@@ -257,6 +257,15 @@ road room are playable; the absence of a separate winning ending is recorded.
       gates, death/recovery, and road to the river. Check save/load during a
       quest and fix any gameplay blockers found.
 
+      
+## Milestone 8 - finishing tweax
+- [ ] Remove all visible PORT message, replace them with some game's
+      tone writing
+- [ ] Fix all in-game communications of features we changed or removed,
+      like MODE commands. Replace it with actual implemented mechanics.
+      Maintain the game's tone in writing
+
+
 Completion criterion: every recoverable gameplay path is playable with its
 source-backed behavior and text, and no missing mechanic hides behind a port
 placeholder. The river remains the original endpoint; no win screen is invented.
