@@ -1,0 +1,168 @@
+ofs,kind,name,private,info1,info2,info3,info4,flags
+226,0x53,PRZEDM,False,sys,,,,
+245,0x53,System,False,sys,,,,
+264,0x53,crt,False,sys,,,,
+280,0x53,monstra,False,sys,,,,
+300,0x53,dos,False,sys,,,,
+316,0x51,MMIECZ,False,var,block=0000,offset=0000,type=Integer,flags=00
+337,0x51,MIECHO2,False,var,block=0000,offset=0002,type=Integer,flags=00
+359,0x51,PRZED,False,var,block=0000,offset=0004,type=Integer,flags=00
+379,0x51,MTARCZA,False,var,block=0000,offset=0006,type=Integer,flags=00
+401,0x51,SERCE,False,var,block=0000,offset=0008,type=Integer,flags=00
+421,0x51,DYPLOM,False,var,block=0000,offset=000A,type=Integer,flags=00
+442,0x51,FAJKA,False,var,block=0000,offset=000C,type=Integer,flags=00
+462,0x51,MAD,False,var,block=0000,offset=000E,type=Integer,flags=00
+480,0x51,SIL,False,var,block=0000,offset=0010,type=Integer,flags=00
+498,0x51,ZRE,False,var,block=0000,offset=0012,type=Integer,flags=00
+516,0x51,MBUTELKA,False,var,block=0000,offset=0014,type=Integer,flags=00
+539,0x51,PRA,False,var,block=0000,offset=0016,type=Integer,flags=00
+557,0x51,MAXMAD,False,var,block=0008,offset=0000,type=Integer,flags=00
+578,0x51,MAXSIL,False,var,block=0008,offset=0002,type=Integer,flags=00
+599,0x51,MAXZRE,False,var,block=0008,offset=0004,type=Integer,flags=00
+620,0x51,ENERGIA,False,var,block=0008,offset=0006,type=Integer,flags=00
+642,0x51,FUKS,False,var,block=0008,offset=0008,type=Integer,flags=00
+661,0x51,PACZEK,False,var,block=0008,offset=000A,type=Integer,flags=00
+682,0x51,CIASTKO,False,var,block=0008,offset=000C,type=Integer,flags=00
+704,0x51,SUCHA,False,var,block=0008,offset=000E,type=Integer,flags=00
+724,0x51,CHLEB,False,var,block=0008,offset=0010,type=Integer,flags=00
+744,0x51,BULKA,False,var,block=0008,offset=0012,type=Integer,flags=00
+764,0x51,WEKA,False,var,block=0008,offset=0014,type=Integer,flags=00
+783,0x51,MANA,False,var,block=0010,offset=0000,type=Integer,flags=00
+802,0x51,MAXMANA,False,var,block=0010,offset=0002,type=Integer,flags=00
+824,0x51,WROGEN,False,var,block=0010,offset=0004,type=Integer,flags=00
+845,0x51,TEST1,False,var,block=0010,offset=0006,type=Integer,flags=00
+865,0x51,MINIKUNSZT,False,var,block=0010,offset=0008,type=Integer,flags=00
+890,0x51,WROGSIL,False,var,block=0010,offset=000A,type=Integer,flags=00
+912,0x51,WROGZRE,False,var,block=0010,offset=000C,type=Integer,flags=00
+934,0x51,ON,False,var,block=0010,offset=000E,type=Integer,flags=00
+951,0x51,TY,False,var,block=0010,offset=0010,type=Integer,flags=00
+968,0x51,SZANSA,False,var,block=0010,offset=0012,type=Integer,flags=00
+989,0x51,WPYSK,False,var,block=0010,offset=0014,type=Integer,flags=00
+1009,0x51,PRO,False,var,block=0018,offset=0000,type=Integer,flags=00
+1027,0x51,ILOSC,False,var,block=0018,offset=0002,type=Integer,flags=00
+1047,0x51,PAR,False,var,block=0018,offset=0004,type=Integer,flags=00
+1065,0x51,KOP,False,var,block=0018,offset=0006,type=Integer,flags=00
+1083,0x51,KOPM,False,var,block=0018,offset=0008,type=Integer,flags=00
+1102,0x51,KOPHP,False,var,block=0018,offset=000A,type=Integer,flags=00
+1122,0x51,ZWIEJ,False,var,block=0018,offset=000C,type=Integer,flags=00
+1142,0x51,WIMP,False,var,block=0018,offset=000E,type=Integer,flags=00
+1161,0x51,PASZOL,False,var,block=0018,offset=0010,type=Integer,flags=00
+1182,0x51,KUNSZT,False,var,block=0018,offset=0012,type=Integer,flags=00
+1203,0x51,MIECHO,False,var,block=0018,offset=0014,type=Integer,flags=00
+1224,0x51,ARENA,False,var,block=0018,offset=0016,type=Integer,flags=00
+1244,0x51,KORNIK,False,var,block=0020,offset=0000,type=Integer,flags=00
+1265,0x51,MUCHA,False,var,block=0020,offset=0002,type=Integer,flags=00
+1285,0x51,BAKTERIA,False,var,block=0020,offset=0004,type=Integer,flags=00
+1308,0x51,SLIMAK,False,var,block=0020,offset=0006,type=Integer,flags=00
+1329,0x51,ZUK,False,var,block=0020,offset=0008,type=Integer,flags=00
+1347,0x51,KARALUCH,False,var,block=0020,offset=000A,type=Integer,flags=00
+1370,0x51,MROWKA,False,var,block=0020,offset=000C,type=Integer,flags=00
+1391,0x51,PAJAK,False,var,block=0020,offset=000E,type=Integer,flags=00
+1411,0x51,DZIK,False,var,block=0020,offset=0010,type=Integer,flags=00
+1430,0x51,SZCZUR,False,var,block=0020,offset=0012,type=Integer,flags=00
+1451,0x51,LIS,False,var,block=0020,offset=0014,type=Integer,flags=00
+1469,0x51,KUROPATWA,False,var,block=0028,offset=0000,type=Integer,flags=00
+1493,0x51,ZAJAC,False,var,block=0028,offset=0002,type=Integer,flags=00
+1513,0x51,WILCZUR,False,var,block=0028,offset=0004,type=Integer,flags=00
+1535,0x51,ORZEL,False,var,block=0028,offset=0006,type=Integer,flags=00
+1555,0x51,SARNA,False,var,block=0028,offset=0008,type=Integer,flags=00
+1575,0x51,SLON,False,var,block=0028,offset=000A,type=Integer,flags=00
+1594,0x51,LEW,False,var,block=0028,offset=000C,type=Integer,flags=00
+1612,0x51,ZYRAFA,False,var,block=0028,offset=000E,type=Integer,flags=00
+1633,0x51,WIELBLAD,False,var,block=0028,offset=0010,type=Integer,flags=00
+1656,0x51,STRUS,False,var,block=0028,offset=0012,type=Integer,flags=00
+1676,0x51,BOA,False,var,block=0028,offset=0014,type=Integer,flags=00
+1694,0x51,WILK,False,var,block=0030,offset=0000,type=Integer,flags=00
+1713,0x51,BIZON,False,var,block=0030,offset=0002,type=Integer,flags=00
+1733,0x51,PANTERA,False,var,block=0030,offset=0004,type=Integer,flags=00
+1755,0x51,GLADIATOR,False,var,block=0030,offset=0006,type=Integer,flags=00
+1779,0x51,WOJOWNIK,False,var,block=0030,offset=0008,type=Integer,flags=00
+1802,0x51,TRENER,False,var,block=0030,offset=000A,type=Integer,flags=00
+1823,0x51,CZY,False,var,block=0030,offset=000C,type=Integer,flags=00
+1841,0x51,STOP,False,var,block=0030,offset=000E,type=Integer,flags=00
+1860,0x51,KOMPLET,False,var,block=0030,offset=0010,type=Integer,flags=00
+1882,0x51,CIALO,False,var,block=0030,offset=0012,type=Integer,flags=00
+1902,0x51,FORSA,False,var,block=0038,offset=0000,type=Longint,flags=00
+1922,0x51,PRZEPUSTKA,False,var,block=0038,offset=0004,type=Longint,flags=00
+1947,0x51,GARNITUR,False,var,block=0040,offset=0000,type=Integer,flags=00
+1970,0x51,FUKSROLL,False,var,block=0040,offset=0002,type=Integer,flags=00
+1993,0x51,GITARZYSTA,False,var,block=0040,offset=0004,type=Integer,flags=00
+2018,0x51,PERKUSISTA,False,var,block=0040,offset=0006,type=Integer,flags=00
+2043,0x51,ORGANISTA,False,var,block=0040,offset=0008,type=Integer,flags=00
+2067,0x51,LIROY,False,var,block=0040,offset=000A,type=Integer,flags=00
+2087,0x51,kaseta,False,var,block=0040,offset=000C,type=Integer,flags=00
+2108,0x51,SCROLLPOR,False,var,block=0040,offset=000E,type=Integer,flags=00
+2132,0x51,SZCZAW,False,var,block=0048,offset=0000,type=Integer,flags=00
+2153,0x51,STOKROTKA,False,var,block=0048,offset=0002,type=Integer,flags=00
+2177,0x51,KONICZYNKA,False,var,block=0048,offset=0004,type=Integer,flags=00
+2202,0x51,MLECZ,False,var,block=0048,offset=0006,type=Integer,flags=00
+2222,0x51,DMUCHAWIEC,False,var,block=0048,offset=0008,type=Integer,flags=00
+2247,0x51,ROZA,False,var,block=0048,offset=000A,type=Integer,flags=00
+2266,0x51,JEZYNA,False,var,block=0048,offset=000C,type=Integer,flags=00
+2287,0x51,OSET,False,var,block=0048,offset=000E,type=Integer,flags=00
+2306,0x51,AGREST,False,var,block=0048,offset=0010,type=Integer,flags=00
+2327,0x51,MALINA,False,var,block=0048,offset=0012,type=Integer,flags=00
+2348,0x51,TRAWA,False,var,block=0048,offset=0014,type=Integer,flags=00
+2368,0x51,QUEST,False,var,block=0048,offset=0016,type=Integer,flags=00
+2388,0x51,QUESTWYK,False,var,block=0048,offset=0018,type=Integer,flags=00
+2411,0x51,DZIECKO,False,var,block=0050,offset=0000,type=Shortint,flags=00
+2433,0x51,WARIAT,False,var,block=0050,offset=0001,type=Shortint,flags=00
+2454,0x51,SLUCHACZ,False,var,block=0050,offset=0002,type=Shortint,flags=00
+2477,0x51,FAN,False,var,block=0050,offset=0003,type=Shortint,flags=00
+2495,0x51,CZLOWIEK,False,var,block=0050,offset=0004,type=Shortint,flags=00
+2518,0x51,POLICJANT,False,var,block=0050,offset=0005,type=Shortint,flags=00
+2542,0x51,OCHRONIARZ,False,var,block=0050,offset=0006,type=Shortint,flags=00
+2567,0x51,DZIADEK,False,var,block=0050,offset=0007,type=Shortint,flags=00
+2589,0x51,GORYL,False,var,block=0050,offset=0008,type=Shortint,flags=00
+2609,0x51,PLECAK,False,var,block=0050,offset=0009,type=Shortint,flags=00
+2630,0x51,REPORTER,False,var,block=0058,offset=0000,type=Shortint,flags=00
+2653,0x51,PIGULKA,False,var,block=0058,offset=0001,type=Shortint,flags=00
+2675,0x51,POTRAWKI,False,var,block=0058,offset=0002,type=Shortint,flags=00
+2698,0x51,BIGOS,False,var,block=0058,offset=0003,type=Shortint,flags=00
+2718,0x51,NOZYCE,False,var,block=0058,offset=0004,type=Shortint,flags=00
+2739,0x51,LISTEK,False,var,block=0058,offset=0005,type=Shortint,flags=00
+2760,0x51,POZIOM,False,var,block=0058,offset=0006,type=Shortint,flags=00
+2781,0x51,POR,False,var,block=0058,offset=0007,type=Shortint,flags=00
+2799,0x51,FIREBALL,False,var,block=0058,offset=0008,type=Shortint,flags=00
+2822,0x51,POISON,False,var,block=0058,offset=0009,type=Shortint,flags=00
+2843,0x51,ILEPOI,False,var,block=0058,offset=000A,type=Shortint,flags=00
+2864,0x51,DUNCAN,False,var,block=0058,offset=000B,type=Shortint,flags=00
+2885,0x51,DUNQ,False,var,block=0058,offset=000C,type=Shortint,flags=00
+2904,0x51,JAKIEUB,False,var,block=0060,offset=0000,type=string,flags=00
+2926,0x51,JAKABRON,False,var,block=0060,offset=0100,type=string,flags=00
+2949,0x51,JAKATAR,False,var,block=0060,offset=0200,type=string,flags=00
+2971,0x51,plik,False,var,block=0068,offset=0000,type=Text,flags=00
+2990,0x51,wpisz,False,var,block=0070,offset=0000,type=string,flags=00
+3010,0x52,BRANIE,False,proc,entryofs=0008,vmt=0,ret=?,code_type=01 obj=08
+3044,0x52,UZYWANIE,False,proc,entryofs=0010,vmt=0,ret=?,code_type=01 obj=08
+3080,0x52,PIERDOLY,False,proc,entryofs=0018,vmt=0,ret=?,code_type=01 obj=08
+3116,0x52,TARCZA,False,proc,entryofs=0020,vmt=0,ret=?,code_type=01 obj=08
+3150,0x52,WALKA,False,proc,entryofs=0028,vmt=0,ret=?,code_type=01 obj=08
+3183,0x52,MINIARENA,False,proc,entryofs=0030,vmt=0,ret=?,code_type=01 obj=08
+3220,0x52,KTO,False,proc,entryofs=0038,vmt=0,ret=?,code_type=01 obj=08
+3251,0x52,MODE,False,proc,entryofs=0040,vmt=0,ret=?,code_type=01 obj=08
+3283,0x52,SLABO,False,proc,entryofs=0048,vmt=0,ret=?,code_type=01 obj=08
+3316,0x52,MNIEJSLABO,False,proc,entryofs=0050,vmt=0,ret=?,code_type=01 obj=08
+3354,0x52,SREDNIO,False,proc,entryofs=0058,vmt=0,ret=?,code_type=01 obj=08
+3389,0x52,TRUDNO,False,proc,entryofs=0060,vmt=0,ret=?,code_type=01 obj=08
+3423,0x52,BTRUDNO,False,proc,entryofs=0068,vmt=0,ret=?,code_type=01 obj=08
+3458,0x52,VEASY,False,proc,entryofs=0070,vmt=0,ret=?,code_type=01 obj=08
+3491,0x52,EASY,False,proc,entryofs=0078,vmt=0,ret=?,code_type=01 obj=08
+3523,0x52,NEASY,False,proc,entryofs=0080,vmt=0,ret=?,code_type=01 obj=08
+3556,0x52,GARNITURZYSK,False,proc,entryofs=0088,vmt=0,ret=?,code_type=01 obj=08
+3596,0x52,PIGULKAZYSK,False,proc,entryofs=0090,vmt=0,ret=?,code_type=01 obj=08
+3635,0x52,KASETAZYSK,False,proc,entryofs=0098,vmt=0,ret=?,code_type=01 obj=08
+3673,0x52,LISTEKZYSK,False,proc,entryofs=00A0,vmt=0,ret=?,code_type=01 obj=08
+3711,0x52,SCROLLPORZYSK,False,proc,entryofs=00A8,vmt=0,ret=?,code_type=01 obj=08
+3752,0x52,SCENA,False,proc,entryofs=00B0,vmt=0,ret=?,code_type=01 obj=08
+3785,0x52,FIGHTSCENA,False,proc,entryofs=00B8,vmt=0,ret=?,code_type=01 obj=08
+3823,0x52,TLUM,False,proc,entryofs=00C0,vmt=0,ret=?,code_type=01 obj=08
+3855,0x52,POTWORY,False,proc,entryofs=00C8,vmt=0,ret=?,code_type=01 obj=08
+3890,0x52,BLUSZCZ,False,proc,entryofs=00D0,vmt=0,ret=?,code_type=01 obj=08
+3925,0x52,KOMENDY,False,proc,entryofs=00D8,vmt=0,ret=?,code_type=01 obj=08
+3960,0x52,FIGHTBLUSZCZ,False,proc,entryofs=00E0,vmt=0,ret=?,code_type=01 obj=08
+4000,0x52,WALKAPIES,False,proc,entryofs=00E8,vmt=0,ret=?,code_type=01 obj=08
+4037,0x52,ULSKLEPIKOWA,False,proc,entryofs=00F0,vmt=0,ret=?,code_type=01 obj=08
+4077,0x52,POROWNANIE,False,proc,entryofs=00F8,vmt=0,ret=?,code_type=01 obj=08
+4115,0x52,TRAIN,False,proc,entryofs=0100,vmt=0,ret=?,code_type=01 obj=08
+4148,0x52,save,False,proc,entryofs=0108,vmt=0,ret=?,code_type=01 obj=08

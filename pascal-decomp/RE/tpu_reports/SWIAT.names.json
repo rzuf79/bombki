@@ -1,0 +1,19 @@
+{
+ "unit": "SWIAT",
+ "checksum": "3B76",
+ "type_names": {},
+ "proc_entry": {
+  "0008": "POKOJ0",
+  "0010": "POKOJ1",
+  "0018": "POKOJ4",
+  "0020": "POKOJ13",
+  "0028": "POKOJE",
+  "0030": "POKOJ5",
+  "0038": "POKOJ11",
+  "0040": "POKOJ30",
+  "0048": "POKOJ60",
+  "0050": "POKOJ75",
+  "0058": "POKOJ100",
+  "0060": "POKOJ83"
+ }
+}

@@ -1,0 +1,4 @@
+Code blocks (ofs  size  relocrecs  owner)
+  0000  000D  0008  FFFF
+  0008  002E  0048  FFFF
+  0010  05E4  02A0  FFFF

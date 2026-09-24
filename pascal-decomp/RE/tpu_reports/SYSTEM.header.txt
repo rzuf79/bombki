@@ -1,0 +1,11 @@
+Header report for tpl_units\SYSTEM.TPU
+file_id    : TPUQ
+i4=0000 i6=0000
+ofs_this_unit=07E8  unit name=System  own_record=07F2
+ofs_hashtable=0060 full_hash=0060
+ofs_entry_pts=0CB9 ofs_code_blocks=1299 ofs_const_blocks=1411 ofs_var_blocks=1431
+ofs_dll_list=1459 ofs_unit_list=1459 ofs_src_name=1464 ofs_line_count=1766 ofs_line_lengths=176C
+sym_size=5996 (0x176C) browser_size=0 code_size=22755 const_size=92 reloc_size=4600 const_reloc_size=0 var_size=610
+flags=0000 object_type_list=0000 br_defs_end=0000
+file size=5996 layout(sym+browser+code+reloc+const+constreloc)=33443
+code at file offset 5996, reloc at 28751, const at 33351, const_reloc at 33443

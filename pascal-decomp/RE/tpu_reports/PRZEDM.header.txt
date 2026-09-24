@@ -1,0 +1,11 @@
+Header report for E:\Develop\Reverse\bombki\PRZEDM.TPU
+file_id    : TPUQ
+i4=0000 i6=0000
+ofs_this_unit=00E2  unit name=PRZEDM  own_record=00EC
+ofs_hashtable=0060 full_hash=1054
+ofs_entry_pts=124C ofs_code_blocks=1364 ofs_const_blocks=1474 ofs_var_blocks=1474
+ofs_dll_list=14EC ofs_unit_list=14EC ofs_src_name=1516 ofs_line_count=1528 ofs_line_lengths=152E
+sym_size=7312 (0x1C90) browser_size=0 code_size=38118 const_size=0 reloc_size=34680 const_reloc_size=0 var_size=1510
+flags=0000 object_type_list=0000 br_defs_end=0000
+file size=80128 layout(sym+browser+code+reloc+const+constreloc)=80110
+code at file offset 7312, reloc at 45430, const at 80110, const_reloc at 80110

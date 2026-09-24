@@ -1,0 +1,42 @@
+D070  9a 91 02 71 1c   lcall 0x1c71, 0x291
+D075  bf a2 07         mov di, 0x7a2
+D078  1e               push ds
+D079  57               push di
+D07A  bf 25 9b         mov di, 0x9b25
+D07D  0e               push cs
+D07E  57               push di
+D07F  31 c0            xor ax, ax
+D081  50               push ax
+D082  9a 01 07 71 1c   lcall 0x1c71, 0x701
+D087  9a dd 05 71 1c   lcall 0x1c71, 0x5dd
+D08C  9a 91 02 71 1c   lcall 0x1c71, 0x291
+D091  c7 06 b0 01 c8 00 mov word ptr [0x1b0], 0xc8
+D097  c7 06 b8 01 0f 00 mov word ptr [0x1b8], 0xf
+D09D  c7 06 b6 01 12 00 mov word ptr [0x1b6], 0x12
+D0A3  c6 06 5e 02 05   mov byte ptr [0x25e], 5
+D0A8  c6 06 5f 02 01   mov byte ptr [0x25f], 1
+D0AD  9a a6 44 9d 12   lcall 0x129d, 0x44a6
+D0B2  83 3e b0 01 00   cmp word ptr [0x1b0], 0
+D0B7  7d 20            jge 0xd0d9
+D0B9  9a 14 30 9d 12   lcall 0x129d, 0x3014
+D0BE  9a 9e 2e 9d 12   lcall 0x129d, 0x2e9e
+D0C3  9a c1 30 9d 12   lcall 0x129d, 0x30c1
+D0C8  80 3e 62 02 00   cmp byte ptr [0x262], 0
+D0CD  74 0a            je 0xd0d9
+D0CF  a0 62 02         mov al, byte ptr [0x262]
+D0D2  98               cwde 
+D0D3  2d 32 00         sub ax, 0x32
+D0D6  a2 62 02         mov byte ptr [0x262], al
+D0D9  83 3e 9c 01 00   cmp word ptr [0x19c], 0
+D0DE  7e 22            jle 0xd102
+D0E0  bf a2 07         mov di, 0x7a2
+D0E3  1e               push ds
+D0E4  57               push di
+D0E5  bf 32 9b         mov di, 0x9b32
+D0E8  0e               push cs
+D0E9  57               push di
+D0EA  31 c0            xor ax, ax
+D0EC  50               push ax
+D0ED  9a 01 07 71 1c   lcall 0x1c71, 0x701
+D0F2  9a dd 05 71 1c   lcall 0x1c71, 0x5dd
+D0F7  9a 91 02 71 1c   lcall 0x1c71, 0x291

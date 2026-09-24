@@ -1,0 +1,27 @@
+{
+ "unit": "Crt",
+ "checksum": "D5E2",
+ "type_names": {},
+ "proc_entry": {
+  "0008": "AssignCrt",
+  "0010": "KeyPressed",
+  "0018": "ReadKey",
+  "0020": "TextMode",
+  "0028": "Window",
+  "0030": "GotoXY",
+  "0038": "WhereX",
+  "0040": "WhereY",
+  "0048": "ClrScr",
+  "0050": "ClrEol",
+  "0058": "InsLine",
+  "0060": "DelLine",
+  "0068": "TextColor",
+  "0070": "TextBackground",
+  "0078": "LowVideo",
+  "0080": "HighVideo",
+  "0088": "NormVideo",
+  "0090": "Delay",
+  "0098": "Sound",
+  "00A0": "NoSound"
+ }
+}

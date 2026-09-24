@@ -1,0 +1,18 @@
+ofs,kind,name,private,info1,info2,info3,info4,flags
+226,0x53,SWIAT,False,sys,,,,
+244,0x53,System,False,sys,,,,
+263,0x53,crt,False,sys,,,,
+279,0x53,monstra,False,sys,,,,
+299,0x53,przedm,False,sys,,,,
+318,0x52,POKOJ0,False,proc,entryofs=0008,vmt=0,ret=?,code_type=01 obj=08
+352,0x52,POKOJ1,False,proc,entryofs=0010,vmt=0,ret=?,code_type=01 obj=08
+386,0x52,POKOJ4,False,proc,entryofs=0018,vmt=0,ret=?,code_type=01 obj=08
+420,0x52,POKOJ13,False,proc,entryofs=0020,vmt=0,ret=?,code_type=01 obj=08
+455,0x52,POKOJE,False,proc,entryofs=0028,vmt=0,ret=?,code_type=01 obj=08
+489,0x52,POKOJ5,False,proc,entryofs=0030,vmt=0,ret=?,code_type=01 obj=08
+523,0x52,POKOJ11,False,proc,entryofs=0038,vmt=0,ret=?,code_type=01 obj=08
+558,0x52,POKOJ30,False,proc,entryofs=0040,vmt=0,ret=?,code_type=01 obj=08
+593,0x52,POKOJ60,False,proc,entryofs=0048,vmt=0,ret=?,code_type=01 obj=08
+628,0x52,POKOJ75,False,proc,entryofs=0050,vmt=0,ret=?,code_type=01 obj=08
+663,0x52,POKOJ100,False,proc,entryofs=0058,vmt=0,ret=?,code_type=01 obj=08
+699,0x52,POKOJ83,False,proc,entryofs=0060,vmt=0,ret=?,code_type=01 obj=08

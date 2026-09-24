@@ -1,0 +1,56 @@
+ofs,kind,name,private,info1,info2,info3,info4,flags
+226,0x53,Crt,False,sys,,,,
+242,0x53,System,False,sys,,,,
+261,0x4f,BW40,False,const,type=Longint,valofs=0111,raw@0111,
+277,0x4f,CO40,False,const,type=Longint,valofs=0121,raw@0121,
+293,0x4f,BW80,False,const,type=Longint,valofs=0131,raw@0131,
+309,0x4f,CO80,False,const,type=Longint,valofs=0141,raw@0141,
+325,0x4f,Mono,False,const,type=Longint,valofs=0151,raw@0151,
+341,0x4f,Font8x8,False,const,type=Longint,valofs=0164,raw@0164,
+360,0x4f,C40,False,const,type=Longint,valofs=0173,raw@0173,
+375,0x4f,C80,False,const,type=Longint,valofs=0182,raw@0182,
+390,0x4f,Black,False,const,type=Longint,valofs=0193,raw@0193,
+407,0x4f,Blue,False,const,type=Longint,valofs=01A3,raw@01A3,
+423,0x4f,Green,False,const,type=Longint,valofs=01B4,raw@01B4,
+440,0x4f,Cyan,False,const,type=Longint,valofs=01C4,raw@01C4,
+456,0x4f,Red,False,const,type=Longint,valofs=01D3,raw@01D3,
+471,0x4f,Magenta,False,const,type=Longint,valofs=01E6,raw@01E6,
+490,0x4f,Brown,False,const,type=Longint,valofs=01F7,raw@01F7,
+507,0x4f,LightGray,False,const,type=Longint,valofs=020C,raw@020C,
+528,0x4f,DarkGray,False,const,type=Longint,valofs=0220,raw@0220,
+548,0x4f,LightBlue,False,const,type=Longint,valofs=0235,raw@0235,
+569,0x4f,LightGreen,False,const,type=Longint,valofs=024B,raw@024B,
+591,0x4f,LightCyan,False,const,type=Longint,valofs=0260,raw@0260,
+612,0x4f,LightRed,False,const,type=Longint,valofs=0274,raw@0274,
+632,0x4f,LightMagenta,False,const,type=Longint,valofs=028C,raw@028C,
+656,0x4f,Yellow,False,const,type=Longint,valofs=029E,raw@029E,
+674,0x4f,White,False,const,type=Longint,valofs=02AF,raw@02AF,
+691,0x4f,Blink,False,const,type=Longint,valofs=02C0,raw@02C0,
+708,0x51,CheckBreak,False,var,block=0000,offset=0000,type=Boolean,flags=00
+733,0x51,CheckEOF,False,var,block=0000,offset=0001,type=Boolean,flags=00
+756,0x51,DirectVideo,False,var,block=0000,offset=0002,type=Boolean,flags=00
+782,0x51,CheckSnow,False,var,block=0000,offset=0003,type=Boolean,flags=00
+806,0x51,LastMode,False,var,block=0000,offset=0004,type=Word,flags=00
+829,0x51,TextAttr,False,var,block=0000,offset=0006,type=Byte,flags=00
+852,0x51,WindMin,False,var,block=0000,offset=0008,type=Word,flags=00
+874,0x51,WindMax,False,var,block=0000,offset=000A,type=Word,flags=00
+896,0x52,AssignCrt,False,proc,entryofs=0008,vmt=0,ret=?,code_type=09 obj=00
+938,0x52,KeyPressed,False,proc,entryofs=0010,vmt=0,ret=Boolean,code_type=09 obj=00
+976,0x52,ReadKey,False,proc,entryofs=0018,vmt=0,ret=Char,code_type=09 obj=00
+1011,0x52,TextMode,False,proc,entryofs=0020,vmt=0,ret=?,code_type=09 obj=00
+1052,0x52,Window,False,proc,entryofs=0028,vmt=0,ret=?,code_type=09 obj=00
+1106,0x52,GotoXY,False,proc,entryofs=0030,vmt=0,ret=?,code_type=09 obj=00
+1150,0x52,WhereX,False,proc,entryofs=0038,vmt=0,ret=Byte,code_type=09 obj=00
+1184,0x52,WhereY,False,proc,entryofs=0040,vmt=0,ret=Byte,code_type=09 obj=00
+1218,0x52,ClrScr,False,proc,entryofs=0048,vmt=0,ret=?,code_type=09 obj=00
+1252,0x52,ClrEol,False,proc,entryofs=0050,vmt=0,ret=?,code_type=09 obj=00
+1286,0x52,InsLine,False,proc,entryofs=0058,vmt=0,ret=?,code_type=09 obj=00
+1321,0x52,DelLine,False,proc,entryofs=0060,vmt=0,ret=?,code_type=09 obj=00
+1356,0x52,TextColor,False,proc,entryofs=0068,vmt=0,ret=?,code_type=09 obj=00
+1398,0x52,TextBackground,False,proc,entryofs=0070,vmt=0,ret=?,code_type=09 obj=00
+1445,0x52,LowVideo,False,proc,entryofs=0078,vmt=0,ret=?,code_type=09 obj=00
+1481,0x52,HighVideo,False,proc,entryofs=0080,vmt=0,ret=?,code_type=09 obj=00
+1518,0x52,NormVideo,False,proc,entryofs=0088,vmt=0,ret=?,code_type=09 obj=00
+1555,0x52,Delay,False,proc,entryofs=0090,vmt=0,ret=?,code_type=09 obj=00
+1593,0x52,Sound,False,proc,entryofs=0098,vmt=0,ret=?,code_type=09 obj=00
+1631,0x52,NoSound,False,proc,entryofs=00A0,vmt=0,ret=?,code_type=09 obj=00

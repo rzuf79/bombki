@@ -1,0 +1,25 @@
+{
+ "unit": "System",
+ "checksum": "C40A",
+ "type_names": {
+  "0172": "Boolean",
+  "0116": "Byte",
+  "0186": "Bytebool",
+  "01CE": "Char",
+  "00EA": "Comp",
+  "00E2": "Double",
+  "00F2": "Extended",
+  "012A": "Integer",
+  "01AE": "Longbool",
+  "0152": "Longint",
+  "01EE": "PChar",
+  "00AE": "Pointer",
+  "00FA": "Real",
+  "0102": "Shortint",
+  "00DA": "Single",
+  "0096": "Text",
+  "013E": "Word",
+  "019A": "Wordbool"
+ },
+ "proc_entry": {}
+}

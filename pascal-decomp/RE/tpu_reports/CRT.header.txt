@@ -1,0 +1,11 @@
+Header report for tpl_units\CRT.TPU
+file_id    : TPUQ
+i4=0000 i6=0000
+ofs_this_unit=00E2  unit name=Crt  own_record=00E9
+ofs_hashtable=0060 full_hash=0060
+ofs_entry_pts=0682 ofs_code_blocks=073A ofs_const_blocks=0752 ofs_var_blocks=0752
+ofs_dll_list=0762 ofs_unit_list=0762 ofs_src_name=0775 ofs_line_count=0793 ofs_line_lengths=0799
+sym_size=1945 (0x799) browser_size=0 code_size=1567 const_size=0 reloc_size=752 const_reloc_size=0 var_size=20
+flags=0000 object_type_list=0000 br_defs_end=0000
+file size=1945 layout(sym+browser+code+reloc+const+constreloc)=4264
+code at file offset 1945, reloc at 3512, const at 4264, const_reloc at 4264

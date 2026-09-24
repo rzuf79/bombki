@@ -1,0 +1,7 @@
+Unit list (offset  refcount  name)
+  0000  ref=0  System
+  000B  ref=0  Crt
+
+Uses chain (unit_ptr records):
+  unit record=00E9 target=0 checksum=D5E2 name=Crt
+  unit record=00FC target=0 checksum=C40A name=System

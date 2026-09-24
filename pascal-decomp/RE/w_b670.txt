@@ -1,0 +1,61 @@
+B670  06               push es
+B671  c7 06 d6 01 0b 00 mov word ptr [0x1d6], 0xb
+B677  bf 64 05         mov di, 0x564
+B67A  1e               push ds
+B67B  57               push di
+B67C  bf e9 8c         mov di, 0x8ce9
+B67F  0e               push cs
+B680  57               push di
+B681  9a d7 09 71 1c   lcall 0x1c71, 0x9d7
+B686  74 03            je 0xb68b
+B688  e9 53 01         jmp 0xb7de
+B68B  83 3e 5c 00 0f   cmp word ptr [0x5c], 0xf
+B690  74 03            je 0xb695
+B692  e9 49 01         jmp 0xb7de
+B695  c7 06 b0 01 28 00 mov word ptr [0x1b0], 0x28
+B69B  c7 06 b8 01 03 00 mov word ptr [0x1b8], 3
+B6A1  c7 06 b6 01 03 00 mov word ptr [0x1b6], 3
+B6A7  9a a6 44 9d 12   lcall 0x129d, 0x44a6
+B6AC  83 3e d2 01 00   cmp word ptr [0x1d2], 0
+B6B1  74 03            je 0xb6b6
+B6B3  e9 23 01         jmp 0xb7d9
+B6B6  31 c0            xor ax, ax
+B6B8  a3 5c 00         mov word ptr [0x5c], ax
+B6BB  b8 0f 00         mov ax, 0xf
+B6BE  50               push ax
+B6BF  9a e4 0b 71 1c   lcall 0x1c71, 0xbe4
+B6C4  a3 12 02         mov word ptr [0x212], ax
+B6C7  bf a2 07         mov di, 0x7a2
+B6CA  1e               push ds
+B6CB  57               push di
+B6CC  bf f6 8c         mov di, 0x8cf6
+B6CF  0e               push cs
+B6D0  57               push di
+B6D1  31 c0            xor ax, ax
+B6D3  50               push ax
+B6D4  9a 01 07 71 1c   lcall 0x1c71, 0x701
+B6D9  a1 12 02         mov ax, word ptr [0x212]
+B6DC  99               cdq 
+B6DD  52               push dx
+B6DE  50               push ax
+B6DF  31 c0            xor ax, ax
+B6E1  50               push ax
+B6E2  9a 89 07 71 1c   lcall 0x1c71, 0x789
+B6E7  bf 01 8d         mov di, 0x8d01
+B6EA  0e               push cs
+B6EB  57               push di
+B6EC  31 c0            xor ax, ax
+B6EE  50               push ax
+B6EF  9a 01 07 71 1c   lcall 0x1c71, 0x701
+B6F4  9a dd 05 71 1c   lcall 0x1c71, 0x5dd
+B6F9  9a 91 02 71 1c   lcall 0x1c71, 0x291
+B6FE  a1 12 02         mov ax, word ptr [0x212]
+B701  99               cdq 
+B702  03 06 1a 02      add ax, word ptr [0x21a]
+B706  13 16 1c 02      adc dx, word ptr [0x21c]
+B70A  a3 1a 02         mov word ptr [0x21a], ax
+B70D  89 16 1c 02      mov word ptr [0x21c], dx
+B711  83 3e 7e 01 00   cmp word ptr [0x17e], 0
+B716  75 3b            jne 0xb753
+B718  b8 14 00         mov ax, 0x14
+B71B  50               push ax

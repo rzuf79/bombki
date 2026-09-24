@@ -1,0 +1,1 @@
+# reloc cell: image-relative seg:ofs  -> file ofs, stored far ptr, target img ofs

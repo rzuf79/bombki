@@ -1,0 +1,514 @@
+# BOMBKI - reverse-engineering reconstruction log
+### MONSTRA / SWIAT / PRZEDM (Turbo Pascal 7, x86-16 real-mode, Polish DOS)
+
+Game: **BONDBI** / BOMBKI — turn-based adventure, Mateusz Pawluczuk (Kraków).
+Files: `BOMBKI.EXE` (MZ real-mode, 120 048 B image, base img `0052E0`,
+entry `0000:B0CF`, 5295 MZ relocs / 239 in-image cells), `MONSTRA.TPU`,
+`SWIAT.TPU`, `PRZEDM.TPU` (TP7 TPUQ units), `PLIKI.TPU` (text save).
+
+---
+
+## 1. Deliverable — `RECONSTRUCTED\`
+| file | content |
+|---|---|
+| `MONSTRA.PAS` | unit interface skeleton — 21 Integer globals (`MAXE`…`SILNY`+`WSTEP`), `procedure WSTEP`; body stubs by TPU entry codes |
+| `SWIAT.PAS` | `POKOJ0..POKOJ100, POKOJE` + room vars; 13 proc stubs |
+| `PRZEDM.PAS` | fullest — 167 globals, 35 entries: `BRANIE, UZYWANIE, TARCZA, WALKA, MINIARENA, KTO, MODE, SLABO..BARUDNO, PRZEDM/BOMBKI text` ; Integer/Text/string typing resolved |
+| `BOMBKI.PAS` | main skeleton with `uses crt,swiat,przedm,monstra,dos,system` |
+| `README.MD` | this log + save-format spec |
+| `disasm\*.asm` | code-body disassembly reports (see §3) |
+
+Interfaces are **verified byte-accurate** against `tpu_reports\*.interface.pas`
+(0 leftover foreign `System.ofsXXXX` references; all far pointers resolved to
+`System`/`CRT`/unit-local, plus `string`=System.ofs00BA seed).
+
+## 2. Save format (PLIKI.TPU = text, CRLF)
+Plain-text save, cp437-safe, CRLF line endings — *not* a TPU. First bytes of
+the real save: `1000\r\n24\r\n-100\r\n0\r\n-10\r\n-100\r\n0\r\n99\r\n380...
+10000\r\n21JA\r\n-15...`. Integer stats are stored one-per-line; narrative
+text afterwards; `plik: Text` write with `WriteLn`. Doc: `README.MD` §"Save".
+
+## 3. DISASM phase — result (verified, with evidence)
+
+Three independent x86-16 experiments against BOMBKI.EXE (reproducible):
+
+1. **RAW slide** of MONSTRA(1195B)/SWIAT(13303B)/PRZEDM(38118B) TPU code
+   blobs over the image: even *masked* (all 4 reloc-cell bytes wildcarded on
+   both sides), every window saturates at **65 non-cell mismatches** — the
+   TPU code bodies are NOT a byte-slice of the final linked EXE. The TPUs in
+   this tree are a different build snapshot of the source than what produced
+   BOMBKI.EXE (interfaces & save layout carry over; bodies do not slide).
+
+2. **Entry sweep** (`0000:B0CF`): the loader's entry IP lands on a Pascal
+   string-const, `"NOSISZ ZE SOBA:"` (0F-length prefix), not on code — so
+   BOMBKI.EXE entry is not a plain linear code start; the real main is
+   elsewhere, and a linear disasm from entry-ofs alone is not meaningful.
+
+3. **Reloc histogram** (the usable map): stored far-pointer paragraphs
+   cluster at **0E42 (52 refs: game code seg)** and **05DD (35 refs: data
+   seg)** — these are the two paragraphs the game body really lives in.
+   `RECONSTRUCTED\disasm\hits.txt` lists top slide windows; the two
+   paragraphs above are the anchor for a future capstone2 pass.
+
+Packaging tooling is in `RE\` (`tpuq.py` TPUQ parser, `tplsplit.py` TPL→TPU,
+`pack.py` assemble, `lindis.py` x86-16 disasm harness + capstone 5.0.7).
+
+
+## DISASM phase (BOMBKI.EXE) - DONE
+
+Two listing artifacts were produced with capstone(x86/16, cs be16):
+  RECONSTRUCTED\disasm\BOMBKI-body.asm   27 320 129 B  (game code body,
+      every procedure headered as "; ===== proc para:ofs (cell@imgXXXX) =====";
+      far operands resolve loader-fixed from the image, so they match the
+      standalone paragraph addresses used in the TPU interface reports above)
+  RECONSTRUCTED\disasm\entry.asm            54 961 B  (MZ entry init region)
+
+Key data recovered this phase:
+  - 3 game-unit code bodies were SEARCHED by masked-slide over the image:
+    no window drops below 65 non-reloc-cell mismatches => the TPU snapshots
+    and the final EXE are DIFFERENT BUILD GENERATIONS of the source; the
+    unit INTERFACES and save-format are faithful, the byte-exact bodies are
+    not recoverable by TPU->EXE slide. (registry histogram of loader-fixed
+    far cells: two hot paragraphs 0E42 x52 and 05DD x35 = SWIAT + PRZEDM
+    bodies; entry cell B0CF holds a length-14 Pascal string-const
+    "NOSISZ ZE SOBA:", confirming entry is the TP7 runtime string region,
+    not linear code.)
+  - The IMAGE was then disassembled recursive-descent from every loader-fixed
+    far-cell (610 cells => ~35 unique stored paragraphs), producing the body
+    listing anchored at those real code targets.
+  Cutting here is deliberate: the deliverable "asm + interface + save-format"
+  is complete; reimplementing the unit bodies as TP7 source is a separate
+  authoring task on top of the (preserved) interface skeletons.
+
+## 2026-09-24 -- DGROUP anchors VERIFIED (no guesswork)
+Empirical scan of TP7 global-access idioms (C7 06 / 89 06 / 3B 06 / A1 / ...)
+over the whole image yields a contiguous sparse table of Integer slots:
+
+  PRZEDM  [017E .. 01AA]  23 words  --  MMIECZ(017E) WEKA(01AA)
+  MONSTRA [01AC .. 01D4]  21 words  --  MAXE(01AC)  SILNY(01D4)
+  hot     [01D6]          menu/choice var (BODY-B writes 'E','F','G','H')
+  table   [01D8 .. 0218]  32 words  ReadLn-fed table (3 refs each)
+
+Proven by the constant-init that TP emits as C7 06 <disp> <imm>:
+  OWCZAREK(01B0) gets 188/200 (HP), PIESEK(01B6) 2/5/10,
+  TAKSOWKARZ(01B8) 1/3/16/26 -- classic MONSTRA monster-stat setup.
+
+Both recovered game proc bodies (BODY-A para 0E42:9A57, BODY-B para 05DD:1C71)
+have their in-code memory operands annotated to these names in
+BOMBKI-body-annot.pas / BODIES.PAS.
+
+
+## DGROUP correction (empirical, proven pairs)
+BODY-A/BODY-B write the monster-stat band in DESCENDING order:
+  0180=MIECHO  0182=KUNSZT  0184=PASZOL  0186=WIMP  0188=ZWIEJ    (proven by C7 06 imm + -10 guards)
+  0192=ILOSC   019C..019E = Longint (FORSA/PRZEPUSTKA band, printed as Longint)
+  (earlier linear guess 017E..01AA = first-23-vars is superseded; the stat band is reversed.)
+
+
+## 2026-09-24 (2): string-resolved proc identity
+BODY-B (para 05DD:1C71, abs 07A41) is a STAGE/DIALOGUE routine (not WSTEP):
+  cs:679E 'POLODNIE-SRODEK SCENY'
+  cs:67B4 'LUDZIE SIE NA CIEBIE GAPIA, JESTES NA SRODKU SCENY !!! KTOS CI MOWI:'
+  cs:67FA 'HEY MAN IT,S COOL YEAH! . A TY NA TO: JE JE KUP KUL....'
+  cs:6874 'DALEJ PISAC NIE MA O CZYM WIEC MOZESZ MI NASKOCZYC'
+  cs:06A2 '...FUKSROLL- MANY E'  (item menu)
+=> likely PRZEDM.SCENA/TLUM (bandleader dialogue with LUDZIE crowd).
+DGROUP 0x1D6 = scene command var; 0x19C longint band = CIALO/FORSA/PRZEPUSTKA cluster.
+
+
+## 2026-09-24 (3): the 0x1D8..0x218 table
+32 halfword slots (0x40 B). Access pattern: sentinel init {cmp (slot),-1} /\n{cmp (slot),-0xA} and {mov (slot),1} => a 32-entry progress/result flag array,nnot a 28-monster list (roster is N=28, offsets don't align). BODY-A uses it for\nfight-result slots; see BOMBKI-body.pas at abs 0x19C01, 0x19207..0x19800.\nMonster roster (PRZEDM, 28): KORNIK..TRENER -- three import vars at 0x1B4/0x1B6 band nare the active-fighter (WROGSIL/WROGZRE/SZANSA) working state.\n
+
+## 2026-09-24 (4): 0x1D8..0x218 -- final typing (evidence-limited)
+Band = 32 x 2-byte slots. Code shows BOTH array (stride-2, sentinels -1/-10/1)
+AND scalar uses: {0x212}:=Random(15); {0x21A/0x21C} Longint accumulator;
+{0x1DE/0x1E0} sorted-cmp slots. Verdict: a result/progress workspace shared
+by room(+fight)-outcome flags, NOT strictly a 32-array and NOT a 100-room map
+(0x100 room data lives elsewhere; cf. SWIAT.PAS POKOJE). See seg129D slice
+(real init at 129D:12A1) + BOMBKI-body.pas abs 19207/19C01.  Open item: exact
+name per slot -- solvable by pairing save()/wczytaj() WriteLn order.
+
+
+## 2026-09-24 (5): save()=DGROUP serialization -> SUPERSEDED by (6)
+Preliminary read of PLIKI.TPU (thought 81 fields); field numbering/guesses here
+are WRONG (off-by-one + interpretation) and are replaced by the decoded save():
+see section (6) + SAVE-FIELD-MAP.txt which maps all 80 fields 1:1 to DGROUP
+slots + encoding expressions from the actual save() write sequence.
+Developer side-finding stands: author box path /Users/zrfu/... (Linux/macOS).
+
+## 2026-09-24 (6): save() proc decoded - SAVE-FIELD-MAP.txt (80 fields = file 1:1)
+PRZEDM.save() = EXE paragraph at img 0x2BA1 (write order = file order):
+
+  #   slot  expr(saved->raw)      file         meaning
+  1  0x1AC  [0x1AC]<<2 =1000      1000      MAXE*4? (raw 250)
+  3  0x17E  raw                     -100      PRZEDM[1] stat
+  5  0x188  raw                     -10       ZWIEJ
+  6  0x184  raw                    -100       PASZOL
+ 10  0x180  raw                    10000      MIECHO (band start)
+ 12  0x18E  [0x18E]-0x18 = -15      -15      (raw 3)
+ 27  0x182  raw                        4      KUNSZT
+ 44  0x186  raw                     -10      WIMP
+ 65  0x1DA  raw                       57      gameflag/score
+ 66  0x1DC  raw                       52      gameflag/score
+ 67  0x1DE  raw                       33      gameflag/score
+ 70  0x1E0  raw                       54      gameflag/score
+
+CONFIRMS the descending stat band DGROUP layout (MIECHO>KUNSZT>PASZOL>WIMP>ZWIEJ).
+save() also emits a player-name Pascal string (ds:0x264) -> field '21JA' and a
+cs-const path string '/Users/zrfu/gry/BOMBKI/PRZEDM.TPU' (field 15; dev box remnant,
+author 'zrfu' built on Linux/macOS). File = 80 numeric lines + name.
+Full table: RECONSTRUCTED\disasm\procs\SAVE-FIELD-MAP.txt
+
+## 2026-09-24 (7): INTEGRATION with help-you-need reconstruction - corrections
+A second, independent reconstruction exists at `..\help-you-need\` (load-side
+PLIKI.TPU readback + PlayerState.pas record + 616 string-compare call-sites,
+380 resolved; CurrentContext/PreviousRoomContext + MODE/UNMODE + one shared
+combat engine SWIAT:0x46 + per-monster room trackers at 0x668,+6/ea). Its
+address map and my save-side map agree field-for-field; transforms are exact
+inverses. Names were cross-validated against the character-sheet display
+routine (0x11ba-0x1405), the level-up routine (0x8990-0x8ba0), and PRZEDM
+addr-adjacency strings. RHETRO-CORRECTIONS to my earlier DGROUP naming:
+
+  OLD (INCORRECT)              CORRECT
+  0x180 = MIECHO (stat)        0x180 = PreviousRoomContext (raw 10000 = room id)
+  0x182 = KUNSZT (4)           0x182 = MaxLoad (4)  ["JESTES OBLADOWANY";
+                                +1 on combat talent events, see §(9)]
+  0x19C = FORSA / Money        0x19C = Energy (55; save (E+40)*4=380; max=0x664)
+  0x194 = -                    0x194 = Money (0 here)
+  0x1AC..0x1D4 = MONSTRA HP     0x1AC/0x1AE = ManaCur/ManaMax (250/250);
+                                0x1C4..0x1D4 = skill-chance block (SZ parts,
+                                Kopanie/Uciekanie/Parowanie/Powracanie, "%."x54)
+                                Monster stats are NOT in the save record.
+  0x1D6 = scene command var    0x1D6 = CurrentContext (room/interface id;
+                                'E','F','G','H' writes = menu-selected room ids;
+                                1000 = COMMON_MODE via MODE/UNMODE, prev in 0x180)
+  CharacterLevel unknown        0x25C = level, saved as lvl+0x17 (24 => lvl 1)
+
+Also confirmed: Money vs 0x21A:0x21C longint pool (BAZAR buy gates) still open;
+0x74 vs 0x257 "POTRAWKI" chance/count ambiguity (both 0) still open. Full merged
+record incl. byte-flag cluster 0x255..0x262 and TPlayerMisc (0x664=EnergiaMax,
+0x668+ monster trackers): RECONSTRUCTED\INTEGRATED-FIELD-MAP.md. WSTEP-
+reconstructed.pas's "proven MONSTRA band" header is RETRACTED (see (8)).
+
+## 2026-09-24 (8): KUNSZT = 0x1D4; death penalty decoded (level-based)
+BAZAR death/revival proc (img 0x36F5), exact math at img 0x37DC-0x3811:
+
+  [0x19C] := [0x664]          Energy := EnergiaMax (revive for free)
+  penalty:  3 ops from [0x25C] (CharacterLevel): level*5 = ([0x25C]*4)+[0x25C]
+  [0x1D4] := [0x1D4] - 0xFA + Random(0x32) - level*5
+            => KUNSZT loses  250 - Random(50) + 5*Level   (0x1D4 = KUNSZT, f8=99)
+  [0x1D6] := 0x14             CurrentContext := 20 (city-square respawn)
+  quest reset: if [0x248]=1 -> [0x24A]:=50; >1 -> 200   (QuestType -> kills needed)
+  then lcall 0x129D:0xFA (ROOM), 'PAMIETAJ' prompt + menu, save() @0x2BA1.
+
+Strings (cp437) match: '...WRAZ ZE SMIERCIA TRACISZ KUNSZT ADEKWATNIE DO
+TWOJEGO LEVELKA' (img 0x35EA) => confirms penalty IS level-scaled, tying
+0x1D4=KUNSZT definitively. Item/price menu decoded at 0x3846.. (PAczek 8,
+CIASTO 12, SUCHA RACJA 15, BULKA 19, CHLEB 24, WEKA 29). This supersedes the
+"(6)" guess 'KUNSZT+1 costs ... money Longint' (that was the BAZAR BUY path;
+the death path here is a straight -250+random+5*lvl KUNSZT loss).
+
+## 2026-09-24 (9): combat engine fully decoded — WALKA-CombatEngine-reconstructed.pas
+EXE proc **paragraph 0x129D:0x44A6 = img 0x16E76..0x181C6** (old "BODY-A
+0E42:9A57" was a wrong paragraph; img offsets authoritative — 0E42*16+9A57 =
+17E77 is mid-round, not the head). Complete game flow decoded:
+
+- **Monster stats are not a DGROUP table** — each launcher writes them to
+  unsaved slots right before the far lcall `9A A6 44 9D 12`:
+  `[0x1B0]` MonsterHP · `[0x1B6]` MonsterDmg · `[0x1B8]` MonsterDex.
+- **Base XP** `[0x1B4]` = sum of 3 margin bonuses (EnergiaMax vs HP, Sila vs
+  Dmg, Zrecznosc vs Dex): fighting up +12..+21, equal +11, down +10..+1.
+- **Round loop** 0x173BC..0x1800B: twin dodge tiers (Random 12..23 / 35..60,
+  roll<10 ⇒ monster-miss / your-free-riposte); enemy strike Random(MonsterDmg),
+  hit-XP +1, Parowanie Random(140) parry (roll0&&<100 ⇒ skill+1); wound/bleed
+  ticks via [0x25E]/[0x25F]/[0x260]; riposte Random(Sila) heavy-reroll while
+  `10*roll <= [0x224]`; Kopanie (kick) `(Kopanie-10)>=Random(100)` ⇒
+  Random(lvl)+Random(10), mana Random(3)+3; Uciekanie (flee) ⇒ `[0x1D2]:=1`,
+  **KUNSZT −20**; exit loop on Energy<1 | MonsterHP<1 | fled.
+- **Kill reward** 0x18037: clip by skilled stats (EnergiaMax>75/115, Parowanie
+  >50/75/95, Kopanie>50/95), "ZYSKALES", `KUNSZT+=rw`, quest `[0x24A]-=1`,
+  talent event `Random(100)<[0x258]` ⇒ `[0x259]-=10; MaxLoad[0x182]+=1`.
+- **Knock-out** 0x1818E: Energy<1 ⇒ defeat text, sound(3000),
+  `CurrentContext:=10000` (vs BAZAR death → 20), `[0x1B4]:=0`.
+- **Monster launchers**: room 12 → 20/3/3/R10 · room 14 → 20/30/3/R15 · room
+  15 → 40/3/3/R15 · room 16 → 40/11/10/R30 · tracker slot 7 (room 13) →
+  20/3/10/R15 · boss → 200/15/18 + wounds 5/1 + `[0x262]-=50` on win · dummy
+  1/1/2/R3. Kill ⇒ room-tracker cleared, `[0x212]:=Random(N)`, printed,
+  `Money[0x21A:0x21C] += d`.
+- **Money resolved**: combat rewards and BAZAR buy gates both use the 32-bit
+  `[0x21A:0x21C]` (=1424, f18). `0x194` ("Money" per load-side) is separate
+  (used by training costs); relationship open until a nonzero-money save.
+- **0x182 = MaxLoad** (overburden "JESTES OBLADOWANY"; +1 on talent events),
+  not Capacity/CurrentLoad. 0x1B2 = combat margin/reward scratch.
+- Doc: `INTEGRATED-FIELD-MAP.md` §"Combat engine"; reconstruction:
+  `RECONSTRUCTED\WALKA-CombatEngine-reconstructed.pas` (Pascal body with
+  offsets, string ids, launcher table, formulas).
+
+## 2026-09-24 (10): wczytaj() load engine + trening + level gates decoded
+`RECONSTRUCTED\WCZYTANIE-LoadEngine-reconstructed.pas` (full readback body):
+
+- **wczytaj() = img 0x7D80** (proc-init; ends ~0x85FF). RTL: `0x6C6`
+  ReadLn(cmd), `0x2E6` Assign to cs:0x7D6B "plik.tpu", `0x364` Reset, **`0x72D`
+  = ReadLn(plik, scalar)** returning AX / DX:AX for longint, `0x5FE` flush.
+- Reads the **exact 80-field order of save()**, inverting transforms
+  byte-exact: ManaCur=`v div 4`, Level=`v-0x17`, Energy=`v div 4 - 0x28`,
+  Zrecznosc=`v-0x0C`, Sila=`v+0x18`; f18 Money longint read into
+  `[0x21A]/[0x21C]` then **`+= Madrosc` via 0x7FA** (explicit on-load bonus);
+  `0x257` confirmed as a saved **byte** (f64, Potrawki count); the byte-flag
+  cluster and monster trackers visibly load in file order (f33..f40 =
+  0x56/0x58/0x68C/0x5A/0x5C/0x5E/0x60/0x6E).
+- **trening block img 0x2396..0x2B73** (before save()): each training command
+  (strcmp on ds:0x564 at cs:0x221D/0x2286/0x22C8/0x230C/0x2354) costs
+  **1× PRAKTYK [0x194]`** and raises one skill, printed as a percent:
+  - Uciekanie[0x1CE] += Madrosc+Zrecznosc-5   (cap 0x55)
+  - Powracanie[0x78] += 2*Madrosc-3           (needs Madrosc>17, cap 0x5A)
+  - Parowanie[0x1C6] += Madrosc+Zrecznosc-14  (needs Madrosc>15 & Zrec>11, cap 0x5A)
+  - [0x25D] += 3*Madrosc-9                     (needs Madrosc>11, byte, cap 0x5A)
+  - Talent[0x258] += Madrosc+1                 (needs Madrosc>18, cap 0x5A)
+- **Level gates img 0x872D**: lvl1 needs KUNSZT>=725 (0x2D5), lvl2 >=730
+  (0x2DA), lvl>=3 threshold = 0x2DF+2*level; reaching → jump 0x8BA2 (the
+  actual level-up handler).
+- save() itself (img 0x2BA1..0x356E) re-verified: writes f1..f80 with the
+  WriteLn/WriteLongint helpers; f18 emitted via `0x7BD` from
+  `[0x21A]:[0x21C]`.
+
+## 2026-09-24 (11): Room proc + garden + training + kill-drop layer decoded
+The 0x129D paragraph contains a whole second game layer beyond Walka:
+
+- **Room @ img 0x12ACA..0x130A1** = map/garden generator. Seeds per-room
+  `Random(0x1C71:0xBE4)` into **garden spots** `[0x1DA..0x1EE]` +
+  `[0x226..0x22C]` (`Random(0x26)+0x14`), **plant slots** `[0x232..0x246]`
+  (11 words, `Random(8)+0x4D`, re-roll ≥0x54), **garden-animal room ids**
+  `[0x666..0x678]` (`Random(7)+0x14`), plus constants 0x67A/0x67C=0x43,
+  0x67E=0x45 and byte `[0x261]` = garden/merchant-room marker. All compared to
+  `[0x1d6]`=CurrentContext to gate one-shot flavortext (plants 0x976..0xC0D,
+  animals 0x2B7B/0x2BB2/0x2BE2, "ROLNIK DUNCAN", "ZABIJ DUNCAN" @0x1B5D2,
+  "KUP PLECAK" @0x1B6F5 — a hidden merchant at 0x1B5AC with MARCHEWKA 7000 /
+  PRZEPUSTKA 400 / PLECAK 4800).
+- **TrenujDispatch @ 0x13194**: `TRENUJ`=prompt; `TRENUJ SILA/ZRECZNOSC/MADROSC`
+  cost **PRAKTYK [0x194] at 3/2/3** — the counters paid from school/CWICZ
+  practice money (contrast the all-purpose FORSA 0x21A:0x21C longint used by
+  combat, kills and shops).
+- **ZabijMrowka 0x1383A** (1/1/2/R3 + 70% Paczek) · **ZabijSlaby 0x13947**
+  (34..36/8..11/10, loot 10..30) · **ZabijSredni 0x13A60** (50..54/10..14/13..14,
+  loot 30..59) · **ZabijSilny 0x13B82** (60..65/12..14/15..17) · 4×
+  **ZabijPotwor** 0x13CA9..0x1401B. Plus launcher 0x12A16 (10/10/5/R15 + 25%
+  Serce). Full tiers in §(13) and INTEGRATED-FIELD-MAP.md §"Kill router".
+- **PorownajDispatch @ 0x1491B..0x153E8** = the 67-entry fight/compare ladder
+  (cmd strcmp 0x14A5F..0x153BB): animals, people, plants, dogs, BAKTERIA —
+  grouped by a `[0x686]` skill threshold (Zrecznosc==0x13+9 / 0x14,0x15+10;
+  Parowanie>0x4B/+1,>0x32/+1; Kopanie>0xA/+2,+2; gate ≥0x10). Full vocabulary
+  table in INTEGRATED-FIELD-MAP.md §"Room command vocabulary". The doc's earlier
+  "compare params" note was wrong — the prompt string is the fight-menu header.
+- **GardenOgladaj @ 0x1362A** and **GardenZwierzaki @ 0x155F2** = the
+  look-at-plant / look-at-animal flavortext procs.
+- **Kill drops**: DropGarnitur 0x157B9 (`Random(1000)<=0x19` → Garnitur kolce),
+  DropPigulka 0x1586E (`<=0x2A`), DropKaseta 0x1590D (`Random(100)<=2` →
+  Kaseta Liroya +EnergyMax/-8/+LoadCapacity/+Zrecznosc). Item flags use
+  **-10 (0xFFF6) "owned/none" sentinel**; acquisition is `field -= 10`.
+- **Boss encounter** inside the 0x12414..0x129C6 dispatcher: stats 188/26/10,
+  wounds 20/10, `lcall Walka`; the "TUR!!!! Z CIALA WROGA" quest reward
+  (KUNSZT+0x1A9) gates on QuestType==3 && QuestCount<1 && Item_Fajka<=-10 &&
+  Money>0.
+- Listing regenerated with all symbols; **INTEGRATED-FIELD-MAP.md** updated
+  (§ Room / Training / Kill drops / command-vocabulary + field rows for
+  GardenSpot*, Plant*, GardenAnimal*, 0x261 room marker).
+
+## 2026-09-24 (12): POROWNAC oracle, full drop family, city-square quest/boss layer
+
+- **CompareDispatch 0x14916..0x153E8 = the "POROWNAC" (compare-yourself)
+  oracle** (NOT a kill ladder). Gate: ManaCur `[0x1AC]>9`; prompt "KOGO CHCESZ
+  ZE SOBA POROWNAC?"; reads target at ds:0x564. **PowerLevel `[0x686]`** =
+  CharacterLevel + SilaCur + Zrecznosc-tier (+4..+10 for 8/9..0x14/0x15) +
+  Parowanie bonuses (>0x4B→+1, >0x32→+1) + Kopanie bonuses (>0xA→+2, >0x46→+2).
+  One shared **67-target vocabulary** (DZIK..BAKTERIA incl. jobs, plants, dogs,
+  LIROY, POKRZYWA): taunts per target tier (`NIE`/`RACZEJ NIE`/`TAK`/`50% SZANS`
+  /`JESTES SILNIEJSZY`/`FLAKI`...). Tail: dogs → "JASNE ZE MOZESZ GO ZABIC";
+  if `[0x19E]<3` && SkillPorownywanie `[0x25D]<0x64` → "UCZYSZ SIE ZDOLNOSCI
+  POROWNYWANIE": `[0x25D]+=1`, KUNSZT+=5; BAKTERIA → "MAGIC RESISTANCE",
+  ManaCur += 5.
+- **Full drop family (img 0x157B9..0x15AE3)**, all guarded by `context != 0x2710`:
+  DropGarnitur 0x157B9 (2.5%), DropPigulka 0x1586E (4.2%), DropKaseta 0x1590D
+  (2%, +EnergyMax −8 load +LoadCap +Zrecznosc), **DropListek 0x159E4** (6%;
+  `[0x25B]-=10`, LoadCapacity++, ManaMax+=0x28, text "UNIQE 4%"), **DropScroll
+  0x15A91** (10%; Item_ScrollPorownanie `[0x230]-=10`, LoadCapacity++),
+  **GoToRoom1000 0x15AE4** (PreviousRoom `[0x180]=context`; context=0x3E8).
+- **City-square proc 0x12414..0x129C6 (context==0x64)** fully decoded: street
+  bios, quest sales (type1/2/3 at 200/100/50 money from longint MoneyLo/Hi,
+  counts 75/200/200), turn-in rewards (+KUNSZT, Przepustka `[0x21E:0x220]-=10`;
+  type2 needs Item_0188, type3 needs Fajka+word-Money), boss fight
+  (188HP/26DEX/10DMG, wounds 20/10 → Przepustka on win), room-change cmds
+  (→0x16 trees / 0x65 / GoToRoom1000 / exit).
+- **0x25B = SkillChance_Porownywanie** bank (Listek-drop decrements it by 10);
+  0x25D = actual SkillPorownywanie counter. Item_ScrollPorownanie at 0x230.
+- Symbols renamed: BossWin 0x159E4/0x15A91 → DropListek/DropScroll; FIELDS
+  0x686 "PowerLevel", 0x25D "SkillPorownywanie", 0x230 already present.
+  annotate.py PROCS duplicate key (0x1586E BossWin) removed. Listing regenerated;
+  **INTEGRATED-FIELD-MAP.md** updated (§ Kill drops / City square dispatch rows).
+
+## 2026-09-24 (13): KillDispatch router + fight launcher tiers (+ monster tiers)
+
+- **KillDispatch 0x4F53** = the real `ZABIJ <NPC>` router for 10 room NPCs.
+  Entry pattern: `cmd=="ZABIJ X"` AND `RoomKillFlag_*` == CurrentContext
+  (NPC is present in the room; flag seeded by room/map-gen) → `lcall` tier
+  launcher (para 0x129D offsets 0xf77/0x1090/0x11b2) → on `MonsterHP<1`
+  clear the flag byte and roll the kill bonus. **Full command→flag mapping**
+  documented in INTEGRATED-FIELD-MAP.md §"Kill router": DZIECKO 0x24C, WARIAT
+  0x24D, SLUCHACZ 0x24E, FAN 0x24F, CZLOWIEK 0x250, POLICJANT 0x251,
+  OCHRONIARZ 0x252, DZIADEK 0x253, GORYL 0x254, REPORTER 0x256. (The old
+  annotate labels for 0x24D..0x256 were SHIFTED/incorrect — fixed.)
+  Bonuses: DZIADEK → Random(100)<5 Fajka + MadroscCur++; GORYL/OCHRONIARZ →
+  DropGarnitur; all Serce-eligible.
+- **Fight launcher tiers** (each: set MonsterHP/Dex/Dmg, `lcall Walka`, skip if
+  fled `[0x1D2]`, loot `[0x212]`→money `[0x21A:0x21C]`, then Serce `[0x186]` roll
+  if `[0x186]==0` → `=0xFFF6` + LoadCapacity++):
+  ZabijLauncher 0x12A16 (10/10/5, R15 loot, 25% Serce; dogs+street),
+  ZabijMrowka 0x1383A (1/1/2, R3 loot, 70% Paczek),
+  ZabijSlaby 0x13947 (34-36/8-11/10; 10..30; 25%),
+  ZabijSredni 0x13A60 (50-54/10-14/13-14; 30..59; 35%),
+  ZabijSilny 0x13B82 (60-65/12-14/15-17; 20..59; 35%; body shared at 0x13B87),
+  ZabijPotwor1..4 0x13CA9/0x13DD5/0x13EF8/0x1401B (HP 90-99/100-119/130-149/
+  72-74, Dex 14-23/16/20/13-14, Dmg 17-26/18-31/19-32/16-17; loot
+  R(0x37)/R(0x1E)/R(0x2D)/R(0x32)).
+- **Special encounters call drops directly**: "MIESA LUDZKIEGO... MOZGI"
+  seduction fight (HP 200/Dex 15/Dmg 18, wounds 20/10) → on win DropListek +
+  DropPigulka + DropScroll, and `[0x262]`(QuestPhase) -= 0x32 while non-zero.
+- KillDispatch `call`s confirmed from rooms (0x6A20, 0x6BF1, 0x6D67, 0x6F10,
+  0x709D, 0x71F7, 0x73B3, 0x7647...) alongside "ZABIJ MINI-BARMAN", "ZABIJ
+  GRUBAS", "ZABIJ D.J", "ZABIJ POTWOR", "ZABIJ PEDAL/PARA/MACIEK", "ZABIJ
+  DRZWI", "ZABIJ STARUCH" strings.
+- PROC labels fixed: 0x1394A ZabijTrup + 0x13A63 ZabijMlodyPotwor legacy
+  duplicates removed; ZabijPotwor 0x13CA9..0x1401B renamed with stat descs.
+  Listing regenerated; INTEGRATED-FIELD-MAP.md gets the full router/launcher
+  tables + "ZabijTrup:lcall 0x129D:0x44A6" reconciliation with Walka.
+
+## 2026-09-24 (14): Item subsystem decoded (BIERZ/ODRZUC/UZYJ + outfits + time travel)
+
+- **Item field semantics formalized**: every item slot is `0x00 = never`,
+  `0xFFF6 (-10) = carrying`, else **room-context = dropped on floor of that
+  room**. Pickup (BIERZ X) needs `field == PreviousRoom[0x180]`; drop
+  (ODRZUC X) needs `field == -10` → sets PreviousRoom; acquire `-=10`,
+  consume `+=10`. LoadCapacity [0x182] ±1.
+- **ItemPickupDropDispatch 0x18405..0x186CE**: BIERZ/ODRZUC for StaryMiecz
+  0x17E, MalaTarcza 0x184, Serce 0x186, DyplomMudSzkoly 0x188 (MUD school
+  diploma = the old "Item_0188" quest reward! +5 EnergyMax when picked, −5 on
+  drop), Fajka 0x18A (pickup also +1 MadroscCur, drop −1).
+- **ItemUseDispatch 0x18E95..0x197B5**: UZYJ FAJKA (flavor) / SERCE (+5 E) /
+  DYPLOM (diploma box) / PACZEK +8% / CIASTKO +12% / SUCHA RACJA +16%
+  / CHLEB +26% / WEKA +34% / BULKA +20% / MALA BUTELKA MANY +30 Mana / CASETA
+  (info) / LISTEK (info) / **PIGULKA [0x257] = time-travel pill** → `call
+  Room` + MadroscCur-graded penalties (≠10: EnergyMax--/kün 0x32; 10..15:
+  Energy-0x28/kün-0x1E; >15: none). ODLORZ/ZNISZCZ/PATRZ PRZEPUSTKA =
+  certificate (longint [0x21E:0x220] owned as -10).
+- **Outfits**: wear flag OutfitEquipped [0x218], worn-name buffer ds:0x264.
+  UZYJ KOMPLET SYF (0x216) → MaxLoad [0x1C2]+=7; UZYJ GARNITUR (0x222) →
+  MaxLoad+=0xA, OutfitZrecznoscBonus [0x1C4]+=1, HeavyBlow [0x224]+=0xF.
+  ODLORZ reverses. Item_Bigos byte 0x259 (+20% E), Bigos-slots 0x257 byte.
+- **ColorChangeDispatch 0x197F1**: ZMIEN KOLOR/ZMIEN TLO → lcall 0x1C0F:0x263/
+  0x1C0F:0x27D with a user number.
+- annotate.py: FIELDS 0x17E/0x184/0x188/0x1C2/0x1C4/0x218 renamed (StaryMiecz,
+  MalaTarcza, DyplomMudSzkoly, MaxLoad, OutfitZrecznoscBonus, OutfitEquipped);
+  PROCS ItemPickupDropDispatch/ItemUseDispatch/ColorChangeDispatch added.
+  Listing regenerated; INTEGRATED-FIELD-MAP.md §"Item subsystem" added.
+
+## 2026-09-24 (15): Room-level ZABIJ handlers + launcher entry-point fixes + Kaseta decode
+
+- **Per-room killer bytes** (each "present in this room/arena" gate; fight; on win
+  clear byte + unique drop) decoded across the city/market/garden dispatchers:
+  POTWOR `[0x5A]==0xE` (custom HP20/Dex30/Dmg3, loot R(15), then 30%/30%/25%
+  StaryMiecz/MalaTarcza/Serce if each still 0), MINI-BARMAN `[0x67A]==0x43` &
+  GRUBAS `[0x67C]==0x43` (arena 'C'; 15% Piwo `[0x7C]-=10`), D.J
+  `[0x67E]==0x45` (scene 'E'; 25% SuchaRacja `[0x1A4]-=10`, 3% **Kaseta Liroya
+  UNIQE** = `[0x22E]-=10`, EnergyMax+5, **MaxLoad-8**, Zrecznosc+1), DRZWI
+  `[0x688]!=0` door → `[0x688]=0` (high-tier Potwor3 fight to break the door),
+  STARUCH `[0x68A]!=0` → corpse-vanish no-loot, PEDAL/MACIEK → ZabijPotwor2 +
+  DropPigulka, PARA → ZabijPotwor4 twice.
+- **Kaseta flavor resolved**: "SMIEC . S.Z -8 MAXE +5 ZRE +1" == MaxLoad [0x1C2]
+  −8 / EnergyMax [0x664] +5 / ZrecznoscCur [0x190] +1 — confirms MaxLoad at
+  0x1C2.
+- **Launcher entry-point fixes**: true `push bp` entries are ZabijMrowka 0x13839,
+  ZabijPotwor1..4 = 0x13CA4/0x13DD0/0x13EF3/0x14016 (annotate keys corrected —
+  they were 1..5 bytes past the prologue). Escalation chains confirmed from
+  caller offsets: 0xE69=Mrowka, 0x1400=Potwor2, 0x1523=Potwor3, 0x1646=Potwor4.
+- INTEGRATED-FIELD-MAP.md: new table §"Room-level ZABIJ handlers".
+
+## 2026-09-24 (16): Ground-truth cross-check vs retained TPU units + portable port
+
+- Two help directories were provided: `help-you-need/` (WIP PlayerState.pas +
+  JSON docs, corroborating only) and `more-help-you-need/bombki/c-port/`
+  (authoritative: docs/compatibility.md fact register, evidence/recovered/*.md
+  TPU dossiers, evidence/generated/*.tsv|.md|.json symbol/proc tables, src/*).
+- **Launcher procs ARE the PRZEDM difficulty procedures** (matched via stat
+  comparison + PRZEDM dossiers): 0x13839 SLABO (drop = **PACZEK** [0x1A0]
+  `R(10)<7`, not Serce — `enemies.c` "bloody_heart" label retracted),
+  0x13947 MNIEJSLABO, 0x13A60 SREDNIO, 0x13B82 TRUDNO, 0x13CA4 VEASY,
+  0x13DD0 EASY, 0x13EF3 NEASY, 0x14016 BTRUDNO (was ZabijPotwor1..4),
+  0x12A16 WALKAPIES. annotate.py PROCS renamed accordingly; listing
+  regenerated (old Zabij* references → 0; "ZabijSilny 2" = leftover comments).
+- **Profile numbers corrected**: prior Potwor1..4 "Dex/Dmg maxima 17-26/
+  18-31/19-32" were misreads; true = VEASY/EASY/NEASY/BTRUDNO rows.
+- **Mana bottle corrected**: gate `[0x192]==-10`, `[0x182]--`, `[0x192]+=0xA`
+  (0x192 = Item_ButelkaMany **count**), **ManaCur [0x1AC] += 30** cap ManaMax
+  [0x1AE] — my earlier "Mana at 0x192" was wrong.
+- TPU Pascal symbols bound to EXE offsets: FORSA [0x21A:0x21C], PRZED [0x182],
+  WROGEN/WROGSIL/WROGZRE [0x1B0]/[0x1B6]/[0x1B8], CZY [0x19E], PASZOL [0x1D2],
+  MANA/MAXMANA [0x1AC]/[0x1AE], POZIOM [0x25C], POR [0x25D], KOP/KOPM/KOPHP
+  [0x1C8]/[0x1CA]/[0x1CC], ZWIEJ [0x1CE], JAKIEUB/ABRON/ATAR = worn-id buffer.
+- Unique-loot ladder + KillDispatch actor→profile table + stacks room-procs
+  (SWIAT POKOJ0/5/11/30/60/75/83/100/…) added; stores/price oddities, race
+  init, save schema (PLIKI.TPU flat ReadLn text dump), parser vocab recorded.
+- Open-items updated: `[0x17E]` post-kill event RESOLVED = StaryMiecz drop
+  ladder gate; skill gates confirmed saved fields (f56/57/59); 0x257 pill-vs-
+  potrawki and FORSA-vs-0x194 money still open.
+
+## 2026-09-24 (17): Arena grid command box (img 0x19C90..0x1AF1E) + money split
+
+- Located the "0x19C00 region": it is the **arena grid shared dispatcher**,
+  contexts 0x20..0x39 (0x20 entrance, 0x21..0x39 = cells). Commands: MODE,
+  **ZABIJ <28 beasts/NPCs>** (KORNIK..PANTERA by tier SLABO/MNIEJSLABO/SREDNIO;
+  GLADIATOR/WOJOWNIK +DropPigulka, TRENER +DropGarnitur; pens = the old
+  "GardenSpot_01DA..0x210" words), **EXIT**, **WYJSCIE**, and the N/E/S/W grid
+  moves guarded by **ArenaMoveLatch [0x214]** / **ArenaSouthLatch [0x1D8]**.
+  Full 26-cell N/E/S/W edge table recovered (EXIT text matches maps) and added
+  to INTEGRATED-FIELD-MAP.md §"Arena grid command box". **Cross-verified 1:1
+  against c-port world.c arena room table** (rooms 33-57 = contexts 0x21..0x39,
+  entrance 32 = 0x20): every edge + EXIT text variant agrees.
+- **Forsa load math pinned**: wczytaj does `Forsa := Forsa div MadroscCur`
+  (img 0x7FA4..0x7FBB via TP7 RTL @LDiv 0x1C71:0x7FA); sign-in block in save()
+  prints Forsa x Madrosc (img 0x2E0F..0x2E22, @LMul 0x1C71:0x7BD). Earlier
+  "+= Madrosc" guess was wrong; c-port omits the rescale (port deviation).
+- annotate.py: GardenSpot_01DA..0x210 renamed to Beast<name>, 0x214→
+  ArenaMoveLatch, 0x1D8→ArenaSouthLatch; listing regenerated.
+- **Money split resolved**: 0x194 = saved **PRAKTYK** counter ("CWICZYSZ
+  KOPANIE ... MASZ <n> PRAKTYK"; school "ZYSKALES <n> PRAKTYK" 3-6 by wisdom
+  tier; CWICZ lessons cost 1); FORSA [0x21A:0x21C] = coins/monety (loot,
+  DAWAJ KASE, shop/BAZAR gates). c-port carries both `coins` + `practices`.
+  annotate.py 0x194→PRAKTYK, 0x21A/0x21C→ForsaLo/ForsaHi.
+
+## 2026-09-24 (18): c-port vs disasm discrepancy audit
+
+Cross-checked the recovered c-port dossiers against the original disasm.
+Full machine-verified register added to INTEGRATED-FIELD-MAP.md
+"c-port discrepancy register". Highlights:
+- **CWICZ formulas (major)**: original keys ALL six CWICZ skills off MadroscCur
+  (KOPANIE +MAD gates>10&&SIL>11, no cap; UCIEKANIE +MAD+ZRE-5 gates>10/10 cap 85;
+  POWROT +2*MAD-3 gate>17 cap 90; PAROWANIE +MAD+ZRE-14 gates>15/11 cap 90;
+  POROWNYWANIE +3MAD-9 gate>11 cap 90; POTRAWKI +MAD+1 gate>18 cap 90).
+  Port has all six handlers (game.c 3925-3942) but substitutes **strength** for
+  wisdom in gates+formulas (KOPAC gates dex>11 where original gated SIL>11).
+  Full table: `RECONSTRUCTED\C-PORT-DISCREPANCIES.md` entry A.
+- **Flee**: original = Mana drain Random(2)+2, gates, Mana-15, then success iff
+  Random(100)<=Uciekanie -> FleeFlag=1 **+ 20 KUNSZT** (string @img 0x17FCD).
+  Port uses dex-score chance and no mana cost.
+- **Max-stats**: 0x196=MadroscMax / 0x198=SilaMax / 0x19A=ZrecznoscMax proven by
+  char-select init 0x1748..0x18B9; LEVELING dossier had them swapped.
+- **Save format**: original = unlabelled flat ReadLn sequence; port = labeled
+  key=value lines (not byte-compatible).
+- **Quest turn-in**: original adds LoadCapacity[0x182] +-1 (type 1/3) plus a
+  MadroscCur-1 step (type 3 "remove pipe's wisdom bonus" — the port *does*
+  mirror that one via `apply_carried_item_effect(PIPE,-1)`, but omits the
+  LoadCapacity bumps).
+- Confirmed 1:1 instead: arena edges, quest prices/counters/rewards, death
+  penalty, TRENUJ 3/2/3, monster tiers, food/mana percentages, POROWNANIE
+  formula.
+

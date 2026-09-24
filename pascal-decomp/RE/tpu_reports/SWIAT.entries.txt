@@ -1,0 +1,28 @@
+Entry records (ofs  code_block:offset  exported  proc)
+  0000  65535 :FFFF  exp=0  
+  0008  8     :005A  exp=0  POKOJ0
+  0010  16    :0397  exp=0  POKOJ1
+  0018  24    :01E2  exp=0  POKOJ4
+  0020  32    :01A7  exp=0  POKOJ13
+  0028  40    :00C9  exp=0  POKOJE
+  0030  0     :0196  exp=0  POKOJ5
+  0038  48    :0261  exp=0  POKOJ11
+  0040  56    :00F1  exp=0  POKOJ30
+  0048  64    :011F  exp=0  POKOJ60
+  0050  72    :014E  exp=0  POKOJ75
+  0058  88    :03AB  exp=0  POKOJ100
+  0060  80    :012B  exp=0  POKOJ83
+
+Proc entry mapping (entry_ofs -> name):
+  0008  POKOJ0
+  0010  POKOJ1
+  0018  POKOJ4
+  0020  POKOJ13
+  0028  POKOJE
+  0030  POKOJ5
+  0038  POKOJ11
+  0040  POKOJ30
+  0048  POKOJ60
+  0050  POKOJ75
+  0058  POKOJ100
+  0060  POKOJ83

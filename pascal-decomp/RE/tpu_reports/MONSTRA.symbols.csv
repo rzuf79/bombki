@@ -1,0 +1,26 @@
+ofs,kind,name,private,info1,info2,info3,info4,flags
+226,0x53,MONSTRA,False,sys,,,,
+246,0x53,System,False,sys,,,,
+265,0x53,crt,False,sys,,,,
+281,0x51,MAXE,False,var,block=0000,offset=0000,type=Integer,flags=00
+300,0x51,JAMNIK,False,var,block=0000,offset=0002,type=Integer,flags=00
+321,0x51,OWCZAREK,False,var,block=0000,offset=0004,type=Integer,flags=00
+344,0x51,SPANIEL,False,var,block=0000,offset=0006,type=Integer,flags=00
+366,0x51,PUDEL,False,var,block=0000,offset=0008,type=Integer,flags=00
+386,0x51,PIESEK,False,var,block=0000,offset=000A,type=Integer,flags=00
+407,0x51,TAKSOWKARZ,False,var,block=0000,offset=000C,type=Integer,flags=00
+432,0x51,SPRZEDAWCA,False,var,block=0000,offset=000E,type=Integer,flags=00
+457,0x51,ZAMIATACZ,False,var,block=0000,offset=0010,type=Integer,flags=00
+481,0x51,PIJAK,False,var,block=0008,offset=0000,type=Integer,flags=00
+501,0x51,ZEBRAK,False,var,block=0008,offset=0002,type=Integer,flags=00
+522,0x51,MINIBARMAN,False,var,block=0008,offset=0004,type=Integer,flags=00
+547,0x51,GRUBAS,False,var,block=0008,offset=0006,type=Integer,flags=00
+568,0x51,DJ,False,var,block=0008,offset=0008,type=Integer,flags=00
+585,0x51,PEDAL,False,var,block=0008,offset=000A,type=Integer,flags=00
+605,0x51,PARA,False,var,block=0008,offset=000C,type=Integer,flags=00
+624,0x51,MACIEK,False,var,block=0008,offset=000E,type=Integer,flags=00
+645,0x51,OGOL,False,var,block=0008,offset=0010,type=Integer,flags=00
+664,0x51,DRZWI,False,var,block=0008,offset=0012,type=Integer,flags=00
+684,0x51,STARUCH,False,var,block=0008,offset=0014,type=Integer,flags=00
+706,0x51,SILNY,False,var,block=0010,offset=0000,type=Integer,flags=00
+726,0x52,WSTEP,False,proc,entryofs=0008,vmt=0,ret=?,code_type=01 obj=08

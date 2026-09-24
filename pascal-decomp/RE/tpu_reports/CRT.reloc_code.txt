@@ -1,0 +1,4 @@
+Code relocation records:
+--- block 0000 ---
+--- block 0008 ---
+--- block 0010 ---

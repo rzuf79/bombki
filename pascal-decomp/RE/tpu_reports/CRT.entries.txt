@@ -1,0 +1,46 @@
+Entry records (ofs  code_block:offset  exported  proc)
+  0000  8     :0000  exp=0  
+  0008  16    :0301  exp=0  AssignCrt
+  0010  16    :02CD  exp=0  KeyPressed
+  0018  16    :02DF  exp=0  ReadKey
+  0020  16    :013C  exp=0  TextMode
+  0028  16    :0151  exp=0  Window
+  0030  16    :01E4  exp=0  GotoXY
+  0038  16    :0210  exp=0  WhereX
+  0040  16    :021C  exp=0  WhereY
+  0048  16    :0191  exp=0  ClrScr
+  0050  16    :01AB  exp=0  ClrEol
+  0058  16    :01BF  exp=0  InsLine
+  0060  16    :01C4  exp=0  DelLine
+  0068  16    :0228  exp=0  TextColor
+  0070  16    :0242  exp=0  TextBackground
+  0078  16    :025A  exp=0  LowVideo
+  0080  16    :0260  exp=0  HighVideo
+  0088  16    :0266  exp=0  NormVideo
+  0090  16    :026D  exp=0  Delay
+  0098  16    :0299  exp=0  Sound
+  00A0  16    :02C6  exp=0  NoSound
+  00A8  16    :0000  exp=0  
+  00B0  0     :0000  exp=0  
+
+Proc entry mapping (entry_ofs -> name):
+  0008  AssignCrt
+  0010  KeyPressed
+  0018  ReadKey
+  0020  TextMode
+  0028  Window
+  0030  GotoXY
+  0038  WhereX
+  0040  WhereY
+  0048  ClrScr
+  0050  ClrEol
+  0058  InsLine
+  0060  DelLine
+  0068  TextColor
+  0070  TextBackground
+  0078  LowVideo
+  0080  HighVideo
+  0088  NormVideo
+  0090  Delay
+  0098  Sound
+  00A0  NoSound

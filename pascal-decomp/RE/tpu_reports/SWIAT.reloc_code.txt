@@ -1,0 +1,1371 @@
+Code relocation records:
+--- block 0000 ---
+  0000:7564 Relative Code unit=SWIAT blkoff=3E83
+  0000:0000 Segment DS Const unit=U0003 blkoff=CB5D
+  0000:0A00 Relative Code unit=SWIAT blkoff=0000
+  0000:0A01 Segment Var unit=U0030 blkoff=9C00
+  0000:0001 Relative Code unit=U0090 blkoff=0000
+  0000:0A01 Relative Code unit=U0050 blkoff=0000
+  0000:0A01 Pointer Var unit=U0030 blkoff=AE00
+  0000:0A01 Offset DS Const unit=U0030 blkoff=B300
+  0000:0A01 Offset Var unit=U0030 blkoff=B800
+  0000:0001 Relative Code unit=U0090 blkoff=0000
+  0000:0A01 Relative Code unit=U0050 blkoff=3600
+  0000:0A01 Pointer Var unit=U0030 blkoff=CA00
+  0000:0A01 Offset DS Const unit=U0030 blkoff=CF00
+  0000:0A01 Offset Var unit=U0030 blkoff=D400
+  0000:0001 Relative Code unit=U0090 blkoff=0000
+  0000:0A01 Relative Code unit=U0050 blkoff=7A00
+  0000:0A01 Pointer Var unit=U0030 blkoff=E600
+  0000:0A01 Offset DS Const unit=U0030 blkoff=EB00
+  0000:0A01 Offset Var unit=U0030 blkoff=F000
+  0000:1501 Relative Code unit=U0090 blkoff=0000
+  0000:0A01 Relative Code unit=U0090 blkoff=0600
+  0000:0002 Pointer Var unit=U0030 blkoff=0300
+  0000:0A02 Relative Code unit=U0050 blkoff=9700
+  0000:1502 Pointer Var unit=U0030 blkoff=1000
+  0000:0A02 Offset Code unit=U0090 blkoff=1200
+  0000:0A02 Pointer Var unit=U0030 blkoff=1E00
+  0000:0A02 Relative DS Const unit=U0030 blkoff=2900
+  0000:0A02 Offset DS Const unit=U0030 blkoff=2E00
+  0000:0A02 Offset Var unit=U0030 blkoff=3300
+  0000:1502 Relative Code unit=U0090 blkoff=0000
+  0000:0A02 Pointer CS Const unit=U0090 blkoff=3D00
+  0000:0A02 Pointer DS Const unit=U0030 blkoff=4600
+  0000:0A02 Relative Code unit=U0030 blkoff=0002
+  0000:1502 Offset Var unit=U0030 blkoff=5000
+  0000:0002 Pointer CS Const unit=U0090 blkoff=5500
+  0000:0A02 Relative Code unit=U0050 blkoff=9A00
+  0000:1502 Relative Var unit=U0030 blkoff=5F00
+  0000:1502 Relative CS Const unit=U0030 blkoff=6600
+  0000:0002 Pointer CS Const unit=U0090 blkoff=6B00
+  0000:0A02 Relative Code unit=U0050 blkoff=9F00
+  0000:0A02 Relative Var unit=U0030 blkoff=7500
+  0000:0002 Relative Code unit=U0090 blkoff=0000
+  0000:0A02 Relative Code unit=U0050 blkoff=A400
+  0000:0A02 Pointer Var unit=U0030 blkoff=8C00
+  0000:0A02 Offset DS Const unit=U0030 blkoff=9100
+  0000:0A02 Offset Var unit=U0030 blkoff=9600
+  0000:0002 Relative Code unit=U0090 blkoff=0000
+  0000:0A02 Relative Code unit=U0050 blkoff=B600
+  0000:0A02 Pointer Var unit=U0030 blkoff=A800
+  0000:0A02 Offset DS Const unit=U0030 blkoff=AD00
+  0000:0A02 Offset Var unit=U0030 blkoff=B200
+  0000:0002 Relative Code unit=U0090 blkoff=0000
+  0000:0A02 Relative Code unit=U0050 blkoff=C800
+  0000:0A02 Pointer Var unit=U0030 blkoff=C400
+  0000:0A02 Offset DS Const unit=U0030 blkoff=C900
+  0000:0A02 Offset Var unit=U0030 blkoff=CE00
+  0000:0002 Relative Code unit=U0090 blkoff=0000
+  0000:0A02 Relative Code unit=U0050 blkoff=D500
+  0000:0A02 Pointer Var unit=U0030 blkoff=E000
+  0000:0A02 Offset DS Const unit=U0030 blkoff=E500
+  0000:0A02 Offset Var unit=U0030 blkoff=EA00
+  0000:0002 Relative Code unit=U0090 blkoff=0000
+  0000:0A02 Relative Code unit=U0050 blkoff=E200
+  0000:0A02 Pointer Var unit=U0030 blkoff=FC00
+  0000:0A03 Offset DS Const unit=U0030 blkoff=0100
+  0000:0A03 Offset Var unit=U0030 blkoff=0600
+  0000:0003 Relative Code unit=U0090 blkoff=0000
+  0000:0A03 Relative Code unit=U0050 blkoff=F100
+  0000:0A03 Pointer Var unit=U0030 blkoff=1800
+  0000:0A03 Offset DS Const unit=U0030 blkoff=1D00
+  0000:0A03 Offset Var unit=U0030 blkoff=2200
+  0000:0003 Relative Code unit=U0090 blkoff=0000
+  0000:0A03 Relative Code unit=U0050 blkoff=FC00
+  0000:0A03 Pointer Var unit=U0030 blkoff=3400
+  0000:0A03 Offset DS Const unit=U0030 blkoff=3900
+  0000:1503 Offset Var unit=U0030 blkoff=3E00
+  0000:0003 Pointer CS Const unit=U0090 blkoff=4300
+  0000:0A03 Relative Code unit=U0050 blkoff=0600
+  0000:1503 Relative Var unit=U0030 blkoff=4D00
+  0000:0003 Pointer CS Const unit=U0090 blkoff=5700
+  0000:0A03 Relative Code unit=U0050 blkoff=0E00
+  0000:1503 Relative Var unit=U0030 blkoff=6100
+  0000:1503 Offset Code unit=U0090 blkoff=1400
+  0000:0003 Pointer CS Const unit=U0090 blkoff=6E00
+  0000:0A03 Relative Code unit=U0050 blkoff=1500
+  0000:1503 Relative Var unit=U0030 blkoff=7800
+  0000:1503 Offset Code unit=U0090 blkoff=1400
+  0000:0003 Pointer CS Const unit=U0090 blkoff=8500
+  0000:0A03 Relative Code unit=U0050 blkoff=1C00
+  0000:1503 Relative Var unit=U0030 blkoff=8F00
+  0000:1503 Offset Code unit=U0090 blkoff=1400
+  0000:0003 Pointer CS Const unit=U0090 blkoff=9C00
+  0000:0A03 Relative Code unit=U0050 blkoff=2300
+  0000:1503 Relative Var unit=U0030 blkoff=A600
+  0000:1503 Offset Code unit=U0090 blkoff=1400
+  0000:0003 Pointer CS Const unit=U0090 blkoff=B300
+  0000:0A03 Relative Code unit=U0050 blkoff=2C00
+  0000:1503 Relative Var unit=U0030 blkoff=BD00
+  0000:1503 Offset Code unit=U0090 blkoff=1400
+  0000:0003 Pointer CS Const unit=U0090 blkoff=CA00
+  0000:0A03 Relative Code unit=U0050 blkoff=3100
+  0000:1503 Relative Var unit=U0030 blkoff=D400
+  0000:1503 Offset Code unit=U0090 blkoff=1400
+  0000:0003 Pointer CS Const unit=U0090 blkoff=E100
+  0000:0A03 Relative Code unit=U0050 blkoff=3500
+  0000:0A03 Relative Var unit=U0030 blkoff=EB00
+  0000:0003 Relative Code unit=U0090 blkoff=0000
+  0000:0A03 Relative Code unit=U0050 blkoff=4200
+  0000:0A03 Pointer Var unit=U0030 blkoff=FF00
+  0000:0A04 Offset DS Const unit=U0030 blkoff=0400
+  0000:0A04 Offset Var unit=U0030 blkoff=0900
+  0000:0004 Relative Code unit=U0090 blkoff=0000
+  0000:0A04 Relative Code unit=U0050 blkoff=5F00
+  0000:0A04 Pointer Var unit=U0030 blkoff=1B00
+  0000:0A04 Offset DS Const unit=U0030 blkoff=2000
+  0000:1504 Offset Var unit=U0030 blkoff=2500
+  0000:0A04 Offset Code unit=U0090 blkoff=1400
+  0000:0A00 Segment Var unit=U0030 blkoff=6000
+  0000:0000 Relative Code unit=U0090 blkoff=0000
+  0000:0A00 Relative Code unit=U0050 blkoff=0000
+  0000:0A00 Pointer Var unit=U0030 blkoff=7200
+  0000:0A00 Offset DS Const unit=U0030 blkoff=7700
+  0000:0A00 Offset Var unit=U0030 blkoff=7C00
+  0000:1500 Relative Code unit=U0090 blkoff=0000
+  0000:0A00 Relative Code unit=U0090 blkoff=0600
+  0000:0000 Pointer Var unit=U0030 blkoff=8F00
+  0000:0A00 Relative Code unit=U0050 blkoff=1300
+  0000:1500 Pointer Var unit=U0030 blkoff=9C00
+  0000:0A00 Offset Code unit=U0090 blkoff=1200
+  0000:0A00 Pointer Var unit=U0030 blkoff=AA00
+  0000:0A00 Relative DS Const unit=U0030 blkoff=B500
+  0000:0A00 Offset DS Const unit=U0030 blkoff=BA00
+  0000:0A00 Offset Var unit=U0030 blkoff=BF00
+  0000:1500 Relative Code unit=U0090 blkoff=0000
+  0000:0A00 Pointer CS Const unit=U0090 blkoff=C900
+  0000:0A00 Pointer DS Const unit=U0030 blkoff=D200
+  0000:0A00 Relative Code unit=U0030 blkoff=0002
+  0000:1500 Offset Var unit=U0030 blkoff=DC00
+  0000:0000 Pointer CS Const unit=U0090 blkoff=E100
+  0000:0A00 Relative Code unit=U0050 blkoff=1600
+  0000:0A00 Relative Var unit=U0030 blkoff=EB00
+  0000:0000 Relative Code unit=U0090 blkoff=0000
+  0000:0A00 Relative Code unit=U0050 blkoff=1B00
+  0000:0A00 Pointer Var unit=U0030 blkoff=FF00
+  0000:0A01 Offset DS Const unit=U0030 blkoff=0400
+  0000:1501 Offset Var unit=U0030 blkoff=0900
+  0000:0001 Pointer CS Const unit=U0090 blkoff=0E00
+  0000:0A01 Relative Code unit=U0050 blkoff=4B00
+  0000:1501 Relative Var unit=U0030 blkoff=1800
+  0000:0001 Pointer CS Const unit=U0090 blkoff=2100
+  0000:0A01 Relative Code unit=U0050 blkoff=5300
+  0000:1501 Relative Var unit=U0030 blkoff=2B00
+  0000:1501 Offset Code unit=U0090 blkoff=1400
+  0000:0A01 Offset Code unit=U0090 blkoff=1400
+  0000:0A03 Segment Var unit=U0030 blkoff=9D00
+  0000:0003 Relative Code unit=U0090 blkoff=0000
+  0000:0A03 Offset Code unit=U0050 blkoff=0000
+  0000:0A03 Pointer Var unit=U0030 blkoff=AF00
+  0000:0A03 Offset DS Const unit=U0030 blkoff=B400
+  0000:0A03 Offset Var unit=U0030 blkoff=B900
+  0000:0003 Relative Code unit=U0090 blkoff=0000
+  0000:0A03 Offset Code unit=U0050 blkoff=3100
+  0000:0A03 Pointer Var unit=U0030 blkoff=CB00
+  0000:0A03 Offset DS Const unit=U0030 blkoff=D000
+  0000:0A03 Offset Var unit=U0030 blkoff=D500
+  0000:0003 Relative Code unit=U0090 blkoff=0000
+  0000:0A03 Offset Code unit=U0050 blkoff=6300
+  0000:0A03 Pointer Var unit=U0030 blkoff=E700
+  0000:0A03 Offset DS Const unit=U0030 blkoff=EC00
+  0000:0A03 Offset Var unit=U0030 blkoff=F100
+  0000:0003 Relative Code unit=U0090 blkoff=0000
+  0000:0A03 Offset Code unit=U0050 blkoff=8F00
+  0000:0A04 Pointer Var unit=U0030 blkoff=0300
+  0000:0A04 Offset DS Const unit=U0030 blkoff=0800
+  0000:0A04 Offset Var unit=U0030 blkoff=0D00
+  0000:1504 Relative Code unit=U0090 blkoff=0000
+  0000:0A04 Relative Code unit=U0090 blkoff=0600
+  0000:0004 Pointer Var unit=U0030 blkoff=2000
+  0000:0A04 Offset Code unit=U0050 blkoff=B400
+  0000:1504 Pointer Var unit=U0030 blkoff=2D00
+  0000:0A04 Offset Code unit=U0090 blkoff=1200
+  0000:0A04 Pointer Var unit=U0030 blkoff=3B00
+  0000:0A04 Relative DS Const unit=U0030 blkoff=4600
+  0000:0A04 Offset DS Const unit=U0030 blkoff=4B00
+  0000:0A04 Offset Var unit=U0030 blkoff=5000
+  0000:1504 Relative Code unit=U0090 blkoff=0000
+  0000:0A04 Pointer CS Const unit=U0090 blkoff=5A00
+  0000:0A04 Pointer DS Const unit=U0030 blkoff=6300
+  0000:0A04 Relative Code unit=U0030 blkoff=0002
+  0000:1504 Offset Var unit=U0030 blkoff=6D00
+  0000:0004 Pointer CS Const unit=U0090 blkoff=7200
+  0000:0A04 Offset Code unit=U0050 blkoff=B700
+  0000:1504 Relative Var unit=U0030 blkoff=7C00
+  0000:1504 Relative CS Const unit=U0030 blkoff=8300
+  0000:0004 Pointer CS Const unit=U0090 blkoff=8800
+  0000:0A04 Offset Code unit=U0050 blkoff=BC00
+  0000:0A04 Relative Var unit=U0030 blkoff=9200
+  0000:0004 Relative Code unit=U0090 blkoff=0000
+  0000:0A04 Offset Code unit=U0050 blkoff=C100
+  0000:0A04 Pointer Var unit=U0030 blkoff=A900
+  0000:0A04 Offset DS Const unit=U0030 blkoff=AE00
+  0000:0A04 Offset Var unit=U0030 blkoff=B300
+  0000:0004 Relative Code unit=U0090 blkoff=0000
+  0000:0A04 Offset Code unit=U0050 blkoff=D300
+  0000:0A04 Pointer Var unit=U0030 blkoff=C500
+  0000:0A04 Offset DS Const unit=U0030 blkoff=CA00
+  0000:0A04 Offset Var unit=U0030 blkoff=CF00
+  0000:0004 Relative Code unit=U0090 blkoff=0000
+  0000:0A04 Offset Code unit=U0050 blkoff=F400
+  0000:0A04 Pointer Var unit=U0030 blkoff=E100
+  0000:0A04 Offset DS Const unit=U0030 blkoff=E600
+  0000:0A04 Offset Var unit=U0030 blkoff=EB00
+  0000:0004 Relative Code unit=U0090 blkoff=0000
+  0000:0A04 Offset Code unit=U0050 blkoff=0200
+  0000:0A04 Pointer Var unit=U0030 blkoff=FD00
+  0000:0A05 Offset DS Const unit=U0030 blkoff=0200
+  0000:0A05 Offset Var unit=U0030 blkoff=0700
+  0000:0005 Relative Code unit=U0090 blkoff=0000
+  0000:0A05 Offset Code unit=U0050 blkoff=1C00
+  0000:0A05 Pointer Var unit=U0030 blkoff=1900
+  0000:0A05 Offset DS Const unit=U0030 blkoff=1E00
+  0000:0A05 Offset Var unit=U0030 blkoff=2300
+  0000:0005 Relative Code unit=U0090 blkoff=0000
+  0000:0A05 Offset Code unit=U0050 blkoff=2E00
+  0000:0A05 Pointer Var unit=U0030 blkoff=3500
+  0000:0A05 Offset DS Const unit=U0030 blkoff=3A00
+  0000:1505 Offset Var unit=U0030 blkoff=3F00
+  0000:0005 Pointer CS Const unit=U0090 blkoff=4400
+  0000:0A05 Offset Code unit=U0050 blkoff=5100
+  0000:1505 Relative Var unit=U0030 blkoff=4E00
+  0000:0005 Pointer CS Const unit=U0090 blkoff=5800
+  0000:0A05 Offset Code unit=U0050 blkoff=5900
+  0000:1505 Relative Var unit=U0030 blkoff=6200
+  0000:1505 Offset Code unit=U0090 blkoff=1400
+  0000:0005 Pointer CS Const unit=U0090 blkoff=6E00
+  0000:0A05 Offset Code unit=U0050 blkoff=6200
+  0000:1505 Relative Var unit=U0030 blkoff=7800
+  0000:1505 Offset Code unit=U0090 blkoff=1400
+  0000:0005 Pointer CS Const unit=U0090 blkoff=8500
+  0000:0A05 Offset Code unit=U0050 blkoff=6900
+  0000:1505 Relative Var unit=U0030 blkoff=8F00
+  0000:1505 Offset Code unit=U0090 blkoff=1400
+  0000:0005 Pointer CS Const unit=U0090 blkoff=9C00
+  0000:0A05 Offset Code unit=U0050 blkoff=6D00
+  0000:1505 Relative Var unit=U0030 blkoff=A600
+  0000:1505 Offset Code unit=U0090 blkoff=1400
+  0000:0005 Pointer CS Const unit=U0090 blkoff=B300
+  0000:0A05 Offset Code unit=U0050 blkoff=7400
+  0000:1505 Relative Var unit=U0030 blkoff=BD00
+  0000:1505 Offset Code unit=U0090 blkoff=1400
+  0000:0005 Pointer CS Const unit=U0090 blkoff=CA00
+  0000:0A05 Offset Code unit=U0050 blkoff=7B00
+  0000:0A05 Relative Var unit=U0030 blkoff=D400
+  0000:0005 Relative Code unit=U0090 blkoff=0000
+  0000:0A05 Offset Code unit=U0050 blkoff=8800
+  0000:0A05 Pointer Var unit=U0030 blkoff=EB00
+  0000:0A05 Offset DS Const unit=U0030 blkoff=F000
+  0000:0A05 Offset Var unit=U0030 blkoff=F500
+  0000:0005 Relative Code unit=U0090 blkoff=0000
+  0000:0A05 Offset Code unit=U0050 blkoff=9D00
+  0000:0A06 Pointer Var unit=U0030 blkoff=0700
+  0000:0A06 Offset DS Const unit=U0030 blkoff=0C00
+  0000:0A06 Offset Var unit=U0030 blkoff=1100
+  0000:0006 Relative Code unit=U0090 blkoff=0000
+  0000:0A06 Offset Code unit=U0050 blkoff=D400
+  0000:0A06 Pointer Var unit=U0030 blkoff=2300
+  0000:0A06 Offset DS Const unit=U0030 blkoff=2800
+  0000:0A06 Offset Var unit=U0030 blkoff=2D00
+  0000:0006 Relative Code unit=U0090 blkoff=0000
+  0000:0A06 Offset Code unit=U0050 blkoff=0E00
+  0000:0A06 Pointer Var unit=U0030 blkoff=3F00
+  0000:0A06 Offset DS Const unit=U0030 blkoff=4400
+  0000:0A06 Offset Var unit=U0030 blkoff=4900
+  0000:0006 Relative Code unit=U0090 blkoff=0000
+  0000:0A06 Offset Code unit=U0050 blkoff=2B00
+  0000:0A06 Pointer Var unit=U0030 blkoff=5B00
+  0000:0A06 Offset DS Const unit=U0030 blkoff=6000
+  0000:0A06 Offset Var unit=U0030 blkoff=6500
+  0000:0006 Relative Code unit=U0090 blkoff=0000
+  0000:0A06 Offset Code unit=U0050 blkoff=4100
+  0000:0A06 Pointer Var unit=U0030 blkoff=7700
+  0000:0A06 Offset DS Const unit=U0030 blkoff=7C00
+  0000:0A06 Offset Var unit=U0030 blkoff=8100
+  0000:0006 Relative Code unit=U0090 blkoff=0000
+  0000:0A06 Offset Code unit=U0050 blkoff=6C00
+  0000:0A06 Pointer Var unit=U0030 blkoff=9300
+  0000:0A06 Offset DS Const unit=U0030 blkoff=9800
+  0000:0A06 Offset Var unit=U0030 blkoff=9D00
+  0000:0006 Relative Code unit=U0090 blkoff=0000
+  0000:0A06 Offset Code unit=U0050 blkoff=9300
+  0000:0A06 Pointer Var unit=U0030 blkoff=AF00
+  0000:0A06 Offset DS Const unit=U0030 blkoff=B400
+  0000:0A06 Offset Var unit=U0030 blkoff=B900
+  0000:0006 Relative Code unit=U0090 blkoff=0000
+  0000:0A06 Offset Code unit=U0050 blkoff=D400
+  0000:0A06 Pointer Var unit=U0030 blkoff=CB00
+  0000:0A06 Offset DS Const unit=U0030 blkoff=D000
+  0000:0A06 Offset Var unit=U0030 blkoff=D500
+  0000:0006 Relative Code unit=U0090 blkoff=0000
+  0000:0A06 Offset Code unit=U0050 blkoff=1500
+  0000:0A06 Pointer Var unit=U0030 blkoff=E700
+  0000:0A06 Offset DS Const unit=U0030 blkoff=EC00
+  0000:0A06 Offset Var unit=U0030 blkoff=F100
+  0000:0006 Relative Code unit=U0090 blkoff=0000
+  0000:0A06 Offset Code unit=U0050 blkoff=5500
+  0000:0A07 Pointer Var unit=U0030 blkoff=0300
+  0000:0A07 Offset DS Const unit=U0030 blkoff=0800
+  0000:1507 Offset Var unit=U0030 blkoff=0D00
+  0000:0A07 Offset Code unit=U0090 blkoff=1400
+  0000:1501 Segment Var unit=U0030 blkoff=E800
+  0000:0A01 Offset Code unit=U0090 blkoff=1400
+  0000:0001 Relative Code unit=U0090 blkoff=0000
+  0000:0A01 Offset Code unit=U0050 blkoff=0000
+  0000:0A02 Pointer Var unit=U0030 blkoff=0400
+  0000:0A02 Offset DS Const unit=U0030 blkoff=0900
+  0000:0A02 Offset Var unit=U0030 blkoff=0E00
+  0000:0002 Relative Code unit=U0090 blkoff=0000
+  0000:0A02 Offset Code unit=U0050 blkoff=3100
+  0000:0A02 Pointer Var unit=U0030 blkoff=2000
+  0000:0A02 Offset DS Const unit=U0030 blkoff=2500
+  0000:0A02 Offset Var unit=U0030 blkoff=2A00
+  0000:1502 Relative Code unit=U0090 blkoff=0000
+  0000:0A02 Relative Code unit=U0090 blkoff=0600
+  0000:0002 Pointer Var unit=U0030 blkoff=3D00
+  0000:0A02 Offset Code unit=U0050 blkoff=5B00
+  0000:1502 Pointer Var unit=U0030 blkoff=4A00
+  0000:0A02 Offset Code unit=U0090 blkoff=1200
+  0000:0A02 Pointer Var unit=U0030 blkoff=5800
+  0000:0A02 Relative DS Const unit=U0030 blkoff=6300
+  0000:0A02 Offset DS Const unit=U0030 blkoff=6800
+  0000:0A02 Offset Var unit=U0030 blkoff=6D00
+  0000:1502 Relative Code unit=U0090 blkoff=0000
+  0000:0A02 Pointer CS Const unit=U0090 blkoff=7700
+  0000:0A02 Pointer DS Const unit=U0030 blkoff=8000
+  0000:0A02 Relative Code unit=U0030 blkoff=0002
+  0000:1502 Offset Var unit=U0030 blkoff=8A00
+  0000:0002 Pointer CS Const unit=U0090 blkoff=8F00
+  0000:0A02 Offset Code unit=U0050 blkoff=5E00
+  0000:1502 Relative Var unit=U0030 blkoff=9900
+  0000:1502 Relative CS Const unit=U0030 blkoff=A000
+  0000:0002 Pointer CS Const unit=U0090 blkoff=A500
+  0000:0A02 Offset Code unit=U0050 blkoff=6300
+  0000:0A02 Relative Var unit=U0030 blkoff=AF00
+  0000:0002 Relative Code unit=U0090 blkoff=0000
+  0000:0A02 Offset Code unit=U0050 blkoff=6800
+  0000:0A02 Pointer Var unit=U0030 blkoff=C300
+  0000:0A02 Offset DS Const unit=U0030 blkoff=C800
+  0000:0A02 Offset Var unit=U0030 blkoff=CD00
+  0000:0002 Relative Code unit=U0090 blkoff=0000
+  0000:0A02 Offset Code unit=U0050 blkoff=7A00
+  0000:0A02 Pointer Var unit=U0030 blkoff=DF00
+  0000:0A02 Offset DS Const unit=U0030 blkoff=E400
+  0000:0A02 Offset Var unit=U0030 blkoff=E900
+  0000:0002 Relative Code unit=U0090 blkoff=0000
+  0000:0A02 Offset Code unit=U0050 blkoff=9100
+  0000:0A02 Pointer Var unit=U0030 blkoff=FB00
+  0000:0A03 Offset DS Const unit=U0030 blkoff=0000
+  0000:1503 Offset Var unit=U0030 blkoff=0500
+  0000:0003 Pointer CS Const unit=U0090 blkoff=0A00
+  0000:0A03 Offset Code unit=U0050 blkoff=A700
+  0000:1503 Relative Var unit=U0030 blkoff=1400
+  0000:0003 Pointer CS Const unit=U0090 blkoff=1E00
+  0000:0A03 Offset Code unit=U0050 blkoff=AF00
+  0000:1503 Relative Var unit=U0030 blkoff=2800
+  0000:1503 Offset Code unit=U0090 blkoff=1400
+  0000:0003 Pointer CS Const unit=U0090 blkoff=3500
+  0000:0A03 Offset Code unit=U0050 blkoff=B600
+  0000:1503 Relative Var unit=U0030 blkoff=3F00
+  0000:1503 Offset Code unit=U0090 blkoff=1400
+  0000:0003 Pointer CS Const unit=U0090 blkoff=4C00
+  0000:0A03 Offset Code unit=U0050 blkoff=BD00
+  0000:0A03 Relative Var unit=U0030 blkoff=5600
+  0000:0003 Relative Code unit=U0090 blkoff=0000
+  0000:0A03 Offset Code unit=U0050 blkoff=C900
+  0000:0A03 Pointer Var unit=U0030 blkoff=6D00
+  0000:0A03 Offset DS Const unit=U0030 blkoff=7200
+  0000:0A03 Offset Var unit=U0030 blkoff=7700
+  0000:0003 Relative Code unit=U0090 blkoff=0000
+  0000:0A03 Offset Code unit=U0050 blkoff=E600
+  0000:0A03 Pointer Var unit=U0030 blkoff=8900
+  0000:0A03 Offset DS Const unit=U0030 blkoff=8E00
+  0000:0A03 Offset Var unit=U0030 blkoff=9300
+  0000:0003 Relative Code unit=U0090 blkoff=0000
+  0000:0A03 Offset Code unit=U0050 blkoff=1A00
+  0000:0A03 Pointer Var unit=U0030 blkoff=A500
+  0000:0A03 Offset DS Const unit=U0030 blkoff=AA00
+  0000:0A03 Offset Var unit=U0030 blkoff=AF00
+  0000:0003 Relative Code unit=U0090 blkoff=0000
+  0000:0A03 Offset Code unit=U0050 blkoff=5B00
+  0000:0A03 Pointer Var unit=U0030 blkoff=C100
+  0000:0A03 Offset DS Const unit=U0030 blkoff=C600
+  0000:0A03 Offset Var unit=U0030 blkoff=CB00
+  0000:0003 Relative Code unit=U0090 blkoff=0000
+  0000:0A03 Offset Code unit=U0050 blkoff=A000
+  0000:0A03 Pointer Var unit=U0030 blkoff=DD00
+  0000:0A03 Offset DS Const unit=U0030 blkoff=E200
+  0000:1503 Offset Var unit=U0030 blkoff=E700
+  0000:0A03 Offset Code unit=U0090 blkoff=1400
+  0000:1501 Segment Var unit=U0030 blkoff=AD00
+  0000:0A01 Offset Code unit=U0090 blkoff=1400
+  0000:0001 Relative Code unit=U0090 blkoff=0000
+  0000:0A01 Segment Code unit=U0050 blkoff=0000
+  0000:0A01 Pointer Var unit=U0030 blkoff=C900
+  0000:0A01 Offset DS Const unit=U0030 blkoff=CE00
+  0000:2001 Offset Var unit=U0030 blkoff=D300
+  0000:0A01 Offset Code unit=U0090 blkoff=0000
+  0000:0001 Relative Code unit=U0090 blkoff=0000
+  0000:0A01 Segment Code unit=U0050 blkoff=4700
+  0000:0A01 Pointer Var unit=U0030 blkoff=EC00
+  0000:0A01 Offset DS Const unit=U0030 blkoff=F100
+  0000:2001 Offset Var unit=U0030 blkoff=F600
+  0000:0A01 Offset Code unit=U0090 blkoff=0000
+  0000:0002 Relative Code unit=U0090 blkoff=0000
+  0000:0A02 Segment Code unit=U0050 blkoff=7100
+  0000:0A02 Pointer Var unit=U0030 blkoff=0F00
+  0000:0A02 Offset DS Const unit=U0030 blkoff=1400
+  0000:0A02 Offset Var unit=U0030 blkoff=1900
+  0000:1502 Relative Code unit=U0090 blkoff=0000
+  0000:0A02 Relative Code unit=U0090 blkoff=0600
+  0000:0002 Pointer Var unit=U0030 blkoff=2C00
+  0000:0A02 Segment Code unit=U0050 blkoff=A500
+  0000:1502 Pointer Var unit=U0030 blkoff=3900
+  0000:0A02 Offset Code unit=U0090 blkoff=1200
+  0000:0A02 Pointer Var unit=U0030 blkoff=4700
+  0000:0A02 Relative DS Const unit=U0030 blkoff=5200
+  0000:0A02 Offset DS Const unit=U0030 blkoff=5700
+  0000:0A02 Offset Var unit=U0030 blkoff=5C00
+  0000:1502 Relative Code unit=U0090 blkoff=0000
+  0000:0A02 Pointer CS Const unit=U0090 blkoff=6600
+  0000:0A02 Pointer DS Const unit=U0030 blkoff=6F00
+  0000:0A02 Relative Code unit=U0030 blkoff=0002
+  0000:1502 Offset Var unit=U0030 blkoff=7900
+  0000:0002 Pointer CS Const unit=U0090 blkoff=7E00
+  0000:0A02 Segment Code unit=U0050 blkoff=A800
+  0000:0A02 Relative Var unit=U0030 blkoff=8800
+  0000:0002 Relative Code unit=U0090 blkoff=0000
+  0000:0A02 Segment Code unit=U0050 blkoff=AD00
+  0000:0A02 Pointer Var unit=U0030 blkoff=9C00
+  0000:0A02 Offset DS Const unit=U0030 blkoff=A100
+  0000:0A02 Offset Var unit=U0030 blkoff=A600
+  0000:0002 Relative Code unit=U0090 blkoff=0000
+  0000:0A02 Segment Code unit=U0050 blkoff=BF00
+  0000:0A02 Pointer Var unit=U0030 blkoff=B800
+  0000:0A02 Offset DS Const unit=U0030 blkoff=BD00
+  0000:1502 Offset Var unit=U0030 blkoff=C200
+  0000:0002 Pointer CS Const unit=U0090 blkoff=C700
+  0000:0A02 Segment Code unit=U0050 blkoff=D900
+  0000:1502 Relative Var unit=U0030 blkoff=D100
+  0000:1502 Relative CS Const unit=U0030 blkoff=D800
+  0000:0002 Pointer CS Const unit=U0090 blkoff=DD00
+  0000:0A02 Segment Code unit=U0050 blkoff=DE00
+  0000:1502 Relative Var unit=U0030 blkoff=E700
+  0000:0002 Pointer CS Const unit=U0090 blkoff=F100
+  0000:0A02 Segment Code unit=U0050 blkoff=E600
+  0000:1502 Relative Var unit=U0030 blkoff=FB00
+  0000:1503 Offset Code unit=U0090 blkoff=1400
+  0000:0003 Pointer CS Const unit=U0090 blkoff=0800
+  0000:0A03 Segment Code unit=U0050 blkoff=ED00
+  0000:2003 Relative Var unit=U0030 blkoff=1200
+  0000:1503 Offset Code unit=U0090 blkoff=0000
+  0000:1503 Offset Code unit=U0090 blkoff=0400
+  0000:1503 Offset Code unit=U0090 blkoff=0C00
+  0000:1503 Offset Code unit=U0090 blkoff=0A00
+  0000:1503 Segment Code unit=U0030 blkoff=0000
+  0000:2003 Offset Code unit=U0090 blkoff=1000
+  0000:0A03 Offset Code unit=U0090 blkoff=0000
+  0000:1503 Segment DS Const unit=U0030 blkoff=5000
+  0000:0A03 Pointer Code unit=U0090 blkoff=0C00
+  0000:0003 Relative Code unit=U0090 blkoff=0000
+  0000:0A03 Segment Code unit=U0050 blkoff=FA00
+  0000:1503 Pointer Var unit=U0030 blkoff=6500
+  0000:0A03 Pointer Code unit=U0090 blkoff=0C00
+  0000:0003 Pointer Var unit=U0030 blkoff=7300
+  0000:0A03 Segment Code unit=U0050 blkoff=0500
+  0000:0A03 Pointer Var unit=U0030 blkoff=8000
+  0000:0A03 Offset DS Const unit=U0030 blkoff=8500
+  0000:1503 Offset Var unit=U0030 blkoff=8A00
+  0000:1503 Pointer Code unit=U0090 blkoff=0C00
+  0000:1503 Pointer Code unit=U0090 blkoff=0000
+  0000:1503 Pointer Code unit=U0090 blkoff=0200
+  0000:1503 Pointer Code unit=U0090 blkoff=0000
+  0000:1503 Pointer Code unit=U0090 blkoff=0200
+  0000:0A03 Relative Code unit=U0090 blkoff=0000
+  0000:1503 Segment DS Const unit=U0030 blkoff=AD00
+  0000:1503 Relative Code unit=U0090 blkoff=0800
+  0000:1503 Relative Code unit=U0090 blkoff=0800
+  0000:1503 Offset Code unit=U0090 blkoff=1400
+  0000:0A03 Relative Code unit=U0090 blkoff=0000
+  0000:0003 Relative Code unit=U0090 blkoff=0000
+  0000:0A03 Segment Code unit=U0050 blkoff=1C00
+  0000:0A03 Pointer Var unit=U0030 blkoff=CF00
+  0000:0A03 Offset DS Const unit=U0030 blkoff=D400
+  0000:1503 Offset Var unit=U0030 blkoff=D900
+  0000:0A03 Relative Code unit=U0090 blkoff=0600
+  0000:1503 Segment DS Const unit=U0030 blkoff=E900
+  0000:1503 Relative Code unit=U0090 blkoff=0800
+  0000:1503 Relative Code unit=U0090 blkoff=0800
+  0000:1503 Offset Code unit=U0090 blkoff=1400
+  0000:0A03 Relative Code unit=U0090 blkoff=0600
+  0000:0003 Relative Code unit=U0090 blkoff=0000
+  0000:0A04 Segment Code unit=U0050 blkoff=4E00
+  0000:0A04 Pointer Var unit=U0030 blkoff=0B00
+  0000:0A04 Offset DS Const unit=U0030 blkoff=1000
+  0000:1504 Offset Var unit=U0030 blkoff=1500
+  0000:0A04 Relative Code unit=U0090 blkoff=0800
+  0000:1504 Segment DS Const unit=U0030 blkoff=2500
+  0000:1504 Relative Code unit=U0090 blkoff=0800
+  0000:1504 Relative Code unit=U0090 blkoff=0800
+  0000:1504 Offset Code unit=U0090 blkoff=1400
+  0000:0A04 Relative Code unit=U0090 blkoff=0800
+  0000:0004 Relative Code unit=U0090 blkoff=0000
+  0000:0A04 Segment Code unit=U0050 blkoff=7B00
+  0000:0A04 Pointer Var unit=U0030 blkoff=4700
+  0000:0A04 Offset DS Const unit=U0030 blkoff=4C00
+  0000:1504 Offset Var unit=U0030 blkoff=5100
+  0000:1504 Offset Code unit=U0090 blkoff=1000
+  0000:0A04 Offset Code unit=U0090 blkoff=1400
+  0000:1500 Segment Var unit=U0030 blkoff=CF00
+  0000:0A00 Offset Code unit=U0090 blkoff=1400
+  0000:0000 Relative Code unit=U0090 blkoff=0000
+  0000:0A00 Segment Code unit=U0050 blkoff=0000
+  0000:0A00 Pointer Var unit=U0030 blkoff=EB00
+  0000:0A00 Offset DS Const unit=U0030 blkoff=F000
+  0000:0A00 Offset Var unit=U0030 blkoff=F500
+  0000:1500 Relative Code unit=U0090 blkoff=0000
+  0000:0A00 Relative Code unit=U0090 blkoff=0600
+  0000:0001 Pointer Var unit=U0030 blkoff=0800
+  0000:0A01 Segment Code unit=U0050 blkoff=3200
+  0000:1501 Pointer Var unit=U0030 blkoff=1500
+  0000:0A01 Offset Code unit=U0090 blkoff=1200
+  0000:0A01 Pointer Var unit=U0030 blkoff=2300
+  0000:0A01 Relative DS Const unit=U0030 blkoff=2E00
+  0000:0A01 Offset DS Const unit=U0030 blkoff=3300
+  0000:0A01 Offset Var unit=U0030 blkoff=3800
+  0000:1501 Relative Code unit=U0090 blkoff=0000
+  0000:0A01 Pointer CS Const unit=U0090 blkoff=4200
+  0000:0A01 Pointer DS Const unit=U0030 blkoff=4B00
+  0000:0A01 Relative Code unit=U0030 blkoff=0002
+  0000:1501 Offset Var unit=U0030 blkoff=5500
+  0000:0001 Pointer CS Const unit=U0090 blkoff=5A00
+  0000:0A01 Segment Code unit=U0050 blkoff=3500
+  0000:1501 Relative Var unit=U0030 blkoff=6400
+  0000:1501 Relative CS Const unit=U0030 blkoff=6B00
+  0000:0001 Pointer CS Const unit=U0090 blkoff=7000
+  0000:0A01 Segment Code unit=U0050 blkoff=3A00
+  0000:0A01 Relative Var unit=U0030 blkoff=7A00
+  0000:0001 Relative Code unit=U0090 blkoff=0000
+  0000:0A01 Segment Code unit=U0050 blkoff=3F00
+  0000:0A01 Pointer Var unit=U0030 blkoff=8E00
+  0000:0A01 Offset DS Const unit=U0030 blkoff=9300
+  0000:0A01 Offset Var unit=U0030 blkoff=9800
+  0000:0001 Relative Code unit=U0090 blkoff=0000
+  0000:0A01 Segment Code unit=U0050 blkoff=5100
+  0000:0A01 Pointer Var unit=U0030 blkoff=AA00
+  0000:0A01 Offset DS Const unit=U0030 blkoff=AF00
+  0000:1501 Offset Var unit=U0030 blkoff=B400
+  0000:0001 Pointer CS Const unit=U0090 blkoff=B900
+  0000:0A01 Segment Code unit=U0050 blkoff=6600
+  0000:1501 Relative Var unit=U0030 blkoff=C300
+  0000:0001 Pointer CS Const unit=U0090 blkoff=CD00
+  0000:0A01 Segment Code unit=U0050 blkoff=6E00
+  0000:1501 Relative Var unit=U0030 blkoff=D700
+  0000:1501 Offset Code unit=U0090 blkoff=1400
+  0000:1501 Offset Code unit=U0090 blkoff=1400
+  0000:0A01 Offset Code unit=U0090 blkoff=1400
+  0000:0001 Relative Code unit=U0090 blkoff=0000
+  0000:0A01 Segment Code unit=U0050 blkoff=0000
+  0000:0A02 Pointer Var unit=U0030 blkoff=0500
+  0000:0A02 Offset DS Const unit=U0030 blkoff=0A00
+  0000:0A02 Offset Var unit=U0030 blkoff=0F00
+  0000:1502 Relative Code unit=U0090 blkoff=0000
+  0000:0A02 Relative Code unit=U0090 blkoff=0600
+  0000:0002 Pointer Var unit=U0030 blkoff=2200
+  0000:0A02 Segment Code unit=U0050 blkoff=3200
+  0000:1502 Pointer Var unit=U0030 blkoff=2F00
+  0000:0A02 Offset Code unit=U0090 blkoff=1200
+  0000:0A02 Pointer Var unit=U0030 blkoff=3D00
+  0000:0A02 Relative DS Const unit=U0030 blkoff=4800
+  0000:0A02 Offset DS Const unit=U0030 blkoff=4D00
+  0000:0A02 Offset Var unit=U0030 blkoff=5200
+  0000:1502 Relative Code unit=U0090 blkoff=0000
+  0000:0A02 Pointer CS Const unit=U0090 blkoff=5C00
+  0000:0A02 Pointer DS Const unit=U0030 blkoff=6500
+  0000:0A02 Relative Code unit=U0030 blkoff=0002
+  0000:1502 Offset Var unit=U0030 blkoff=6F00
+  0000:0002 Pointer CS Const unit=U0090 blkoff=7400
+  0000:0A02 Segment Code unit=U0050 blkoff=3500
+  0000:1502 Relative Var unit=U0030 blkoff=7E00
+  0000:1502 Relative CS Const unit=U0030 blkoff=8500
+  0000:0002 Pointer CS Const unit=U0090 blkoff=8A00
+  0000:0A02 Segment Code unit=U0050 blkoff=3A00
+  0000:0A02 Relative Var unit=U0030 blkoff=9400
+  0000:0002 Relative Code unit=U0090 blkoff=0000
+  0000:0A02 Segment Code unit=U0050 blkoff=3F00
+  0000:0A02 Pointer Var unit=U0030 blkoff=A800
+  0000:0A02 Offset DS Const unit=U0030 blkoff=AD00
+  0000:0A02 Offset Var unit=U0030 blkoff=B200
+  0000:0002 Relative Code unit=U0090 blkoff=0000
+  0000:0A02 Segment Code unit=U0050 blkoff=7500
+  0000:0A02 Pointer Var unit=U0030 blkoff=C400
+  0000:0A02 Offset DS Const unit=U0030 blkoff=C900
+  0000:1502 Offset Var unit=U0030 blkoff=CE00
+  0000:0002 Pointer CS Const unit=U0090 blkoff=D300
+  0000:0A02 Segment Code unit=U0050 blkoff=6600
+  0000:1502 Relative Var unit=U0030 blkoff=DD00
+  0000:0002 Pointer CS Const unit=U0090 blkoff=E700
+  0000:0A02 Segment Code unit=U0050 blkoff=8A00
+  0000:1502 Relative Var unit=U0030 blkoff=F100
+  0000:1502 Offset Code unit=U0090 blkoff=1400
+  0000:1502 Offset Code unit=U0090 blkoff=1400
+  0000:0A03 Offset Code unit=U0090 blkoff=1400
+  0000:0003 Relative Code unit=U0090 blkoff=0000
+  0000:0A03 Segment Code unit=U0050 blkoff=0000
+  0000:0A03 Pointer Var unit=U0030 blkoff=1F00
+  0000:0A03 Offset DS Const unit=U0030 blkoff=2400
+  0000:0A03 Offset Var unit=U0030 blkoff=2900
+  0000:1503 Relative Code unit=U0090 blkoff=0000
+  0000:0A03 Relative Code unit=U0090 blkoff=0600
+  0000:0003 Pointer Var unit=U0030 blkoff=3C00
+  0000:0A03 Segment Code unit=U0050 blkoff=3200
+  0000:1503 Pointer Var unit=U0030 blkoff=4900
+  0000:0A03 Offset Code unit=U0090 blkoff=1200
+  0000:0A03 Pointer Var unit=U0030 blkoff=5700
+  0000:0A03 Relative DS Const unit=U0030 blkoff=6200
+  0000:0A03 Offset DS Const unit=U0030 blkoff=6700
+  0000:0A03 Offset Var unit=U0030 blkoff=6C00
+  0000:1503 Relative Code unit=U0090 blkoff=0000
+  0000:0A03 Pointer CS Const unit=U0090 blkoff=7600
+  0000:0A03 Pointer DS Const unit=U0030 blkoff=7F00
+  0000:0A03 Relative Code unit=U0030 blkoff=0002
+  0000:1503 Offset Var unit=U0030 blkoff=8900
+  0000:0003 Pointer CS Const unit=U0090 blkoff=8E00
+  0000:0A03 Segment Code unit=U0050 blkoff=3500
+  0000:1503 Relative Var unit=U0030 blkoff=9800
+  0000:1503 Relative CS Const unit=U0030 blkoff=9F00
+  0000:0003 Pointer CS Const unit=U0090 blkoff=A400
+  0000:0A03 Segment Code unit=U0050 blkoff=3A00
+  0000:0A03 Relative Var unit=U0030 blkoff=AE00
+  0000:0003 Relative Code unit=U0090 blkoff=0000
+  0000:0A03 Segment Code unit=U0050 blkoff=3F00
+  0000:0A03 Pointer Var unit=U0030 blkoff=C200
+  0000:0A03 Offset DS Const unit=U0030 blkoff=C700
+  0000:0A03 Offset Var unit=U0030 blkoff=CC00
+  0000:0003 Relative Code unit=U0090 blkoff=0000
+  0000:0A03 Segment Code unit=U0050 blkoff=9100
+  0000:0A03 Pointer Var unit=U0030 blkoff=DE00
+  0000:0A03 Offset DS Const unit=U0030 blkoff=E300
+  0000:1503 Offset Var unit=U0030 blkoff=E800
+  0000:0003 Pointer CS Const unit=U0090 blkoff=ED00
+  0000:0A03 Segment Code unit=U0050 blkoff=6600
+  0000:1503 Relative Var unit=U0030 blkoff=F700
+  0000:0004 Pointer CS Const unit=U0090 blkoff=0100
+  0000:0A04 Segment Code unit=U0050 blkoff=A800
+  0000:1504 Relative Var unit=U0030 blkoff=0B00
+  0000:1504 Offset Code unit=U0090 blkoff=1400
+  0000:1504 Offset Code unit=U0090 blkoff=1400
+  0000:0A04 Offset Code unit=U0090 blkoff=1400
+  0000:0004 Relative Code unit=U0090 blkoff=0000
+  0000:0A04 Segment Code unit=U0050 blkoff=0000
+  0000:0A04 Pointer Var unit=U0030 blkoff=3900
+  0000:0A04 Offset DS Const unit=U0030 blkoff=3E00
+  0000:0A04 Offset Var unit=U0030 blkoff=4300
+  0000:1504 Relative Code unit=U0090 blkoff=0000
+  0000:0A04 Relative Code unit=U0090 blkoff=0600
+  0000:0004 Pointer Var unit=U0030 blkoff=5600
+  0000:0A04 Segment Code unit=U0050 blkoff=3200
+  0000:1504 Pointer Var unit=U0030 blkoff=6300
+  0000:0A04 Offset Code unit=U0090 blkoff=1200
+  0000:0A04 Pointer Var unit=U0030 blkoff=7100
+  0000:0A04 Relative DS Const unit=U0030 blkoff=7C00
+  0000:0A04 Offset DS Const unit=U0030 blkoff=8100
+  0000:0A04 Offset Var unit=U0030 blkoff=8600
+  0000:1504 Relative Code unit=U0090 blkoff=0000
+  0000:0A04 Pointer CS Const unit=U0090 blkoff=9000
+  0000:0A04 Pointer DS Const unit=U0030 blkoff=9900
+  0000:0A04 Relative Code unit=U0030 blkoff=0002
+  0000:1504 Offset Var unit=U0030 blkoff=A300
+  0000:0004 Pointer CS Const unit=U0090 blkoff=A800
+  0000:0A04 Segment Code unit=U0050 blkoff=3500
+  0000:1504 Relative Var unit=U0030 blkoff=B200
+  0000:1504 Relative CS Const unit=U0030 blkoff=B900
+  0000:0004 Pointer CS Const unit=U0090 blkoff=BE00
+  0000:0A04 Segment Code unit=U0050 blkoff=3A00
+  0000:0A04 Relative Var unit=U0030 blkoff=C800
+  0000:0004 Relative Code unit=U0090 blkoff=0000
+  0000:0A04 Segment Code unit=U0050 blkoff=3F00
+  0000:0A04 Pointer Var unit=U0030 blkoff=DC00
+  0000:0A04 Offset DS Const unit=U0030 blkoff=E100
+  0000:0A04 Offset Var unit=U0030 blkoff=E600
+  0000:0004 Relative Code unit=U0090 blkoff=0000
+  0000:0A04 Segment Code unit=U0050 blkoff=B100
+  0000:0A04 Pointer Var unit=U0030 blkoff=F800
+  0000:0A04 Offset DS Const unit=U0030 blkoff=FD00
+  0000:1505 Offset Var unit=U0030 blkoff=0200
+  0000:0005 Pointer CS Const unit=U0090 blkoff=0700
+  0000:0A05 Segment Code unit=U0050 blkoff=6600
+  0000:1505 Relative Var unit=U0030 blkoff=1100
+  0000:0005 Pointer CS Const unit=U0090 blkoff=1A00
+  0000:0A05 Segment Code unit=U0050 blkoff=C400
+  0000:1505 Relative Var unit=U0030 blkoff=2400
+  0000:1505 Offset Code unit=U0090 blkoff=1400
+  0000:0A05 Offset Code unit=U0090 blkoff=1400
+  0000:1502 Segment Var unit=U0030 blkoff=6700
+  0000:0A02 Offset Code unit=U0090 blkoff=1400
+  0000:0002 Relative Code unit=U0090 blkoff=0000
+  0000:0A02 Pointer Code unit=U0050 blkoff=0000
+  0000:0A02 Pointer Var unit=U0030 blkoff=8300
+  0000:0A02 Offset DS Const unit=U0030 blkoff=8800
+  0000:0A02 Offset Var unit=U0030 blkoff=8D00
+  0000:0002 Relative Code unit=U0090 blkoff=0000
+  0000:0A02 Pointer Code unit=U0050 blkoff=2600
+  0000:0A02 Pointer Var unit=U0030 blkoff=9F00
+  0000:0A02 Offset DS Const unit=U0030 blkoff=A400
+  0000:0A02 Offset Var unit=U0030 blkoff=A900
+  0000:0002 Relative Code unit=U0090 blkoff=0000
+  0000:0A02 Pointer Code unit=U0050 blkoff=5800
+  0000:0A02 Pointer Var unit=U0030 blkoff=BB00
+  0000:0A02 Offset DS Const unit=U0030 blkoff=C000
+  0000:0A02 Offset Var unit=U0030 blkoff=C500
+  0000:0002 Relative Code unit=U0090 blkoff=0000
+  0000:0A02 Pointer Code unit=U0050 blkoff=9A00
+  0000:0A02 Pointer Var unit=U0030 blkoff=D700
+  0000:0A02 Offset DS Const unit=U0030 blkoff=DC00
+  0000:0A02 Offset Var unit=U0030 blkoff=E100
+  0000:1502 Relative Code unit=U0090 blkoff=0000
+  0000:0A02 Relative Code unit=U0090 blkoff=0600
+  0000:0002 Pointer Var unit=U0030 blkoff=F400
+  0000:0A02 Pointer Code unit=U0050 blkoff=C600
+  0000:1503 Pointer Var unit=U0030 blkoff=0100
+  0000:0A03 Offset Code unit=U0090 blkoff=1200
+  0000:0A03 Pointer Var unit=U0030 blkoff=0F00
+  0000:0A03 Relative DS Const unit=U0030 blkoff=1A00
+  0000:0A03 Offset DS Const unit=U0030 blkoff=1F00
+  0000:0A03 Offset Var unit=U0030 blkoff=2400
+  0000:1503 Relative Code unit=U0090 blkoff=0000
+  0000:0A03 Pointer CS Const unit=U0090 blkoff=2E00
+  0000:0A03 Pointer DS Const unit=U0030 blkoff=3700
+  0000:0A03 Relative Code unit=U0030 blkoff=0002
+  0000:1503 Offset Var unit=U0030 blkoff=4100
+  0000:1503 Offset DS Const unit=U0030 blkoff=4600
+  0000:0003 Pointer CS Const unit=U0090 blkoff=4B00
+  0000:0A03 Pointer Code unit=U0050 blkoff=C900
+  0000:1503 Relative Var unit=U0030 blkoff=5500
+  0000:1503 Relative CS Const unit=U0030 blkoff=5C00
+  0000:0003 Pointer CS Const unit=U0090 blkoff=6100
+  0000:0A03 Pointer Code unit=U0050 blkoff=CE00
+  0000:0A03 Relative Var unit=U0030 blkoff=6B00
+  0000:0003 Relative Code unit=U0090 blkoff=0000
+  0000:0A03 Pointer Code unit=U0050 blkoff=D300
+  0000:0A03 Pointer Var unit=U0030 blkoff=8200
+  0000:0A03 Offset DS Const unit=U0030 blkoff=8700
+  0000:0A03 Offset Var unit=U0030 blkoff=8C00
+  0000:0003 Relative Code unit=U0090 blkoff=0000
+  0000:0A03 Pointer Code unit=U0050 blkoff=E500
+  0000:0A03 Pointer Var unit=U0030 blkoff=9E00
+  0000:0A03 Offset DS Const unit=U0030 blkoff=A300
+  0000:0A03 Offset Var unit=U0030 blkoff=A800
+  0000:0003 Relative Code unit=U0090 blkoff=0000
+  0000:0A03 Pointer Code unit=U0050 blkoff=FC00
+  0000:0A03 Pointer Var unit=U0030 blkoff=BA00
+  0000:0A03 Offset DS Const unit=U0030 blkoff=BF00
+  0000:0A03 Offset Var unit=U0030 blkoff=C400
+  0000:0003 Relative Code unit=U0090 blkoff=0000
+  0000:0A03 Pointer Code unit=U0050 blkoff=1200
+  0000:0A03 Pointer Var unit=U0030 blkoff=D600
+  0000:0A03 Offset DS Const unit=U0030 blkoff=DB00
+  0000:0A03 Offset Var unit=U0030 blkoff=E000
+  0000:0003 Relative Code unit=U0090 blkoff=0000
+  0000:0A03 Pointer Code unit=U0050 blkoff=2A00
+  0000:0A03 Pointer Var unit=U0030 blkoff=F200
+  0000:0A03 Offset DS Const unit=U0030 blkoff=F700
+  0000:0A03 Offset Var unit=U0030 blkoff=FC00
+  0000:0004 Relative Code unit=U0090 blkoff=0000
+  0000:0A04 Pointer Code unit=U0050 blkoff=4400
+  0000:0A04 Pointer Var unit=U0030 blkoff=0E00
+  0000:0A04 Offset DS Const unit=U0030 blkoff=1300
+  0000:0A04 Offset Var unit=U0030 blkoff=1800
+  0000:0004 Relative Code unit=U0090 blkoff=0000
+  0000:0A04 Pointer Code unit=U0050 blkoff=6F00
+  0000:0A04 Pointer Var unit=U0030 blkoff=2A00
+  0000:0A04 Offset DS Const unit=U0030 blkoff=2F00
+  0000:1504 Offset Var unit=U0030 blkoff=3400
+  0000:0004 Pointer CS Const unit=U0090 blkoff=3900
+  0000:0A04 Pointer Code unit=U0050 blkoff=9900
+  0000:1504 Relative Var unit=U0030 blkoff=4300
+  0000:0004 Pointer CS Const unit=U0090 blkoff=4D00
+  0000:0A04 Pointer Code unit=U0050 blkoff=A100
+  0000:1504 Relative Var unit=U0030 blkoff=5700
+  0000:1504 Offset Code unit=U0090 blkoff=1400
+  0000:0004 Pointer CS Const unit=U0090 blkoff=6400
+  0000:0A04 Pointer Code unit=U0050 blkoff=A800
+  0000:1504 Relative Var unit=U0030 blkoff=6E00
+  0000:1504 Offset Code unit=U0090 blkoff=1400
+  0000:0004 Pointer CS Const unit=U0090 blkoff=7B00
+  0000:0A04 Pointer Code unit=U0050 blkoff=AF00
+  0000:1504 Relative Var unit=U0030 blkoff=8500
+  0000:1504 Offset Code unit=U0090 blkoff=1400
+  0000:0004 Pointer CS Const unit=U0090 blkoff=9200
+  0000:0A04 Pointer Code unit=U0050 blkoff=B600
+  0000:1504 Relative Var unit=U0030 blkoff=9C00
+  0000:1504 Offset Code unit=U0090 blkoff=1400
+  0000:0004 Pointer CS Const unit=U0090 blkoff=A900
+  0000:0A04 Pointer Code unit=U0050 blkoff=BF00
+  0000:1504 Relative Var unit=U0030 blkoff=B300
+  0000:1504 Offset Code unit=U0090 blkoff=1400
+  0000:0004 Pointer CS Const unit=U0090 blkoff=C000
+  0000:0A04 Pointer Code unit=U0050 blkoff=C400
+  0000:1504 Relative Var unit=U0030 blkoff=CA00
+  0000:1504 Offset Code unit=U0090 blkoff=1400
+  0000:0004 Pointer CS Const unit=U0090 blkoff=D700
+  0000:0A04 Pointer Code unit=U0050 blkoff=C800
+  0000:0A04 Relative Var unit=U0030 blkoff=E100
+  0000:0004 Relative Code unit=U0090 blkoff=0000
+  0000:0A04 Pointer Code unit=U0050 blkoff=D500
+  0000:0A04 Pointer Var unit=U0030 blkoff=F500
+  0000:0A04 Offset DS Const unit=U0030 blkoff=FA00
+  0000:0A04 Offset Var unit=U0030 blkoff=FF00
+  0000:0005 Relative Code unit=U0090 blkoff=0000
+  0000:0A05 Pointer Code unit=U0050 blkoff=E800
+  0000:0A05 Pointer Var unit=U0030 blkoff=1100
+  0000:0A05 Offset DS Const unit=U0030 blkoff=1600
+  0000:0A05 Offset Var unit=U0030 blkoff=1B00
+  0000:0005 Relative Code unit=U0090 blkoff=0000
+  0000:0A05 Pointer Code unit=U0050 blkoff=2A00
+  0000:0A05 Pointer Var unit=U0030 blkoff=2D00
+  0000:0A05 Offset DS Const unit=U0030 blkoff=3200
+  0000:1505 Offset Var unit=U0030 blkoff=3700
+  0000:0A05 Offset Code unit=U0090 blkoff=1400
+  0000:1500 Segment Var unit=U0030 blkoff=F700
+  0000:0A00 Offset Code unit=U0090 blkoff=1400
+  0000:0001 Relative Code unit=U0090 blkoff=0000
+  0000:0A01 Pointer Code unit=U0050 blkoff=0000
+  0000:0A01 Pointer Var unit=U0030 blkoff=1300
+  0000:0A01 Offset DS Const unit=U0030 blkoff=1800
+  0000:0A01 Offset Var unit=U0030 blkoff=1D00
+  0000:0001 Relative Code unit=U0090 blkoff=0000
+  0000:0A01 Pointer Code unit=U0050 blkoff=2F00
+  0000:0A01 Pointer Var unit=U0030 blkoff=2F00
+  0000:0A01 Offset DS Const unit=U0030 blkoff=3400
+  0000:0A01 Offset Var unit=U0030 blkoff=3900
+  0000:1501 Relative Code unit=U0090 blkoff=0000
+  0000:0A01 Relative Code unit=U0090 blkoff=0600
+  0000:0001 Pointer Var unit=U0030 blkoff=4C00
+  0000:0A01 Pointer Code unit=U0050 blkoff=7400
+  0000:1501 Pointer Var unit=U0030 blkoff=5900
+  0000:0A01 Offset Code unit=U0090 blkoff=1200
+  0000:0A01 Pointer Var unit=U0030 blkoff=6700
+  0000:0A01 Relative DS Const unit=U0030 blkoff=7200
+  0000:0A01 Offset DS Const unit=U0030 blkoff=7700
+  0000:0A01 Offset Var unit=U0030 blkoff=7C00
+  0000:1501 Relative Code unit=U0090 blkoff=0000
+  0000:0A01 Pointer CS Const unit=U0090 blkoff=8600
+  0000:0A01 Pointer DS Const unit=U0030 blkoff=8F00
+  0000:0A01 Relative Code unit=U0030 blkoff=0002
+  0000:1501 Offset Var unit=U0030 blkoff=9900
+  0000:0001 Pointer CS Const unit=U0090 blkoff=9E00
+  0000:0A01 Pointer Code unit=U0050 blkoff=7700
+  0000:1501 Relative Var unit=U0030 blkoff=A800
+  0000:1501 Relative CS Const unit=U0030 blkoff=AF00
+  0000:0001 Pointer CS Const unit=U0090 blkoff=B400
+  0000:0A01 Pointer Code unit=U0050 blkoff=7C00
+  0000:0A01 Relative Var unit=U0030 blkoff=BE00
+  0000:0001 Relative Code unit=U0090 blkoff=0000
+  0000:0A01 Pointer Code unit=U0050 blkoff=8100
+  0000:0A01 Pointer Var unit=U0030 blkoff=D200
+  0000:0A01 Offset DS Const unit=U0030 blkoff=D700
+  0000:0A01 Offset Var unit=U0030 blkoff=DC00
+  0000:0001 Relative Code unit=U0090 blkoff=0000
+  0000:0A01 Pointer Code unit=U0050 blkoff=9300
+  0000:0A01 Pointer Var unit=U0030 blkoff=EE00
+  0000:0A01 Offset DS Const unit=U0030 blkoff=F300
+  0000:0A01 Offset Var unit=U0030 blkoff=F800
+  0000:0001 Relative Code unit=U0090 blkoff=0000
+  0000:0A02 Pointer Code unit=U0050 blkoff=A900
+  0000:0A02 Pointer Var unit=U0030 blkoff=0A00
+  0000:0A02 Offset DS Const unit=U0030 blkoff=0F00
+  0000:0A02 Offset Var unit=U0030 blkoff=1400
+  0000:0002 Relative Code unit=U0090 blkoff=0000
+  0000:0A02 Pointer Code unit=U0050 blkoff=BC00
+  0000:0A02 Pointer Var unit=U0030 blkoff=2600
+  0000:0A02 Offset DS Const unit=U0030 blkoff=2B00
+  0000:1502 Offset Var unit=U0030 blkoff=3000
+  0000:0002 Pointer CS Const unit=U0090 blkoff=3500
+  0000:0A02 Pointer Code unit=U0050 blkoff=D400
+  0000:1502 Relative Var unit=U0030 blkoff=3F00
+  0000:0002 Pointer CS Const unit=U0090 blkoff=4800
+  0000:0A02 Pointer Code unit=U0050 blkoff=DC00
+  0000:1502 Relative Var unit=U0030 blkoff=5200
+  0000:1502 Offset Code unit=U0090 blkoff=1400
+  0000:0002 Pointer CS Const unit=U0090 blkoff=5F00
+  0000:0A02 Pointer Code unit=U0050 blkoff=E300
+  0000:1502 Relative Var unit=U0030 blkoff=6900
+  0000:1502 Offset Code unit=U0090 blkoff=1400
+  0000:0002 Pointer CS Const unit=U0090 blkoff=7600
+  0000:0A02 Pointer Code unit=U0050 blkoff=EA00
+  0000:1502 Relative Var unit=U0030 blkoff=8000
+  0000:1502 Offset Code unit=U0090 blkoff=1400
+  0000:0A02 Offset Code unit=U0090 blkoff=1400
+  0000:1501 Segment Var unit=U0030 blkoff=2500
+  0000:0A01 Offset Code unit=U0090 blkoff=1400
+  0000:0001 Relative Code unit=U0090 blkoff=0000
+  0000:0A01 Relative CS Const unit=U0050 blkoff=3900
+  0000:0A01 Pointer Var unit=U0030 blkoff=4100
+  0000:0A01 Offset DS Const unit=U0030 blkoff=4600
+  0000:0A01 Offset Var unit=U0030 blkoff=4B00
+  0000:0001 Relative Code unit=U0090 blkoff=0000
+  0000:0A01 Relative CS Const unit=U0050 blkoff=5500
+  0000:0A01 Pointer Var unit=U0030 blkoff=5D00
+  0000:0A01 Offset DS Const unit=U0030 blkoff=6200
+  0000:0A01 Offset Var unit=U0030 blkoff=6700
+  0000:0001 Relative Code unit=U0090 blkoff=0000
+  0000:0A01 Relative CS Const unit=U0050 blkoff=7100
+--- block 0008 ---
+  0008:0A01 Pointer Var unit=U0030 blkoff=7900
+  0008:0A01 Offset DS Const unit=U0030 blkoff=7E00
+  0008:0A01 Offset Var unit=U0030 blkoff=8300
+  0008:1501 Relative Code unit=U0090 blkoff=0000
+  0008:0A01 Relative Code unit=U0090 blkoff=0600
+  0008:0001 Pointer Var unit=U0030 blkoff=9600
+  0008:0A01 Relative CS Const unit=U0050 blkoff=9B00
+  0008:1501 Pointer Var unit=U0030 blkoff=A300
+  0008:0A01 Offset Code unit=U0090 blkoff=1200
+  0008:0A01 Pointer Var unit=U0030 blkoff=B100
+  0008:0A01 Relative DS Const unit=U0030 blkoff=BC00
+  0008:0A01 Offset DS Const unit=U0030 blkoff=C100
+  0008:0A01 Offset Var unit=U0030 blkoff=C600
+  0008:1501 Relative Code unit=U0090 blkoff=0000
+  0008:0A01 Pointer CS Const unit=U0090 blkoff=D000
+  0008:0A01 Pointer DS Const unit=U0030 blkoff=D900
+  0008:0A01 Relative Code unit=U0030 blkoff=0002
+  0008:1501 Offset Var unit=U0030 blkoff=E300
+  0008:0001 Pointer CS Const unit=U0090 blkoff=E800
+  0008:0A01 Relative CS Const unit=U0050 blkoff=ED00
+  0008:1501 Relative Var unit=U0030 blkoff=F200
+  0008:1501 Relative CS Const unit=U0030 blkoff=F900
+  0008:0001 Pointer CS Const unit=U0090 blkoff=FE00
+  0008:0A02 Relative CS Const unit=U0050 blkoff=0300
+  0008:0A02 Relative Var unit=U0030 blkoff=0800
+  0008:0002 Relative Code unit=U0090 blkoff=0000
+  0008:0A02 Relative CS Const unit=U0050 blkoff=1400
+  0008:0A02 Pointer Var unit=U0030 blkoff=1C00
+  0008:0A02 Offset DS Const unit=U0030 blkoff=2100
+  0008:0A02 Offset Var unit=U0030 blkoff=2600
+  0008:0002 Relative Code unit=U0090 blkoff=0000
+  0008:0A02 Relative CS Const unit=U0050 blkoff=3000
+  0008:0A02 Pointer Var unit=U0030 blkoff=3800
+  0008:0A02 Offset DS Const unit=U0030 blkoff=3D00
+  0008:0A02 Offset Var unit=U0030 blkoff=4200
+  0008:0002 Relative Code unit=U0090 blkoff=0000
+  0008:0A02 Relative CS Const unit=U0050 blkoff=4C00
+  0008:0A02 Pointer Var unit=U0030 blkoff=5400
+  0008:0A02 Offset DS Const unit=U0030 blkoff=5900
+  0008:1502 Offset Var unit=U0030 blkoff=5E00
+  0008:0002 Pointer CS Const unit=U0090 blkoff=6300
+  0008:0A02 Relative CS Const unit=U0050 blkoff=6801
+  0008:1502 Relative Var unit=U0030 blkoff=6D00
+  0008:0002 Pointer CS Const unit=U0090 blkoff=7600
+  0008:0A02 Relative CS Const unit=U0050 blkoff=7B01
+  0008:1502 Relative Var unit=U0030 blkoff=8000
+  0008:1502 Offset Code unit=U0090 blkoff=1400
+  0008:0002 Pointer CS Const unit=U0090 blkoff=8D00
+  0008:0A02 Relative CS Const unit=U0050 blkoff=9201
+  0008:1502 Relative Var unit=U0030 blkoff=9700
+  0008:1502 Offset Code unit=U0090 blkoff=1400
+  0008:0A02 Offset Code unit=U0090 blkoff=1400
+  0008:1501 Segment Var unit=U0030 blkoff=5400
+  0008:0A01 Offset Code unit=U0090 blkoff=1400
+  0008:0001 Relative Code unit=U0090 blkoff=0000
+  0008:0A01 Relative CS Const unit=U0050 blkoff=6800
+  0008:0A01 Pointer Var unit=U0030 blkoff=7000
+  0008:0A01 Offset DS Const unit=U0030 blkoff=7500
+  0008:0A01 Offset Var unit=U0030 blkoff=7A00
+  0008:0001 Relative Code unit=U0090 blkoff=0000
+  0008:0A01 Relative CS Const unit=U0050 blkoff=8400
+  0008:0A01 Pointer Var unit=U0030 blkoff=8C00
+  0008:0A01 Offset DS Const unit=U0030 blkoff=9100
+  0008:0A01 Offset Var unit=U0030 blkoff=9600
+  0008:0001 Relative Code unit=U0090 blkoff=0000
+  0008:0A01 Relative CS Const unit=U0050 blkoff=A000
+  0008:0A01 Pointer Var unit=U0030 blkoff=A800
+  0008:0A01 Offset DS Const unit=U0030 blkoff=AD00
+  0008:0A01 Offset Var unit=U0030 blkoff=B200
+  0008:1501 Relative Code unit=U0090 blkoff=0000
+  0008:0A01 Relative Code unit=U0090 blkoff=0600
+  0008:0001 Pointer Var unit=U0030 blkoff=C500
+  0008:0A01 Relative CS Const unit=U0050 blkoff=CA00
+  0008:1501 Pointer Var unit=U0030 blkoff=D200
+  0008:0A01 Offset Code unit=U0090 blkoff=1200
+  0008:0A01 Pointer Var unit=U0030 blkoff=E000
+  0008:0A01 Relative DS Const unit=U0030 blkoff=EB00
+  0008:0A01 Offset DS Const unit=U0030 blkoff=F000
+  0008:0A01 Offset Var unit=U0030 blkoff=F500
+  0008:1501 Relative Code unit=U0090 blkoff=0000
+  0008:0A01 Pointer CS Const unit=U0090 blkoff=FF00
+  0008:0A02 Pointer DS Const unit=U0030 blkoff=0800
+  0008:0A02 Relative Code unit=U0030 blkoff=0002
+  0008:1502 Offset Var unit=U0030 blkoff=1200
+  0008:0002 Pointer CS Const unit=U0090 blkoff=1700
+  0008:0A02 Relative CS Const unit=U0050 blkoff=1C00
+  0008:1502 Relative Var unit=U0030 blkoff=2100
+  0008:1502 Relative CS Const unit=U0030 blkoff=2800
+  0008:0002 Pointer CS Const unit=U0090 blkoff=2D00
+  0008:0A02 Relative CS Const unit=U0050 blkoff=3200
+  0008:0A02 Relative Var unit=U0030 blkoff=3700
+  0008:0002 Relative Code unit=U0090 blkoff=0000
+  0008:0A02 Relative CS Const unit=U0050 blkoff=4300
+  0008:0A02 Pointer Var unit=U0030 blkoff=4B00
+  0008:0A02 Offset DS Const unit=U0030 blkoff=5000
+  0008:0A02 Offset Var unit=U0030 blkoff=5500
+  0008:0002 Relative Code unit=U0090 blkoff=0000
+  0008:0A02 Relative CS Const unit=U0050 blkoff=5F00
+  0008:0A02 Pointer Var unit=U0030 blkoff=6700
+  0008:0A02 Offset DS Const unit=U0030 blkoff=6C00
+  0008:0A02 Offset Var unit=U0030 blkoff=7100
+  0008:0002 Relative Code unit=U0090 blkoff=0000
+  0008:0A02 Relative CS Const unit=U0050 blkoff=7B01
+  0008:0A02 Pointer Var unit=U0030 blkoff=8300
+  0008:0A02 Offset DS Const unit=U0030 blkoff=8800
+  0008:0A02 Offset Var unit=U0030 blkoff=8D00
+  0008:0002 Relative Code unit=U0090 blkoff=0000
+  0008:0A02 Relative CS Const unit=U0050 blkoff=9701
+  0008:0A02 Pointer Var unit=U0030 blkoff=9F00
+  0008:0A02 Offset DS Const unit=U0030 blkoff=A400
+  0008:1502 Offset Var unit=U0030 blkoff=A900
+  0008:0002 Pointer CS Const unit=U0090 blkoff=AE00
+  0008:0A02 Relative CS Const unit=U0050 blkoff=B301
+  0008:1502 Relative Var unit=U0030 blkoff=B800
+  0008:0002 Pointer CS Const unit=U0090 blkoff=C100
+  0008:0A02 Relative CS Const unit=U0050 blkoff=C601
+  0008:1502 Relative Var unit=U0030 blkoff=CB00
+  0008:1502 Offset Code unit=U0090 blkoff=1400
+  0008:0002 Pointer CS Const unit=U0090 blkoff=D800
+  0008:0A02 Relative CS Const unit=U0050 blkoff=DD01
+  0008:1502 Relative Var unit=U0030 blkoff=E200
+  0008:1502 Offset Code unit=U0090 blkoff=1400
+  0008:0002 Pointer CS Const unit=U0090 blkoff=EF00
+  0008:0A02 Relative CS Const unit=U0050 blkoff=F401
+  0008:1502 Relative Var unit=U0030 blkoff=F900
+  0008:1503 Offset Code unit=U0090 blkoff=1400
+  0008:0A03 Offset Code unit=U0090 blkoff=1400
+  0008:1501 Segment Var unit=U0030 blkoff=3100
+  0008:0A01 Offset Code unit=U0090 blkoff=1400
+  0008:0001 Relative Code unit=U0090 blkoff=0000
+  0008:0A01 Offset CS Const unit=U0050 blkoff=4500
+  0008:0A01 Pointer Var unit=U0030 blkoff=4D00
+  0008:0A01 Offset DS Const unit=U0030 blkoff=5200
+  0008:0A01 Offset Var unit=U0030 blkoff=5700
+  0008:0001 Relative Code unit=U0090 blkoff=0000
+  0008:0A01 Offset CS Const unit=U0050 blkoff=6100
+  0008:0A01 Pointer Var unit=U0030 blkoff=6900
+  0008:0A01 Offset DS Const unit=U0030 blkoff=6E00
+  0008:0A01 Offset Var unit=U0030 blkoff=7300
+  0008:0001 Relative Code unit=U0090 blkoff=0000
+  0008:0A01 Offset CS Const unit=U0050 blkoff=7D00
+  0008:0A01 Pointer Var unit=U0030 blkoff=8500
+  0008:0A01 Offset DS Const unit=U0030 blkoff=8A00
+  0008:1501 Offset Var unit=U0030 blkoff=8F00
+  0008:0A01 Offset DS Const unit=U0030 blkoff=9400
+  0008:1501 Relative Code unit=U0090 blkoff=0000
+  0008:0A01 Relative Code unit=U0090 blkoff=0600
+  0008:0001 Pointer Var unit=U0030 blkoff=A700
+  0008:0A01 Offset CS Const unit=U0050 blkoff=AC00
+  0008:1501 Pointer Var unit=U0030 blkoff=B400
+  0008:0A01 Offset Code unit=U0090 blkoff=1200
+  0008:0A01 Pointer Var unit=U0030 blkoff=C200
+  0008:0A01 Relative DS Const unit=U0030 blkoff=CD00
+  0008:0A01 Offset DS Const unit=U0030 blkoff=D200
+  0008:0A01 Offset Var unit=U0030 blkoff=D700
+  0008:1501 Relative Code unit=U0090 blkoff=0000
+  0008:0A01 Pointer CS Const unit=U0090 blkoff=E100
+  0008:0A01 Pointer DS Const unit=U0030 blkoff=EA00
+  0008:0A01 Relative Code unit=U0030 blkoff=0002
+  0008:1501 Offset Var unit=U0030 blkoff=F400
+  0008:1501 Offset DS Const unit=U0030 blkoff=F900
+  0008:1501 Segment DS Const unit=U0030 blkoff=FE00
+  0008:0002 Pointer CS Const unit=U0090 blkoff=0300
+  0008:0A02 Offset CS Const unit=U0050 blkoff=0800
+  0008:1502 Relative Var unit=U0030 blkoff=0D00
+  0008:1502 Relative CS Const unit=U0030 blkoff=1400
+  0008:0002 Pointer CS Const unit=U0090 blkoff=1900
+  0008:0A02 Offset CS Const unit=U0050 blkoff=1E00
+  0008:0A02 Relative Var unit=U0030 blkoff=2300
+  0008:0002 Relative Code unit=U0090 blkoff=0000
+  0008:0A02 Offset CS Const unit=U0050 blkoff=2F00
+  0008:0A02 Pointer Var unit=U0030 blkoff=3700
+  0008:0A02 Offset DS Const unit=U0030 blkoff=3C00
+  0008:0A02 Offset Var unit=U0030 blkoff=4100
+  0008:0002 Relative Code unit=U0090 blkoff=0000
+  0008:0A02 Offset CS Const unit=U0050 blkoff=4B00
+  0008:0A02 Pointer Var unit=U0030 blkoff=5300
+  0008:0A02 Offset DS Const unit=U0030 blkoff=5800
+  0008:0A02 Offset Var unit=U0030 blkoff=5D00
+  0008:0002 Relative Code unit=U0090 blkoff=0000
+  0008:0A02 Offset CS Const unit=U0050 blkoff=6700
+  0008:0A02 Pointer Var unit=U0030 blkoff=6F00
+  0008:0A02 Offset DS Const unit=U0030 blkoff=7400
+  0008:1502 Offset Var unit=U0030 blkoff=7900
+  0008:0002 Pointer CS Const unit=U0090 blkoff=7E00
+  0008:0A02 Offset CS Const unit=U0050 blkoff=8301
+  0008:1502 Relative Var unit=U0030 blkoff=8800
+  0008:0002 Pointer CS Const unit=U0090 blkoff=9100
+  0008:0A02 Offset CS Const unit=U0050 blkoff=9601
+  0008:1502 Relative Var unit=U0030 blkoff=9B00
+  0008:1502 Offset Code unit=U0090 blkoff=1400
+  0008:0002 Pointer CS Const unit=U0090 blkoff=A800
+  0008:0A02 Offset CS Const unit=U0050 blkoff=AD01
+  0008:1502 Relative Var unit=U0030 blkoff=B200
+  0008:1502 Offset Code unit=U0090 blkoff=1400
+  0008:0A02 Offset Code unit=U0090 blkoff=1400
+  0008:1503 Segment Var unit=U0030 blkoff=B100
+  0008:0A03 Offset Code unit=U0090 blkoff=1400
+  0008:0003 Relative Code unit=U0090 blkoff=0000
+  0008:0A03 Offset CS Const unit=U0050 blkoff=C500
+  0008:0A03 Pointer Var unit=U0030 blkoff=CD00
+  0008:0A03 Offset DS Const unit=U0030 blkoff=D200
+  0008:0A03 Offset Var unit=U0030 blkoff=D700
+  0008:0003 Relative Code unit=U0090 blkoff=0000
+  0008:0A03 Offset CS Const unit=U0050 blkoff=E100
+  0008:0A03 Pointer Var unit=U0030 blkoff=E900
+  0008:0A03 Offset DS Const unit=U0030 blkoff=EE00
+  0008:1503 Offset Var unit=U0030 blkoff=F300
+  0008:0A03 Pointer DS Const unit=U0030 blkoff=F800
+  0008:1503 Relative Code unit=U0090 blkoff=0000
+  0008:0A04 Relative Code unit=U0090 blkoff=0600
+  0008:0004 Pointer Var unit=U0030 blkoff=0B00
+  0008:0A04 Offset CS Const unit=U0050 blkoff=1000
+  0008:1504 Pointer Var unit=U0030 blkoff=1800
+  0008:0A04 Offset Code unit=U0090 blkoff=1200
+  0008:0A04 Pointer Var unit=U0030 blkoff=2600
+  0008:0A04 Relative DS Const unit=U0030 blkoff=3100
+  0008:0A04 Offset DS Const unit=U0030 blkoff=3600
+  0008:0A04 Offset Var unit=U0030 blkoff=3B00
+  0008:1504 Relative Code unit=U0090 blkoff=0000
+  0008:0A04 Pointer CS Const unit=U0090 blkoff=4500
+  0008:0A04 Pointer DS Const unit=U0030 blkoff=4E00
+  0008:0A04 Relative Code unit=U0030 blkoff=0002
+  0008:1504 Offset Var unit=U0030 blkoff=5800
+  0008:0004 Pointer CS Const unit=U0090 blkoff=5D00
+  0008:0A04 Offset CS Const unit=U0050 blkoff=6200
+  0008:1504 Relative Var unit=U0030 blkoff=6700
+  0008:1504 Relative CS Const unit=U0030 blkoff=6E00
+  0008:0004 Pointer CS Const unit=U0090 blkoff=7300
+  0008:0A04 Offset CS Const unit=U0050 blkoff=7800
+  0008:0A04 Relative Var unit=U0030 blkoff=7D00
+  0008:0004 Relative Code unit=U0090 blkoff=0000
+  0008:0A04 Offset CS Const unit=U0050 blkoff=8C00
+  0008:0A04 Pointer Var unit=U0030 blkoff=9400
+  0008:0A04 Offset DS Const unit=U0030 blkoff=9900
+  0008:0A04 Offset Var unit=U0030 blkoff=9E00
+  0008:0004 Relative Code unit=U0090 blkoff=0000
+  0008:0A04 Offset CS Const unit=U0050 blkoff=A800
+  0008:0A04 Pointer Var unit=U0030 blkoff=B000
+  0008:0A04 Offset DS Const unit=U0030 blkoff=B500
+  0008:0A04 Offset Var unit=U0030 blkoff=BA00
+  0008:0004 Relative Code unit=U0090 blkoff=0000
+  0008:0A04 Offset CS Const unit=U0050 blkoff=C400
+  0008:0A04 Pointer Var unit=U0030 blkoff=CC00
+  0008:0A04 Offset DS Const unit=U0030 blkoff=D100
+  0008:1504 Offset Var unit=U0030 blkoff=D600
+  0008:1504 Pointer Code unit=U0090 blkoff=0400
+  0008:0A04 Pointer Code unit=U0090 blkoff=0600
+  0008:0004 Relative Code unit=U0090 blkoff=0000
+  0008:0A04 Offset CS Const unit=U0050 blkoff=E900
+  0008:0A04 Pointer Var unit=U0030 blkoff=F100
+  0008:0A04 Offset DS Const unit=U0030 blkoff=F600
+  0008:1504 Offset Var unit=U0030 blkoff=FB00
+  0008:1505 Pointer Code unit=U0090 blkoff=0600
+  0008:0A05 Pointer Code unit=U0090 blkoff=0400
+  0008:0005 Relative Code unit=U0090 blkoff=0000
+  0008:0A05 Offset CS Const unit=U0050 blkoff=1501
+  0008:0A05 Pointer Var unit=U0030 blkoff=1D00
+  0008:0A05 Offset DS Const unit=U0030 blkoff=2200
+  0008:1505 Offset Var unit=U0030 blkoff=2700
+  0008:0005 Pointer CS Const unit=U0090 blkoff=2C00
+  0008:0A05 Offset CS Const unit=U0050 blkoff=3101
+  0008:0A05 Relative Var unit=U0030 blkoff=3600
+  0008:0005 Relative Code unit=U0090 blkoff=0000
+  0008:0A05 Offset CS Const unit=U0050 blkoff=4201
+  0008:0A05 Pointer Var unit=U0030 blkoff=4A00
+  0008:0A05 Offset DS Const unit=U0030 blkoff=4F00
+  0008:0A05 Offset Var unit=U0030 blkoff=5400
+  0008:0005 Relative Code unit=U0090 blkoff=0000
+  0008:0A05 Offset CS Const unit=U0050 blkoff=5E01
+  0008:0A05 Pointer Var unit=U0030 blkoff=6600
+  0008:0A05 Offset DS Const unit=U0030 blkoff=6B00
+  0008:0A05 Offset Var unit=U0030 blkoff=7000
+  0008:0005 Relative Code unit=U0090 blkoff=0000
+  0008:0A05 Offset CS Const unit=U0050 blkoff=7A01
+  0008:0A05 Pointer Var unit=U0030 blkoff=8200
+  0008:0A05 Offset DS Const unit=U0030 blkoff=8700
+  0008:0A05 Offset Var unit=U0030 blkoff=8C00
+  0008:0005 Relative Code unit=U0090 blkoff=0000
+  0008:0A05 Offset CS Const unit=U0050 blkoff=9601
+  0008:0A05 Pointer Var unit=U0030 blkoff=9E00
+  0008:0A05 Offset DS Const unit=U0030 blkoff=A300
+  0008:1505 Offset Var unit=U0030 blkoff=A800
+  0008:0005 Pointer CS Const unit=U0090 blkoff=AD00
+  0008:0A05 Offset CS Const unit=U0050 blkoff=B201
+  0008:1505 Relative Var unit=U0030 blkoff=B700
+  0008:1505 Pointer Code unit=U0090 blkoff=0200
+  0008:0A05 Pointer Code unit=U0090 blkoff=0000
+  0008:0005 Relative Code unit=U0090 blkoff=0000
+  0008:0A05 Offset CS Const unit=U0050 blkoff=D401
+  0008:0A05 Pointer Var unit=U0030 blkoff=DC00
+  0008:0A05 Offset DS Const unit=U0030 blkoff=E100
+  0008:1505 Offset Var unit=U0030 blkoff=E600
+  0008:1505 Relative CS Const unit=U0090 blkoff=EC00
+  0008:1505 Relative CS Const unit=U0090 blkoff=F200
+  0008:1505 Pointer Code unit=U0090 blkoff=0000
+--- block 0010 ---
+  0010:1505 Pointer Code unit=U0090 blkoff=0200
+  0010:1506 Pointer Code unit=U0090 blkoff=0000
+  0010:1506 Pointer Code unit=U0090 blkoff=0200
+  0010:0006 Pointer CS Const unit=U0090 blkoff=0B00
+  0010:0A06 Offset CS Const unit=U0050 blkoff=1001
+  0010:1506 Relative Var unit=U0030 blkoff=1500
+  0010:1506 Pointer Code unit=U0090 blkoff=0200
+  0010:0A06 Pointer Code unit=U0090 blkoff=0000
+  0010:0006 Relative Code unit=U0090 blkoff=0000
+  0010:0A06 Offset CS Const unit=U0050 blkoff=3101
+  0010:0A06 Pointer Var unit=U0030 blkoff=3900
+  0010:0A06 Offset DS Const unit=U0030 blkoff=3E00
+  0010:1506 Offset Var unit=U0030 blkoff=4300
+  0010:1506 Relative CS Const unit=U0090 blkoff=4900
+  0010:1506 Relative CS Const unit=U0090 blkoff=4F00
+  0010:1506 Pointer Code unit=U0090 blkoff=0000
+  0010:1506 Pointer Code unit=U0090 blkoff=0200
+  0010:1506 Pointer Code unit=U0090 blkoff=0000
+  0010:1506 Pointer Code unit=U0090 blkoff=0200
+  0010:0006 Pointer CS Const unit=U0090 blkoff=6800
+  0010:0A06 Offset CS Const unit=U0050 blkoff=6D02
+  0010:1506 Relative Var unit=U0030 blkoff=7200
+  0010:1506 Pointer Code unit=U0090 blkoff=0200
+  0010:0A06 Pointer Code unit=U0090 blkoff=0000
+  0010:0006 Relative Code unit=U0090 blkoff=0000
+  0010:0A06 Offset CS Const unit=U0050 blkoff=8E02
+  0010:0A06 Pointer Var unit=U0030 blkoff=9600
+  0010:0A06 Offset DS Const unit=U0030 blkoff=9B00
+  0010:1506 Offset Var unit=U0030 blkoff=A000
+  0010:1506 Relative CS Const unit=U0090 blkoff=A600
+  0010:1506 Relative CS Const unit=U0090 blkoff=AC00
+  0010:1506 Pointer Code unit=U0090 blkoff=0000
+  0010:1506 Pointer Code unit=U0090 blkoff=0200
+  0010:1506 Pointer Code unit=U0090 blkoff=0000
+  0010:1506 Pointer Code unit=U0090 blkoff=0200
+  0010:0006 Pointer CS Const unit=U0090 blkoff=C500
+  0010:0A06 Offset CS Const unit=U0050 blkoff=CA02
+  0010:1506 Relative Var unit=U0030 blkoff=CF00
+  0010:1506 Relative CS Const unit=U0090 blkoff=DA00
+  0010:1506 Relative CS Const unit=U0090 blkoff=E400
+  0010:0A06 Relative CS Const unit=U0090 blkoff=EB00
+  0010:0006 Relative Code unit=U0090 blkoff=0000
+  0010:0A06 Offset CS Const unit=U0050 blkoff=F602
+  0010:0A06 Pointer Var unit=U0030 blkoff=FE00
+  0010:0A07 Offset DS Const unit=U0030 blkoff=0300
+  0010:0A07 Offset Var unit=U0030 blkoff=0800
+  0010:0007 Relative Code unit=U0090 blkoff=0000
+  0010:0A07 Offset CS Const unit=U0050 blkoff=1202
+  0010:0A07 Pointer Var unit=U0030 blkoff=1A00
+  0010:0A07 Offset DS Const unit=U0030 blkoff=1F00
+  0010:1507 Offset Var unit=U0030 blkoff=2400
+  0010:1507 Offset Code unit=U0090 blkoff=1200
+  0010:1507 Offset Code unit=U0090 blkoff=1200
+  0010:1507 Relative CS Const unit=U0090 blkoff=3400
+  0010:1507 Relative CS Const unit=U0090 blkoff=3900
+  0010:1507 Pointer Code unit=U0090 blkoff=0400
+  0010:1507 Pointer Code unit=U0090 blkoff=0600
+  0010:1507 Pointer Code unit=U0090 blkoff=0400
+  0010:1507 Pointer Code unit=U0090 blkoff=0600
+  0010:1507 Relative Code unit=U0090 blkoff=0400
+  0010:1507 Relative Code unit=U0090 blkoff=0400
+  0010:1507 Relative CS Const unit=U0090 blkoff=5800
+  0010:1507 Relative CS Const unit=U0090 blkoff=5F00
+  0010:0A07 Relative Code unit=U0090 blkoff=0A00
+  0010:0007 Relative Code unit=U0090 blkoff=0000
+  0010:0A07 Offset CS Const unit=U0050 blkoff=7102
+  0010:0A07 Pointer Var unit=U0030 blkoff=7900
+  0010:0A07 Offset DS Const unit=U0030 blkoff=7E00
+  0010:0A07 Offset Var unit=U0030 blkoff=8300
+  0010:0007 Relative Code unit=U0090 blkoff=0000
+  0010:0A07 Offset CS Const unit=U0050 blkoff=8D02
+  0010:0A07 Pointer Var unit=U0030 blkoff=9500
+  0010:0A07 Offset DS Const unit=U0030 blkoff=9A00
+  0010:1507 Offset Var unit=U0030 blkoff=9F00
+  0010:1507 Offset Code unit=U0090 blkoff=1200
+  0010:1507 Offset Code unit=U0090 blkoff=1200
+  0010:1507 Relative CS Const unit=U0090 blkoff=AF00
+  0010:1507 Relative CS Const unit=U0090 blkoff=B400
+  0010:2007 Relative Code unit=U0090 blkoff=0A00
+  0010:2007 Relative Code unit=U0090 blkoff=0000
+  0010:1507 Relative Code unit=U0090 blkoff=0000
+  0010:1507 Pointer Code unit=U0090 blkoff=0400
+  0010:1507 Pointer Code unit=U0090 blkoff=0600
+  0010:1507 Pointer Code unit=U0090 blkoff=0400
+  0010:1507 Pointer Code unit=U0090 blkoff=0600
+  0010:1507 Relative CS Const unit=U0090 blkoff=DA00
+  0010:1507 Relative CS Const unit=U0090 blkoff=E400
+  0010:1507 Relative Code unit=U0090 blkoff=0C00
+  0010:0A07 Relative Code unit=U0090 blkoff=1600
+  0010:0008 Relative Code unit=U0090 blkoff=0000
+  0010:0A08 Offset CS Const unit=U0050 blkoff=0602
+  0010:0A08 Pointer Var unit=U0030 blkoff=0E00
+  0010:0A08 Offset DS Const unit=U0030 blkoff=1300
+  0010:0A08 Offset Var unit=U0030 blkoff=1800
+  0010:0008 Relative Code unit=U0090 blkoff=0000
+  0010:0A08 Offset CS Const unit=U0050 blkoff=2203
+  0010:0A08 Pointer Var unit=U0030 blkoff=2A00
+  0010:0A08 Offset DS Const unit=U0030 blkoff=2F00
+  0010:1508 Offset Var unit=U0030 blkoff=3400
+  0010:1508 Offset Code unit=U0090 blkoff=1200
+  0010:1508 Offset Code unit=U0090 blkoff=1200
+  0010:1508 Relative Code unit=U0090 blkoff=0400
+  0010:1508 Relative Code unit=U0090 blkoff=0400
+  0010:1508 Relative Code unit=U0090 blkoff=0E00
+  0010:1508 Relative Code unit=U0090 blkoff=0E00
+  0010:1508 Relative CS Const unit=U0090 blkoff=5200
+  0010:1508 Relative CS Const unit=U0090 blkoff=5700
+  0010:1508 Relative Code unit=U0090 blkoff=0C00
+  0010:1508 Relative Code unit=U0090 blkoff=0C00
+  0010:1508 Relative Code unit=U0090 blkoff=1600
+  0010:1508 Relative Code unit=U0090 blkoff=1600
+  0010:1508 Pointer Code unit=U0090 blkoff=0400
+  0010:1508 Pointer Code unit=U0090 blkoff=0600
+  0010:1508 Pointer Code unit=U0090 blkoff=0400
+  0010:1508 Pointer Code unit=U0090 blkoff=0600
+  0010:0008 Pointer CS Const unit=U0090 blkoff=7E00
+  0010:0A08 Offset CS Const unit=U0050 blkoff=8303
+  0010:1508 Relative Var unit=U0030 blkoff=8800
+  0010:0008 Pointer CS Const unit=U0090 blkoff=9200
+  0010:0A08 Offset CS Const unit=U0050 blkoff=9703
+  0010:1508 Relative Var unit=U0030 blkoff=9C00
+  0010:1508 Offset Code unit=U0090 blkoff=1400
+  0010:0008 Pointer CS Const unit=U0090 blkoff=A900
+  0010:0A08 Offset CS Const unit=U0050 blkoff=AE03
+  0010:1508 Relative Var unit=U0030 blkoff=B300
+  0010:1508 Pointer Code unit=U0090 blkoff=0600
+  0010:1508 Pointer Code unit=U0090 blkoff=0400
+  0010:1508 Offset Code unit=U0090 blkoff=1400
+  0010:0008 Pointer CS Const unit=U0090 blkoff=D000
+  0010:0A08 Offset CS Const unit=U0050 blkoff=D503
+  0010:1508 Relative Var unit=U0030 blkoff=DA00
+  0010:1508 Pointer Code unit=U0090 blkoff=0400
+  0010:0A08 Pointer Code unit=U0090 blkoff=0600
+  0010:0008 Relative Code unit=U0090 blkoff=0000
+  0010:0A08 Offset CS Const unit=U0050 blkoff=EF03
+  0010:0A08 Pointer Var unit=U0030 blkoff=F700
+  0010:0A08 Offset DS Const unit=U0030 blkoff=FC00
+  0010:1509 Offset Var unit=U0030 blkoff=0100
+  0010:0009 Pointer CS Const unit=U0090 blkoff=0600
+  0010:0A09 Offset CS Const unit=U0050 blkoff=0B03
+  0010:1509 Relative Var unit=U0030 blkoff=1000
+  0010:1509 Offset CS Const unit=U0090 blkoff=1800
+  0010:1509 Offset CS Const unit=U0090 blkoff=1D00
+  0010:1509 Offset Code unit=U0090 blkoff=0A00
+  0010:1509 Offset Code unit=U0090 blkoff=0C00
+  0010:1509 Offset Code unit=U0090 blkoff=0400
+  0010:1509 Segment Code unit=U0030 blkoff=0000
+  0010:1509 Offset Code unit=U0090 blkoff=0400
+  0010:1509 Pointer Code unit=U0090 blkoff=0400
+  0010:1509 Pointer Code unit=U0090 blkoff=0600
+--- block 0018 ---
+--- block 0020 ---
+--- block 0028 ---
+--- block 0030 ---
+--- block 0038 ---
+--- block 0040 ---
+--- block 0048 ---
+--- block 0050 ---
+--- block 0058 ---

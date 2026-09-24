@@ -1,0 +1,4 @@
+Var blocks (ofs  size  relocrecs  owner)
+  0000  0012  0000  0000
+  0008  0016  0000  0000
+  0010  0002  0000  0000

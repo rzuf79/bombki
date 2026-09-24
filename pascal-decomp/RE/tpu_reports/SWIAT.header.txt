@@ -1,0 +1,11 @@
+Header report for E:\Develop\Reverse\bombki\SWIAT.TPU
+file_id    : TPUQ
+i4=0000 i6=0000
+ofs_this_unit=00E2  unit name=SWIAT  own_record=00EB
+ofs_hashtable=0060 full_hash=02DE
+ofs_entry_pts=03D8 ofs_code_blocks=0440 ofs_const_blocks=04A0 ofs_var_blocks=04A0
+ofs_dll_list=04A0 ofs_unit_list=04A0 ofs_src_name=04CC ofs_line_count=04DD ofs_line_lengths=04E3
+sym_size=1810 (0x712) browser_size=0 code_size=13303 const_size=0 reloc_size=10864 const_reloc_size=0 var_size=0
+flags=0000 object_type_list=0000 br_defs_end=0000
+file size=26000 layout(sym+browser+code+reloc+const+constreloc)=25977
+code at file offset 1810, reloc at 15113, const at 25977, const_reloc at 25977

@@ -1,0 +1,11 @@
+Header report for E:\Develop\Reverse\bombki\MONSTRA.TPU
+file_id    : TPUQ
+i4=0000 i6=0000
+ofs_this_unit=00E2  unit name=MONSTRA  own_record=00ED
+ofs_hashtable=0060 full_hash=02F7
+ofs_entry_pts=0383 ofs_code_blocks=0393 ofs_const_blocks=039B ofs_var_blocks=039B
+ofs_dll_list=03B3 ofs_unit_list=03B3 ofs_src_name=03D2 ofs_line_count=03E5 ofs_line_lengths=03EB
+sym_size=1057 (0x421) browser_size=0 code_size=1195 const_size=0 reloc_size=800 const_reloc_size=0 var_size=42
+flags=0000 object_type_list=0000 br_defs_end=0000
+file size=3072 layout(sym+browser+code+reloc+const+constreloc)=3052
+code at file offset 1057, reloc at 2252, const at 3052, const_reloc at 3052

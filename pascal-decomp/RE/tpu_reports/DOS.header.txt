@@ -1,0 +1,11 @@
+Header report for tpl_units\DOS.TPU
+file_id    : TPUQ
+i4=0000 i6=0000
+ofs_this_unit=00E2  unit name=Dos  own_record=00E9
+ofs_hashtable=0060 full_hash=0060
+ofs_entry_pts=0EBE ofs_code_blocks=0FCE ofs_const_blocks=1066 ofs_var_blocks=1066
+ofs_dll_list=1076 ofs_unit_list=1076 ofs_src_name=1089 ofs_line_count=11C8 ofs_line_lengths=11CE
+sym_size=4558 (0x11CE) browser_size=0 code_size=1591 const_size=0 reloc_size=160 const_reloc_size=0 var_size=6
+flags=0002 object_type_list=0000 br_defs_end=0000
+file size=4558 layout(sym+browser+code+reloc+const+constreloc)=6309
+code at file offset 4558, reloc at 6149, const at 6309, const_reloc at 6309

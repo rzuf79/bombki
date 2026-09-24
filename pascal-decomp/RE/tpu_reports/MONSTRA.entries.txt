@@ -1,0 +1,6 @@
+Entry records (ofs  code_block:offset  exported  proc)
+  0000  65535 :FFFF  exp=0  
+  0008  0     :022B  exp=0  WSTEP
+
+Proc entry mapping (entry_ofs -> name):
+  0008  WSTEP

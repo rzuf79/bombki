@@ -1,0 +1,13 @@
+import struct,sys
+sys.stdout.reconfigure(encoding="utf-8",errors="replace")
+d=open(r"E:\Develop\Reverse\bombki\BOMBKI.EXE","rb").read()
+(hdr,)=struct.unpack_from("<H",d,8)
+img=d[hdr*16:]
+def pstr(a):
+    n=img[a]
+    if n==0 or a+1+n>=len(img): return None,0
+    try: return img[a+1:a+1+n].decode("cp437"),n
+    except: return None,0
+for off in (0x6d2,0x6d9,0x6ed,0x72d,0x774,0x6f9,0x710,0x724,0x73e,0x75a,0x783,0x79d,0x976,0x9bc,0x9f1,0xa29,0xa55,0xa89,0xacc,0xb10,0xb4f,0xb7f,0xbc8,0xc0d,0xe22,0xe2d,0xe3c,0xe49,0xf3f,0xf4a,0xf59):
+    s,n=pstr(off)
+    print("%04X len%3d  %r"%(off,n,s))

@@ -1,0 +1,65 @@
+ofs,kind,name,private,info1,info2,info3,info4,flags
+226,0x53,Dos,False,sys,,,,
+242,0x53,System,False,sys,,,,
+261,0x4f,FCarry,False,const,type=System.ofs0152,valofs=0113,raw@0113,
+279,0x4f,FParity,False,const,type=System.ofs0152,valofs=0126,raw@0126,
+298,0x4f,FAuxiliary,False,const,type=System.ofs0152,valofs=013C,raw@013C,
+320,0x4f,FZero,False,const,type=System.ofs0152,valofs=014D,raw@014D,
+337,0x4f,FSign,False,const,type=System.ofs0152,valofs=015E,raw@015E,
+354,0x4f,FOverflow,False,const,type=System.ofs0152,valofs=0173,raw@0173,
+375,0x4f,fmClosed,False,const,type=System.ofs0152,valofs=0187,raw@0187,
+395,0x4f,fmInput,False,const,type=System.ofs0152,valofs=019A,raw@019A,
+414,0x4f,fmOutput,False,const,type=System.ofs0152,valofs=01AE,raw@01AE,
+434,0x4f,fmInOut,False,const,type=System.ofs0152,valofs=01C1,raw@01C1,
+453,0x4f,ReadOnly,False,const,type=System.ofs0152,valofs=01D5,raw@01D5,
+473,0x4f,Hidden,False,const,type=System.ofs0152,valofs=01E7,raw@01E7,
+491,0x4f,SysFile,False,const,type=System.ofs0152,valofs=01FA,raw@01FA,
+510,0x4f,VolumeID,False,const,type=System.ofs0152,valofs=020E,raw@020E,
+530,0x4f,Directory,False,const,type=System.ofs0152,valofs=0223,raw@0223,
+551,0x4f,Archive,False,const,type=System.ofs0152,valofs=0236,raw@0236,
+570,0x4f,AnyFile,False,const,type=System.ofs0152,valofs=0249,raw@0249,
+589,0x50,ComStr,False,type,defofs=026F,unit=00E9,string[127],
+639,0x50,PathStr,False,type,defofs=02A2,unit=00E9,string[79],
+690,0x50,DirStr,False,type,defofs=02D4,unit=00E9,string[67],
+740,0x50,NameStr,False,type,defofs=0307,unit=00E9,string[8],
+791,0x50,ExtStr,False,type,defofs=0339,unit=00E9,string[4],
+841,0x50,Registers,False,type,defofs=035A,unit=00E9,Record,
+1189,0x50,FileRec,False,type,defofs=04B4,unit=00E9,Record,
+1460,0x50,TextBuf,False,type,defofs=05D7,unit=00E9,array[Dos.ofs05C3] of System.ofs01CE,
+1511,0x50,TextRec,False,type,defofs=05F6,unit=00E9,Record,
+1937,0x50,SearchRec,False,type,defofs=07A2,unit=00E9,Record,
+2143,0x50,DateTime,False,type,defofs=086F,unit=00E9,Record,
+2293,0x51,DosError,False,var,block=0000,offset=0000,type=System.ofs012A,flags=00
+2316,0x52,DosVersion,False,proc,entryofs=0008,vmt=0,ret=System.ofs013E,code_type=09 obj=00
+2354,0x52,Intr,False,proc,entryofs=0010,vmt=0,ret=?,code_type=09 obj=00
+2396,0x52,MsDos,False,proc,entryofs=0018,vmt=0,ret=?,code_type=09 obj=00
+2434,0x52,GetDate,False,proc,entryofs=0020,vmt=0,ret=?,code_type=09 obj=00
+2489,0x52,SetDate,False,proc,entryofs=0028,vmt=0,ret=?,code_type=09 obj=00
+2539,0x52,GetTime,False,proc,entryofs=0030,vmt=0,ret=?,code_type=09 obj=00
+2594,0x52,SetTime,False,proc,entryofs=0038,vmt=0,ret=?,code_type=09 obj=00
+2649,0x52,GetCBreak,False,proc,entryofs=0040,vmt=0,ret=?,code_type=09 obj=00
+2691,0x52,SetCBreak,False,proc,entryofs=0048,vmt=0,ret=?,code_type=09 obj=00
+2733,0x52,GetVerify,False,proc,entryofs=0050,vmt=0,ret=?,code_type=09 obj=00
+2775,0x52,SetVerify,False,proc,entryofs=0058,vmt=0,ret=?,code_type=09 obj=00
+2817,0x52,DiskFree,False,proc,entryofs=0060,vmt=0,ret=System.ofs0152,code_type=09 obj=00
+2858,0x52,DiskSize,False,proc,entryofs=0068,vmt=0,ret=System.ofs0152,code_type=09 obj=00
+2899,0x52,GetFAttr,False,proc,entryofs=0070,vmt=0,ret=?,code_type=09 obj=00
+2945,0x52,SetFAttr,False,proc,entryofs=0078,vmt=0,ret=?,code_type=09 obj=00
+2991,0x52,GetFTime,False,proc,entryofs=0080,vmt=0,ret=?,code_type=09 obj=00
+3037,0x52,SetFTime,False,proc,entryofs=0088,vmt=0,ret=?,code_type=09 obj=00
+3083,0x52,FindFirst,False,proc,entryofs=0090,vmt=0,ret=?,code_type=09 obj=00
+3135,0x52,FindNext,False,proc,entryofs=0098,vmt=0,ret=?,code_type=09 obj=00
+3176,0x52,UnpackTime,False,proc,entryofs=00A0,vmt=0,ret=?,code_type=09 obj=00
+3224,0x52,PackTime,False,proc,entryofs=00A8,vmt=0,ret=?,code_type=09 obj=00
+3270,0x52,GetIntVec,False,proc,entryofs=00B0,vmt=0,ret=?,code_type=09 obj=00
+3317,0x52,SetIntVec,False,proc,entryofs=00B8,vmt=0,ret=?,code_type=09 obj=00
+3364,0x52,FSearch,False,proc,entryofs=00C0,vmt=0,ret=PathStr,code_type=09 obj=00
+3409,0x52,FExpand,False,proc,entryofs=00C8,vmt=0,ret=PathStr,code_type=09 obj=00
+3449,0x52,FSplit,False,proc,entryofs=00D0,vmt=0,ret=?,code_type=09 obj=00
+3503,0x52,EnvCount,False,proc,entryofs=00D8,vmt=0,ret=System.ofs012A,code_type=09 obj=00
+3539,0x52,EnvStr,False,proc,entryofs=00E0,vmt=0,ret=System.ofs00BA,code_type=09 obj=00
+3578,0x52,GetEnv,False,proc,entryofs=00E8,vmt=0,ret=System.ofs00BA,code_type=09 obj=00
+3617,0x52,SwapVectors,False,proc,entryofs=00F0,vmt=0,ret=?,code_type=09 obj=00
+3656,0x52,Keep,False,proc,entryofs=00F8,vmt=0,ret=?,code_type=09 obj=00
+3693,0x52,Exec,False,proc,entryofs=0100,vmt=0,ret=?,code_type=09 obj=00
+3735,0x52,DosExitCode,False,proc,entryofs=0108,vmt=0,ret=System.ofs013E,code_type=09 obj=00

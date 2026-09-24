@@ -1,0 +1,32 @@
+173BC  31 c0            xor ax, ax
+173BE  a3 ba 01         mov word ptr [0x1ba], ax
+173C1  31 c0            xor ax, ax
+173C3  a3 bc 01         mov word ptr [0x1bc], ax
+173C6  bf a2 07         mov di, 0x7a2
+173C9  1e               push ds
+173CA  57               push di
+173CB  bf ba 3f         mov di, 0x3fba
+173CE  0e               push cs
+173CF  57               push di
+173D0  31 c0            xor ax, ax
+173D2  50               push ax
+173D3  9a 01 07 71 1c   lcall 0x1c71, 0x701
+173D8  a1 b0 01         mov ax, word ptr [0x1b0]
+173DB  99               cdq 
+173DC  52               push dx
+173DD  50               push ax
+173DE  31 c0            xor ax, ax
+173E0  50               push ax
+173E1  9a 89 07 71 1c   lcall 0x1c71, 0x789
+173E6  bf d7 3f         mov di, 0x3fd7
+173E9  0e               push cs
+173EA  57               push di
+173EB  31 c0            xor ax, ax
+173ED  50               push ax
+173EE  9a 01 07 71 1c   lcall 0x1c71, 0x701
+173F3  a1 9c 01         mov ax, word ptr [0x19c]
+173F6  99               cdq 
+173F7  52               push dx
+173F8  50               push ax
+173F9  31 c0            xor ax, ax
+173FB  50               push ax

@@ -1,0 +1,24 @@
+5D90  c7 06 d6 01 0b 00 mov word ptr [0x1d6], 0xb
+5D96  bf 64 05         mov di, 0x564
+5D99  1e               push ds
+5D9A  57               push di
+5D9B  bf 7c 5b         mov di, 0x5b7c
+5D9E  0e               push cs
+5D9F  57               push di
+5DA0  9a d7 09 71 1c   lcall 0x1c71, 0x9d7
+5DA5  74 03            je 0x5daa
+5DA7  e9 53 01         jmp 0x5efd
+5DAA  83 3e 58 00 0c   cmp word ptr [0x58], 0xc
+5DAF  74 03            je 0x5db4
+5DB1  e9 49 01         jmp 0x5efd
+5DB4  c7 06 b0 01 14 00 mov word ptr [0x1b0], 0x14
+5DBA  c7 06 b8 01 03 00 mov word ptr [0x1b8], 3
+5DC0  c7 06 b6 01 03 00 mov word ptr [0x1b6], 3
+5DC6  9a a6 44 9d 12   lcall 0x129d, 0x44a6
+5DCB  83 3e d2 01 00   cmp word ptr [0x1d2], 0
+5DD0  74 03            je 0x5dd5
+5DD2  e9 23 01         jmp 0x5ef8
+5DD5  31 c0            xor ax, ax
+5DD7  a3 58 00         mov word ptr [0x58], ax
+5DDA  b8 0a 00         mov ax, 0xa
+5DDD  50               push ax

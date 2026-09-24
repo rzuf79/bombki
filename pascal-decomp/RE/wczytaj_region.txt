@@ -1,0 +1,564 @@
+2880  0a 7f 03         or bh, byte ptr [bx + 3]
+2883  e9 96 00         jmp 0x291c
+2886  83 3e 94 01 00   cmp word ptr [0x194], 0
+288B  7e 73            jle 0x2900
+288D  83 3e ce 01 55   cmp word ptr [0x1ce], 0x55
+2892  7d 6c            jge 0x2900
+2894  a1 ce 01         mov ax, word ptr [0x1ce]
+2897  03 06 8c 01      add ax, word ptr [0x18c]
+289B  03 06 90 01      add ax, word ptr [0x190]
+289F  2d 05 00         sub ax, 5
+28A2  a3 ce 01         mov word ptr [0x1ce], ax
+28A5  a1 94 01         mov ax, word ptr [0x194]
+28A8  48               dec ax
+28A9  a3 94 01         mov word ptr [0x194], ax
+28AC  bf a2 07         mov di, 0x7a2
+28AF  1e               push ds
+28B0  57               push di
+28B1  bf 1d 22         mov di, 0x221d
+28B4  0e               push cs
+28B5  57               push di
+28B6  31 c0            xor ax, ax
+28B8  50               push ax
+28B9  9a 01 07 71 1c   lcall 0x1c71, 0x701
+28BE  a1 ce 01         mov ax, word ptr [0x1ce]
+28C1  99               cdq 
+28C2  52               push dx
+28C3  50               push ax
+28C4  31 c0            xor ax, ax
+28C6  50               push ax
+28C7  9a 89 07 71 1c   lcall 0x1c71, 0x789
+28CC  bf fe 21         mov di, 0x21fe
+28CF  0e               push cs
+28D0  57               push di
+28D1  31 c0            xor ax, ax
+28D3  50               push ax
+28D4  9a 01 07 71 1c   lcall 0x1c71, 0x701
+28D9  a1 94 01         mov ax, word ptr [0x194]
+28DC  99               cdq 
+28DD  52               push dx
+28DE  50               push ax
+28DF  31 c0            xor ax, ax
+28E1  50               push ax
+28E2  9a 89 07 71 1c   lcall 0x1c71, 0x789
+28E7  bf 06 22         mov di, 0x2206
+28EA  0e               push cs
+28EB  57               push di
+28EC  31 c0            xor ax, ax
+28EE  50               push ax
+28EF  9a 01 07 71 1c   lcall 0x1c71, 0x701
+28F4  9a dd 05 71 1c   lcall 0x1c71, 0x5dd
+28F9  9a 91 02 71 1c   lcall 0x1c71, 0x291
+28FE  eb 1c            jmp 0x291c
+2900  bf a2 07         mov di, 0x7a2
+2903  1e               push ds
+2904  57               push di
+2905  bf 51 22         mov di, 0x2251
+2908  0e               push cs
+2909  57               push di
+290A  31 c0            xor ax, ax
+290C  50               push ax
+290D  9a 01 07 71 1c   lcall 0x1c71, 0x701
+2912  9a dd 05 71 1c   lcall 0x1c71, 0x5dd
+2917  9a 91 02 71 1c   lcall 0x1c71, 0x291
+291C  bf 64 05         mov di, 0x564
+291F  1e               push ds
+2920  57               push di
+2921  bf 86 22         mov di, 0x2286
+2924  0e               push cs
+2925  57               push di
+2926  9a d7 09 71 1c   lcall 0x1c71, 0x9d7
+292B  74 03            je 0x2930
+292D  e9 7d 00         jmp 0x29ad
+2930  83 3e 8c 01 11   cmp word ptr [0x18c], 0x11
+2935  7e 76            jle 0x29ad
+2937  83 3e 78 00 5a   cmp word ptr [0x78], 0x5a
+293C  7d 6f            jge 0x29ad
+293E  83 3e 94 01 00   cmp word ptr [0x194], 0
+2943  7e 68            jle 0x29ad
+2945  a1 8c 01         mov ax, word ptr [0x18c]
+2948  d1 e0            shl ax, 1
+294A  03 06 78 00      add ax, word ptr [0x78]
+294E  2d 03 00         sub ax, 3
+2951  a3 78 00         mov word ptr [0x78], ax
+2954  a1 94 01         mov ax, word ptr [0x194]
+2957  48               dec ax
+2958  a3 94 01         mov word ptr [0x194], ax
+295B  bf a2 07         mov di, 0x7a2
+295E  1e               push ds
+295F  57               push di
+2960  bf 93 22         mov di, 0x2293
+2963  0e               push cs
+2964  57               push di
+2965  31 c0            xor ax, ax
+2967  50               push ax
+2968  9a 01 07 71 1c   lcall 0x1c71, 0x701
+296D  a1 78 00         mov ax, word ptr [0x78]
+2970  99               cdq 
+2971  52               push dx
+2972  50               push ax
+2973  31 c0            xor ax, ax
+2975  50               push ax
+2976  9a 89 07 71 1c   lcall 0x1c71, 0x789
+297B  bf fe 21         mov di, 0x21fe
+297E  0e               push cs
+297F  57               push di
+2980  31 c0            xor ax, ax
+2982  50               push ax
+2983  9a 01 07 71 1c   lcall 0x1c71, 0x701
+2988  a1 94 01         mov ax, word ptr [0x194]
+298B  99               cdq 
+298C  52               push dx
+298D  50               push ax
+298E  31 c0            xor ax, ax
+2990  50               push ax
+2991  9a 89 07 71 1c   lcall 0x1c71, 0x789
+2996  bf 06 22         mov di, 0x2206
+2999  0e               push cs
+299A  57               push di
+299B  31 c0            xor ax, ax
+299D  50               push ax
+299E  9a 01 07 71 1c   lcall 0x1c71, 0x701
+29A3  9a dd 05 71 1c   lcall 0x1c71, 0x5dd
+29A8  9a 91 02 71 1c   lcall 0x1c71, 0x291
+29AD  bf 64 05         mov di, 0x564
+29B0  1e               push ds
+29B1  57               push di
+29B2  bf c8 22         mov di, 0x22c8
+29B5  0e               push cs
+29B6  57               push di
+29B7  9a d7 09 71 1c   lcall 0x1c71, 0x9d7
+29BC  74 03            je 0x29c1
+29BE  e9 89 00         jmp 0x2a4a
+29C1  83 3e 8c 01 0f   cmp word ptr [0x18c], 0xf
+29C6  7f 03            jg 0x29cb
+29C8  e9 7f 00         jmp 0x2a4a
+29CB  83 3e 90 01 0b   cmp word ptr [0x190], 0xb
+29D0  7e 78            jle 0x2a4a
+29D2  83 3e c6 01 5a   cmp word ptr [0x1c6], 0x5a
+29D7  7d 71            jge 0x2a4a
+29D9  83 3e 94 01 00   cmp word ptr [0x194], 0
+29DE  7e 6a            jle 0x2a4a
+29E0  a1 c6 01         mov ax, word ptr [0x1c6]
+29E3  03 06 8c 01      add ax, word ptr [0x18c]
+29E7  03 06 90 01      add ax, word ptr [0x190]
+29EB  2d 0e 00         sub ax, 0xe
+29EE  a3 c6 01         mov word ptr [0x1c6], ax
+29F1  a1 94 01         mov ax, word ptr [0x194]
+29F4  48               dec ax
+29F5  a3 94 01         mov word ptr [0x194], ax
+29F8  bf a2 07         mov di, 0x7a2
+29FB  1e               push ds
+29FC  57               push di
+29FD  bf d8 22         mov di, 0x22d8
+2A00  0e               push cs
+2A01  57               push di
+2A02  31 c0            xor ax, ax
+2A04  50               push ax
+2A05  9a 01 07 71 1c   lcall 0x1c71, 0x701
+2A0A  a1 c6 01         mov ax, word ptr [0x1c6]
+2A0D  99               cdq 
+2A0E  52               push dx
+2A0F  50               push ax
+2A10  31 c0            xor ax, ax
+2A12  50               push ax
+2A13  9a 89 07 71 1c   lcall 0x1c71, 0x789
+2A18  bf fe 21         mov di, 0x21fe
+2A1B  0e               push cs
+2A1C  57               push di
+2A1D  31 c0            xor ax, ax
+2A1F  50               push ax
+2A20  9a 01 07 71 1c   lcall 0x1c71, 0x701
+2A25  a1 94 01         mov ax, word ptr [0x194]
+2A28  99               cdq 
+2A29  52               push dx
+2A2A  50               push ax
+2A2B  31 c0            xor ax, ax
+2A2D  50               push ax
+2A2E  9a 89 07 71 1c   lcall 0x1c71, 0x789
+2A33  bf 06 22         mov di, 0x2206
+2A36  0e               push cs
+2A37  57               push di
+2A38  31 c0            xor ax, ax
+2A3A  50               push ax
+2A3B  9a 01 07 71 1c   lcall 0x1c71, 0x701
+2A40  9a dd 05 71 1c   lcall 0x1c71, 0x5dd
+2A45  9a 91 02 71 1c   lcall 0x1c71, 0x291
+2A4A  bf 64 05         mov di, 0x564
+2A4D  1e               push ds
+2A4E  57               push di
+2A4F  bf 0c 23         mov di, 0x230c
+2A52  0e               push cs
+2A53  57               push di
+2A54  9a d7 09 71 1c   lcall 0x1c71, 0x9d7
+2A59  74 03            je 0x2a5e
+2A5B  e9 89 00         jmp 0x2ae7
+2A5E  83 3e 8c 01 0b   cmp word ptr [0x18c], 0xb
+2A63  7f 03            jg 0x2a68
+2A65  e9 7f 00         jmp 0x2ae7
+2A68  80 3e 5d 02 5a   cmp byte ptr [0x25d], 0x5a
+2A6D  7d 78            jge 0x2ae7
+2A6F  83 3e 94 01 00   cmp word ptr [0x194], 0
+2A74  7e 71            jle 0x2ae7
+2A76  a1 8c 01         mov ax, word ptr [0x18c]
+2A79  8b f0            mov si, ax
+2A7B  d1 e0            shl ax, 1
+2A7D  01 f0            add ax, si
+2A7F  8b d0            mov dx, ax
+2A81  a0 5d 02         mov al, byte ptr [0x25d]
+2A84  98               cwde 
+2A85  03 c2            add ax, dx
+2A87  2d 09 00         sub ax, 9
+2A8A  a2 5d 02         mov byte ptr [0x25d], al
+2A8D  a1 94 01         mov ax, word ptr [0x194]
+2A90  48               dec ax
+2A91  a3 94 01         mov word ptr [0x194], ax
+2A94  bf a2 07         mov di, 0x7a2
+2A97  1e               push ds
+2A98  57               push di
+2A99  bf 1d 23         mov di, 0x231d
+2A9C  0e               push cs
+2A9D  57               push di
+2A9E  31 c0            xor ax, ax
+2AA0  50               push ax
+2AA1  9a 01 07 71 1c   lcall 0x1c71, 0x701
+2AA6  a0 5d 02         mov al, byte ptr [0x25d]
+2AA9  98               cwde 
+2AAA  99               cdq 
+2AAB  52               push dx
+2AAC  50               push ax
+2AAD  31 c0            xor ax, ax
+2AAF  50               push ax
+2AB0  9a 89 07 71 1c   lcall 0x1c71, 0x789
+2AB5  bf fe 21         mov di, 0x21fe
+2AB8  0e               push cs
+2AB9  57               push di
+2ABA  31 c0            xor ax, ax
+2ABC  50               push ax
+2ABD  9a 01 07 71 1c   lcall 0x1c71, 0x701
+2AC2  a1 94 01         mov ax, word ptr [0x194]
+2AC5  99               cdq 
+2AC6  52               push dx
+2AC7  50               push ax
+2AC8  31 c0            xor ax, ax
+2ACA  50               push ax
+2ACB  9a 89 07 71 1c   lcall 0x1c71, 0x789
+2AD0  bf 06 22         mov di, 0x2206
+2AD3  0e               push cs
+2AD4  57               push di
+2AD5  31 c0            xor ax, ax
+2AD7  50               push ax
+2AD8  9a 01 07 71 1c   lcall 0x1c71, 0x701
+2ADD  9a dd 05 71 1c   lcall 0x1c71, 0x5dd
+2AE2  9a 91 02 71 1c   lcall 0x1c71, 0x291
+2AE7  bf 64 05         mov di, 0x564
+2AEA  1e               push ds
+2AEB  57               push di
+2AEC  bf 54 23         mov di, 0x2354
+2AEF  0e               push cs
+2AF0  57               push di
+2AF1  9a d7 09 71 1c   lcall 0x1c71, 0x9d7
+2AF6  75 7b            jne 0x2b73
+2AF8  83 3e 8c 01 12   cmp word ptr [0x18c], 0x12
+2AFD  7e 74            jle 0x2b73
+2AFF  80 3e 58 02 5a   cmp byte ptr [0x258], 0x5a
+2B04  7d 6d            jge 0x2b73
+2B06  83 3e 94 01 00   cmp word ptr [0x194], 0
+2B0B  7e 66            jle 0x2b73
+2B0D  a0 58 02         mov al, byte ptr [0x258]
+2B10  98               cwde 
+2B11  03 06 8c 01      add ax, word ptr [0x18c]
+2B15  40               inc ax
+2B16  a2 58 02         mov byte ptr [0x258], al
+2B19  a1 94 01         mov ax, word ptr [0x194]
+2B1C  48               dec ax
+2B1D  a3 94 01         mov word ptr [0x194], ax
+2B20  bf a2 07         mov di, 0x7a2
+2B23  1e               push ds
+2B24  57               push di
+2B25  bf 63 23         mov di, 0x2363
+2B28  0e               push cs
+2B29  57               push di
+2B2A  31 c0            xor ax, ax
+2B2C  50               push ax
+2B2D  9a 01 07 71 1c   lcall 0x1c71, 0x701
+2B32  a0 58 02         mov al, byte ptr [0x258]
+2B35  98               cwde 
+2B36  99               cdq 
+2B37  52               push dx
+2B38  50               push ax
+2B39  31 c0            xor ax, ax
+2B3B  50               push ax
+2B3C  9a 89 07 71 1c   lcall 0x1c71, 0x789
+2B41  bf fe 21         mov di, 0x21fe
+2B44  0e               push cs
+2B45  57               push di
+2B46  31 c0            xor ax, ax
+2B48  50               push ax
+2B49  9a 01 07 71 1c   lcall 0x1c71, 0x701
+2B4E  a1 94 01         mov ax, word ptr [0x194]
+2B51  99               cdq 
+2B52  52               push dx
+2B53  50               push ax
+2B54  31 c0            xor ax, ax
+2B56  50               push ax
+2B57  9a 89 07 71 1c   lcall 0x1c71, 0x789
+2B5C  bf 06 22         mov di, 0x2206
+2B5F  0e               push cs
+2B60  57               push di
+2B61  31 c0            xor ax, ax
+2B63  50               push ax
+2B64  9a 01 07 71 1c   lcall 0x1c71, 0x701
+2B69  9a dd 05 71 1c   lcall 0x1c71, 0x5dd
+2B6E  9a 91 02 71 1c   lcall 0x1c71, 0x291
+2B73  5d               pop bp
+2B74  c3               ret 
+2B75  02 4a 41         add cl, byte ptr [bp + si + 0x41]
+2B78  1e               push ds
+2B79  41               inc cx
+2B7A  4c               dec sp
+2B7B  4c               dec sp
+2B7C  20 52 49         and byte ptr [bp + si + 0x49], dl
+2B7F  47               inc di
+2B80  48               dec ax
+2B81  54               push sp
+2B82  20 21            and byte ptr [bx + di], ah
+2B84  21 21            and word ptr [bx + di], sp
+2B86  20 47 52         and byte ptr [bx + 0x52], al
+2B89  41               inc cx
+2B8A  20 5a 41         and byte ptr [bp + si + 0x41], bl
+2B8D  50               push ax
+2B8E  49               dec cx
+2B8F  53               push bx
+2B90  41               inc cx
+2B91  4e               dec si
+2B92  41               inc cx
+2B93  21 20            and word ptr [bx + si], sp
+2B95  3b 29            cmp bp, word ptr [bx + di]
+2B97  09 70 6c         or word ptr [bx + si + 0x6c], si
+2B9A  69 6b 69 2e 74   imul bp, word ptr [bp + di + 0x69], 0x742e
+2B9F  70 75            jo 0x2c16
+2BA1  55               push bp
+2BA2  89 e5            mov bp, sp
+2BA4  31 c0            xor ax, ax
+2BA6  9a cd 02 71 1c   lcall 0x1c71, 0x2cd
+2BAB  bf 75 2b         mov di, 0x2b75
+2BAE  0e               push cs
+2BAF  57               push di
+2BB0  bf 64 05         mov di, 0x564
+2BB3  1e               push ds
+2BB4  57               push di
+2BB5  b8 ff 00         mov ax, 0xff
+2BB8  50               push ax
+2BB9  9a 00 09 71 1c   lcall 0x1c71, 0x900
+2BBE  c7 06 56 00 01 00 mov word ptr [0x56], 1
+2BC4  bf a2 07         mov di, 0x7a2
+2BC7  1e               push ds
+2BC8  57               push di
+2BC9  bf 78 2b         mov di, 0x2b78
+2BCC  0e               push cs
+2BCD  57               push di
+2BCE  31 c0            xor ax, ax
+2BD0  50               push ax
+2BD1  9a 01 07 71 1c   lcall 0x1c71, 0x701
+2BD6  9a dd 05 71 1c   lcall 0x1c71, 0x5dd
+2BDB  9a 91 02 71 1c   lcall 0x1c71, 0x291
+2BE0  9a 63 92 9d 12   lcall 0x129d, 0x9263
+2BE5  9a cc 01 0f 1c   lcall 0x1c0f, 0x1cc
+2BEA  bf 7e 00         mov di, 0x7e
+2BED  1e               push ds
+2BEE  57               push di
+2BEF  bf 97 2b         mov di, 0x2b97
+2BF2  0e               push cs
+2BF3  57               push di
+2BF4  9a e6 02 71 1c   lcall 0x1c71, 0x2e6
+2BF9  bf 7e 00         mov di, 0x7e
+2BFC  1e               push ds
+2BFD  57               push di
+2BFE  9a 69 03 71 1c   lcall 0x1c71, 0x369
+2C03  9a 91 02 71 1c   lcall 0x1c71, 0x291
+2C08  bf 7e 00         mov di, 0x7e
+2C0B  1e               push ds
+2C0C  57               push di
+2C0D  a1 ac 01         mov ax, word ptr [0x1ac]
+2C10  d1 e0            shl ax, 1
+2C12  d1 e0            shl ax, 1
+2C14  99               cdq 
+2C15  52               push dx
+2C16  50               push ax
+2C17  31 c0            xor ax, ax
+2C19  50               push ax
+2C1A  9a 89 07 71 1c   lcall 0x1c71, 0x789
+2C1F  9a dd 05 71 1c   lcall 0x1c71, 0x5dd
+2C24  9a 91 02 71 1c   lcall 0x1c71, 0x291
+2C29  bf 7e 00         mov di, 0x7e
+2C2C  1e               push ds
+2C2D  57               push di
+2C2E  a0 5c 02         mov al, byte ptr [0x25c]
+2C31  98               cwde 
+2C32  05 17 00         add ax, 0x17
+2C35  99               cdq 
+2C36  52               push dx
+2C37  50               push ax
+2C38  31 c0            xor ax, ax
+2C3A  50               push ax
+2C3B  9a 89 07 71 1c   lcall 0x1c71, 0x789
+2C40  9a dd 05 71 1c   lcall 0x1c71, 0x5dd
+2C45  9a 91 02 71 1c   lcall 0x1c71, 0x291
+2C4A  bf 7e 00         mov di, 0x7e
+2C4D  1e               push ds
+2C4E  57               push di
+2C4F  a1 7e 01         mov ax, word ptr [0x17e]
+2C52  99               cdq 
+2C53  52               push dx
+2C54  50               push ax
+2C55  31 c0            xor ax, ax
+2C57  50               push ax
+2C58  9a 89 07 71 1c   lcall 0x1c71, 0x789
+2C5D  9a dd 05 71 1c   lcall 0x1c71, 0x5dd
+2C62  9a 91 02 71 1c   lcall 0x1c71, 0x291
+2C67  bf 7e 00         mov di, 0x7e
+2C6A  1e               push ds
+2C6B  57               push di
+2C6C  a1 8a 01         mov ax, word ptr [0x18a]
+2C6F  99               cdq 
+2C70  52               push dx
+2C71  50               push ax
+2C72  31 c0            xor ax, ax
+2C74  50               push ax
+2C75  9a 89 07 71 1c   lcall 0x1c71, 0x789
+2C7A  9a dd 05 71 1c   lcall 0x1c71, 0x5dd
+2C7F  9a 91 02 71 1c   lcall 0x1c71, 0x291
+2C84  bf 7e 00         mov di, 0x7e
+2C87  1e               push ds
+2C88  57               push di
+2C89  a1 88 01         mov ax, word ptr [0x188]
+2C8C  99               cdq 
+2C8D  52               push dx
+2C8E  50               push ax
+2C8F  31 c0            xor ax, ax
+2C91  50               push ax
+2C92  9a 89 07 71 1c   lcall 0x1c71, 0x789
+2C97  9a dd 05 71 1c   lcall 0x1c71, 0x5dd
+2C9C  9a 91 02 71 1c   lcall 0x1c71, 0x291
+2CA1  bf 7e 00         mov di, 0x7e
+2CA4  1e               push ds
+2CA5  57               push di
+2CA6  a1 84 01         mov ax, word ptr [0x184]
+2CA9  99               cdq 
+2CAA  52               push dx
+2CAB  50               push ax
+2CAC  31 c0            xor ax, ax
+2CAE  50               push ax
+2CAF  9a 89 07 71 1c   lcall 0x1c71, 0x789
+2CB4  9a dd 05 71 1c   lcall 0x1c71, 0x5dd
+2CB9  9a 91 02 71 1c   lcall 0x1c71, 0x291
+2CBE  bf 7e 00         mov di, 0x7e
+2CC1  1e               push ds
+2CC2  57               push di
+2CC3  a1 22 02         mov ax, word ptr [0x222]
+2CC6  99               cdq 
+2CC7  52               push dx
+2CC8  50               push ax
+2CC9  31 c0            xor ax, ax
+2CCB  50               push ax
+2CCC  9a 89 07 71 1c   lcall 0x1c71, 0x789
+2CD1  9a dd 05 71 1c   lcall 0x1c71, 0x5dd
+2CD6  9a 91 02 71 1c   lcall 0x1c71, 0x291
+2CDB  bf 7e 00         mov di, 0x7e
+2CDE  1e               push ds
+2CDF  57               push di
+2CE0  a1 d4 01         mov ax, word ptr [0x1d4]
+2CE3  99               cdq 
+2CE4  52               push dx
+2CE5  50               push ax
+2CE6  31 c0            xor ax, ax
+2CE8  50               push ax
+2CE9  9a 89 07 71 1c   lcall 0x1c71, 0x789
+2CEE  9a dd 05 71 1c   lcall 0x1c71, 0x5dd
+2CF3  9a 91 02 71 1c   lcall 0x1c71, 0x291
+2CF8  bf 7e 00         mov di, 0x7e
+2CFB  1e               push ds
+2CFC  57               push di
+2CFD  a1 9c 01         mov ax, word ptr [0x19c]
+2D00  05 28 00         add ax, 0x28
+2D03  d1 e0            shl ax, 1
+2D05  d1 e0            shl ax, 1
+2D07  99               cdq 
+2D08  52               push dx
+2D09  50               push ax
+2D0A  31 c0            xor ax, ax
+2D0C  50               push ax
+2D0D  9a 89 07 71 1c   lcall 0x1c71, 0x789
+2D12  9a dd 05 71 1c   lcall 0x1c71, 0x5dd
+2D17  9a 91 02 71 1c   lcall 0x1c71, 0x291
+2D1C  bf 7e 00         mov di, 0x7e
+2D1F  1e               push ds
+2D20  57               push di
+2D21  a1 80 01         mov ax, word ptr [0x180]
+2D24  99               cdq 
+2D25  52               push dx
+2D26  50               push ax
+2D27  31 c0            xor ax, ax
+2D29  50               push ax
+2D2A  9a 89 07 71 1c   lcall 0x1c71, 0x789
+2D2F  9a dd 05 71 1c   lcall 0x1c71, 0x5dd
+2D34  9a 91 02 71 1c   lcall 0x1c71, 0x291
+2D39  bf 7e 00         mov di, 0x7e
+2D3C  1e               push ds
+2D3D  57               push di
+2D3E  a1 90 01         mov ax, word ptr [0x190]
+2D41  05 0c 00         add ax, 0xc
+2D44  99               cdq 
+2D45  52               push dx
+2D46  50               push ax
+2D47  31 c0            xor ax, ax
+2D49  50               push ax
+2D4A  9a 89 07 71 1c   lcall 0x1c71, 0x789
+2D4F  9a dd 05 71 1c   lcall 0x1c71, 0x5dd
+2D54  9a 91 02 71 1c   lcall 0x1c71, 0x291
+2D59  bf 7e 00         mov di, 0x7e
+2D5C  1e               push ds
+2D5D  57               push di
+2D5E  a1 8e 01         mov ax, word ptr [0x18e]
+2D61  2d 18 00         sub ax, 0x18
+2D64  99               cdq 
+2D65  52               push dx
+2D66  50               push ax
+2D67  31 c0            xor ax, ax
+2D69  50               push ax
+2D6A  9a 89 07 71 1c   lcall 0x1c71, 0x789
+2D6F  9a dd 05 71 1c   lcall 0x1c71, 0x5dd
+2D74  9a 91 02 71 1c   lcall 0x1c71, 0x291
+2D79  bf 7e 00         mov di, 0x7e
+2D7C  1e               push ds
+2D7D  57               push di
+2D7E  a1 8c 01         mov ax, word ptr [0x18c]
+2D81  99               cdq 
+2D82  52               push dx
+2D83  50               push ax
+2D84  31 c0            xor ax, ax
+2D86  50               push ax
+2D87  9a 89 07 71 1c   lcall 0x1c71, 0x789
+2D8C  9a dd 05 71 1c   lcall 0x1c71, 0x5dd
+2D91  9a 91 02 71 1c   lcall 0x1c71, 0x291
+2D96  bf 7e 00         mov di, 0x7e
+2D99  1e               push ds
+2D9A  57               push di
+2D9B  a1 94 01         mov ax, word ptr [0x194]
+2D9E  99               cdq 
+2D9F  52               push dx
+2DA0  50               push ax
+2DA1  31 c0            xor ax, ax
+2DA3  50               push ax
+2DA4  9a 89 07 71 1c   lcall 0x1c71, 0x789
+2DA9  9a dd 05 71 1c   lcall 0x1c71, 0x5dd
+2DAE  9a 91 02 71 1c   lcall 0x1c71, 0x291
+2DB3  bf 7e 00         mov di, 0x7e
+2DB6  1e               push ds
+2DB7  57               push di
+2DB8  a1 6c 00         mov ax, word ptr [0x6c]
+2DBB  99               cdq 
+2DBC  52               push dx
+2DBD  50               push ax
+2DBE  31 c0            xor ax, ax
