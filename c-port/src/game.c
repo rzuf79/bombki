@@ -677,18 +677,18 @@ static void improve_level_twelve_maxima(GameState *state, GameOutput output)
         add_clamped(&state->maximum_strength, 1);
         add_clamped(&state->maximum_wisdom, 1);
     }
-    if (state->maximum_dexterity > state->maximum_strength
-        && state->maximum_dexterity == state->maximum_wisdom) {
-        add_clamped(&state->maximum_wisdom, 2);
+    if (state->maximum_dexterity > state->maximum_wisdom
+        && state->maximum_dexterity == state->maximum_strength) {
+        add_clamped(&state->maximum_strength, 2);
         add_clamped(&state->maximum_dexterity, 1);
     }
 
     emit_formatted(output, "%s MASZ TERAZ %d MAXYMALNIE SILY %s\n",
-        level_marker, state->maximum_wisdom, level_marker);
+        level_marker, state->maximum_strength, level_marker);
     emit_formatted(output, "%s MASZ TERAZ %d MAXYMALNIE ZRECZNOSCI %s\n",
         level_marker, state->maximum_dexterity, level_marker);
     emit_formatted(output, "%s MASZ TERAZ %d MAXYMALNIE MADROSCI %s\n",
-        level_marker, state->maximum_strength, level_marker);
+        level_marker, state->maximum_wisdom, level_marker);
 }
 
 static void try_level_up(GameState *state, GameOutput output)
@@ -710,11 +710,11 @@ static void try_level_up(GameState *state, GameOutput output)
     }
     add_clamped(&state->experience, -level_cost(state->level));
 
-    if (state->strength < 11) {
+    if (state->wisdom < 11) {
         practice_gain = 3;
-    } else if (state->strength < 16) {
+    } else if (state->wisdom < 16) {
         practice_gain = 4;
-    } else if (state->strength < 23) {
+    } else if (state->wisdom < 23) {
         practice_gain = 5;
     } else {
         practice_gain = 6;
@@ -732,7 +732,7 @@ static void try_level_up(GameState *state, GameOutput output)
     if (state->dexterity > 21) {
         ++energy_gain;
     }
-    if (state->dexterity > 26 && state->wisdom > 20) {
+    if (state->dexterity > 26 && state->strength > 20) {
         ++energy_gain;
     }
     add_clamped(&state->maximum_energy, energy_gain);
@@ -741,9 +741,9 @@ static void try_level_up(GameState *state, GameOutput output)
         state->maximum_energy
     );
 
-    mana_gain = state->strength > INT_MAX - 2
+    mana_gain = state->wisdom > INT_MAX - 2
         ? INT_MAX
-        : state->strength + 2;
+        : state->wisdom + 2;
     add_clamped(&state->maximum_mana, mana_gain);
     emit_formatted(output,
         "<<<<<<<<<<<<<<ZYSKALES %dMANY >>>>>>>>>>>>>>>>>\n",
@@ -897,40 +897,40 @@ static void describe_skill_poster(const GameState *state, GameOutput output)
         "NA PLAKACIE PISZE:\n"
         "MOZESZ CWICZYC UZYWAJAC KOMENDY CWICZ RAZEM Z \n"
     );
-    if (state->strength < 11) {
+    if (state->wisdom < 11) {
         emit(output, "Z NICZYM BO MASZ ZA MALA MADROSC\n");
     }
-    if (state->strength > 10 && state->wisdom > 11) {
+    if (state->wisdom > 10 && state->strength > 11) {
         emit(output, "KOPAC - KOMENDA:KOP \n");
     }
-    if (state->strength > 10 && state->dexterity > 10) {
+    if (state->wisdom > 10 && state->dexterity > 10) {
         emit(output, "UCIEKAC - KOMENDA : ZWIEJ \n");
     }
-    if (state->strength > 15 && state->dexterity > 11) {
+    if (state->wisdom > 15 && state->dexterity > 11) {
         emit(output, "PAROWANIE - SAMOCZYNNIE \n");
     }
-    if (state->strength > 11) {
+    if (state->wisdom > 11) {
         emit(output, "POROWNANIE-KOMEDA POROWNAJ\n");
     }
-    if (state->strength > 18) {
+    if (state->wisdom > 18) {
         emit(output, "POTRAWKI-SAMOCZYNNIE , PO WALCE\n");
     }
-    if (state->strength > 17) {
+    if (state->wisdom > 17) {
         emit(output, "POWROT-KOMEDA POWROT\n");
     }
     if (state->dexterity > 20) {
         emit(output, "ZRECZNE RECE - KOMENDA : RECE\n");
     }
-    if (state->wisdom > 20 && state->dexterity > 10) {
+    if (state->strength > 20 && state->dexterity > 10) {
         emit(output, "KRZEPA : SAMOCZYNNIE\n");
     }
-    if (state->strength > 19 && state->dexterity > 10 && state->wisdom > 10) {
+    if (state->wisdom > 19 && state->dexterity > 10 && state->strength > 10) {
         emit(output, "TARGOWANIE SIE : SAMOCZYNNIE\n");
     }
-    if (state->wisdom > 25 && state->strength > 12) {
+    if (state->strength > 25 && state->wisdom > 12) {
         emit(output, "WIROWANIE - SAMOCZYNNIE \n");
     }
-    if (state->wisdom > 29 && state->strength > 14) {
+    if (state->strength > 29 && state->wisdom > 14) {
         emit(output, "FATALITY - SAMOCZYNNIE \n");
     }
     if (state->dexterity > 22) {
@@ -939,37 +939,37 @@ static void describe_skill_poster(const GameState *state, GameOutput output)
     if (state->dexterity > 28) {
         emit(output, "SUPER COMBO - SAMOCZYNNIE \n");
     }
-    if (state->strength > 22) {
+    if (state->wisdom > 22) {
         emit(output, "TRUCIZNA - SAMOCZYNNIE\n");
     }
-    if (state->strength > 23) {
+    if (state->wisdom > 23) {
         emit(output, "UZDRAWIANIE - KOMENDA UZDROW\n");
     }
-    if (state->dexterity > 24 && state->strength > 14 && state->wisdom > 14) {
+    if (state->dexterity > 24 && state->wisdom > 14 && state->strength > 14) {
         emit(output, "MOCNY SEN - SAMOCZYNNIE \n");
     }
-    if (state->strength > 24) {
+    if (state->wisdom > 24) {
         emit(output, "OSLEPIANIE  - KOMEDA OSLEP \n");
     }
-    if (state->strength > 26) {
+    if (state->wisdom > 26) {
         emit(output, "NEKROMANCJA - SAMOCZYNNIE \n");
     }
-    if (state->wisdom > 12 && state->strength > 19 && state->dexterity > 12) {
+    if (state->strength > 12 && state->wisdom > 19 && state->dexterity > 12) {
         emit(output, "SZAL - KOMEDNA SZAL\n");
     }
-    if (state->dexterity > 22 && state->strength > 16) {
+    if (state->dexterity > 22 && state->wisdom > 16) {
         emit(output, "SIATKA - KOMENDA SIATKA\n");
     }
     if (state->dexterity > 30) {
         emit(output, "CIOS W PLECY - KOMENDA CIOS W (COS)\n");
     }
-    if (state->strength > 29) {
+    if (state->wisdom > 29) {
         emit(output, "ROZPALANIE OGNISKA - KOMENDA ROZPAL\n");
     }
-    if (state->strength > 19) {
+    if (state->wisdom > 19) {
         emit(output, "HIPER SPEED - KOMENDA SPEED\n");
     }
-    if (state->strength > 23 && state->dexterity > 12) {
+    if (state->wisdom > 23 && state->dexterity > 12) {
         emit(output, "PIECZENIE - KOMENDA PIECZ\n");
     }
     emit(output,
@@ -2544,7 +2544,7 @@ static bool practice_fleeing(GameState *state, GameOutput output)
 {
     int64_t improved;
 
-    if (state->strength <= 10
+    if (state->wisdom <= 10
         || state->dexterity <= 10
         || state->practices <= 0
         || state->flee_skill >= 85) {
@@ -2555,7 +2555,7 @@ static bool practice_fleeing(GameState *state, GameOutput output)
     }
 
     improved = (int64_t)state->flee_skill
-        + state->strength
+        + state->wisdom
         + state->dexterity
         - 5;
     state->flee_skill = improved > INT_MAX ? INT_MAX : (int)improved;
@@ -2572,13 +2572,13 @@ static bool practice_kicking(GameState *state, GameOutput output)
 {
     int64_t improved;
 
-    if (state->strength <= 10
-        || state->dexterity <= 11
+    if (state->wisdom <= 10
+        || state->strength <= 11
         || state->practices <= 0) {
         return false;
     }
 
-    improved = (int64_t)state->kick_skill + state->strength;
+    improved = (int64_t)state->kick_skill + state->wisdom;
     state->kick_skill = improved > INT_MAX ? INT_MAX : (int)improved;
     --state->practices;
     emit_formatted(output,
@@ -2593,14 +2593,14 @@ static bool practice_comparison(GameState *state, GameOutput output)
 {
     int64_t improved;
 
-    if (state->strength <= 11
+    if (state->wisdom <= 11
         || state->comparison_skill >= 90
         || state->practices <= 0) {
         return false;
     }
 
     improved = (int64_t)state->comparison_skill
-        + 3 * (int64_t)state->strength
+        + 3 * (int64_t)state->wisdom
         - 9;
     state->comparison_skill = improved > INT_MAX ? INT_MAX : (int)improved;
     --state->practices;
@@ -2616,7 +2616,7 @@ static bool practice_parrying(GameState *state, GameOutput output)
 {
     int64_t improved;
 
-    if (state->strength <= 15
+    if (state->wisdom <= 15
         || state->dexterity <= 11
         || state->parry_skill >= 90
         || state->practices <= 0) {
@@ -2624,7 +2624,7 @@ static bool practice_parrying(GameState *state, GameOutput output)
     }
 
     improved = (int64_t)state->parry_skill
-        + state->strength
+        + state->wisdom
         + state->dexterity
         - 14;
     state->parry_skill = improved > INT_MAX ? INT_MAX : (int)improved;
@@ -2641,13 +2641,13 @@ static bool practice_cooking(GameState *state, GameOutput output)
 {
     int64_t improved;
 
-    if (state->strength <= 18
+    if (state->wisdom <= 18
         || state->cooking_skill >= 90
         || state->practices <= 0) {
         return false;
     }
 
-    improved = (int64_t)state->cooking_skill + state->strength + 1;
+    improved = (int64_t)state->cooking_skill + state->wisdom + 1;
     state->cooking_skill = improved > INT_MAX ? INT_MAX : (int)improved;
     --state->practices;
     emit_formatted(output,
@@ -2662,14 +2662,14 @@ static bool practice_returning(GameState *state, GameOutput output)
 {
     int64_t improved;
 
-    if (state->strength <= 17
+    if (state->wisdom <= 17
         || state->return_skill >= 90
         || state->practices <= 0) {
         return false;
     }
 
     improved = (int64_t)state->return_skill
-        + 2 * (int64_t)state->strength
+        + 2 * (int64_t)state->wisdom
         - 3;
     state->return_skill = improved > INT_MAX ? INT_MAX : (int)improved;
     --state->practices;
@@ -2842,16 +2842,16 @@ static void wake_from_sleep(GameState *state, GameOutput output)
     if (hours > 4) {
         emit_formatted(output,
             "DLUGI SEN DODATKOWO POZWOLIL CI ODPOCZAC : ZYSKALES %dENERGI\n",
-            state->strength
+            state->wisdom
         );
-        add_clamped(&state->energy, state->strength);
+        add_clamped(&state->energy, state->wisdom);
     }
     if (hours > 8) {
         emit_formatted(output,
             "PELNOWARTOSCIOWY SEN SPOWODOWAL SUPER ZYSK : %lldENERGI\n",
-            (long long)(2 * (int64_t)state->strength)
+            (long long)(2 * (int64_t)state->wisdom)
         );
-        add_clamped(&state->energy, 2 * (int64_t)state->strength);
+        add_clamped(&state->energy, 2 * (int64_t)state->wisdom);
     }
     if (state->energy > state->maximum_energy) {
         state->energy = state->maximum_energy;
@@ -3727,9 +3727,9 @@ static void describe_status(const GameState *state, GameOutput output)
     }
     emit_formatted(output,
         "TWOJE PARAMETRY : SILA - %d/%d ZRECZNOSC - %d/%d MADROSC - %d/%d\n",
-        state->wisdom, state->maximum_wisdom,
+        state->strength, state->maximum_strength,
         state->dexterity, state->maximum_dexterity,
-        state->strength, state->maximum_strength);
+        state->wisdom, state->maximum_wisdom);
     emit_formatted(output, "S.Z-%d                    FUKSROLL-%d\n",
         protection, luck);
     emit_formatted(output, "MASZ %d/%d MANY\n", state->mana, state->maximum_mana);
