@@ -1,0 +1,35 @@
+{
+  "header_bytes": 21216,
+  "header_bytes_hex": "0x052e0",
+  "linked_unit_segments": {
+    "MONSTRA.TPU": 7108,
+    "PRZEDM.TPU": 4765,
+    "SWIAT.TPU": 3933
+  },
+  "logical_segments": [
+    0,
+    3933,
+    4765,
+    7108,
+    7183,
+    7281
+  ],
+  "relocation_count": 5295,
+  "relocation_table_offset": 28,
+  "source_segments": [
+    0,
+    3933,
+    4765,
+    7108,
+    7183,
+    7281
+  ],
+  "target_segments": [
+    3933,
+    4765,
+    7108,
+    7183,
+    7281,
+    7497
+  ]
+}

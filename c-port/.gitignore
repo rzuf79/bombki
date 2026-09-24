@@ -1,0 +1,7 @@
+/build/
+/build-*/
+/bombki.sav
+*.swp
+*.tmp
+__pycache__/
+*.py[cod]

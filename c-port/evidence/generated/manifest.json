@@ -1,0 +1,48 @@
+{
+  "artifacts": [
+    {
+      "description": "16-bit DOS MZ executable",
+      "name": "BOMBKI.EXE",
+      "sha256": "6afe6910cb6624ace1c38827e33df63fc3e55e1a69a97080a180a5e394c0f176",
+      "size": 141264
+    },
+    {
+      "description": "Windows Program Information File",
+      "name": "BOMBKI.PIF",
+      "sha256": "69b4943cd65f7ebf27f6e594ffbf98611862c75371d9f4fbd2320d485cace20d",
+      "size": 967
+    },
+    {
+      "description": "CP852 text with CRLF line endings",
+      "name": "CZYTAJ.TXT",
+      "sha256": "8c0045c7a2265ed022ea5cacdceb520abb7d6c4a5e234a442ddc1b8b03bcc37e",
+      "size": 1856
+    },
+    {
+      "description": "Borland Pascal 7 TPUQ compiled unit",
+      "name": "MONSTRA.TPU",
+      "sha256": "ffc02180b11b9198e19f4b5c92f4ff8ab47872d02e99c6b53129c9f1b60c1228",
+      "size": 3072
+    },
+    {
+      "description": "ASCII line-oriented game state",
+      "name": "PLIKI.TPU",
+      "sha256": "ae54c5f306b663e5af394b2f387305b3ca957b0f194ebb46839b8b1333781313",
+      "size": 320
+    },
+    {
+      "description": "Borland Pascal 7 TPUQ compiled unit",
+      "name": "PRZEDM.TPU",
+      "sha256": "e5a56c851cafa943dd57cb6324f3cbabc735fea83a6b2427d4e3bcebb742a0e7",
+      "size": 80128
+    },
+    {
+      "description": "Borland Pascal 7 TPUQ compiled unit",
+      "name": "SWIAT.TPU",
+      "sha256": "fa10ec7352e0a287793ec5a7919f1667984776086648bba421ffe19823d65961",
+      "size": 26000
+    }
+  ],
+  "schema": 1,
+  "scope": "Every regular file in the original-artifact directory"
+}
