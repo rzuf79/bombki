@@ -40,16 +40,18 @@ level cost by current POZIOM:
 on level advancement:
     print the recovered level banner four times
     subtract the current level cost from KUNSZT
-    add 3/4/5/6 practices for SIL < 11 / < 16 / < 23 / otherwise
+    add 3/4/5/6 practices for MADROSC < 11 / 11..15 / 16..22 / >= 23
     add 10 maximum energy, or 11 when ZRE > 12
     add another 1 for each satisfied gate: ZRE > 16, ZRE > 21,
-        and ZRE > 26 together with MAD > 20
-    add SIL + 2 maximum mana
+        and ZRE > 26 together with SIL > 20
+    add MAD + 2 maximum mana
     POZIOM := POZIOM + 1
 ```
 
 The level-one threshold/cost mismatch is present in the executable and is
-retained. At level 12 the executable adjusts the three maximum attributes,
-emits fourteen raw STX bytes around each result, and labels maximum wisdom as
-strength and maximum strength as wisdom. Those display quirks are also
-retained exactly.
+retained. At level 12 the executable adjusts the three maximum attributes
+(each boosted +3 when the matching current stat is at its cap, otherwise +2,
+followed by a rebalancing pass), emits fourteen raw STX bytes around each
+result, and displays each maximum under its matching Polish label
+(MAXYMALNIE SILY / MAXYMALNIE ZRECZNOSCI / MAXYMALNIE MADROSCI). The STX
+display bytes are retained exactly.
