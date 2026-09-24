@@ -164,26 +164,26 @@ It is not reconstructed source code.
 0db53  2bc2                 sub ax, dx                        
 0db55  2ddf02               sub ax, 0x2df                     
 0db58  a3d401               mov word ptr [0x1d4], ax           ; data PRZEDM.KUNSZT
-0db5b  833e8c010b           cmp word ptr [0x18c], 0xb          ; data PRZEDM.SIL
+0db5b  833e8c010b           cmp word ptr [0x18c], 0xb          ; data PRZEDM.MAD
 0db60  7d09                 jge 0xdb6b                        
 0db62  a19401               mov ax, word ptr [0x194]           ; data PRZEDM.PRA
 0db65  050300               add ax, 3                         
 0db68  a39401               mov word ptr [0x194], ax           ; data PRZEDM.PRA
-0db6b  833e8c010a           cmp word ptr [0x18c], 0xa          ; data PRZEDM.SIL
+0db6b  833e8c010a           cmp word ptr [0x18c], 0xa          ; data PRZEDM.MAD
 0db70  7e10                 jle 0xdb82                        
-0db72  833e8c0110           cmp word ptr [0x18c], 0x10         ; data PRZEDM.SIL
+0db72  833e8c0110           cmp word ptr [0x18c], 0x10         ; data PRZEDM.MAD
 0db77  7d09                 jge 0xdb82                        
 0db79  a19401               mov ax, word ptr [0x194]           ; data PRZEDM.PRA
 0db7c  050400               add ax, 4                         
 0db7f  a39401               mov word ptr [0x194], ax           ; data PRZEDM.PRA
-0db82  833e8c010f           cmp word ptr [0x18c], 0xf          ; data PRZEDM.SIL
+0db82  833e8c010f           cmp word ptr [0x18c], 0xf          ; data PRZEDM.MAD
 0db87  7e10                 jle 0xdb99                        
-0db89  833e8c0117           cmp word ptr [0x18c], 0x17         ; data PRZEDM.SIL
+0db89  833e8c0117           cmp word ptr [0x18c], 0x17         ; data PRZEDM.MAD
 0db8e  7d09                 jge 0xdb99                        
 0db90  a19401               mov ax, word ptr [0x194]           ; data PRZEDM.PRA
 0db93  050500               add ax, 5                         
 0db96  a39401               mov word ptr [0x194], ax           ; data PRZEDM.PRA
-0db99  833e8c0116           cmp word ptr [0x18c], 0x16         ; data PRZEDM.SIL
+0db99  833e8c0116           cmp word ptr [0x18c], 0x16         ; data PRZEDM.MAD
 0db9e  7e09                 jle 0xdba9                        
 0dba0  a19401               mov ax, word ptr [0x194]           ; data PRZEDM.PRA
 0dba3  050600               add ax, 6                         
@@ -233,7 +233,7 @@ It is not reconstructed source code.
 0dc14  a36406               mov word ptr [0x664], ax           ; data PRZEDM.MAXE
 0dc17  833e90011a           cmp word ptr [0x190], 0x1a         ; data PRZEDM.ZRE
 0dc1c  7e0e                 jle 0xdc2c                        
-0dc1e  833e8e0114           cmp word ptr [0x18e], 0x14         ; data PRZEDM.MAD
+0dc1e  833e8e0114           cmp word ptr [0x18e], 0x14         ; data PRZEDM.SIL
 0dc23  7e07                 jle 0xdc2c                        
 0dc25  a16406               mov ax, word ptr [0x664]           ; data PRZEDM.MAXE
 0dc28  40                   inc ax                            
@@ -263,7 +263,7 @@ It is not reconstructed source code.
 0dc59  9add05711c           lcall 0x1c71, 0x5dd                ; call System.WriteLn
 0dc5e  9a9102711c           lcall 0x1c71, 0x291                ; call System.IOCheck
 0dc63  a1ae01               mov ax, word ptr [0x1ae]           ; data PRZEDM.MAXMANA
-0dc66  03068c01             add ax, word ptr [0x18c]           ; data PRZEDM.SIL
+0dc66  03068c01             add ax, word ptr [0x18c]           ; data PRZEDM.MAD
 0dc6a  40                   inc ax                            
 0dc6b  40                   inc ax                            
 0dc6c  a3ae01               mov word ptr [0x1ae], ax           ; data PRZEDM.MAXMANA
@@ -276,7 +276,7 @@ It is not reconstructed source code.
 0dc79  31c0                 xor ax, ax                        
 0dc7b  50                   push ax                           
 0dc7c  9a0107711c           lcall 0x1c71, 0x701                ; call System.WriteString
-0dc81  a18c01               mov ax, word ptr [0x18c]           ; data PRZEDM.SIL
+0dc81  a18c01               mov ax, word ptr [0x18c]           ; data PRZEDM.MAD
 0dc84  40                   inc ax                            
 0dc85  40                   inc ax                            
 0dc86  99                   cwd                               
@@ -313,31 +313,31 @@ It is not reconstructed source code.
 0dccc  9a0107711c           lcall 0x1c71, 0x701                ; call System.WriteString
 0dcd1  9add05711c           lcall 0x1c71, 0x5dd                ; call System.WriteLn
 0dcd6  9a9102711c           lcall 0x1c71, 0x291                ; call System.IOCheck
-0dcdb  a18e01               mov ax, word ptr [0x18e]           ; data PRZEDM.MAD
-0dcde  3b069801             cmp ax, word ptr [0x198]           ; data PRZEDM.MAXMAD
+0dcdb  a18e01               mov ax, word ptr [0x18e]           ; data PRZEDM.SIL
+0dcde  3b069801             cmp ax, word ptr [0x198]           ; data PRZEDM.MAXSIL
 0dce2  7c09                 jl 0xdced                         
-0dce4  a19801               mov ax, word ptr [0x198]           ; data PRZEDM.MAXMAD
+0dce4  a19801               mov ax, word ptr [0x198]           ; data PRZEDM.MAXSIL
 0dce7  050300               add ax, 3                         
-0dcea  a39801               mov word ptr [0x198], ax           ; data PRZEDM.MAXMAD
+0dcea  a39801               mov word ptr [0x198], ax           ; data PRZEDM.MAXSIL
 0dced  a19001               mov ax, word ptr [0x190]           ; data PRZEDM.ZRE
 0dcf0  3b069a01             cmp ax, word ptr [0x19a]           ; data PRZEDM.MAXZRE
 0dcf4  7c09                 jl 0xdcff                         
 0dcf6  a19a01               mov ax, word ptr [0x19a]           ; data PRZEDM.MAXZRE
 0dcf9  050300               add ax, 3                         
 0dcfc  a39a01               mov word ptr [0x19a], ax           ; data PRZEDM.MAXZRE
-0dcff  a18c01               mov ax, word ptr [0x18c]           ; data PRZEDM.SIL
-0dd02  3b069601             cmp ax, word ptr [0x196]           ; data PRZEDM.MAXSIL
+0dcff  a18c01               mov ax, word ptr [0x18c]           ; data PRZEDM.MAD
+0dd02  3b069601             cmp ax, word ptr [0x196]           ; data PRZEDM.MAXMAD
 0dd06  7c09                 jl 0xdd11                         
-0dd08  a19601               mov ax, word ptr [0x196]           ; data PRZEDM.MAXSIL
+0dd08  a19601               mov ax, word ptr [0x196]           ; data PRZEDM.MAXMAD
 0dd0b  050300               add ax, 3                         
-0dd0e  a39601               mov word ptr [0x196], ax           ; data PRZEDM.MAXSIL
-0dd11  a18e01               mov ax, word ptr [0x18e]           ; data PRZEDM.MAD
-0dd14  3b069801             cmp ax, word ptr [0x198]           ; data PRZEDM.MAXMAD
+0dd0e  a39601               mov word ptr [0x196], ax           ; data PRZEDM.MAXMAD
+0dd11  a18e01               mov ax, word ptr [0x18e]           ; data PRZEDM.SIL
+0dd14  3b069801             cmp ax, word ptr [0x198]           ; data PRZEDM.MAXSIL
 0dd18  7d08                 jge 0xdd22                        
-0dd1a  a19801               mov ax, word ptr [0x198]           ; data PRZEDM.MAXMAD
+0dd1a  a19801               mov ax, word ptr [0x198]           ; data PRZEDM.MAXSIL
 0dd1d  40                   inc ax                            
 0dd1e  40                   inc ax                            
-0dd1f  a39801               mov word ptr [0x198], ax           ; data PRZEDM.MAXMAD
+0dd1f  a39801               mov word ptr [0x198], ax           ; data PRZEDM.MAXSIL
 0dd22  a19001               mov ax, word ptr [0x190]           ; data PRZEDM.ZRE
 0dd25  3b069a01             cmp ax, word ptr [0x19a]           ; data PRZEDM.MAXZRE
 0dd29  7d08                 jge 0xdd33                        
@@ -345,65 +345,65 @@ It is not reconstructed source code.
 0dd2e  40                   inc ax                            
 0dd2f  40                   inc ax                            
 0dd30  a39a01               mov word ptr [0x19a], ax           ; data PRZEDM.MAXZRE
-0dd33  a18c01               mov ax, word ptr [0x18c]           ; data PRZEDM.SIL
-0dd36  3b069601             cmp ax, word ptr [0x196]           ; data PRZEDM.MAXSIL
+0dd33  a18c01               mov ax, word ptr [0x18c]           ; data PRZEDM.MAD
+0dd36  3b069601             cmp ax, word ptr [0x196]           ; data PRZEDM.MAXMAD
 0dd3a  7d08                 jge 0xdd44                        
-0dd3c  a19601               mov ax, word ptr [0x196]           ; data PRZEDM.MAXSIL
+0dd3c  a19601               mov ax, word ptr [0x196]           ; data PRZEDM.MAXMAD
 0dd3f  40                   inc ax                            
 0dd40  40                   inc ax                            
-0dd41  a39601               mov word ptr [0x196], ax           ; data PRZEDM.MAXSIL
-0dd44  a19601               mov ax, word ptr [0x196]           ; data PRZEDM.MAXSIL
-0dd47  3b069801             cmp ax, word ptr [0x198]           ; data PRZEDM.MAXMAD
+0dd41  a39601               mov word ptr [0x196], ax           ; data PRZEDM.MAXMAD
+0dd44  a19601               mov ax, word ptr [0x196]           ; data PRZEDM.MAXMAD
+0dd47  3b069801             cmp ax, word ptr [0x198]           ; data PRZEDM.MAXSIL
 0dd4b  7e12                 jle 0xdd5f                        
-0dd4d  a19601               mov ax, word ptr [0x196]           ; data PRZEDM.MAXSIL
+0dd4d  a19601               mov ax, word ptr [0x196]           ; data PRZEDM.MAXMAD
 0dd50  3b069a01             cmp ax, word ptr [0x19a]           ; data PRZEDM.MAXZRE
 0dd54  7e09                 jle 0xdd5f                        
-0dd56  a19601               mov ax, word ptr [0x196]           ; data PRZEDM.MAXSIL
+0dd56  a19601               mov ax, word ptr [0x196]           ; data PRZEDM.MAXMAD
 0dd59  050300               add ax, 3                         
-0dd5c  a39601               mov word ptr [0x196], ax           ; data PRZEDM.MAXSIL
-0dd5f  a19801               mov ax, word ptr [0x198]           ; data PRZEDM.MAXMAD
-0dd62  3b069601             cmp ax, word ptr [0x196]           ; data PRZEDM.MAXSIL
+0dd5c  a39601               mov word ptr [0x196], ax           ; data PRZEDM.MAXMAD
+0dd5f  a19801               mov ax, word ptr [0x198]           ; data PRZEDM.MAXSIL
+0dd62  3b069601             cmp ax, word ptr [0x196]           ; data PRZEDM.MAXMAD
 0dd66  7e12                 jle 0xdd7a                        
-0dd68  a19801               mov ax, word ptr [0x198]           ; data PRZEDM.MAXMAD
+0dd68  a19801               mov ax, word ptr [0x198]           ; data PRZEDM.MAXSIL
 0dd6b  3b069a01             cmp ax, word ptr [0x19a]           ; data PRZEDM.MAXZRE
 0dd6f  7e09                 jle 0xdd7a                        
-0dd71  a19801               mov ax, word ptr [0x198]           ; data PRZEDM.MAXMAD
+0dd71  a19801               mov ax, word ptr [0x198]           ; data PRZEDM.MAXSIL
 0dd74  050300               add ax, 3                         
-0dd77  a39801               mov word ptr [0x198], ax           ; data PRZEDM.MAXMAD
+0dd77  a39801               mov word ptr [0x198], ax           ; data PRZEDM.MAXSIL
 0dd7a  a19a01               mov ax, word ptr [0x19a]           ; data PRZEDM.MAXZRE
-0dd7d  3b069801             cmp ax, word ptr [0x198]           ; data PRZEDM.MAXMAD
+0dd7d  3b069801             cmp ax, word ptr [0x198]           ; data PRZEDM.MAXSIL
 0dd81  7e12                 jle 0xdd95                        
 0dd83  a19a01               mov ax, word ptr [0x19a]           ; data PRZEDM.MAXZRE
-0dd86  3b069601             cmp ax, word ptr [0x196]           ; data PRZEDM.MAXSIL
+0dd86  3b069601             cmp ax, word ptr [0x196]           ; data PRZEDM.MAXMAD
 0dd8a  7e09                 jle 0xdd95                        
 0dd8c  a19a01               mov ax, word ptr [0x19a]           ; data PRZEDM.MAXZRE
 0dd8f  050300               add ax, 3                         
 0dd92  a39a01               mov word ptr [0x19a], ax           ; data PRZEDM.MAXZRE
 0dd95  a19a01               mov ax, word ptr [0x19a]           ; data PRZEDM.MAXZRE
-0dd98  3b069801             cmp ax, word ptr [0x198]           ; data PRZEDM.MAXMAD
+0dd98  3b069801             cmp ax, word ptr [0x198]           ; data PRZEDM.MAXSIL
 0dd9c  751e                 jne 0xddbc                        
-0dd9e  a19801               mov ax, word ptr [0x198]           ; data PRZEDM.MAXMAD
-0dda1  3b069601             cmp ax, word ptr [0x196]           ; data PRZEDM.MAXSIL
+0dd9e  a19801               mov ax, word ptr [0x198]           ; data PRZEDM.MAXSIL
+0dda1  3b069601             cmp ax, word ptr [0x196]           ; data PRZEDM.MAXMAD
 0dda5  7515                 jne 0xddbc                        
 0dda7  a19a01               mov ax, word ptr [0x19a]           ; data PRZEDM.MAXZRE
 0ddaa  40                   inc ax                            
 0ddab  a39a01               mov word ptr [0x19a], ax           ; data PRZEDM.MAXZRE
-0ddae  a19601               mov ax, word ptr [0x196]           ; data PRZEDM.MAXSIL
+0ddae  a19601               mov ax, word ptr [0x196]           ; data PRZEDM.MAXMAD
 0ddb1  40                   inc ax                            
-0ddb2  a39601               mov word ptr [0x196], ax           ; data PRZEDM.MAXSIL
-0ddb5  a19801               mov ax, word ptr [0x198]           ; data PRZEDM.MAXMAD
+0ddb2  a39601               mov word ptr [0x196], ax           ; data PRZEDM.MAXMAD
+0ddb5  a19801               mov ax, word ptr [0x198]           ; data PRZEDM.MAXSIL
 0ddb8  40                   inc ax                            
-0ddb9  a39801               mov word ptr [0x198], ax           ; data PRZEDM.MAXMAD
+0ddb9  a39801               mov word ptr [0x198], ax           ; data PRZEDM.MAXSIL
 0ddbc  a19a01               mov ax, word ptr [0x19a]           ; data PRZEDM.MAXZRE
-0ddbf  3b069601             cmp ax, word ptr [0x196]           ; data PRZEDM.MAXSIL
+0ddbf  3b069601             cmp ax, word ptr [0x196]           ; data PRZEDM.MAXMAD
 0ddc3  7e18                 jle 0xdddd                        
 0ddc5  a19a01               mov ax, word ptr [0x19a]           ; data PRZEDM.MAXZRE
-0ddc8  3b069801             cmp ax, word ptr [0x198]           ; data PRZEDM.MAXMAD
+0ddc8  3b069801             cmp ax, word ptr [0x198]           ; data PRZEDM.MAXSIL
 0ddcc  750f                 jne 0xdddd                        
-0ddce  a19801               mov ax, word ptr [0x198]           ; data PRZEDM.MAXMAD
+0ddce  a19801               mov ax, word ptr [0x198]           ; data PRZEDM.MAXSIL
 0ddd1  40                   inc ax                            
 0ddd2  40                   inc ax                            
-0ddd3  a39801               mov word ptr [0x198], ax           ; data PRZEDM.MAXMAD
+0ddd3  a39801               mov word ptr [0x198], ax           ; data PRZEDM.MAXSIL
 0ddd6  a19a01               mov ax, word ptr [0x19a]           ; data PRZEDM.MAXZRE
 0ddd9  40                   inc ax                            
 0ddda  a39a01               mov word ptr [0x19a], ax           ; data PRZEDM.MAXZRE
@@ -416,7 +416,7 @@ It is not reconstructed source code.
 0dde7  31c0                 xor ax, ax                        
 0dde9  50                   push ax                           
 0ddea  9a0107711c           lcall 0x1c71, 0x701                ; call System.WriteString
-0ddef  a19801               mov ax, word ptr [0x198]           ; data PRZEDM.MAXMAD
+0ddef  a19801               mov ax, word ptr [0x198]           ; data PRZEDM.MAXSIL
 0ddf2  99                   cwd                               
 0ddf3  52                   push dx                           
 0ddf4  50                   push ax                           
@@ -464,7 +464,7 @@ It is not reconstructed source code.
 0de55  31c0                 xor ax, ax                        
 0de57  50                   push ax                           
 0de58  9a0107711c           lcall 0x1c71, 0x701                ; call System.WriteString
-0de5d  a19601               mov ax, word ptr [0x196]           ; data PRZEDM.MAXSIL
+0de5d  a19601               mov ax, word ptr [0x196]           ; data PRZEDM.MAXMAD
 0de60  99                   cwd                               
 0de61  52                   push dx                           
 0de62  50                   push ax                           
