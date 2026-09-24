@@ -56,7 +56,9 @@ The rewrite is entirely turn based. It does not reproduce real-time timers,
 input deadlines, automatic idle-time attacks, countdowns, animated delays, or
 paced text. Waiting at any prompt has no effect on game state or random state.
 Combat consequences are resolved as discrete player/enemy rounds initiated by
-a complete input line, and the opening screen pauses only for explicit input.
+a complete input line. After `ZABIJ`, an empty line continues the fight and the
+available combat choices are shown before every prompt. The opening screen
+pauses only for explicit input.
 
 This removes wall-clock behavior only. Original wording, capitalization,
 punctuation, command results, formulas, and player/enemy action order remain
@@ -293,13 +295,17 @@ contains elapsed-time gameplay state.
 
 Selecting a present actor with `ZABIJ` now rolls that actor's recovered energy,
 strength, and dexterity once. Repeating the selection retains the same values;
-movement and monster regeneration clear them. Each successful `ZABIJ` now
-resolves one atomic basic combat round and consumes one logical turn: both
+victory, death, escape, and monster regeneration clear them. The initial
+`ZABIJ`, then an empty line or another `ZABIJ`, each resolve one atomic basic
+combat round and consume one logical turn: both
 dexterity-dependent dodge checks run first, the enemy attacks, the player
 attacks, and victory rewards are resolved before the prompt returns. The
 original `Random(strength)` damage ranges, message tiers, overlapping dodge
 branches, and the small shield's inclusive 0-through-10 defense roll are
-retained. No wall-clock delay or automatic follow-up round is used.
+retained. A surviving fight stays in its combat input loop; no wall-clock delay
+or automatic follow-up round is used. Movement and ordinary world actions are
+blocked until the fight ends. Status, abilities, save, load, and quit remain
+available but are not included in the brief combat-action prompt.
 
 Enemy fireball and poison processing occurs at the same recovered point after
 physical defense and before the player's attack. Each charged spell has its
@@ -327,13 +333,14 @@ maximum-stat changes, and original display quirks. It has no elapsed-time
 dependency.
 
 `CWICZ UCIEKAC` uses the recovered stat, practice, and 85-point gates plus the
-original skill-growth formula. `ZWIEJ` retains its original threshold prompt;
-it configures the energy value below which escape is attempted. The old game
-checked that threshold inside its timed combat loop. The portable game checks
-it once at the end of each atomic `ZABIJ` round instead. Success uses the
+original skill-growth formula. Outside combat, `ZWIEJ` retains its original
+threshold prompt and configures the energy value below which escape is
+attempted after a normal round. During combat, `ZWIEJ` is also an explicit
+round choice: the enemy attacks, the player gives up the normal weapon hit,
+and escape is attempted without checking that threshold. Success uses the
 recovered combined energy/strength/dexterity score, costs 20 kunszt, leaves the
 enemy in its room, and closes the active fight. Failed attempts retain the
-fight. This boundary check has no clock or background activity.
+fight. Neither path has a clock or background activity.
 
 `CWICZ PAROWANIE` uses the recovered strength, dexterity, practice, and
 90-point gates. During an enemy hit, automatic parrying runs after the small

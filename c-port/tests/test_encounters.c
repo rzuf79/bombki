@@ -79,7 +79,7 @@ static void test_fixed_profiles_do_not_advance_rng(void)
     assert(game_state_is_valid(&state));
 }
 
-static void test_attack_selects_and_movement_clears(void)
+static void test_attack_enters_combat_and_blocks_movement(void)
 {
     GameState state;
     Capture capture = {{0}, 0};
@@ -107,13 +107,16 @@ static void test_attack_selects_and_movement_clears(void)
 
     command = parser_parse("N");
     (void)game_execute(&state, &command, output);
-    assert(state.room_id == ROOM_ARENA_34);
+    assert(state.room_id == ROOM_ARENA_33);
+    assert(state.turn == 1);
+    assert(state.active_opponent_actor == WORLD_ACTOR_KORNIK);
+    assert(strstr(capture.text,
+        "[PORT: W CZASIE WALKI WYBIERZ JEDNA Z OPCJI PONIZEJ]\n"
+    ) != NULL);
+
+    command = parser_parse("");
+    (void)game_execute(&state, &command, output);
     assert(state.turn == 2);
-    assert(state.active_opponent_actor == BOMBKI_NO_ACTOR);
-    assert(state.active_opponent_energy == 0);
-    assert(state.active_opponent_maximum_energy == 0);
-    assert(state.active_opponent_strength == 0);
-    assert(state.active_opponent_dexterity == 0);
 }
 
 static void test_regeneration_and_validation(void)
@@ -145,7 +148,7 @@ int main(void)
 {
     test_variable_profile_is_rolled_once();
     test_fixed_profiles_do_not_advance_rng();
-    test_attack_selects_and_movement_clears();
+    test_attack_enters_combat_and_blocks_movement();
     test_regeneration_and_validation();
     return 0;
 }

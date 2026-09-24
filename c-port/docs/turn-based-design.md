@@ -38,12 +38,23 @@ Combat uses an atomic round:
 
 No combat state changes between input lines.
 
-The recovered `ZWIEJ` energy threshold is evaluated only while completing an
-atomic combat round. It never fires while the game waits at a prompt.
+After `ZABIJ` starts a fight, the terminal remains in a combat input loop until
+victory, death, or escape. An empty line (or `ZABIJ`) chooses the normal combat
+exchange. Learned `KOP` and `ZWIEJ` skills are also direct round choices; the
+former replaces the player's weapon hit and the latter gives up that hit to
+attempt escape. Movement and other world actions cannot silently abandon an
+active fight. The terminal lists the choices after every surviving round.
+
+The recovered `ZWIEJ` energy threshold is evaluated only while completing a
+normal atomic combat round. The explicit `ZWIEJ` round choice attempts escape
+regardless of that threshold. Neither path fires while the game waits at a
+prompt.
 
 The recovered `KOP` energy and mana thresholds are likewise evaluated once at
-the atomic-round boundary. Its original two-second delay is omitted, and the
-kick resolves before automatic escape and victory/death resolution.
+the normal atomic-round boundary. The explicit `KOP` round choice requires
+some mana but bypasses those automatic thresholds. Its original two-second
+delay is omitted, and the kick resolves before automatic escape and
+victory/death resolution.
 
 ## Opening and presentation
 

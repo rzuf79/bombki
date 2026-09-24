@@ -143,6 +143,11 @@ void game_clear_active_opponent(GameState *state)
     state->active_opponent_poison_casts = 0;
 }
 
+bool game_combat_is_active(const GameState *state)
+{
+    return state != NULL && state->active_opponent_actor != BOMBKI_NO_ACTOR;
+}
+
 bool game_select_opponent(GameState *state, const char *target)
 {
     size_t index;
@@ -2159,17 +2164,20 @@ static int recovered_combat_chance(const GameState *state)
     return chance;
 }
 
-static bool try_automatic_flee(GameState *state, GameOutput output)
+static bool try_flee(GameState *state, bool forced, GameOutput output)
 {
     int chance;
 
     if (state->flee_skill <= 0
-        || state->energy >= state->flee_energy_threshold) {
+        || (!forced && state->energy >= state->flee_energy_threshold)) {
         return false;
     }
 
     chance = recovered_combat_chance(state);
     if (chance <= 14) {
+        if (forced) {
+            emit(output, "NIE UDALO CI SIE UCIEC !!!! WALCZYSZ DALEJ !!! \n");
+        }
         return false;
     }
     chance -= 15;
@@ -2212,14 +2220,15 @@ static void spend_mana(GameState *state, int amount)
     state->mana = amount >= state->mana ? 0 : state->mana - amount;
 }
 
-static void try_automatic_kick(GameState *state, GameOutput output)
+static void try_kick(GameState *state, bool forced, GameOutput output)
 {
     int damage;
     int mana_cost;
 
     if (state->kick_skill <= 0
-        || state->mana <= state->kick_mana_threshold
-        || state->energy >= state->kick_energy_threshold) {
+        || (forced && state->mana <= 0)
+        || (!forced && (state->mana <= state->kick_mana_threshold
+            || state->energy >= state->kick_energy_threshold))) {
         return;
     }
 
@@ -2426,9 +2435,16 @@ static void resolve_player_death(GameState *state, GameOutput output)
     game_regenerate_encounters(state);
 }
 
+typedef enum {
+    COMBAT_ACTION_BASIC = 0,
+    COMBAT_ACTION_KICK,
+    COMBAT_ACTION_FLEE
+} CombatAction;
+
 static bool resolve_basic_combat_round(
     GameState *state,
     const char *target,
+    CombatAction action,
     GameOutput output
 )
 {
@@ -2438,7 +2454,10 @@ static bool resolve_basic_combat_round(
     int difference;
     int damage;
 
-    if (state->energy <= 0 || !game_select_opponent(state, target)) {
+    if (state->energy <= 0
+        || (target != NULL && target[0] != '\0'
+            ? !game_select_opponent(state, target)
+            : !game_combat_is_active(state))) {
         return false;
     }
     opponent = (WorldActorId)state->active_opponent_actor;
@@ -2487,7 +2506,7 @@ static bool resolve_basic_combat_round(
         apply_enemy_magic(state, output);
     }
 
-    if (!opponent_dodged) {
+    if (action == COMBAT_ACTION_BASIC && !opponent_dodged) {
         damage = (int)random_below(
             state,
             state->strength > 0 ? (size_t)state->strength : 0
@@ -2499,8 +2518,12 @@ static bool resolve_basic_combat_round(
                 : state->active_opponent_energy - damage;
     }
 
-    try_automatic_kick(state, output);
-    if (try_automatic_flee(state, output)) {
+    if (action == COMBAT_ACTION_KICK) {
+        try_kick(state, true, output);
+    } else if (action == COMBAT_ACTION_BASIC) {
+        try_kick(state, false, output);
+    }
+    if (try_flee(state, action == COMBAT_ACTION_FLEE, output)) {
         if (opponent == WORLD_ACTOR_STARUCH) {
             resolve_staruch_consequence(state, output);
         }
@@ -3728,6 +3751,22 @@ static void describe_status(const GameState *state, GameOutput output)
     }
 }
 
+void game_describe_combat_options(const GameState *state, GameOutput output)
+{
+    if (!game_combat_is_active(state)) {
+        return;
+    }
+
+    emit(output, "OPCJE WALKI: ENTER/ZABIJ");
+    if (state->kick_skill > 0 && state->mana > 0) {
+        emit(output, " | KOP");
+    }
+    if (state->flee_skill > 0) {
+        emit(output, " | ZWIEJ");
+    }
+    emit(output, "\n");
+}
+
 GameAction game_execute(GameState *state, const Command *command, GameOutput output)
 {
     if (state == NULL || command == NULL) {
@@ -3736,6 +3775,58 @@ GameAction game_execute(GameState *state, const Command *command, GameOutput out
 
     if (state->sleep_hours > 0 && command->verb != COMMAND_SLEEP) {
         wake_from_sleep(state, output);
+    }
+
+    if (game_combat_is_active(state)) {
+        CombatAction combat_action = COMBAT_ACTION_BASIC;
+        bool resolve_round = false;
+
+        switch (command->verb) {
+        case COMMAND_EMPTY:
+        case COMMAND_ATTACK:
+            resolve_round = true;
+            break;
+        case COMMAND_KICK:
+            if (state->kick_skill > 0 && state->mana > 0) {
+                combat_action = COMBAT_ACTION_KICK;
+                resolve_round = true;
+            }
+            break;
+        case COMMAND_FLEE:
+            if (state->flee_skill > 0) {
+                combat_action = COMBAT_ACTION_FLEE;
+                resolve_round = true;
+            }
+            break;
+        case COMMAND_STATUS:
+            describe_status(state, output);
+            break;
+        case COMMAND_ABILITIES:
+            describe_abilities(state, output);
+            break;
+        case COMMAND_SAVE:
+            return GAME_ACTION_SAVE;
+        case COMMAND_LOAD:
+            return GAME_ACTION_LOAD;
+        case COMMAND_QUIT:
+            return GAME_ACTION_QUIT;
+        default:
+            emit(output,
+                "WALCZYSZ I NIE MOZESZ TERAZ TEGO ZROBIC!\n"
+            );
+            break;
+        }
+
+        if (resolve_round
+            && resolve_basic_combat_round(
+                state,
+                NULL,
+                combat_action,
+                output
+            )) {
+            advance_turn(state, output);
+        }
+        return GAME_ACTION_NONE;
     }
 
     if (parser_command_requires_argument(command->verb)
@@ -3863,7 +3954,12 @@ GameAction game_execute(GameState *state, const Command *command, GameOutput out
         }
         break;
     case COMMAND_ATTACK:
-        if (resolve_basic_combat_round(state, command->argument, output)) {
+        if (resolve_basic_combat_round(
+                state,
+                command->argument,
+                COMBAT_ACTION_BASIC,
+                output
+            )) {
             advance_turn(state, output);
         }
         break;

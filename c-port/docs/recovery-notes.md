@@ -87,19 +87,22 @@ are not part of the remaining game-reconstruction work.
   values, all five direct cage assignments, and a profile for every current
   `WorldActorId`.
 - `ZABIJ` selects a matching actor in the current room, creates one deterministic
-  active-opponent snapshot, and resolves one timer-free basic combat round.
-  Re-selection does not reroll the snapshot; movement and regeneration clear
-  it, and native saves preserve it. Dodge checks, enemy-first damage, the old
-  small shield, victory rewards, and one logical turn are now connected without
-  an intermediate prompt or elapsed-time state.
-- `CWICZ UCIEKAC` and `ZWIEJ` are connected. The latter retains the original
-  nested energy-threshold prompt; its automatic escape test runs only at the
-  atomic-round boundary. Both the success penalty and failure path use the
-  recovered combat score and exact messages.
-- `CWICZ KOPAC` and `KOP` are connected. The two original threshold reads are
-  terminal-neutral nested input, and the recovered chance, level damage, mana
-  costs, output, and ordering run once at an atomic-round boundary. The DOS
-  delay is discarded; mana is clamped at zero to keep portable state valid.
+  active-opponent snapshot, and enters an input-driven fight. Each empty line
+  (or `ZABIJ`) resolves one timer-free basic combat round, then lists the
+  available choices before the next prompt. Movement cannot abandon combat;
+  native saves preserve the active fight. Dodge checks, enemy-first damage, the
+  old small shield, victory rewards, and one logical turn per round are
+  connected without elapsed-time state.
+- `CWICZ UCIEKAC` and `ZWIEJ` are connected. Outside combat the latter retains
+  the original nested energy-threshold prompt, and its automatic escape test
+  runs after normal rounds. Inside combat it is a direct round choice which
+  gives up the weapon hit and bypasses the threshold. Both paths use the
+  recovered combat score, success penalty, and exact messages.
+- `CWICZ KOPAC` and `KOP` are connected. Outside combat the two original
+  threshold reads are terminal-neutral nested input. Inside combat `KOP` is a
+  direct round choice replacing the weapon hit and bypassing those thresholds.
+  Both paths use the recovered chance, level damage, mana costs, output, and
+  ordering. The DOS delay is discarded; mana is clamped at zero.
 - `CWICZ POROWNANIE`, `POROWNAJ`, and the comparison scroll now use the
   recovered name prompt, player-score formula, hard-coded advice groups, mana
   costs, automatic learning, and `BAKTERIA` result. The scroll is consumed only

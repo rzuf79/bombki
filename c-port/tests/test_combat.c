@@ -472,6 +472,74 @@ static void test_failed_automatic_flee(void)
     assert(game_state_is_valid(&state));
 }
 
+static void test_combat_loop_options_and_empty_round(void)
+{
+    GameState state;
+    Capture capture = {{0}, 0};
+    GameOutput output = {capture_write, &capture};
+
+    prepare_enemy(&state, WORLD_ACTOR_CAGE_WEAK, ROOM_CAGE_WEAK);
+    state.dexterity = 3;
+    state.strength = 1;
+    state.kick_skill = 20;
+    state.flee_skill = 20;
+    state.random_state = 2u;
+
+    execute(&state, &capture, "ZABIJ POTWOR");
+    assert(game_combat_is_active(&state));
+    assert(state.turn == 1);
+
+    memset(&capture, 0, sizeof(capture));
+    game_describe_combat_options(&state, output);
+    assert(strcmp(capture.text,
+        "OPCJE WALKI: ENTER/ZABIJ | KOP | ZWIEJ\n"
+    ) == 0);
+
+    state.kick_skill = 0;
+    state.flee_skill = 0;
+    memset(&capture, 0, sizeof(capture));
+    game_describe_combat_options(&state, output);
+    assert(strcmp(capture.text, "OPCJE WALKI: ENTER/ZABIJ\n") == 0);
+
+    memset(&capture, 0, sizeof(capture));
+    execute(&state, &capture, "");
+    assert(strncmp(capture.text, "WALCZYSZ - ", 11) == 0);
+    assert(state.turn == 2);
+}
+
+static void test_combat_loop_kick_and_flee_choices(void)
+{
+    GameState state;
+    Capture capture = {{0}, 0};
+
+    prepare_enemy(&state, WORLD_ACTOR_CAGE_WEAK, ROOM_CAGE_WEAK);
+    state.dexterity = 3;
+    state.kick_skill = 100;
+    state.random_state = 0u;
+    assert(game_select_opponent(&state, "POTWOR"));
+
+    execute(&state, &capture, "KOP");
+    assert(strstr(capture.text, "TWOJ SUPER KOP ZABIERA 4% ENERGI\n") != NULL);
+    assert(strstr(capture.text, "MASZ PECHA") == NULL);
+    assert(state.active_opponent_energy == 16);
+    assert(state.turn == 1);
+
+    prepare_enemy(&state, WORLD_ACTOR_CAGE_WEAK, ROOM_CAGE_WEAK);
+    state.dexterity = 3;
+    state.flee_skill = 20;
+    state.random_state = 26u;
+    assert(game_select_opponent(&state, "POTWOR"));
+    memset(&capture, 0, sizeof(capture));
+
+    execute(&state, &capture, "ZWIEJ");
+    assert(strstr(capture.text,
+        "WSTYD !!! UCIEKLES Z POLA BITWY TRACISZ 20 KUNSZTU\n"
+    ) != NULL);
+    assert(!game_combat_is_active(&state));
+    assert(state.experience == -20);
+    assert(state.turn == 1);
+}
+
 static void test_parry_practice(void)
 {
     GameState state;
@@ -984,6 +1052,8 @@ int main(void)
     test_flee_practice_and_threshold_prompt();
     test_successful_automatic_flee();
     test_failed_automatic_flee();
+    test_combat_loop_options_and_empty_round();
+    test_combat_loop_kick_and_flee_choices();
     test_parry_practice();
     test_automatic_parry_and_learning();
     test_automatic_parry_damage_ranges();

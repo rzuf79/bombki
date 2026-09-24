@@ -60,11 +60,24 @@ in [`docs/turn-based-design.md`](docs/turn-based-design.md).
 ## Build and run
 
 ```sh
-cmake -S . -B build
-cmake --build build
-ctest --test-dir build --output-on-failure
+make
+make check
 ./build/bombki
 ```
+
+The source-controlled `Makefile` uses only paths relative to this directory, so
+the checkout and its build directory can be moved without reconfiguration.
+
+CMake remains available as an alternative:
+
+```sh
+cmake --fresh -S . -B build
+cmake --build build
+ctest --test-dir build --output-on-failure
+```
+
+CMake-generated build trees contain absolute source paths and must be refreshed
+after moving the checkout; they are excluded from version control.
 
 Python 3.10 or newer is optional. When available, it verifies the generated
 evidence reports; it is never required to build, test, or run the C game.

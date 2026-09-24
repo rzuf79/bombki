@@ -147,6 +147,8 @@ void game_set_kick_thresholds(
     int energy_threshold,
     int mana_threshold
 );
+bool game_combat_is_active(const GameState *state);
+void game_describe_combat_options(const GameState *state, GameOutput output);
 void game_resolve_comparison_target(
     GameState *state,
     const char *target,

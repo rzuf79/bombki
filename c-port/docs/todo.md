@@ -140,32 +140,39 @@ The shared enemy-stat and reward catalogue is implemented: every currently
 represented world actor maps to one of the eight recovered random profiles or
 to the fixed dog/cage values. `ZABIJ` rolls and retains a deterministic
 active-opponent snapshot, which is serialized in native save version 16 and
-cleared on movement or regeneration. The combat-facing victory boundary now
+cleared on victory, death, escape, or regeneration. The combat-facing victory
+boundary now
 pays the exact profile-specific coin range, applies eligible heart and cage
 drops in the original roll order, removes the defeated actor, invokes named
 unique loot after ordinary rewards, and clears combat state atomically. Dog and
 cage drops remain in the room; ordinary bloody hearts go directly into carried
 inventory. The original temporary drop timers remain intentionally discarded.
 
-Basic `ZABIJ` combat is also connected. One command performs both recovered
+Basic `ZABIJ` combat is also connected. The starting command and each empty
+line in the resulting combat loop perform both recovered
 dexterity-based dodge checks, an enemy-first `Random(strength)` attack, the
 player's matching attack, old-small-shield mitigation, victory or the recovered
 death announcement, and one logical turn. The DOS loop and delays are replaced
-by one atomic round per command.
+by an input-driven loop with one atomic round per line; the available choices
+are printed after each surviving round, and ordinary movement is blocked.
 
-`CWICZ UCIEKAC` now trains the recovered flee skill, while `ZWIEJ` asks for the
-original energy threshold. That threshold is tested at atomic-round boundaries
-instead of inside a timed loop. Successful escape applies the exact 20-kunszt
+`CWICZ UCIEKAC` now trains the recovered flee skill, while `ZWIEJ` outside a
+fight asks for the original energy threshold. That threshold is tested after
+normal atomic rounds instead of inside a timed loop. In the combat loop,
+`ZWIEJ` is a direct round choice which gives up the weapon hit and attempts the
+same recovered escape roll. Successful escape applies the exact 20-kunszt
 penalty, leaves the actor in the room, and clears the active snapshot; failure
 retains combat.
 
-`CWICZ KOPAC` now trains the recovered kick skill, and `KOP` asks separately
-for the energy and mana thresholds. At an atomic-round boundary an enabled kick
+`CWICZ KOPAC` now trains the recovered kick skill, and `KOP` outside combat
+asks separately for the energy and mana thresholds. At a normal atomic-round
+boundary an enabled kick
 uses the recovered chance, level-based damage, mana costs, success text, and
 miss text before escape and victory resolution. The original two-second delay
-is intentionally absent. Native save version 16 preserves level, kick, flee,
-comparison, parry, cooking, return, sleep, and poison state while importing
-versions 1–15.
+is intentionally absent. In the combat loop, `KOP` is also a direct round
+choice which replaces the weapon hit and bypasses the automatic thresholds.
+Native save version 16 preserves level, kick, flee, comparison, parry, cooking,
+return, sleep, and poison state while importing versions 1–15.
 
 `CWICZ PAROWANIE` now trains the recovered skill. Automatic parrying runs after
 small-shield mitigation, uses the original 140-way chance, covers all three

@@ -190,6 +190,10 @@ int main(int argc, char **argv)
         case GAME_ACTION_NONE:
             break;
         }
+
+        if (running && game_combat_is_active(&state)) {
+            game_describe_combat_options(&state, output);
+        }
     }
 
     terminal_write(&terminal, "DO ZOBACZENIA.\n");
