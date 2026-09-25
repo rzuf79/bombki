@@ -8,6 +8,10 @@ save/load reconstructions. The "port" is `..\..\c-port\` relative to this file
 formula below was re-derived from the raw instructions in this pass (not taken
 from earlier notes).
 
+Status notes (2026-09-25): A and C were resolved by the merged
+`fix/SIL-vs-MAD-mixup` swap correction; I was resolved on
+`fix/mrowka-paczek-drop` (MROWKA-specific PACZEK, SLABO heart roll dropped).
+
 Verdict vocabulary:
 
 - `ORIGINAL` — this is how the original game works; the port should match it.
@@ -30,7 +34,7 @@ different inputs/values; `minor` = cosmetic/faithfulness only.
 | F | Quest turn-in side effects | PORT-DEVIATION | moderate |
 | G | Arena "3 LEVEL" placard | (no gate either side) | minor |
 | H | Room-number flavour nits | ORIGINAL clarifications | minor |
-| I | Monster kill rewards (PACZEK / SERCE) | PORT-DEVIATION | major |
+| I | Monster kill rewards (PACZEK / SERCE) | RESOLVED (fix/mrowka-paczek-drop) | was major |
 
 ---
 
@@ -237,6 +241,8 @@ operations in the original or the port — flavour text only. No action.
 
 ## I. Monster kill rewards — PACZEK wired as SERCE (major)
 
+**Status: RESOLVED on `fix/mrowka-paczek-drop`.**
+
 ### What the ORIGINAL does
 
 Every kill launcher pays **coins** (`Random(N)` -> Forsa longint [0x21A:0x21C],
@@ -263,12 +269,14 @@ carrying, 0 = consumed. Eating PACZEK does `[0x1A0] += 0xA` and
 `LoadCapacity -= 1` (img 0x19095..0x190A2); pickup prints the item only when
 the slot is exactly -10. You hold at most one paczek and one heart.
 
-### What the PORT does (enemies.c 9-43, game.c 1802-1862)
+### What the PORT does (enemies.c 9-43, game.c release 1802-1862)
 
-- SLABO profile: `coins {0,2}` (matches R(3)=0..2) but
-  **`bloody_heart = {7,10}` = 70% ITEM_BLOODY_HEART** ("WYCIAGASZ SERCE Z CIALA
-  TRUPA"). There is **no PACZEK drop and no ZABIJ MROWKA special case anywhere
-  in game.c** (grep: only bakery buy + eat + protected-food list hit PACZEK).
+- SLABO profile: `coins {0,2}` (matches R(3)=0..2). The `bloody_heart`
+  drop is **gone** (`{0,0}`).
+- MROWKA gets a PACZEK drop in its place: gated on the actor id at
+  `WorldActorId` in the kill launcher (`game.c` `resolve_ordinary_enemy_rewards`,
+  ENEMY_REWARD_STANDARD branch) — `R(10) < 7` (70%), skipped while the player
+  already holds a doughnut. Prints `"WYCIAGASZ PACZEK Z CIALA MROWKI"`.
 - Heart chances for the other tiers match the original operands
   ({5,20},{7,20},{4,20},{5,20}) and the "give once" gate is roughly mirrored
   by `recovered_world_drop_is_available` (quantity==0 && not dropped).
@@ -279,23 +287,22 @@ the slot is exactly -10. You hold at most one paczek and one heart.
 
 ### Comments
 
-The 70% "drop" on the Mrowka targets the **wrong item**: the original gives a
-PACZEK, the port gives a heart. This is exactly the mis-attribution the earlier
-§16 note ("enemies.c bloody_heart label retracted") flagged — but the current
-enemies.c still carries `{7,10}` under `bloody_heart`, so the port keeps doing
-the wrong thing. Fix = a MROWKA-specific PACZEK drop (and drop the SLABO heart
-roll). The food sentinel-vs-quantity storage is a deliberate port relaxation;
-behavioural impact is small (you simply can stack paczki in the port).
+The fix targets the correct item: the original gives a PACZEK off the Mrowka
+only, and **no edible drop at all** from the remaining SLABO kills (KORNIK /
+MUCHA / BAKTERIA / SLIMAK / ZUK / KARALUCH / PAJAK / STARUCH), matching this
+audit. The food sentinel-vs-quantity storage is still a deliberate port
+relaxation (paczki stack in the port); the `LoadCapacity` carry bonuses remain
+unrepresentable in the dex-derived capacity model.
 
-**Shared-launcher note (verified):** PRZEDM_SLABO (img 0x13839) is the fight
-used by ALL weak monsters — the arena-pen dispatcher routes
-`ZABIJ KORNIK/MUCHA/SLIMAK/ZUK/KARALUCH/MROWKA/PAJAK` to the same
+**Shared-launcher note (verified and since fixed):** PRZEDM_SLABO (img
+0x13839) is the fight used by ALL weak monsters — the arena-pen dispatcher
+routes `ZABIJ KORNIK/MUCHA/SLIMAK/ZUK/KARALUCH/MROWKA/PAJAK` to the same
 `call 0x13839` (0x19CBB..0x19DE8) and the Staruch cage fight also calls it
 (0x0D712). Yet the paczek branch is gated on the typed command
 (`strcmp(cmd,"ZABIJ MROWKA")` @ 0x138BE), so the item is STRICTLY Mrowka-only:
-every other SLABO kill pays just coins `R(3)=0..2`. The port therefore errs for
-ALL SLABO actors: it rolls `{7,10}` as a heart for KORNIK/MUCHA/BAKTERIA/SLIMAK/
-ZUK/KARALUCH/PAJAK/STARUCH too, where the original drops nothing edible at all.
+every other SLABO kill pays just coins `R(3)=0..2`. The port's kill launcher
+now keys on the defeated actor id, so it matches: coins-only for the other
+SLABO actors, PACZEK for MROWKA.
 
 ---
 
