@@ -1,8 +1,10 @@
 import json,re,struct,sys
+from pathlib import Path
 from capstone import Cs, CS_ARCH_X86, CS_MODE_16
 
-IMAGE = r"E:\Develop\Reverse\bombki\BOMBKI.EXE"
-OUT   = r"E:\Develop\Reverse\bombki\RECONSTRUCTED\disasm\annotated-BOMBKI.asm"
+ROOT = Path(__file__).resolve().parents[2]
+IMAGE = ROOT / "og" / "BOMBKI.EXE"
+OUT = ROOT / "pascal-decomp" / "RECONSTRUCTED" / "disasm" / "annotated-BOMBKI.asm"
 
 d=open(IMAGE,"rb").read()
 (hdr,)=struct.unpack_from("<H",d,8)
@@ -45,7 +47,7 @@ FIELDS = {  # DGROUP offset -> name
  0x20A:"BeastPantera",0x20C:"ArenaGladiator",0x20E:"ArenaWojownik",0x210:"ArenaTrener",
  0x212:"LootMoney",0x214:"ArenaMoveLatch",0x216:"Item_KompletUbranSyf",0x218:"OutfitEquipped",
  0x21A:"ForsaLo",0x21C:"ForsaHi",0x222:"Item_GarniturKolce",0x224:"HeavyBlow",
- 0x226:"GardenSpot_0226",0x228:"GardenSpot_0228",0x22A:"GardenSpot_022A",0x22C:"GardenSpot_022C",
+ 0x226:"GitarzystaRoom",0x228:"PerkusistaRoom",0x22A:"OrganistaRoom",0x22C:"LiroyRoom",
  0x22E:"Item_KasetaLiroya",0x230:"Item_ScrollPorownanie",0x232:"PlantSzczaw",
  0x234:"PlantStokrotka",0x236:"PlantKoniczynka",0x238:"PlantMlecz",0x23A:"PlantDmuchawiec",
  0x23C:"PlantRoza",0x23E:"PlantJezyna",0x240:"PlantOset",0x242:"PlantAgrest",
@@ -64,9 +66,12 @@ BYTEF = {0x24C:"RoomKillFlag_Dziecko",0x24D:"RoomKillFlag_Wariat",0x24E:"RoomKil
          0x258:"TalentChance",0x259:"TalentPool",0x261:"DuncanFarmer"}
 
 PROCS = {  # img->(name, extra)
- 0x1691B:("EnemyTurnHelper",""),0x16E76:("Walka","combat engine"),
- 0x159E4:("DropListek","Listek Szczescia 6%: Random(100)<6 && ctx!=0x2710 -> "
-  "[0x25B]-=10 LoadCapacity++ ManaMax+=0x28; text 'UNIQE 4%'"),0x15A91:("DropScroll","Scroll Porownania 10%: Random(100)<0xA && ctx!=0x2710 -> Item_ScrollPorownanie[0x230]-=10 LoadCapacity++"),0x15AE4:("GoToRoom1000","PreviousRoom[0x180]=context; context=0x3E8"),
+  0x1691B:("EnemyTurnHelper",""),0x16E76:("Walka","combat engine"),
+  0x159E4:("DropListek","Listek Szczescia 6%: Random(100)<6 && ctx!=0x2710 -> "
+   "[0x25B]-=10 LoadCapacity++ ManaMax+=0x28; text 'UNIQE 4%'"),0x15A91:("DropScroll","Scroll Porownania 10%: Random(100)<0xA && ctx!=0x2710 -> Item_ScrollPorownanie[0x230]-=10 LoadCapacity++"),
+  0x15AE4:("PRZEDM_MODE","MIECHO2=MIECHO; MIECHO=1000"),
+  0x15BCF:("PRZEDM_SCENA","stage-musician descriptions by MIECHO"),
+  0x15E37:("PRZEDM_TLUM","concert-crowd descriptions by MIECHO"),
  0x18405:("ItemPickupDropDispatch","BIERZ/ODRZUC items; item field semantics: 0x00=never, 0xFFF6=carrying, roomctx=dropped"),0x18E95:("ItemUseDispatch","UZYJ/ODLORZ/ZNISZCZ/PATRZ consumables+outfits; Pigulka=[0x257] time-travel"),0x197F1:("ColorChangeDispatch","ZMIEN KOLOR/TLO"),0x2BA1:("save",""),0x7D80:("wczytaj",""),
  0x2395:("trening","skills"),0x36F3:("BAZAR","death/shop"),0x8740:("LevelUp","0x8740..0x8BA1"),
  0x12ACA:("Room","map gen + TRENUJ + ZABIJ MROWKA/TRUP"),
@@ -81,13 +86,13 @@ PROCS = {  # img->(name, extra)
 0x13EF3:("PRZEDM_NEASY","HP R(20)+130 / Dex 20 / Dmg R(20)+19; loot R(0x2D)"),
 0x14016:("PRZEDM_BTRUDNO","HP R(3)+72 / Dex R(2)+13 / Dmg R(2)+16; loot R(0x32)"),
  
-0x1491B:("CompareDispatch","POROWNAC oracle: PowerLevel[0x686]=lvl+Sila+Zrec tier+Par+Kop; "
+ 0x1491B:("CompareDispatch","POROWNAC oracle: PowerLevel[0x686]=lvl+Sila+Zrec tier+Par+Kop; "
   "taunt per target tier; 3% learn POROWNYWANIE; BAKTERIA ManaCur+=5"),
   0x155F0:("GardenZwierzaki","garden animals flavortext by context"),
  0x157B9:("DropGarnitur","Random(1000)<=0x19: Garnitur kolce 2.5%"),
  0x1586E:("DropPigulka","Random(1000)<=0x2a: Pigulka transportujaca 4.2%"),
  0x1590D:("DropKaseta","Random(100)<=2: Kaseta Liroya 2%"),
- 0x15AE9:("MoneyGrind",""),0x15BD4:("MoneyGrind",""),0x1362A:("GardenOgladaj","Duncan garden: plant flavortext by context"),
+ 0x1362A:("GardenOgladaj","Duncan garden: plant flavortext by context"),
 }
 
 NEAR = {  # img -> name (near call/abs targets)

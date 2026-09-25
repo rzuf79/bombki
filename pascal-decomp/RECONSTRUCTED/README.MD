@@ -252,8 +252,9 @@ EXE proc **paragraph 0x129D:0x44A6 = img 0x16E76..0x181C6** (old "BODY-A
   = ReadLn(plik, scalar)** returning AX / DX:AX for longint, `0x5FE` flush.
 - Reads the **exact 80-field order of save()**, inverting transforms
   byte-exact: ManaCur=`v div 4`, Level=`v-0x17`, Energy=`v div 4 - 0x28`,
-  Zrecznosc=`v-0x0C`, Sila=`v+0x18`; f18 Money longint read into
-  `[0x21A]/[0x21C]` then **`+= Madrosc` via 0x7FA** (explicit on-load bonus);
+  Zrecznosc=`v-0x0C`, Sila=`v+0x18`; f18 net-worth longint read into
+  `[0x21A]/[0x21C]` then **`div Madrosc` via @LDiv 0x7FA**, the inverse of
+  save's `Forsa * Madrosc` encoding;
   `0x257` confirmed as a saved **byte** (f64, Potrawki count); the byte-flag
   cluster and monster trackers visibly load in file order (f33..f40 =
   0x56/0x58/0x68C/0x5A/0x5C/0x5E/0x60/0x6E).
@@ -276,8 +277,9 @@ EXE proc **paragraph 0x129D:0x44A6 = img 0x16E76..0x181C6** (old "BODY-A
 The 0x129D paragraph contains a whole second game layer beyond Walka:
 
 - **Room @ img 0x12ACA..0x130A1** = map/garden generator. Seeds per-room
-  `Random(0x1C71:0xBE4)` into **garden spots** `[0x1DA..0x1EE]` +
-  `[0x226..0x22C]` (`Random(0x26)+0x14`), **plant slots** `[0x232..0x246]`
+  `Random(0x1C71:0xBE4)` into the 11 monster positions `[0x1DA..0x1EE]`
+  (`Random(0x26)+0x14`), the four stage-musician positions `[0x226..0x22C]`
+  (`Random(3)+0x46`), and **plant slots** `[0x232..0x246]`
   (11 words, `Random(8)+0x4D`, re-roll ≥0x54), **garden-animal room ids**
   `[0x666..0x678]` (`Random(7)+0x14`), plus constants 0x67A/0x67C=0x43,
   0x67E=0x45 and byte `[0x261]` = garden/merchant-room marker. All compared to
@@ -511,4 +513,17 @@ Full machine-verified register added to INTEGRATED-FIELD-MAP.md
 - Confirmed 1:1 instead: arena edges, quest prices/counters/rewards, death
   penalty, TRENUJ 3/2/3, monster tiers, food/mana percentages, POROWNANIE
   formula.
+
+## 2026-09-25 (19): PRZEDM MODE/SCENA/TLUM reconstructed
+
+- `PRZEDM.PAS` now contains source-equivalent bodies for `MODE` (TPU source
+  543..546; EXE img 0x15AE4..0x15AFB), `SCENA` (548..553; EXE img
+  0x15BCF..0x15C6E), and `TLUM` (555..566; EXE img 0x15E37..0x15FBE).
+- `[0x226..0x22C]` are confirmed as GITARZYSTA/PERKUSISTA/ORGANISTA/LIROY
+  room positions, not garden spots: `Room` assigns each `Random(3)+70`,
+  `SCENA` prints by equality with `MIECHO`, and `FIGHTSCENA` tests/clears the
+  same fields for the four `ZABIJ` commands.
+- The C port preserves the 14 actor strings and random placement categories.
+  It deliberately has no `MODE` state: commands operate directly, while the
+  original helper saves `MIECHO` to `MIECHO2` and enters context 1000.
 

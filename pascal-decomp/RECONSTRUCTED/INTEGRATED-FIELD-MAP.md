@@ -168,7 +168,10 @@ The `Room` routine is far larger than the "checkpoint" hint implied. (The `retf`
 0x12AC9 ends a preceding monster launcher = **PRZEDM.WALKAPIES**, img 0x12A16: HP 10 / Dex 10 / Dmg 5 /
 Random(15) loot + 25% Serce drop into [0x186].) Real map+flavor setup:
 
-- 9 garden spots `[0x1DA..0x1EE]` (each `Random(0x26)+0x14`), 4 more `[0x226..0x22C]`.
+- 11 arena/room monster positions `[0x1DA..0x1EE]` (KORNIK through LIS, each
+  `Random(0x26)+0x14`). The four words `[0x226..0x22C]` are instead
+  GITARZYSTA/PERKUSISTA/ORGANISTA/LIROY stage positions, each initialized with
+  `Random(3)+0x46` (rooms 70..72) and consumed by `SCENA`/`FIGHTSCENA`.
 - 11 plant slots `[0x232..0x246]` = PlantSzczaw/Stokrotka/Koniczynka/Mlecz/
   Dmuchawiec/Roza/Jezyna/Oset/Agrest/Malina/Trava (`Random(8)+0x4D`, re-roll ≥0x54).
 - 7 garden-animal room ids `[0x666..0x678]` (`Random(7)+0x14`); 3 constants

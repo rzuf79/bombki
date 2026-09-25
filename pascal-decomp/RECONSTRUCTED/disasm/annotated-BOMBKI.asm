@@ -38521,22 +38521,22 @@
 12F33: 509A  push    ax
 12F34: 9AE4  lcall   0x1c71, 0xbe4
 12F39: 0546  add     ax, 0x46
-12F3C: A326  mov     word ptr [0x226], ax ; data:GardenSpot_0226
+12F3C: A326  mov     word ptr [0x226], ax ; data:GitarzystaRoom
 12F3F: B803  mov     ax, 3
 12F42: 509A  push    ax
 12F43: 9AE4  lcall   0x1c71, 0xbe4
 12F48: 0546  add     ax, 0x46
-12F4B: A328  mov     word ptr [0x228], ax ; data:GardenSpot_0228
+12F4B: A328  mov     word ptr [0x228], ax ; data:PerkusistaRoom
 12F4E: B803  mov     ax, 3
 12F51: 509A  push    ax
 12F52: 9AE4  lcall   0x1c71, 0xbe4
 12F57: 0546  add     ax, 0x46
-12F5A: A32A  mov     word ptr [0x22a], ax ; data:GardenSpot_022A
+12F5A: A32A  mov     word ptr [0x22a], ax ; data:OrganistaRoom
 12F5D: B803  mov     ax, 3
 12F60: 509A  push    ax
 12F61: 9AE4  lcall   0x1c71, 0xbe4
 12F66: 0546  add     ax, 0x46
-12F69: A32C  mov     word ptr [0x22c], ax ; data:GardenSpot_022C
+12F69: A32C  mov     word ptr [0x22c], ax ; data:LiroyRoom
 12F6C: C706  mov     word ptr [0x67a], 0x43
 12F72: C706  mov     word ptr [0x67c], 0x43
 12F78: C706  mov     word ptr [0x67e], 0x45
@@ -44320,12 +44320,10 @@
 15AE2: 5DCB  pop     bp
 15AE3: CB55  retf    
 
-; ===== PROC GoToRoom1000 @ img 15AE4 (para0129D:3114) PreviousRoom[0x180]=context; context=0x3E8 =====
+; ===== PROC PRZEDM_MODE @ img 15AE4 (para0129D:3114) MIECHO2=MIECHO; MIECHO=1000 =====
 15AE4: 5589  push    bp
 15AE5: 89E5  mov     bp, sp
 15AE7: 31C0  xor     ax, ax
-
-; ===== PROC MoneyGrind @ img 15AE9 (para0129D:3119)  =====
 15AE9: 9ACD  lcall   0x1c71, 0x2cd
 15AEE: A1D6  mov     ax, word ptr [0x1d6] ; data:context
 15AF1: A380  mov     word ptr [0x180], ax ; data:PreviousRoom
@@ -44482,13 +44480,13 @@
 15BCC: 4B4F  dec     bx
 15BCD: 4F57  dec     di
 15BCE: 5755  push    di
+
+; ===== PROC PRZEDM_SCENA @ img 15BCF (para0129D:31FF) stage-musician descriptions by MIECHO =====
 15BCF: 5589  push    bp
 15BD0: 89E5  mov     bp, sp
 15BD2: 31C0  xor     ax, ax
-
-; ===== PROC MoneyGrind @ img 15BD4 (para0129D:3204)  =====
 15BD4: 9ACD  lcall   0x1c71, 0x2cd
-15BD9: A126  mov     ax, word ptr [0x226] ; data:GardenSpot_0226
+15BD9: A126  mov     ax, word ptr [0x226] ; data:GitarzystaRoom
 15BDC: 3B06  cmp     ax, word ptr [0x1d6] ; data:context
 15BE0: 751C  jne     0x15bfe
 15BE2: BFA2  mov     di, 0x7a2
@@ -44502,7 +44500,7 @@
 15BEF: 9A01  lcall   0x1c71, 0x701
 15BF4: 9ADD  lcall   0x1c71, 0x5dd
 15BF9: 9A91  lcall   0x1c71, 0x291
-15BFE: A128  mov     ax, word ptr [0x228] ; data:GardenSpot_0228
+15BFE: A128  mov     ax, word ptr [0x228] ; data:PerkusistaRoom
 15C01: 3B06  cmp     ax, word ptr [0x1d6] ; data:context
 15C05: 751C  jne     0x15c23
 15C07: BFA2  mov     di, 0x7a2
@@ -44516,7 +44514,7 @@
 15C14: 9A01  lcall   0x1c71, 0x701
 15C19: 9ADD  lcall   0x1c71, 0x5dd
 15C1E: 9A91  lcall   0x1c71, 0x291
-15C23: A12A  mov     ax, word ptr [0x22a] ; data:GardenSpot_022A
+15C23: A12A  mov     ax, word ptr [0x22a] ; data:OrganistaRoom
 15C26: 3B06  cmp     ax, word ptr [0x1d6] ; data:context
 15C2A: 751C  jne     0x15c48
 15C2C: BFA2  mov     di, 0x7a2
@@ -44530,7 +44528,7 @@
 15C39: 9A01  lcall   0x1c71, 0x701
 15C3E: 9ADD  lcall   0x1c71, 0x5dd
 15C43: 9A91  lcall   0x1c71, 0x291
-15C48: A12C  mov     ax, word ptr [0x22c] ; data:GardenSpot_022C
+15C48: A12C  mov     ax, word ptr [0x22c] ; data:LiroyRoom
 15C4B: 3B06  cmp     ax, word ptr [0x1d6] ; data:context
 15C4F: 751C  jne     0x15c6d
 15C51: BFA2  mov     di, 0x7a2
@@ -44877,6 +44875,8 @@
 15E34: 5A4D  pop     dx
 15E35: 4D59  dec     bp
 15E36: 5955  pop     cx
+
+; ===== PROC PRZEDM_TLUM @ img 15E37 (para0129D:3467) concert-crowd descriptions by MIECHO =====
 15E37: 5589  push    bp
 15E38: 89E5  mov     bp, sp
 15E3A: 31C0  xor     ax, ax
@@ -54419,13 +54419,13 @@
 1AFAA: 579A  push    di
 1AFAB: 9AD7  lcall   0x1c71, 0x9d7
 1AFB0: 7516  jne     0x1afc8
-1AFB2: A128  mov     ax, word ptr [0x228] ; data:GardenSpot_0228
+1AFB2: A128  mov     ax, word ptr [0x228] ; data:PerkusistaRoom
 1AFB5: 3B06  cmp     ax, word ptr [0x1d6] ; data:context
 1AFB9: 750D  jne     0x1afc8
 1AFBB: 0EE8  push    cs
 1AFBC: E8E5  call    0x13ca4 ; ->PRZEDM_VEASY
 1AFBF: 31C0  xor     ax, ax
-1AFC1: A328  mov     word ptr [0x228], ax ; data:GardenSpot_0228
+1AFC1: A328  mov     word ptr [0x228], ax ; data:PerkusistaRoom
 1AFC4: 0EE8  push    cs
 1AFC5: E840  call    0x15908
 1AFC8: BF64  mov     di, 0x564
@@ -54436,13 +54436,13 @@
 1AFD1: 579A  push    di
 1AFD2: 9AD7  lcall   0x1c71, 0x9d7
 1AFD7: 7516  jne     0x1afef
-1AFD9: A126  mov     ax, word ptr [0x226] ; data:GardenSpot_0226
+1AFD9: A126  mov     ax, word ptr [0x226] ; data:GitarzystaRoom
 1AFDC: 3B06  cmp     ax, word ptr [0x1d6] ; data:context
 1AFE0: 750D  jne     0x1afef
 1AFE2: 0EE8  push    cs
 1AFE3: E8BE  call    0x13ca4 ; ->PRZEDM_VEASY
 1AFE6: 31C0  xor     ax, ax
-1AFE8: A326  mov     word ptr [0x226], ax ; data:GardenSpot_0226
+1AFE8: A326  mov     word ptr [0x226], ax ; data:GitarzystaRoom
 1AFEB: 0EE8  push    cs
 1AFEC: E819  call    0x15908
 1AFEF: BF64  mov     di, 0x564
@@ -54453,7 +54453,7 @@
 1AFF8: 579A  push    di
 1AFF9: 9AD7  lcall   0x1c71, 0x9d7
 1AFFE: 756C  jne     0x1b06c
-1B000: A12C  mov     ax, word ptr [0x22c] ; data:GardenSpot_022C
+1B000: A12C  mov     ax, word ptr [0x22c] ; data:LiroyRoom
 1B003: 3B06  cmp     ax, word ptr [0x1d6] ; data:context
 1B007: 7563  jne     0x1b06c
 1B009: 0EE8  push    cs
@@ -54489,7 +54489,7 @@
 1B061: 2D96  sub     ax, 0x96
 1B064: A34A  mov     word ptr [0x24a], ax ; data:QuestCount
 1B067: 31C0  xor     ax, ax
-1B069: A32C  mov     word ptr [0x22c], ax ; data:GardenSpot_022C
+1B069: A32C  mov     word ptr [0x22c], ax ; data:LiroyRoom
 1B06C: BF64  mov     di, 0x564
 1B06F: 1E57  push    ds
 1B070: 57BF  push    di
@@ -54498,13 +54498,13 @@
 1B075: 579A  push    di
 1B076: 9AD7  lcall   0x1c71, 0x9d7
 1B07B: 7516  jne     0x1b093
-1B07D: A12A  mov     ax, word ptr [0x22a] ; data:GardenSpot_022A
+1B07D: A12A  mov     ax, word ptr [0x22a] ; data:OrganistaRoom
 1B080: 3B06  cmp     ax, word ptr [0x1d6] ; data:context
 1B084: 750D  jne     0x1b093
 1B086: 0EE8  push    cs
 1B087: E81A  call    0x13ca4 ; ->PRZEDM_VEASY
 1B08A: 31C0  xor     ax, ax
-1B08C: A32A  mov     word ptr [0x22a], ax ; data:GardenSpot_022A
+1B08C: A32A  mov     word ptr [0x22a], ax ; data:OrganistaRoom
 1B08F: 0EE8  push    cs
 1B090: E875  call    0x15908
 1B093: 5DCB  pop     bp
