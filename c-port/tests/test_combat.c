@@ -428,17 +428,18 @@ static void test_successful_automatic_flee(void)
     state.dexterity = 3;
     state.flee_skill = 21;
     state.flee_energy_threshold = 60;
-    state.random_state = 63u;
+    state.random_state = 4u;
 
     execute(&state, &capture, "ZABIJ POTWOR");
 
     assert(strcmp(capture.text,
         "WALCZYSZ - <<<<TWOJ WROG MA 20%>>>><<<< A TY MASZ 50% ENERGII>>>>>\n"
-        "PRZECIWNIK CIE TYLKO DRASNA I TRACISZ 1% ENERGII\n"
-        "DOSTAL I STRACIL 7% ENERGII\n"
+        "PRZECIWNIK CIE TYLKO DRASNA I TRACISZ 0% ENERGII\n"
+        "MASZ PECHA : LEKKO POPCHNALES GO I STRACIL TYLKO 2% ENERGII\n"
         "WSTYD !!! UCIEKLES Z POLA BITWY TRACISZ 20 KUNSZTU\n"
     ) == 0);
-    assert(state.energy == 49);
+    assert(state.energy == 50);
+    assert(state.mana == 82);
     assert(state.experience == -20);
     assert(state.active_opponent_actor == BOMBKI_NO_ACTOR);
     assert(state.world_actor_rooms[WORLD_ACTOR_CAGE_WEAK] == ROOM_CAGE_WEAK);
@@ -466,9 +467,37 @@ static void test_failed_automatic_flee(void)
         "NIE UDALO CI SIE UCIEC !!!! WALCZYSZ DALEJ !!! \n"
     ) == 0);
     assert(state.energy == 49);
+    assert(state.mana == 82);
     assert(state.experience == 0);
     assert(state.active_opponent_actor == WORLD_ACTOR_CAGE_WEAK);
     assert(state.active_opponent_energy == 18);
+    assert(state.turn == 1);
+    assert(game_state_is_valid(&state));
+}
+
+static void test_flee_low_mana_blocked_silently(void)
+{
+    GameState state;
+    Capture capture = {{0}, 0};
+
+    prepare_enemy(&state, WORLD_ACTOR_CAGE_WEAK, ROOM_CAGE_WEAK);
+    state.dexterity = 3;
+    state.flee_skill = 20;
+    state.mana = 15;
+    state.maximum_mana = 15;
+    state.random_state = 1u;
+    assert(game_select_opponent(&state, "POTWOR"));
+
+    memset(&capture, 0, sizeof(capture));
+    execute(&state, &capture, "ZWIEJ");
+
+    assert(strcmp(capture.text,
+        "WALCZYSZ - <<<<TWOJ WROG MA 20%>>>><<<< A TY MASZ 50% ENERGII>>>>>\n"
+        "PRZECIWNIK CIE TYLKO DRASNA I TRACISZ 0% ENERGII\n"
+    ) == 0);
+    assert(state.mana == 12);
+    assert(game_combat_is_active(&state));
+    assert(state.active_opponent_energy == 20);
     assert(state.turn == 1);
     assert(game_state_is_valid(&state));
 }
@@ -528,7 +557,7 @@ static void test_combat_loop_kick_and_flee_choices(void)
     prepare_enemy(&state, WORLD_ACTOR_CAGE_WEAK, ROOM_CAGE_WEAK);
     state.dexterity = 3;
     state.flee_skill = 20;
-    state.random_state = 26u;
+    state.random_state = 28u;
     assert(game_select_opponent(&state, "POTWOR"));
     memset(&capture, 0, sizeof(capture));
 
@@ -537,6 +566,7 @@ static void test_combat_loop_kick_and_flee_choices(void)
         "WSTYD !!! UCIEKLES Z POLA BITWY TRACISZ 20 KUNSZTU\n"
     ) != NULL);
     assert(!game_combat_is_active(&state));
+    assert(state.mana == 83);
     assert(state.experience == -20);
     assert(state.turn == 1);
 }
@@ -1058,6 +1088,7 @@ int main(void)
     test_flee_practice_and_threshold_prompt();
     test_successful_automatic_flee();
     test_failed_automatic_flee();
+    test_flee_low_mana_blocked_silently();
     test_combat_loop_options_and_empty_round();
     test_combat_loop_kick_and_flee_choices();
     test_parry_practice();

@@ -1,7 +1,7 @@
 # C-PORT vs ORIGINAL — discrepancy report (human-readable)
 
-Audit date: 2026-09-24. Last cleaned: 2026-09-25 (A CWICZ, C max-stat
-dossier, I kill rewards removed — all resolved). Source of truth: the
+Audit date: 2026-09-24. Last cleaned: 2026-09-25 (A CWICZ, B flee, C
+max-stat dossier, I kill rewards removed — all resolved). Source of truth: the
 original x86-16 disassembly
 (`RECONSTRUCTED\disasm\annotated-BOMBKI.asm`), cross-checked against the TP7
 save/load reconstructions. The "port" is `..\..\c-port\` relative to this file
@@ -12,7 +12,9 @@ from earlier notes).
 
 Status notes (2026-09-25): A and C were resolved by the merged
 `fix/SIL-vs-MAD-mixup` swap correction; I was resolved on
-`fix/mrowka-paczek-drop` (MROWKA-specific PACZEK, SLABO heart roll dropped).
+`fix/mrowka-paczek-drop` (MROWKA-specific PACZEK, SLABO heart roll dropped);
+B was resolved on `fix/flee-mana-cost` (skill-based flee roll + three-step
+mana economy).
 
 Verdict vocabulary:
 
@@ -27,45 +29,13 @@ different inputs/values; `minor` = cosmetic/faithfulness only.
 ## Summary matrix
 
 | # | topic | verdict | severity |
-|---|---|---|---|
-| B | Flee (ZWIEJ) resolve + cost | PORT-DEVIATION | moderate |
+|---|---|---|
 | D | Save-file format | PORT-DEVIATION (deliberate) | moderate |
 | E | Forsa / Madrosc wealth scaling | PORT-DEVIATION (deliberate) | moderate |
 | F | Quest turn-in side effects | PORT-DEVIATION | moderate |
 | G | Arena "3 LEVEL" placard | (no gate either side) | minor |
 | H | Room-number flavour nits | ORIGINAL clarifications | minor |
 | J | Item storage: countable quantities vs bool sentinels | PORT-DEVIATION (deliberate) | major |
-
----
-
-## B. Flee / ZWIEJ mechanics (moderate)
-
-### ORIGINAL (img 0x17F55..0x1800B)
-
-Attempt **drains 2-3 Mana before anything else** (`Mana −= Random(2)+2`).
-Run only when all three true: `Uciekanie [0x1CE] > 0`, `Energy < [0x1D0]`
-(flee threshold), `ManaCur > 14`. Commit: `Mana −= 15`, then **success iff
-`Random(100) <= Uciekanie`** → `FleeFlag [0x1D2] = 1` and `KUNSZT [0x1D4]
-−= 20` with the "WSTYD !!! UCIEKLES Z POLA BITWY..." text (img 0x17FCD).
-
-### PORT (try_flee, game.c 2167-2197)
-
-Gates `flee_skill > 0 && (forced || energy < flee_energy_threshold)` — matches
-the original gate shape. But:
-
-- success roll = `random_below(100) > recovered_combat_chance(state) − 15`
-  → the dice use the **generic dex-based combat chance**, not the
-  **Uciekanie skill**;
-- **no mana cost** at all (no 2-3 attempt drain, no 15 commit);
-- applies the 20 KUNSZT loss and exit-on-success correctly.
-
-### Comments
-
-Half-faithful. The "costs 15 Mana" reading in older notes was incomplete but
-not wrong — the original really does cost mana three times over (attempt drain,
-commit, plus a mana>14 prerequisite). The port keeps the KUNSZT penalty but
-replaces the entire mana economy with a dex roll. Whenever the docs cite a
-"three-step mana flee", that is the original truth.
 
 ---
 
@@ -211,6 +181,9 @@ gates as a PORT-DEVIATION bug; this section is the standing record of the intent
   small mana bottle +30, capped at max).
 - POROWNANIE oracle formula components (Sila + Zrecznosc-tier + PAR/KOP
   bonuses).
+- Flee (ZWIEJ): three-step mana economy (attempt `MANA −= Random(2)+2`, gate
+  `MANA > 14`, commit `MANA −= 15`) and success exactly `Random(100) <=
+  Uciekanie` with KUNSZT −= 20 (img 0x17F55..0x1800B).
 
 ---
 
@@ -218,7 +191,7 @@ gates as a PORT-DEVIATION bug; this section is the standing record of the intent
 
 | item | original | port |
 |---|---|---|
-| flee | img 0x17F55..0x1800B | game.c 2167-2197 (try_flee) |
+| flee | img 0x17F55..0x1800B | game.c 2145-2173 (try_flee) |
 | save | SAVE-FIELD-MAP.txt / wczytaj img 0x7D80 | persistence.c 43-105 |
 | forsza scaling | img 0x7FA4..0x7FBB, 0x2E0F..0x2E22 | game.c coins ops |
 | quest turn-in | img 0x1276B..0x127C4 | game.c 3471-3513 |
