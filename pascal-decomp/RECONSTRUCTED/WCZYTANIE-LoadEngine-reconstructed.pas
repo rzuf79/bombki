@@ -119,11 +119,12 @@ end;
 {          [0x258] += Madrosc + 1                                (0x2AF8)  }
 { (Kopanie training block not in this window - ends at 0x2B73 pop bp; ret) }
 
-{ ---------------- level gate (img 0x872D...) -------------------------- }
-{ [0x25C] CharacterLevel vs KUNSZT[0x1D4] thresholds:                     }
-{   lvl==1: need KUNSZT >= 0x2D5 (725)        (0x8740..0x874D)           }
-{   lvl==2: need KUNSZT >= 0x2DA (730)        (0x874F..0x875E)           }
-{   lvl>=3: threshold = 0x2DF + 2*lvl (i.e. 741+), via 2*lvl+0x2DF sums   }
-{           on reaching threshold jump to 0x8BA2 (level-up handler).      }
+{ ---------------- level-up proc (img 0x872E..0x8BA2) -------------------- }
+{ [0x25C] CharacterLevel vs KUNSZT[0x1D4] thresholds (POZIOM = [0x25C]):    }
+{   lvl1 700, lvl2 725 (0x2D5), lvl3 730 (0x2DA), lvl4-8 735+POZIOM,        }
+{   lvl9+ 735+2*POZIOM (0x2DF = 735 base); success body at 0x87A2 (banner   }
+{   + stat gains); 0x8BA2 = common epilogue (pop bp; retf), NOT the handler.}
+{ Costs on advance: 725/730/735, 4-8: +POZIOM, 9+: +2*POZIOM per            }
+{ c-port/evidence/recovered/pseudocode/LEVELING.md (porter cross-check).    }
 { adjacent map-floor strings cs:0x8681..0x872C ('...CZAS PODW...',        }
 { 'MAX ','MADROSC SILA...','MASZ TERAZ...' area)                          }

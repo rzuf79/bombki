@@ -26,7 +26,7 @@ FIELDS = {  # DGROUP offset -> name
  0x62:"MaxLoad",0x6C:"CheckpointStage",0x6E:"Field_006E",
  0x74:"Field_0074_PotrawkiChance",0x76:"Field_0076",0x78:"Powracanie",
  0x7A:"ScrollPowrot",0x7C:"Piwo",
- 0x17E:"Item_StaryMiecz",0x180:"PreviousRoom",0x182:"LoadCapacity",
+ 0x17E:"Item_StaryMiecz",0x180:"PreviousRoom",0x182:"PRZED",
  0x184:"Item_MalaTarcza",0x186:"Item_Serce",0x188:"Item_DyplomMudSzkoly",
  0x18A:"Item_Fajka",0x18C:"MadroscCur",0x18E:"SilaCur",0x190:"ZrecznoscCur",
  0x192:"Item_ButelkaMany",0x194:"PRAKTYK",0x196:"MadroscMax",0x198:"SilaMax",
@@ -68,15 +68,15 @@ BYTEF = {0x24C:"RoomKillFlag_Dziecko",0x24D:"RoomKillFlag_Wariat",0x24E:"RoomKil
 
 PROCS = {  # img->(name, extra)
   0x1691B:("EnemyTurnHelper",""),0x16E76:("Walka","combat engine"),
-  0x159E4:("DropListek","Random(100)<6 && context!=10000: LISTEK-=10, PRZED++, ManaMax+=40; text says 4%"),0x15A91:("DropScroll","Random(100)<10 && context!=10000: SCROLLPOR-=10, PRZED++"),
+  0x159E4:("LISTEKZYSK","Random(100)<6 && context!=10000: LISTEK-=10, PRZED++, ManaMax+=40; text says 4%"),0x15A91:("SCROLLPORZYSK","Random(100)<10 && context!=10000: SCROLLPOR-=10, PRZED++"),
   0x15AE4:("PRZEDM_MODE","MIECHO2=MIECHO; MIECHO=1000"),
   0x15BCF:("PRZEDM_SCENA","stage-musician descriptions by MIECHO"),
   0x15E37:("PRZEDM_TLUM","concert-crowd descriptions by MIECHO"),
   0x1AF97:("PRZEDM_FIGHTSCENA","ZABIJ stage musicians/Liroy; Liroy success bonus and quest progress"),
  0x18405:("ItemPickupDropDispatch","BIERZ/ODRZUC items; item field semantics: 0x00=never, 0xFFF6=carrying, roomctx=dropped"),0x18E95:("ItemUseDispatch","UZYJ/ODLORZ/ZNISZCZ/PATRZ consumables+outfits; Pigulka=[0x257] time-travel"),0x197F1:("ColorChangeDispatch","ZMIEN KOLOR/TLO"),0x2BA1:("save",""),0x7D80:("wczytaj",""),
- 0x2395:("trening","skills"),0x36F3:("BAZAR","death/shop"),0x8740:("LevelUp","0x8740..0x8BA1"),
+ 0x2395:("trening","skills"),0x36F3:("BAZAR","death/shop"),0x872E:("LevelUp","thresholds lvl1 700, lvl2 725, lvl3 730, 4-8 735+lvl, 9+ 735+2*lvl; body 0x87A2; epilogue 0x8BA2"),
  0x12ACA:("Room","map gen + TRENUJ + ZABIJ MROWKA/TRUP"),
- 0x4F53:("KillDispatch","ZABIJ <NPC> router: flag==context -> tier launcher (0xf77/0x1090/0x11b2 in para 0x129D) -> clear flag on win; Dziadek 5% Fajka, Goryl/Ochroniarz DropGarnitur"),0x51C3:("Checkpoint","KUNSZT>=0x190 && CheckpointStage==0 && SilaCur<0x14: sets CheckpointStage=1"),
+ 0x4F53:("KillDispatch","ZABIJ <NPC> router: flag==context -> tier launcher (0xf77/0x1090/0x11b2 in para 0x129D) -> clear flag on win; Dziadek 5% Fajka, Goryl/Ochroniarz GARNITURZYSK"),0x51C3:("Checkpoint","KUNSZT>=0x190 && CheckpointStage==0 && SilaCur<0x14: sets CheckpointStage=1"),
   0x12A16:("PRZEDM_WALKAPIES","HP10 Dex10 Dmg5; unconditional post-WALKA R(15) coins; 25% Serce placed at MIECHO"),0x13947:("PRZEDM_MNIEJSLABO","NPC weak tier: HP Random(3)+34 Dex Random(4)+8 Dmg 10; loot 10..30; 25% Serce->[0x186]"),0x13A60:("PRZEDM_SREDNIO","NPC mid tier: HP Random(5)+50 Dex Random(5)+10 Dmg Random(2)+13; loot 30..59; 35% Serce->[0x186]"),
  0x13194:("TrenujDispatch","TRENUJ SILA/ZRECZNOSC/MADROSC costs 3/2/3"),
   0x13839:("PRZEDM_SLABO","HP1 DEX1 DMG2 loot Random(3)..roll Paczek"),
@@ -90,9 +90,9 @@ PROCS = {  # img->(name, extra)
  0x1491B:("CompareDispatch","POROWNAC oracle: PowerLevel[0x686]=lvl+Sila+Zrec tier+Par+Kop; "
   "taunt per target tier; 3% learn POROWNYWANIE; BAKTERIA ManaCur+=5"),
   0x155F0:("GardenZwierzaki","garden animals flavortext by context"),
-  0x157B9:("DropGarnitur","Random(1000)<=25: GARNITUR-=10, PRZED++; text says 2.5%"),
-  0x1586E:("DropPigulka","Random(1000)<=42: PIGULKA-=10, PRZED++"),
-  0x15908:("DropKaseta","Random(100)<2 && context!=10000: KASETA-=10 and stat effects"),
+0x157B9:("GARNITURZYSK","Random(1000)<=25: GARNITUR-=10, PRZED++; text says 2.5%"),
+   0x1586E:("PIGULKAZYSK","Random(1000)<=42: PIGULKA-=10, PRZED++"),
+   0x15908:("KASETAZYSK","Random(100)<2 && context!=10000: KASETA-=10 and stat effects"),
  0x1362A:("GardenOgladaj","Duncan garden: plant flavortext by context"),
 }
 
@@ -159,7 +159,7 @@ def annotate_line(addr,size,mnem,op,raw):
         if name: com.append("data:"+name)
         else:
             nb=BYTEF.get(off)
-            if nb: com.append(nb)
+            if nb: com.append("data:"+nb)
     for typ in ("word","byte","dword"):
         op2=op.replace(typ+" ptr ","")
     # string refs
