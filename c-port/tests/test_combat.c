@@ -819,6 +819,29 @@ static void test_return_training_and_spell_outcomes(void)
     assert(state.room_id == ROOM_BRUSZCZ_EAST);
     assert(state.mana == 40);
     assert(game_state_is_valid(&state));
+
+    {
+        const struct {
+            unsigned random_state;
+            int room_id;
+        } cage_locations[] = {
+            {438u, ROOM_CAGE_STRONG},
+            {47u, ROOM_CAGE_DEXTEROUS},
+            {4560u, ROOM_CAGE_RESISTANT}
+        };
+        size_t index;
+
+        for (index = 0; index < sizeof(cage_locations) / sizeof(cage_locations[0]);
+             ++index) {
+            game_initialize(&state);
+            state.room_id = ROOM_ARENA_33;
+            state.return_skill = 1;
+            state.random_state = cage_locations[index].random_state;
+            memset(&capture, 0, sizeof(capture));
+            execute(&state, &capture, "POWROT");
+            assert(state.room_id == cage_locations[index].room_id);
+        }
+    }
 }
 
 static void test_ability_display_and_skill_poster(void)

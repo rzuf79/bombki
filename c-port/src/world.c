@@ -20,7 +20,7 @@ static const Room rooms[] = {
         "DOSTEPNE WYJSCIE-POLNOC-HALA GLOWNA MUD SZKOLE ",
         NULL,
         NULL,
-        {{DIRECTION_NORTH, ROOM_SCHOOL}},
+        {{DIRECTION_NORTH, ROOM_CENTRAL}},
         1
     },
     {
