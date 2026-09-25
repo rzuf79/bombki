@@ -111,7 +111,7 @@ static void test_attack_enters_combat_and_blocks_movement(void)
     assert(state.turn == 1);
     assert(state.active_opponent_actor == WORLD_ACTOR_KORNIK);
     assert(strstr(capture.text,
-        "[PORT: W CZASIE WALKI WYBIERZ JEDNA Z OPCJI PONIZEJ]\n"
+        "WALCZYSZ I NIE MOZESZ TERAZ TEGO ZROBIC!\n"
     ) != NULL);
 
     command = parser_parse("");
