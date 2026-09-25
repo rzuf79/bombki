@@ -170,6 +170,14 @@ invent player-facing text or mechanics for unrecovered commands.
 
 ## Useful recovered anchors
 
+- Kill launchers (verified in the retained executable): `PRZEDM_SLABO` (img
+  0x13839) is used by ALL weak monsters — the arena-pen dispatcher routes
+  `ZABIJ KORNIK/MUCHA/SLIMAK/ZUK/KARALUCH/MROWKA/PAJAK` to it and Staruch's
+  cage fight calls it too (0x0D712). The PACZEK drop is gated on the typed
+  command `strcmp(cmd,"ZABIJ MROWKA")` @ 0x138BE, so it is strictly Mrowka-only;
+  every other SLABO kill pays coins `R(3)=0..2` only. SERCE comes from the
+  MNIEJSLABO+ and dog launchers while `[0x186]==0`, one-and-only. Heart/paczek
+  slots are `0xFFF6` (-10 carrying) sentinels.
 - `PRZEDM.TPU` `BRANIE`: file offset `0x0793d`, recovered source lines
   908–963.
 - `PRZEDM.TPU` `UZYWANIE`: file offset `0x083cc`, recovered source lines
@@ -190,3 +198,21 @@ invent player-facing text or mechanics for unrecovered commands.
 These offsets are starting points, not permission to alter a recovered string.
 Exact player-visible text must still be copied from evidence and locked with a
 focused regression test.
+
+## Port decisions (deliberate deviations, not bugs)
+
+Recorded so future work does not re-flag these as discrepancies:
+
+- **Countable items (decision 2026-09-25):** every item is a countable
+  quantity, not the pascal `-10` bool sentinel. Gaining an item always
+  increments its count; there is no "you may only have 1 before giving it"
+  gate anywhere (`take_item` and monster drops use clamped `++`).
+  `game_state_is_valid` does not cap world-location items at 1. Hearts and
+  paczki stack and print each drop. The teleport-diploma ownership clause is
+  gone (the "all five cages dead" trigger stays). `LoadCapacity` bumps from
+  the original are not implemented — capacity is dex-derived
+  (`game_carrying_capacity`). Same note: `C-PORT-DISCREPANCIES.md` §J.
+- **Native save format** is self-describing and versioned, not
+  byte-compatible with the original text file (persistence.c); deliberate.
+- **Raw coins**, no `Forsa div Madrosc` load-time scaling (README §17);
+  deliberate.

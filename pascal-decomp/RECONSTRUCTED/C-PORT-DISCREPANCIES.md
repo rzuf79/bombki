@@ -1,6 +1,8 @@
 # C-PORT vs ORIGINAL — discrepancy report (human-readable)
 
-Audit date: 2026-09-24. Source of truth: the original x86-16 disassembly
+Audit date: 2026-09-24. Last cleaned: 2026-09-25 (A CWICZ, C max-stat
+dossier, I kill rewards removed — all resolved). Source of truth: the
+original x86-16 disassembly
 (`RECONSTRUCTED\disasm\annotated-BOMBKI.asm`), cross-checked against the TP7
 save/load reconstructions. The "port" is `..\..\c-port\` relative to this file
 (e.g. `src\game.c`, `src\persistence.c`), and the disasm is
@@ -26,72 +28,13 @@ different inputs/values; `minor` = cosmetic/faithfulness only.
 
 | # | topic | verdict | severity |
 |---|---|---|---|
-| A | CWICZ training formulas | PORT-DEVIATION | major |
 | B | Flee (ZWIEJ) resolve + cost | PORT-DEVIATION | moderate |
-| C | Max-stat field offsets | DOSSIER-ERROR | minor |
-| D | Save-file format | PORT-DEVIATION | moderate |
-| E | Forsa / Madrosc wealth scaling | PORT-DEVIATION | moderate |
+| D | Save-file format | PORT-DEVIATION (deliberate) | moderate |
+| E | Forsa / Madrosc wealth scaling | PORT-DEVIATION (deliberate) | moderate |
 | F | Quest turn-in side effects | PORT-DEVIATION | moderate |
 | G | Arena "3 LEVEL" placard | (no gate either side) | minor |
 | H | Room-number flavour nits | ORIGINAL clarifications | minor |
-| I | Monster kill rewards (PACZEK / SERCE) | RESOLVED (fix/mrowka-paczek-drop) | major |
 | J | Item storage: countable quantities vs bool sentinels | PORT-DEVIATION (deliberate) | major |
-
----
-
-## A. CWICZ training formulas (major, port deviation)
-
-### What the ORIGINAL does
-
-The six `CWICZ <skill>` commands live in the training block img
-0x27D5..0x2B73. ALL SIX key their gates **and** their formulas on
-**MadroscCur [0x18C]** (and, for two of them, ZrecznoscCur [0x190]). Each
-`CWICZ` costs exactly **1 PRAKTYK [0x194]** (`dec [0x194]` each time). Gates
-and formulas, straight from the disasm:
-
-| cmd | strcmp @img | gates (all must pass) | improvement | cap |
-|---|---|---|---|---|
-| CWICZ KOPAC    | 0x27DA | MAD>0xA && **SIL>0xB** && PRAKTYK>0 | KOPANIE [0x1C8] += MAD | — (no cap in block) |
-| CWICZ UCIEKAC  | 0x2863 | MAD>0xA && ZRE>0xA && sk<85 && PRAKTYK>0 | UCIEKANIE [0x1CE] += MAD+ZRE−5 | 0x55 (85) |
-| CWICZ POWROT   | 0x2921 | MAD>0x11 && sk<90 && PRAKTYK>0 | POWRACANIE [0x78] += **2·MAD−3** | 0x5A (90) |
-| CWICZ PAROWANIE| 0x29B2 | MAD>0xF && ZRE>0xB && sk<90 && PRAKTYK>0 | PAROWANIE [0x1C6] += MAD+ZRE−14 | 0x5A (90) |
-| CWICZ POROWNANIE | 0x2A4F | MAD>0xB && sk<90 && PRAKTYK>0 | POROWNYWANIE [0x25D] += **3·MAD−9** | 0x5A (90) |
-| CWICZ POTRAWKI | 0x2AEC | MAD>0x12 && sk<90 && PRAKTYK>0 | POTRAWKI/Talent [0x258] += MAD+1 | 0x5A (90) |
-
-Evidence bytes: POWROT is `mov ax,[0x18c]; shl ax,1; add ax,[0x78]; sub ax,3`
-(0x2945..0x294E) — the "2·" comes from the real `shl`. POROWNANIE is
-`3·MAD` via `shl + add` then `sub 9` stored to a byte (0x2A76..0x2A8A).
-
-### What the PORT does (game.c 2543..2679)
-
-The port implements all six handlers and wires the full `CWICZ` menu
-(`practice_*` calls at game.c 3925-3942). Each keys gates **and** formulas on
-**strength** instead of wisdom:
-
-| port fn | port gates | port improvement | cap |
-|---|---|---|---|
-| practice_kicking  (2571) | strength>10 && **dexterity>11** | kick += strength | — |
-| practice_fleeing  (2543) | strength>10 && dexterity>10 | flee += strength+dexterity−5 | 85 |
-| practice_returning(2661) | strength>17 | return += 2·strength−3 | 90 |
-| practice_parrying (2615) | strength>15 && dexterity>11 | parry += strength+dexterity−14 | 90 |
-| practice_comparison(2592) | strength>11 | comparison += 3·strength−9 | 90 |
-| practice_cooking  (2640) | strength>18 | cooking += strength+1 | 90 |
-
-### Comments
-
-- The **single systematic deviation** is `MadroscCur → strength`. Formulas,
-  caps and most gate numbers are otherwise faithful (even the subtle `−5`,
-  `−14`, `−9` constants match).
-- Watch the two oddballs: original KOPAC gates `SIL>0xB` but the port gates
-  `dexterity>11` there; original KOPAC has **no cap** and the port agrees.
-- The skill poster/`ZDOLNOSCI` printers in the port (game.c 894-919, 2783-2806)
-  also advertise abilities off `strength`, duplicating the same swap.
-- Gameplay impact: a low-wisdom/high-strength character overtakes the original
-  training curve (cheaper thresholds, bigger gains), and vice versa.
-- **Correction of the earlier register:** the previous `INTEGRATED-FIELD-MAP.md`
-  entry A claimed the port "drops CWICZ UCIEKANIE and KOPANIE (panel lists 4,
-  not 6)" — stale; the current port has all six. It also listed POWROT as
-  `+MAD` (real: `+2·MAD−3`) and omitted the `−5` of UCIEKAC — both fixed above.
 
 ---
 
@@ -123,27 +66,6 @@ not wrong — the original really does cost mana three times over (attempt drain
 commit, plus a mana>14 prerequisite). The port keeps the KUNSZT penalty but
 replaces the entire mana economy with a dex roll. Whenever the docs cite a
 "three-step mana flee", that is the original truth.
-
----
-
-## C. Max-stat field offsets (dossier error, port untouched)
-
-### ORIGINAL
-
-Char-select init img 0x1748..0x18B9 writes the maxima in this order:
-**0x196 = MadroscMax, 0x198 = SilaMax, 0x19A = ZrecznoscMax**.
-
-### The error
-
-The recovered "LEVELING" dossier swapped them (`MAXSIL=0x196`,
-`MAXMAD=0x198`, `MAXZRE=0x19A`). Anyone using the dossier to decode the
-original save layout would mislabel three fields. The port has its own
-`maximum_strength/dexterity/wisdom` fields and is not affected.
-
-### Comments
-
-Fields should be corrected in the dossier; the save-field map
-(`INTEGRATED-FIELD-MAP.md` field table) already has them right.
 
 ---
 
@@ -240,67 +162,6 @@ operations in the original or the port — flavour text only. No action.
 
 ---
 
-## I. Monster kill rewards — PACZEK wired as SERCE (major)
-
-**Status: RESOLVED on `fix/mrowka-paczek-drop`.**
-
-### What the ORIGINAL does
-
-Every kill launcher pays **coins** (`Random(N)` -> Forsa longint [0x21A:0x21C],
-"WYCIAGASZ N MONET Z CIALA"). On top of the coins exactly two item drops exist:
-
-1. **PACZEK — only `ZABIJ MROWKA`** (SLABO launcher tail, img 0x138B9..0x1390D):
-   gated by the command strcmp "ZABIJ MROWKA", then `Random(10) < 7` (70%) and
-   `[0x1A0] != -10` (you don't already carry one) -> prints
-   "WYCIAGASZ PACZEK Z CIALA MROWKI", sets `[0x1A0] = 0xFFF6 (-10)`, and
-   `LoadCapacity [0x182] += 1`. **No heart on the Mrowka.**
-2. **SERCE — every other launcher** (MNIEJSLABO 0x13947, SREDNIO 0x13A60,
-   TRUDNO 0x13B82, VEASY..BTRUDNO, and the dog/street launcher 0x12A16):
-   only while `[0x186] == 0` (you have never owned the one-and-only heart),
-   then `Random(20) < K` (verified: K=5 MNIEJSLABO @0x139E3, K=7 SREDNIO
-   @0x13B05 = 35%), and `[0x186] != -10` -> "WYCIAGASZ SERCE Z CIALA TRUPA",
-   `[0x186] = 0xFFF6`, `LoadCapacity += 1`.
-
-Chances by tier (disasm-verified operands): MNIEJSLABO `R(20)<5` (25%),
-SREDNIO `R(20)<7` (35%), TRUDNO 35%, BTRUDNO 25%, VEASY/EASY/NEASY `R(20)<4`
-(20%), dogs 25%.
-
-Storage model: heart and paczek are **sentinel single slots** — 0xFFF6 (-10) =
-carrying, 0 = consumed. Eating PACZEK does `[0x1A0] += 0xA` and
-`LoadCapacity -= 1` (img 0x19095..0x190A2); pickup prints the item only when
-the slot is exactly -10. You hold at most one paczek and one heart.
-
-### What the PORT does (enemies.c 9-43, game.c 1805-1820)
-
-- **RESOLVED** (`fix/mrowka-paczek-drop` / `688a4d4`): SLABO `bloody_heart` is
-  now `{0,0}` (no heart) and `resolve_ordinary_enemy_rewards` special-cases
-  `WORLD_ACTOR_MROWKA` to a 70% `R(10)<7` PACZEK drop ("WYCIAGASZ PACZEK Z
-  CIALA MROWKI") that increments ITEM_DOUGHNUT. Every other SLABO kill now pays
-  coins `R(3)=0..2` only.
-- Heart chances for the other tiers stay faithful ({5,20},{7,20},{4,20},
-  {5,20}). The original's "never owned / already carrying" give-once gates are
-  gone by the countable-items policy (see J below).
-- **Omitted: `LoadCapacity` bumps** on heart/paczek acquisition (and the -1 on
-  eating) — deliberate, see J.
-
-### Comments
-
-Status: RESOLVED for the PACZEK/SERCE mis-attribution. Storage is now uniformly
-countable (§J): ITEM_DOUGHNUT and ITEM_BLOODY_HEART are stackable quantities and
-no give-once gate remains for any monster drop.
-
-**Shared-launcher note (verified and since fixed):** PRZEDM_SLABO (img
-0x13839) is the fight used by ALL weak monsters — the arena-pen dispatcher
-routes `ZABIJ KORNIK/MUCHA/SLIMAK/ZUK/KARALUCH/MROWKA/PAJAK` to the same
-`call 0x13839` (0x19CBB..0x19DE8) and the Staruch cage fight also calls it
-(0x0D712). Yet the paczek branch is gated on the typed command
-(`strcmp(cmd,"ZABIJ MROWKA")` @ 0x138BE), so the item is STRICTLY Mrowka-only:
-every other SLABO kill pays just coins `R(3)=0..2`. The port's kill launcher
-now keys on the defeated actor id, so it matches: coins-only for the other
-SLABO actors, PACZEK for MROWKA.
-
----
-
 ## J. Item storage: countable quantities, not bool sentinels (major, deliberate)
 
 ### What the ORIGINAL does
@@ -357,10 +218,7 @@ gates as a PORT-DEVIATION bug; this section is the standing record of the intent
 
 | item | original | port |
 |---|---|---|
-| CWICZ training | annotated-BOMBKI.asm img 0x27D5..0x2B73 | game.c 2543-2679, 3925-3942 |
 | flee | img 0x17F55..0x1800B | game.c 2167-2197 (try_flee) |
-| max-stat init | img 0x1748..0x18B9 | — |
 | save | SAVE-FIELD-MAP.txt / wczytaj img 0x7D80 | persistence.c 43-105 |
 | forsza scaling | img 0x7FA4..0x7FBB, 0x2E0F..0x2E22 | game.c coins ops |
 | quest turn-in | img 0x1276B..0x127C4 | game.c 3471-3513 |
-| kill rewards | launchers img 0x13839..0x14016 (tails) | enemies.c 9-43 + game.c 1802-1862 |
