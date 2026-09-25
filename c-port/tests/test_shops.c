@@ -332,7 +332,7 @@ static void test_old_elf_fetch_quest(void)
 
     clear_capture(&capture);
     execute(&state, &capture, "ROZMAWIAJ NIEMA");
-    assert(capture.text[0] == '\0');
+    assert(strcmp(capture.text, "NIE MA TU NIKOGO TAKIEGO!\n") == 0);
 
     state.item_quantities[ITEM_WEKA] = 3;
     state.coins = 199;
@@ -365,6 +365,25 @@ static void test_old_elf_fetch_quest(void)
     execute(&state, &capture, "ROZMAWIAJ STARUCH");
     assert(strcmp(capture.text, "AAAA SPADAJ STAD BO CI KOSCI POLAMIE\n") == 0);
     assert(state.room_id == ROOM_CAGE_ALL);
+}
+
+static void test_talk_fallbacks(void)
+{
+    GameState state;
+    Capture capture = {{0}, 0};
+
+    game_initialize(&state);
+    state.room_id = ROOM_ARENA_33;
+    state.world_actor_rooms[WORLD_ACTOR_KORNIK] = state.room_id;
+
+    execute(&state, &capture, "ROZMAWIAJ KORNIK");
+    assert(strcmp(capture.text, "NIE MA CI NIC DO POWIEDZENIA!\n") == 0);
+    assert(state.turn == 0);
+
+    clear_capture(&capture);
+    execute(&state, &capture, "ROZMAWIAJ DUNCAN");
+    assert(strcmp(capture.text, "NIE MA TU NIKOGO TAKIEGO!\n") == 0);
+    assert(state.turn == 0);
 }
 
 static void test_quest_master_paths(void)
@@ -500,6 +519,7 @@ int main(void)
     test_wrong_room_is_silent();
     test_duncan_quest_and_black_market();
     test_old_elf_fetch_quest();
+    test_talk_fallbacks();
     test_quest_master_paths();
     return 0;
 }

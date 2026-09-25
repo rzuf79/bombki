@@ -267,13 +267,15 @@ source vocabulary and advertised skills with no retained handler are silent.
 A fresh run reaches the school cages through the restored opening route, and
 the full suite covers the quest paths, recovery, native save/load, and river.
 
-      
-## Milestone 8 - finishing tweax
-- [ ] Remove all visible PORT message, replace them with some game's
-      tone writing
-- [ ] Fix all in-game communications of features we changed or removed,
-      like MODE commands. Replace it with actual implemented mechanics.
-      Maintain the game's tone in writing
+## Milestone 8 — feature communication (complete)
+
+- [x] Replace player-facing instructions for removed command states and dormant
+      abilities with the mechanics implemented by the portable game.
+
+The central and underground posters no longer describe `MODE`/`UNMODE`, the
+subconscious state, or abilities with no handler. `POMOC` now lists the usable
+command set in the game's tone. This is a user-approved exception to the normal
+recovered-wording rule.
 
 
 Completion criterion: every recoverable gameplay path is playable with its

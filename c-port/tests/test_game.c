@@ -160,12 +160,11 @@ int main(void)
         "JEŻELI CHCESZ NAUCZYC SIE NOWYCH KOMEND IDZ DO MUD SZKOLY\n"
         "DOPIERO POTEM IDZ DO MIASTA \n"
         "A OTO TAJNE KOMENDY :\n"
-        " MODE - WPROWADZENIE W STAN PODSWIADOMOSCI\n"
-        " UNMODE - POWROT DO POPRZEDNIEGO STANU\n"
-        "W CZASIE POBYTU W STANIE PODSWIADOMOSCI DZIALA WIELE KOMEND MIN:\n"
+        " WSZYSTKO DZIALA OD RAZU , NIE MUSISZ WCHODZIC W ZADEN DZIWNY STAN\n"
         " JA - WSZYSTKO O TOBIE , BIERZ , UZYJ , ZDEJMIJ , ODRZUC I INNE \n"
-        " PONADTO WIELE KOMEND TRZEBA ODKRYC NP:ZMIEN KOLOR , ZMIEN TLO \n"
-        " UWAGA Z OSTATNIEJ CHWILI : KOMENDA SPIJ W STANIE PODSWIADOMOSCI!\n") == 0);
+        " PATRZ PLAKAT I NA ARENIE PISZ KTO - BO TAM NIE JESTES SAM\n"
+        " CWICZ KOPAC , UCIEKAC , POROWNANIE I INNE JAK BEDZIESZ KOZAK\n"
+        " UWAGA Z OSTATNIEJ CHWILI : SPIJ KIEDY CHCESZ , NIKT CIE NIE PILNUJE!\n") == 0);
 
     clear_capture(&capture);
     command = parser_parse("PAMIETAJ");
@@ -184,8 +183,12 @@ int main(void)
     command = parser_parse("POMOC");
     (void)game_execute(&state, &command, output);
     assert(strcmp(capture.text,
-        "KOMENDY: PATRZ, EXIT, POLNOC, POLUDNIE, WSCHOD, ZACHOD, GORA, DOL,\n"
-        "         N, S, W, E, U, D, JA, PAMIETAJ, WLACZ POSTAC, KONIEC.\n") == 0);
+        "KOMENDY DLA ODWAZNYCH:\n"
+        "PATRZ, EXIT, POLNOC, POLUDNIE, WSCHOD, ZACHOD, GORA, DOL\n"
+        "N, S, W, E, U, D, JA, KTO (NA ARENIE), BIERZ, ODRZUC, UZYJ, ODLOZ, ZABIJ\n"
+        "ROZMAWIAJ, KUP, SPRZEDAJ, LISTA, CWICZ, TRENUJ, POROWNAJ, KOP, ZWIEJ\n"
+        "POWROT, ZDOLNOSCI, SPIJ, PAMIETAJ, WLACZ POSTAC, KONIEC.\n"
+        "RESZTE ODKRYJ SAM !!\n") == 0);
     clear_capture(&capture);
     command = parser_parse("NIEZNANA KOMENDA");
     (void)game_execute(&state, &command, output);
