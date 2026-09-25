@@ -11,6 +11,7 @@ Glowne zmiany w porcie do C:
 - poprawione nieco ortografii (w tym "polodnie")
 - wygodniejsza nawigacja (poruszanie za pomoca n,s,w,e,u,d)
 - pozbycie sie stanu podswiadomosci (mode/unmode)
+- liczniki na przedmioty zamiast flag (czyli teraz mozna miec dwa paczki)
 - odrobinka zmian layoutowych dla czytelnosci
 
 Równolegle w `pascal-decomp` wrzucone próby dekompilacji do Pascala.
