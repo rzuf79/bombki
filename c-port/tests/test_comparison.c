@@ -51,7 +51,7 @@ static void test_training(void)
     Capture capture = {{0}, 0};
 
     game_initialize(&state);
-    state.strength = 13;
+    state.wisdom = 13;
     assert(execute(&state, &capture, "CWICZ POROWNANIE") == GAME_ACTION_NONE);
     assert(strcmp(capture.text,
         "CWICZYSZ POROWNYWANIE - PRAWDOPODOBIENSTWO JEST TERAZ 30% MASZ 9 PRAKTYK\n"
