@@ -200,9 +200,51 @@ uses  dos, monstra, crt, System;
   procedure save;
   { Proc $0108 Entry 264:0000 }
 implementation
-  (* BODY TODO: reconstruct from BOMBKI.EXE code disassembly.
-     Linked code blocks & entries are documented in
-     RE\tpu_reports\PRZEDM.*.txt and RE\exe_reports\exe.*.txt *)
+
+procedure MODE;
+begin
+  MIECHO2 := MIECHO;
+  MIECHO := 1000;
+end;
+
+procedure SCENA;
+begin
+  if GITARZYSTA = MIECHO then
+    WriteLn('GITARZYSTA GRA TU NA WYSOKIM CE-DUR');
+  if PERKUSISTA = MIECHO then
+    WriteLn('PERKUSISTA TLUCZE TU NIEMILOSIERNIE (W) TALEZE I BEBNY');
+  if ORGANISTA = MIECHO then
+    WriteLn('ORGANISTA KORZYSTA Z 8 CIASIO NARAZ PODLĄCZONYCH DO SIECI');
+  if LIROY = MIECHO then
+    WriteLn('MAGA BOSS TEJ PLANSZY - LIROY SPIEWA JEDEN ZE SWOICH KAWALKOW');
+end;
+
+procedure TLUM;
+begin
+  if DZIECKO = MIECHO then
+    WriteLn('MILE DZIECKO POWTARZA NAJLEPSZE KAWALKI LIROYA');
+  if WARIAT = MIECHO then
+    WriteLn('WARIAT SIE CIESZY ZE NIE TYLKO ON JEST WARIATEM');
+  if SLUCHACZ = MIECHO then
+    WriteLn('SLUCHACZ SLUCHA');
+  if FAN = MIECHO then
+    WriteLn('FAN LIROYA ZAPUSCIL SOBIE BRODKE JAK LIROY I MA PODJAR');
+  if CZLOWIEK = MIECHO then
+    WriteLn('NORMALNY CZLOWIEK PRZYSZEDL POSLUCHAC LIROYA(DZIWNE NIE)?');
+  if POLICJANT = MIECHO then
+    WriteLn('ZALANY POLICJANT STARA SIE PELNIC SWA SLUZBE');
+  if OCHRONIARZ = MIECHO then
+    WriteLn('OCHRONIARZ ZABIJA KAZDEGO KTO PRZEJDZIE PRZEZ BALUSTRADKI');
+  if GORYL = MIECHO then
+    WriteLn('PRYWATNY GORYL LIROYA JE BANANA ');
+  if DZIADEK = MIECHO then
+    WriteLn('DZIADEK NIESTESTY NIE SKACZE DO GORY JAK KANGURY');
+  if REPORTER = MIECHO then
+    WriteLn('REPORTER UWAZNIE ZAPISUJE WSZYSTKIE WULGARYZMY');
+end;
+
+  (* Remaining bodies are still to be reconstructed from the retained TPU
+     listings and BOMBKI.EXE disassembly. *)
 begin
   { unit-initialization: runs once at program start }
 end.
