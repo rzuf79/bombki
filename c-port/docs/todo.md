@@ -2,7 +2,9 @@
 
 This is intentionally limited to work required to finish the portable game.
 The plan excludes DOS emulator setup, runtime comparison work, timing
-reproduction, transcript infrastructure, CI setup, and release packaging.
+reproduction, transcript infrastructure, and release packaging. CI is
+included and important: automated builds and tests on every push keep the
+portable core honest across Ubuntu, Windows, and macOS.
 
 Technical compatibility and portability take priority over reproducing DOS or
 Turbo Pascal internals. The engine is entirely turn based. Original wording,
@@ -27,6 +29,8 @@ unambiguous spelling corrections.
 - [x] Remove all real-time timers and adopt logical turns.
 - [x] Add and serialize the logical turn counter.
 - [x] Add focused parser, state, persistence, turn, and evidence tests.
+- [x] Add a GitHub Actions build-and-test workflow on Ubuntu, Windows, and
+      macOS so every pushed state is compiled and unit-tested.
 
 The evidence generator and reports are documented in
 [`../evidence/README.md`](../evidence/README.md). The exact turn rules are in
