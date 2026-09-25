@@ -365,7 +365,8 @@ The 0x129D paragraph contains a whole second game layer beyond Walka:
 - **Fight launcher tiers** (each: set MonsterHP/Dex/Dmg, `lcall Walka`, skip if
   fled `[0x1D2]`, loot `[0x212]`→money `[0x21A:0x21C]`, then Serce `[0x186]` roll
   if `[0x186]==0` → `=0xFFF6` + `PRZED`++):
-  ZabijLauncher 0x12A16 (10/10/5, R15 loot, 25% Serce; dogs+street),
+  WALKAPIES 0x12A16 (10/10/5, unconditional post-WALKA R15 loot, 25% Serce
+  placed in the current room; dogs+street),
   SLABO 0x13839 (1/1/2, R3 loot, 70% Paczek for `ZABIJ MROWKA`),
   MNIEJSLABO 0x13947 (34-36/8-11/10; 10..30; 25%),
   SREDNIO 0x13A60 (50-54/10-14/13-14; 30..59; 35%),
@@ -560,4 +561,14 @@ Full machine-verified register added to INTEGRATED-FIELD-MAP.md
   rather than using the original signed Longint arithmetic (entry K).
 - Stale disassembly annotations were corrected: VEASY/EASY/NEASY damage rolls
   use `Random(2)`, and 0x13B87 is inside `TRUDNO`, not a second procedure.
+
+## 2026-09-25 (22): PRZEDM WALKAPIES reconstructed
+
+- `PRZEDM.PAS` now contains the source-equivalent `WALKAPIES` body from TPU
+  source lines 54..67 and EXE img 0x12A16..0x12AC9.
+- It sets enemy HP/Dex/Dmg to 10/10/5, calls `WALKA`, then unconditionally
+  grants `Random(15)` coins. If `SERCE = 0`, it rolls 25% and stores `MIECHO`
+  in `SERCE`, placing the heart in the current room rather than carrying it.
+- The C port matches the stats, ranges, strings, and room placement on victory,
+  but does not reproduce the original post-flee reward path (register entry L).
 

@@ -76,9 +76,9 @@ PROCS = {  # img->(name, extra)
  0x2395:("trening","skills"),0x36F3:("BAZAR","death/shop"),0x8740:("LevelUp","0x8740..0x8BA1"),
  0x12ACA:("Room","map gen + TRENUJ + ZABIJ MROWKA/TRUP"),
  0x4F53:("KillDispatch","ZABIJ <NPC> router: flag==context -> tier launcher (0xf77/0x1090/0x11b2 in para 0x129D) -> clear flag on win; Dziadek 5% Fajka, Goryl/Ochroniarz DropGarnitur"),0x51C3:("Checkpoint","KUNSZT>=0x190 && CheckpointStage==0 && SilaCur<0x14: sets CheckpointStage=1"),
- 0x12A16:("ZabijLauncher","dog/street tier: HP10 Dex10 Dmg5 loot Random(15); 25% Serce->[0x186]"),0x13839:("PRZEDM_SLABO","HP1/Dex1/Dmg2 loot Random(3); 70% Paczek->[0x1A0]"),0x13947:("PRZEDM_MNIEJSLABO","NPC weak tier: HP Random(3)+34 Dex Random(4)+8 Dmg 10; loot 10..30; 25% Serce->[0x186]"),0x13A60:("PRZEDM_SREDNIO","NPC mid tier: HP Random(5)+50 Dex Random(5)+10 Dmg Random(2)+13; loot 30..59; 35% Serce->[0x186]"),
+  0x12A16:("PRZEDM_WALKAPIES","HP10 Dex10 Dmg5; unconditional post-WALKA R(15) coins; 25% Serce placed at MIECHO"),0x13947:("PRZEDM_MNIEJSLABO","NPC weak tier: HP Random(3)+34 Dex Random(4)+8 Dmg 10; loot 10..30; 25% Serce->[0x186]"),0x13A60:("PRZEDM_SREDNIO","NPC mid tier: HP Random(5)+50 Dex Random(5)+10 Dmg Random(2)+13; loot 30..59; 35% Serce->[0x186]"),
  0x13194:("TrenujDispatch","TRENUJ SILA/ZRECZNOSC/MADROSC costs 3/2/3"),
- 0x13839:("PRZEDM_SLABO","HP1 DEX1 DMG2 loot Random(3)..roll Paczek"),
+  0x13839:("PRZEDM_SLABO","HP1 DEX1 DMG2 loot Random(3)..roll Paczek"),
  
  
   0x13B82:("PRZEDM_TRUDNO","strong NPC tier: HP Random(6)+60 Dex Random(3)+12 Dmg Random(3)+15; loot 20..59; 35% Serce"),0x13CA4:("PRZEDM_VEASY","HP R(10)+90 / Dex R(2)+14 / Dmg R(2)+17; loot R(55)+10"),

@@ -3817,7 +3817,7 @@
 01C45: A168  mov     ax, word ptr [0x668] ; data:GardenAnimal_0668
 01C48: 3B06  cmp     ax, word ptr [0x1d6] ; data:context
 01C4C: 750A  jne     0x1c58
-01C4E: 9A46  lcall   0x129d, 0x46 ; call==ZabijLauncher
+01C4E: 9A46  lcall   0x129d, 0x46 ; call==PRZEDM_WALKAPIES
 01C53: 31C0  xor     ax, ax
 01C55: A368  mov     word ptr [0x668], ax ; data:GardenAnimal_0668
 01C58: BF64  mov     di, 0x564
@@ -3831,7 +3831,7 @@
 01C69: A16E  mov     ax, word ptr [0x66e] ; data:GardenAnimal_066E
 01C6C: 3B06  cmp     ax, word ptr [0x1d6] ; data:context
 01C70: 750A  jne     0x1c7c
-01C72: 9A46  lcall   0x129d, 0x46 ; call==ZabijLauncher
+01C72: 9A46  lcall   0x129d, 0x46 ; call==PRZEDM_WALKAPIES
 01C77: 31C0  xor     ax, ax
 01C79: A36E  mov     word ptr [0x66e], ax ; data:GardenAnimal_066E
 01C7C: BF64  mov     di, 0x564
@@ -3845,7 +3845,7 @@
 01C8D: A166  mov     ax, word ptr [0x666] ; data:GardenAnimal_0666
 01C90: 3B06  cmp     ax, word ptr [0x1d6] ; data:context
 01C94: 750A  jne     0x1ca0
-01C96: 9A46  lcall   0x129d, 0x46 ; call==ZabijLauncher
+01C96: 9A46  lcall   0x129d, 0x46 ; call==PRZEDM_WALKAPIES
 01C9B: 31C0  xor     ax, ax
 01C9D: A366  mov     word ptr [0x666], ax ; data:GardenAnimal_0666
 01CA0: BF64  mov     di, 0x564
@@ -3859,7 +3859,7 @@
 01CB1: A16A  mov     ax, word ptr [0x66a] ; data:GardenAnimal_066A
 01CB4: 3B06  cmp     ax, word ptr [0x1d6] ; data:context
 01CB8: 755E  jne     0x1d18
-01CBA: 9A46  lcall   0x129d, 0x46 ; call==ZabijLauncher
+01CBA: 9A46  lcall   0x129d, 0x46 ; call==PRZEDM_WALKAPIES
 01CBF: 31C0  xor     ax, ax
 01CC1: A36A  mov     word ptr [0x66a], ax ; data:GardenAnimal_066A
 01CC4: BFA2  mov     di, 0x7a2
@@ -3906,7 +3906,7 @@
 01D29: A16C  mov     ax, word ptr [0x66c] ; data:GardenAnimal_066C
 01D2C: 3B06  cmp     ax, word ptr [0x1d6] ; data:context
 01D30: 750A  jne     0x1d3c
-01D32: 9A46  lcall   0x129d, 0x46 ; call==ZabijLauncher
+01D32: 9A46  lcall   0x129d, 0x46 ; call==PRZEDM_WALKAPIES
 01D37: 31C0  xor     ax, ax
 01D39: A36C  mov     word ptr [0x66c], ax ; data:GardenAnimal_066C
 01D3C: BF64  mov     di, 0x564
@@ -38088,7 +38088,7 @@
 12A12: 2050  and     byte ptr [bx + si + 0x53], dl
 12A15: 4155  inc     cx
 
-; ===== PROC ZabijLauncher @ img 12A16 (para0129D:0046) dog/street tier: HP10 Dex10 Dmg5 loot Random(15); 25% Serce->[0x186] =====
+; ===== PROC PRZEDM_WALKAPIES @ img 12A16 (para0129D:0046) HP10 Dex10 Dmg5; unconditional post-WALKA R(15) coins; 25% Serce placed at MIECHO =====
 12A16: 5589  push    bp
 12A17: 89E5  mov     bp, sp
 12A19: 31C0  xor     ax, ax
