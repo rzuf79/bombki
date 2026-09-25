@@ -98,7 +98,11 @@ invent player-facing text or mechanics for unrecovered commands.
   the original nested energy-threshold prompt, and its automatic escape test
   runs after normal rounds. Inside combat it is a direct round choice which
   gives up the weapon hit and bypasses the threshold. Both paths use the
-  recovered combat score, success penalty, and exact messages.
+  `Uciekanie` skill roll (`Random(100) <= Uciekanie`), the three-step mana
+  economy (attempt `MANA -= Random(2)+2`, gate `MANA > 14`, commit 15), the
+  20 KUNSZT penalty, and the exact messages (scriptlines recovery 2026-09-25:
+  the earlier "recovered combat score" reading was wrong — the roll keys off
+  the flee skill, not the dex-based combat chance).
 - `CWICZ KOPAC` and `KOP` are connected. Outside combat the two original
   threshold reads are terminal-neutral nested input. Inside combat `KOP` is a
   direct round choice replacing the weapon hit and bypassing those thresholds.
