@@ -98,31 +98,16 @@ static uint32_t seed_for_mrowka_paczek(void)
     return 0;
 }
 
-static uint32_t seed_for_mrowka_no_paczek(void)
-{
-    uint32_t seed;
-
-    for (seed = 0; seed < UINT32_C(1000000); ++seed) {
-        uint32_t coin = next_value(seed);
-        uint32_t paczek = next_value(coin);
-
-        if (paczek % 10 >= 7) {
-            return seed;
-        }
-    }
-    assert(!"could not find deterministic mrowka no-doughnut seed");
-    return 0;
-}
-
 static uint32_t seed_for_trainer_unique_after_coins(void)
 {
     uint32_t seed;
 
-    for (seed = 0; seed < UINT32_C(1000000); ++seed) {
+    for (seed = 0; seed < UINT32_C(5000000); ++seed) {
         uint32_t coin = next_value(seed);
-        uint32_t unique = next_value(coin);
+        uint32_t heart = next_value(coin);
+        uint32_t unique = next_value(heart);
 
-        if (unique % 1000 < 26) {
+        if (heart % 20 >= 5 && unique % 1000 < 26) {
             return seed;
         }
     }
@@ -230,6 +215,33 @@ static void test_standard_rewards_are_carried(void)
     assert(strcmp(capture.text, expected) == 0);
 }
 
+static void test_standard_heart_rewards_stack(void)
+{
+    GameState state;
+    Capture capture = {{0}, 0};
+    GameOutput output = {capture_write, &capture};
+    char expected[128];
+    uint32_t seed = seed_for_standard_heart();
+    int coins = 10 + (int)(next_value(seed) % 21);
+
+    prepare_enemy(&state, WORLD_ACTOR_DZIK, ROOM_ARENA_33, "DZIK");
+    state.item_quantities[ITEM_BLOODY_HEART] = 1;
+    state.random_state = seed;
+    state.active_opponent_energy = 0;
+
+    assert(game_resolve_active_opponent_victory(&state, output));
+    (void)snprintf(expected, sizeof(expected),
+        "ZABILES GO ! ZYSKUJESZ ZA TO %d KUNSZTU \n"
+        "WYCIAGASZ %d MONET Z CIALA\n"
+        "WYCIAGASZ SERCE Z CIALA TRUPA\n",
+        state.experience,
+        coins
+    );
+    assert(strcmp(capture.text, expected) == 0);
+    assert(state.coins == coins);
+    assert(state.item_quantities[ITEM_BLOODY_HEART] == 2);
+    assert_victory_state(&state, WORLD_ACTOR_DZIK);
+}
 static void test_mrowka_drops_paczek(void)
 {
     GameState state;
@@ -258,13 +270,13 @@ static void test_mrowka_drops_paczek(void)
     assert_victory_state(&state, WORLD_ACTOR_MROWKA);
 }
 
-static void test_mrowka_with_carried_doughnut_drops_nothing(void)
+static void test_mrowka_drops_paczek_again_when_carrying(void)
 {
     GameState state;
     Capture capture = {{0}, 0};
     GameOutput output = {capture_write, &capture};
     char expected[128];
-    uint32_t seed = seed_for_mrowka_no_paczek();
+    uint32_t seed = seed_for_mrowka_paczek();
     int coins = (int)(next_value(seed) % 3);
 
     prepare_enemy(&state, WORLD_ACTOR_MROWKA, ROOM_ARENA_33, "MROWKA");
@@ -275,12 +287,13 @@ static void test_mrowka_with_carried_doughnut_drops_nothing(void)
     assert(game_resolve_active_opponent_victory(&state, output));
     (void)snprintf(expected, sizeof(expected),
         "ZABILES GO ! ZYSKUJESZ ZA TO 9 KUNSZTU \n"
-        "WYCIAGASZ %d MONET Z CIALA\n",
+        "WYCIAGASZ %d MONET Z CIALA\n"
+        "WYCIAGASZ PACZEK Z CIALA MROWKI\n",
         coins
     );
     assert(strcmp(capture.text, expected) == 0);
     assert(state.coins == coins);
-    assert(state.item_quantities[ITEM_DOUGHNUT] == 1);
+    assert(state.item_quantities[ITEM_DOUGHNUT] == 2);
     assert_victory_state(&state, WORLD_ACTOR_MROWKA);
 }
 
@@ -442,8 +455,9 @@ int main(void)
     test_alive_opponent_is_not_resolved();
     test_weak_standard_rewards_are_coins_only();
     test_standard_rewards_are_carried();
+    test_standard_heart_rewards_stack();
     test_mrowka_drops_paczek();
-    test_mrowka_with_carried_doughnut_drops_nothing();
+    test_mrowka_drops_paczek_again_when_carrying();
     test_dog_rewards_stay_in_the_room();
     test_spaniel_speaks_after_victory();
     test_cage_rewards_use_original_roll_order();
