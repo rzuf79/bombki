@@ -71,19 +71,24 @@ jobs:
           objdump -f "$exe" | grep -q "architecture: i386" \
             || { echo "expected a 32-bit binary, got:"; objdump -f "$exe" | grep architecture; exit 1; }
 
-      - name: Ship required MinGW runtime DLLs next to executables (Windows)
-        if: ${{ runner.os == 'Windows' && !cancelled() }}
-        shell: msys2 {0}
-        run: |
-          set -e
-          for exe in $(find build -name '*.exe'); do
-            dir=$(dirname "$exe")
-            objdump -p "$exe" | sed -n 's/.*DLL Name: \(.*\)/\1/p' | while read -r dll; do
-              if [ -f "$MINGW_PREFIX/bin/$dll" ]; then
-                cp "$MINGW_PREFIX/bin/$dll" "$dir/"
-              fi
-            done
-          done
+      # Static MinGW linkage (-static -static-libgcc in c-port/CMakeLists.txt)
+      # means the executables carry no mingw runtime DLL dependencies, so this
+      # step is disabled. Keep it commented out in case dynamic linkage comes
+      # back: it inspects each .exe's imports (objdump -p / "DLL Name:") and
+      # copies any referenced toolchain DLLs from $MINGW_PREFIX/bin.
+      # - name: Ship required MinGW runtime DLLs next to executables (Windows)
+      #   if: ${{ runner.os == 'Windows' && !cancelled() }}
+      #   shell: msys2 {0}
+      #   run: |
+      #     set -e
+      #     for exe in $(find build -name '*.exe'); do
+      #       dir=$(dirname "$exe")
+      #       objdump -p "$exe" | sed -n 's/.*DLL Name: \(.*\)/\1/p' | while read -r dll; do
+      #         if [ -f "$MINGW_PREFIX/bin/$dll" ]; then
+      #           cp "$MINGW_PREFIX/bin/$dll" "$dir/"
+      #         fi
+      #       done
+      #     done
 
       - name: Upload executables
         if: ${{ !cancelled() }}
