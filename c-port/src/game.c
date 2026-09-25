@@ -1973,6 +1973,13 @@ bool game_resolve_active_opponent_victory(
     if (loot_source_for_actor(actor, &loot_source)) {
         (void)game_resolve_enemy_loot(state, loot_source, output);
     }
+    if (actor == WORLD_ACTOR_SPANIEL) {
+        emit(output,
+            "GDY NAGLE!!!! NIEBIOSA SIE OTWIERAJA\n"
+            "A SPANIEL PRZEMAWIA DO CIEBIE LUDZKIM GLOSEM !!!!!\n"
+            "HAU HAU CHAMIE PO CO MNIE ZABILES ??? \n"
+        );
+    }
     if (state->quest_type > 0) {
         add_clamped(&state->quest_progress, -1);
     }
@@ -3631,6 +3638,23 @@ static bool move_player(GameState *state, Direction direction, GameOutput output
 
     game_clear_active_opponent(state);
     state->room_id = destination_id;
+    if (state->room_id == ROOM_TELEPORT
+        && state->item_quantities[ITEM_SCHOOL_DIPLOMA] == 0
+        && state->world_object_rooms[WORLD_OBJECT_SCHOOL_DIPLOMA]
+            == BOMBKI_ROOM_NOWHERE
+        && state->world_actor_rooms[WORLD_ACTOR_CAGE_WEAK]
+            == BOMBKI_ROOM_NOWHERE
+        && state->world_actor_rooms[WORLD_ACTOR_CAGE_DEXTEROUS]
+            == BOMBKI_ROOM_NOWHERE
+        && state->world_actor_rooms[WORLD_ACTOR_CAGE_RESISTANT]
+            == BOMBKI_ROOM_NOWHERE
+        && state->world_actor_rooms[WORLD_ACTOR_CAGE_STRONG]
+            == BOMBKI_ROOM_NOWHERE
+        && state->world_actor_rooms[WORLD_ACTOR_CAGE_ALL]
+            == BOMBKI_ROOM_NOWHERE) {
+        state->world_object_rooms[WORLD_OBJECT_SCHOOL_DIPLOMA]
+            = ROOM_TELEPORT;
+    }
     game_describe_current_room(state, output);
     destination = world_find_room(state->room_id);
     if (destination != NULL && destination->redirects_on_arrival) {

@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include "bombki/game.h"
+#include "bombki/parser.h"
 #include "items.h"
 #include "world.h"
 
@@ -199,6 +200,64 @@ static void test_dog_rewards_stay_in_the_room(void)
     assert_victory_state(&state, WORLD_ACTOR_JAMNIK);
 }
 
+static void test_spaniel_speaks_after_victory(void)
+{
+    GameState state;
+    Capture capture = {{0}, 0};
+    GameOutput output = {capture_write, &capture};
+    char expected[256];
+    int coins = (int)(next_value(1u) % 15);
+
+    prepare_enemy(&state, WORLD_ACTOR_SPANIEL, ROOM_SHOP_STREET, "SPANIEL");
+    state.item_quantities[ITEM_BLOODY_HEART] = 1;
+    state.random_state = 1u;
+    state.active_opponent_energy = 0;
+
+    assert(game_resolve_active_opponent_victory(&state, output));
+    (void)snprintf(expected, sizeof(expected),
+        "ZABILES GO ! ZYSKUJESZ ZA TO 17 KUNSZTU \n"
+        "WYCIAGASZ %d MONET Z CIALA PSA\n"
+        "GDY NAGLE!!!! NIEBIOSA SIE OTWIERAJA\n"
+        "A SPANIEL PRZEMAWIA DO CIEBIE LUDZKIM GLOSEM !!!!!\n"
+        "HAU HAU CHAMIE PO CO MNIE ZABILES ??? \n",
+        coins
+    );
+    assert(strcmp(capture.text, expected) == 0);
+    assert_victory_state(&state, WORLD_ACTOR_SPANIEL);
+}
+
+static void test_school_completion_places_diploma_in_teleporter(void)
+{
+    GameState state;
+    Capture capture = {{0}, 0};
+    GameOutput output = {capture_write, &capture};
+    Command command;
+
+    prepare_enemy(&state, WORLD_ACTOR_CAGE_ALL, ROOM_CAGE_ALL, "POTWOR");
+    state.world_actor_rooms[WORLD_ACTOR_CAGE_WEAK] = BOMBKI_ROOM_NOWHERE;
+    state.world_actor_rooms[WORLD_ACTOR_CAGE_DEXTEROUS] = BOMBKI_ROOM_NOWHERE;
+    state.world_actor_rooms[WORLD_ACTOR_CAGE_RESISTANT] = BOMBKI_ROOM_NOWHERE;
+    state.world_actor_rooms[WORLD_ACTOR_CAGE_STRONG] = BOMBKI_ROOM_NOWHERE;
+    state.active_opponent_energy = 0;
+
+    assert(game_resolve_active_opponent_victory(&state, output));
+    assert(state.world_object_rooms[WORLD_OBJECT_SCHOOL_DIPLOMA]
+        == BOMBKI_ROOM_NOWHERE);
+
+    command = parser_parse("DOL");
+    (void)game_execute(&state, &command, output);
+    command = parser_parse("DOL");
+    (void)game_execute(&state, &command, output);
+
+    assert(state.room_id == ROOM_TELEPORT);
+    assert(state.world_object_rooms[WORLD_OBJECT_SCHOOL_DIPLOMA]
+        == ROOM_TELEPORT);
+    assert(strstr(capture.text,
+        "W TYM POKOJU ZNAJDUJE SIE !DYPLOM! MUD SZKOLY"
+    ) != NULL);
+    assert(game_state_is_valid(&state));
+}
+
 static void test_cage_rewards_use_original_roll_order(void)
 {
     GameState state;
@@ -270,7 +329,9 @@ int main(void)
     test_alive_opponent_is_not_resolved();
     test_standard_rewards_are_carried();
     test_dog_rewards_stay_in_the_room();
+    test_spaniel_speaks_after_victory();
     test_cage_rewards_use_original_roll_order();
+    test_school_completion_places_diploma_in_teleporter();
     test_named_loot_follows_ordinary_rewards();
     return 0;
 }
