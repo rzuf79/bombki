@@ -127,7 +127,7 @@ if(BUILD_TESTING)
             NAME evidence-generated-files
             COMMAND
                 "${Python3_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/tools/evidence.py"
-                --source "${CMAKE_CURRENT_SOURCE_DIR}/.."
+                --source "${CMAKE_CURRENT_SOURCE_DIR}/../og"
                 --output "${CMAKE_CURRENT_SOURCE_DIR}/evidence/generated"
                 --check
         )
