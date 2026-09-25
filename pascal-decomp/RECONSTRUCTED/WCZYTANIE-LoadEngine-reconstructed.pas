@@ -34,9 +34,9 @@
 {   f14 0x194  raw := Money WORD          Money := v                         }
 {   f15 0x6C   raw                        (dev-path artifact)                }
 {   f16 0x52  ...f17 0x1B2 ... f19 0x212  raw                               }
-{   f18 0x21A:0x21C Money longint (DX:AX) then += Madrosc via 0x7FA;         }
-{                       this bonus is an explicit in-game effect on load     }
-{                                  (not a round-trip loss)                  }
+{   f18 0x21A:0x21C coins longint (DX:AX); raw = coins x MadroscCur (net-worth  }
+{                       field encoding: @LMul on save, @LDiv on load — a       }
+{                       reversible transform, not a round-trip loss)           }
 {   f20 0x664 EnergiaMax  f21 0x62 MaxLoad  f22 0x25D byte                  }
 {   f23 0x1AE ManaMax f24 0x198 SilaMax f25 0x19A ZrecznoscMax              }
 {   f26 0x196 MadroscMax f27 0x182  f28 0x1C2 f29 0x224 HeavyBlowTresh       }
@@ -77,7 +77,7 @@ begin  { img 0x7D80 }
   { 0x7FA4..0x7FBB: Forsa := Forsa div MadroscCur           }
   {   mov ax,[0x18c]; cwd; mov cx,ax; mov bx,dx; mov ax,[0x21a]; mov dx,[0x21c]; }
   {   lcall 0x1C71:0x7FA (TP7 RTL @LDiv: DX:AX/CX:BX -> quoT DX:AX, rem CX:BX) }
-  Inc(MoneyLong, Madrosc);                                  { 0x7FA4..0x7FBB, longint add }
+  Forsa := Forsa div MadroscCur;                            { f18 inverse: net-worth/16 -> pocket coins }
   [0x212] := ReadLn; [0x664] := ReadLn; [0x62] := ReadLn;   { f19..f21 }
   [0x25D] := ReadLn; [0x1AE] := ReadLn; [0x198] := ReadLn;  { f22..f24 }
   [0x19A] := ReadLn; [0x196] := ReadLn; [0x182] := ReadLn;  { f25..f27 }
