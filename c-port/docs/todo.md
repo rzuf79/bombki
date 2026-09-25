@@ -46,9 +46,9 @@ The evidence generator and reports are documented in
 - [x] Save and load every state field implemented at this stage.
 
 The player can now be created as any of the six recovered races. The parser
-recognizes the in-scope gameplay command vocabulary without a mode switch. Some
-remaining commands still report a `[PORT: ...]` marker; Milestone 7 checks
-whether they have recoverable gameplay. Native save format version 16 preserves
+recognizes the in-scope gameplay command vocabulary without a mode switch.
+Milestone 7 checked whether remaining commands have recoverable gameplay.
+Native save format version 16 preserves
 all current player, world, inventory, equipment, combat, skill, and quest state,
 and versions 1–15 remain readable.
 
@@ -252,14 +252,20 @@ road room are playable; the absence of a separate winning ending is recorded.
 
 ## Milestone 7 — gameplay completion
 
-- [ ] Investigate remaining player-facing gameplay placeholders and silent
+- [x] Investigate remaining player-facing gameplay placeholders and silent
       commands. Implement behavior found in the original game; keep commands
       silent when the retained evidence shows no effect. Do not invent mechanics.
-- [ ] Check gameplay text against the recovered strings and approved spelling
+- [x] Check gameplay text against the recovered strings and approved spelling
       corrections. Fix actual mismatches without rewriting the original voice.
-- [ ] Play from a fresh character through the recovered quest paths, fights,
+- [x] Play from a fresh character through the recovered quest paths, fights,
       gates, death/recovery, and road to the river. Check save/load during a
       quest and fix any gameplay blockers found.
+
+`KTO` now follows `PRZEDM.KTO`: it lists only the arena roster present in the
+current room, in recovered order. The original `SCAN` taunt remains intact;
+source vocabulary and advertised skills with no retained handler are silent.
+A fresh run reaches the school cages through the restored opening route, and
+the full suite covers the quest paths, recovery, native save/load, and river.
 
       
 ## Milestone 8 - finishing tweax

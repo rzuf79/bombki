@@ -105,14 +105,15 @@ static void test_attack_enters_combat_and_blocks_movement(void)
         "MASZ PECHA : LEKKO POPCHNALES GO I STRACIL TYLKO 0% ENERGII\n"
     ) == 0);
 
+    memset(&capture, 0, sizeof(capture));
     command = parser_parse("N");
     (void)game_execute(&state, &command, output);
     assert(state.room_id == ROOM_ARENA_33);
     assert(state.turn == 1);
     assert(state.active_opponent_actor == WORLD_ACTOR_KORNIK);
-    assert(strstr(capture.text,
+    assert(strcmp(capture.text,
         "WALCZYSZ I NIE MOZESZ TERAZ TEGO ZROBIC!\n"
-    ) != NULL);
+    ) == 0);
 
     command = parser_parse("");
     (void)game_execute(&state, &command, output);

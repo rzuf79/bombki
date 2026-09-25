@@ -361,6 +361,13 @@ The underground poster also preserves every independent gate and exact line.
 Its additional advertised direct and automatic abilities have no executable
 handler, state, or combat branch, so those command words are silent no-ops.
 
+`KTO` follows `PRZEDM.KTO`: it lists only the recovered arena roster from
+`KORNIK` through `TRENER` that shares the current room, in that order. `SCAN`
+retains its original taunt. Other unmatched command forms remain silent as in
+the retained command handlers. `POMOC` and `HELP` retain the port's command
+guide, and blocked movement or non-combat actions during a fight retain their
+port feedback text.
+
 `SPIJ` is the recovered healing path. One explicit command represents one
 logical sleep hour, adds ten energy, subtracts 20 kunszt, and consumes one turn.
 Repeating it continues the same sleep. Any other input wakes the player, uses

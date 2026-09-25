@@ -97,9 +97,9 @@ Commands with implemented behavior include:
 - `POMOC`
 - `KONIEC` (portable-port extension used to leave the program)
 
-All supported gameplay commands work without changing command state. Commands
-with no implemented gameplay behavior may remain silent or report a
-`[PORT: ...]` marker while their recovered behavior is checked.
+All supported gameplay commands work without changing command state. Recovered
+command words with no retained gameplay handler remain silent. `POMOC` provides
+the portable command guide.
 
 The corrected spelling `POLUDNIE` is displayed. The original `POLODNIE` remains
 accepted as a parser alias for compatibility.
