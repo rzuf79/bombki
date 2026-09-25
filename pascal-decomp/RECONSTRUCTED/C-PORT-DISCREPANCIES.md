@@ -26,6 +26,8 @@ different inputs/values; `minor` = cosmetic/faithfulness only.
 | E | Quest turn-in side effects | PORT-DEVIATION (deliberate) | moderate |
 | F | Item storage: countable quantities vs bool sentinels | PORT-DEVIATION (deliberate) | major |
 | I | Kaseta unique-drop carrying penalty | PORT-DEVIATION | major |
+| J | High-tier ordinary-reward energy gate | PORT-DEVIATION | moderate |
+| K | Coin-reward overflow behavior | PORT-DEVIATION | minor |
 
 ---
 
@@ -122,6 +124,10 @@ By explicit project decision, **all items are countable quantities, not bools**:
 - Consequence: hearts and paczki stack; each successful drop prints its message
   and raises the count (test 02 `test_standard_heart_rewards_stack`,
   `test_mrowka_drops_paczek_again_when_carrying`).
+- The original heart routines call `Random(20)` only while `SERCE = 0`; the
+  port rolls on every eligible non-Mrowka ordinary reward. Mrowka similarly
+  rolls before its original `PACZEK <> -10` check. Countable repeats therefore
+  also change subsequent RNG consumption, not just inventory quantities.
 - `LoadCapacity` bumps (+1 heart/paczek, -1 eating) remain unimplemented —
   capacity is dex-derived in the port (game.c `game_carrying_capacity`).
 
@@ -152,6 +158,32 @@ unchanged or increase it instead. The generic drop helper also has no equivalent
 of the original `MIECHO <> 10000` guard, although current callers are combat-loot
 paths. `PRZED += 1` is not separately actionable because carried count is derived
 from quantities under the deliberate item model in section F.
+
+---
+
+## J. High-tier ordinary-reward energy gate (moderate)
+
+### ORIGINAL (`PRZEDM.VEASY/EASY/NEASY`)
+
+After `WALKA`, these three procedures grant coins and attempt the Serce drop only
+when both `PASZOL = 0` and `ENERGIA > 0`. SLABO/MNIEJSLABO/SREDNIO/TRUDNO/
+BTRUDNO require only `PASZOL = 0`.
+
+### PORT (`game_resolve_active_opponent_victory`, game.c 1934-1939)
+
+Kunszt and cooking are gated by `state->energy > 0`, but
+`resolve_ordinary_enemy_rewards` is called unconditionally. If victory reaches
+this path with nonpositive player energy, VEASY/EASY/NEASY still grant coins and
+roll their ordinary item reward, unlike the original.
+
+---
+
+## K. Coin-reward overflow behavior (minor)
+
+The original difficulty procedures add the 16-bit roll directly to signed
+Longint `FORSA`. The port checks `INT_MAX - coins` and saturates at `INT_MAX`
+(`game.c` 1767-1773). This differs only at the extreme upper bound but is not
+the original arithmetic behavior.
 
 ---
 
@@ -188,3 +220,4 @@ from quantities under the deliberate item model in section F.
 | save | SAVE-FIELD-MAP.txt / wczytaj img 0x7D80; f18 Forsa raw=coins×wisdom (@LMul img 0x2E0F..0x2E25, @LDiv img 0x7FA4..0x7FBB) | persistence.c 43-105 |
 | quest turn-in | img 0x1276B..0x127C4 | game.c 3471-3513 |
 | Kaseta drop | PRZEDM.KASETAZYSK / img 0x15908..0x1598F | game.c 1527-1533, 1580-1586, 1607-1612 |
+| difficulty rewards | PRZEDM.SLABO..BTRUDNO / img 0x13839..0x140FF | enemies.c 9-25; game.c 1760-1792, 1909-1940 |

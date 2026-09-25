@@ -40130,7 +40130,6 @@
 13B83: 89E5  mov     bp, sp
 13B85: 31C0  xor     ax, ax
 
-; ===== PROC ZabijSilny_body @ img 13B87 (para0129D:11B7) same body as ZabijSilny (shared code) =====
 13B87: 9ACD  lcall   0x1c71, 0x2cd
 13B8C: B806  mov     ax, 6
 13B8F: 509A  push    ax
@@ -40256,7 +40255,7 @@
 13CA2: 5041  push    ax
 13CA3: 4155  inc     cx
 
-; ===== PROC PRZEDM_VEASY @ img 13CA4 (para0129D:12D4) HP R(10)+90 / Dex R(10)+14 / Dmg R(10)+17; loot R(0x37) =====
+; ===== PROC PRZEDM_VEASY @ img 13CA4 (para0129D:12D4) HP R(10)+90 / Dex R(2)+14 / Dmg R(2)+17; loot R(55)+10 =====
 13CA4: 5589  push    bp
 13CA5: 89E5  mov     bp, sp
 13CA7: 31C0  xor     ax, ax
@@ -40388,7 +40387,7 @@
 13DCE: 5041  push    ax
 13DCF: 4155  inc     cx
 
-; ===== PROC PRZEDM_EASY @ img 13DD0 (para0129D:1400) HP R(20)+100 / Dex 16 / Dmg R(20)+18; loot R(0x1E) =====
+; ===== PROC PRZEDM_EASY @ img 13DD0 (para0129D:1400) HP R(20)+100 / Dex 16 / Dmg R(2)+18; loot R(30)+30 =====
 13DD0: 5589  push    bp
 13DD1: 89E5  mov     bp, sp
 13DD3: 31C0  xor     ax, ax
@@ -40516,7 +40515,7 @@
 13EF1: 5041  push    ax
 13EF2: 4155  inc     cx
 
-; ===== PROC PRZEDM_NEASY @ img 13EF3 (para0129D:1523) HP R(20)+130 / Dex 20 / Dmg R(20)+19; loot R(0x2D) =====
+; ===== PROC PRZEDM_NEASY @ img 13EF3 (para0129D:1523) HP R(20)+130 / Dex 20 / Dmg R(2)+19; loot R(45)+20 =====
 13EF3: 5589  push    bp
 13EF4: 89E5  mov     bp, sp
 13EF6: 31C0  xor     ax, ax
@@ -40644,7 +40643,7 @@
 14014: 5041  push    ax
 14015: 4155  inc     cx
 
-; ===== PROC PRZEDM_BTRUDNO @ img 14016 (para0129D:1646) HP R(3)+72 / Dex R(2)+13 / Dmg R(2)+16; loot R(0x32) =====
+; ===== PROC PRZEDM_BTRUDNO @ img 14016 (para0129D:1646) HP R(3)+72 / Dex R(2)+13 / Dmg R(2)+16; loot R(50)+15 =====
 14016: 5589  push    bp
 14017: 89E5  mov     bp, sp
 14019: 31C0  xor     ax, ax

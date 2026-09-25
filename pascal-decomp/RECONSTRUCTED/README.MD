@@ -364,15 +364,16 @@ The 0x129D paragraph contains a whole second game layer beyond Walka:
   DropGarnitur; all Serce-eligible.
 - **Fight launcher tiers** (each: set MonsterHP/Dex/Dmg, `lcall Walka`, skip if
   fled `[0x1D2]`, loot `[0x212]`→money `[0x21A:0x21C]`, then Serce `[0x186]` roll
-  if `[0x186]==0` → `=0xFFF6` + LoadCapacity++):
+  if `[0x186]==0` → `=0xFFF6` + `PRZED`++):
   ZabijLauncher 0x12A16 (10/10/5, R15 loot, 25% Serce; dogs+street),
-  ZabijMrowka 0x1383A (1/1/2, R3 loot, 70% Paczek),
-  ZabijSlaby 0x13947 (34-36/8-11/10; 10..30; 25%),
-  ZabijSredni 0x13A60 (50-54/10-14/13-14; 30..59; 35%),
-  ZabijSilny 0x13B82 (60-65/12-14/15-17; 20..59; 35%; body shared at 0x13B87),
-  ZabijPotwor1..4 0x13CA9/0x13DD5/0x13EF8/0x1401B (HP 90-99/100-119/130-149/
-  72-74, Dex 14-23/16/20/13-14, Dmg 17-26/18-31/19-32/16-17; loot
-  R(0x37)/R(0x1E)/R(0x2D)/R(0x32)).
+  SLABO 0x13839 (1/1/2, R3 loot, 70% Paczek for `ZABIJ MROWKA`),
+  MNIEJSLABO 0x13947 (34-36/8-11/10; 10..30; 25%),
+  SREDNIO 0x13A60 (50-54/10-14/13-14; 30..59; 35%),
+  TRUDNO 0x13B82 (60-65/12-14/15-17; 20..59; 35%),
+  VEASY/EASY/NEASY/BTRUDNO 0x13CA4/0x13DD0/0x13EF3/0x14016
+  (HP 90-99/100-119/130-149/
+  72-74, Dex 14-15/16/20/13-14, Dmg 17-18/18-19/19-20/16-17; loot
+  10..64/30..59/20..64/15..64).
 - **Special encounters call drops directly**: "MIESA LUDZKIEGO... MOZGI"
   seduction fight (HP 200/Dex 15/Dmg 18, wounds 20/10) → on win DropListek +
   DropPigulka + DropScroll, and `[0x262]`(QuestPhase) -= 0x32 while non-zero.
@@ -543,4 +544,20 @@ Full machine-verified register added to INTEGRATED-FIELD-MAP.md
   penalty. Its generic helper also does not model the `MIECHO <> 10000` guard on
   Kaseta/Listek/Scroll; current port call sites invoke it through combat loot.
   The Kaseta penalty is discrepancy-register entry I.
+
+## 2026-09-25 (21): PRZEDM difficulty procedures reconstructed
+
+- `PRZEDM.PAS` now contains source-equivalent bodies for `SLABO`,
+  `MNIEJSLABO`, `SREDNIO`, `TRUDNO`, `VEASY`, `EASY`, `NEASY`, and `BTRUDNO`
+  from TPU source lines 225..383 and EXE img 0x13839..0x140FF.
+- The reconstruction preserves stat and coin rolls, `PASZOL` reward gates,
+  `ENERGIA > 0` gates unique to VEASY/EASY/NEASY, exact loot strings, the
+  MROWKA-only Paczek path, and the original nested Serce checks and RNG order.
+- `enemies.c` agrees with every stat, coin, and drop range. The countable-item
+  port deliberately differs in Paczek/Serce ownership and RNG consumption
+  (register entry F). It also grants ordinary VEASY/EASY/NEASY rewards without
+  the original `ENERGIA > 0` condition (entry J) and saturates coin addition
+  rather than using the original signed Longint arithmetic (entry K).
+- Stale disassembly annotations were corrected: VEASY/EASY/NEASY damage rolls
+  use `Random(2)`, and 0x13B87 is inside `TRUDNO`, not a second procedure.
 
