@@ -201,6 +201,24 @@ uses  dos, monstra, crt, System;
   { Proc $0108 Entry 264:0000 }
 implementation
 
+procedure WALKAPIES;
+begin
+  WROGEN := 10;
+  WROGZRE := 10;
+  WROGSIL := 5;
+  WALKA;
+  CZY := Random(15);
+  WriteLn('WYCIAGASZ ', CZY, ' MONET Z CIALA PSA');
+  FORSA := FORSA + CZY;
+  if SERCE = 0 then begin
+    FUKS := Random(20);
+    if FUKS < 5 then begin
+      SERCE := MIECHO;
+      WriteLn('WYCIAGASZ ZAKRWAWIONE SERCE Z CIALA PSA');
+    end;
+  end;
+end;
+
 procedure SLABO;
 begin
   WROGEN := 1;

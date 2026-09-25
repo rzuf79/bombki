@@ -28,6 +28,7 @@ different inputs/values; `minor` = cosmetic/faithfulness only.
 | I | Kaseta unique-drop carrying penalty | PORT-DEVIATION | major |
 | J | High-tier ordinary-reward energy gate | PORT-DEVIATION | moderate |
 | K | Coin-reward overflow behavior | PORT-DEVIATION | minor |
+| L | WALKAPIES rewards after fleeing | PORT-DEVIATION | moderate |
 
 ---
 
@@ -187,6 +188,23 @@ the original arithmetic behavior.
 
 ---
 
+## L. WALKAPIES rewards after fleeing (moderate)
+
+### ORIGINAL (`PRZEDM.WALKAPIES`, img 0x12A16..0x12AC9)
+
+`WALKAPIES` calls `WALKA` and then, without checking `PASZOL`, always rolls and
+grants `Random(15)` coins. If `SERCE = 0`, it also makes the 25% heart roll and
+sets `SERCE := MIECHO`, placing the heart in the current room. A successful flee
+therefore still reaches the dog reward code.
+
+### PORT (`game_resolve_active_opponent_victory`)
+
+Dog rewards are represented accurately by `ENEMY_REWARD_DOG`, but are emitted
+only by the victory resolver after the opponent reaches zero energy. Fleeing
+does not grant the original dog coins or attempt the heart drop.
+
+---
+
 ## Confirmed 1:1 (checked, no deviation)
 
 - Arena N/S/E/W edge table (cells 33-57, entrance 17/32) + "EXIT" texts.
@@ -221,3 +239,4 @@ the original arithmetic behavior.
 | quest turn-in | img 0x1276B..0x127C4 | game.c 3471-3513 |
 | Kaseta drop | PRZEDM.KASETAZYSK / img 0x15908..0x1598F | game.c 1527-1533, 1580-1586, 1607-1612 |
 | difficulty rewards | PRZEDM.SLABO..BTRUDNO / img 0x13839..0x140FF | enemies.c 9-25; game.c 1760-1792, 1909-1940 |
+| dog rewards | PRZEDM.WALKAPIES / img 0x12A16..0x12AC9 | enemies.c 31-32; game.c 1794-1802, 1909-1940 |

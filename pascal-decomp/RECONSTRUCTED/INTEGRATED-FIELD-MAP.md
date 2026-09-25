@@ -257,7 +257,7 @@ item sentinel -10 = carried.
 | 0x13DD0 (ofs 0x1400) | **EASY** | 100..119 | 18..19 | 16 | 30..59 | Serce `R(20)<4` (20%) |
 | 0x13EF3 (ofs 0x1523) | **NEASY** | 130..149 | 19..20 | 20 | 20..64 | Serce `R(20)<4` (20%) |
 | 0x14016 (ofs 0x1646) | **BTRUDNO** | 72..74 | 16..17 | 13..14 | 15..64 | Serce `R(20)<5` (25%) |
-| 0x12A16 (ofs 0x46) | **WALKAPIES** | 10 | 5 | 10 | R(15) 0..14 | Serce `R(20)<5` (25%) |
+| 0x12A16 (ofs 0x46) | **WALKAPIES** | 10 | 5 | 10 | R(15) 0..14, unconditional after WALKA | Serce `R(20)<5` placed at MIECHO when slot=0 |
 
 The prior "ZabijPotwor1..4" Dex/Dmg maxima in this file were misread (17-26/
 18-31/19-32); correct = VEASY/EASY/NEASY/BTRUDNO above. Backbone profiles use
