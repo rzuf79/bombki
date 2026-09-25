@@ -180,6 +180,19 @@ int main(void)
     assert(state.turn == 1);
     assert(strcmp(capture.text,
         "FUNKCJA BEDZIE DOSTEPNA ZA DWA LATA , I TAK ZGINIESZ , I TAK :) \n") == 0);
+    clear_capture(&capture);
+    command = parser_parse("POMOC");
+    (void)game_execute(&state, &command, output);
+    assert(strcmp(capture.text,
+        "KOMENDY: PATRZ, EXIT, POLNOC, POLUDNIE, WSCHOD, ZACHOD, GORA, DOL,\n"
+        "         N, S, W, E, U, D, JA, PAMIETAJ, WLACZ POSTAC, KONIEC.\n") == 0);
+    clear_capture(&capture);
+    command = parser_parse("NIEZNANA KOMENDA");
+    (void)game_execute(&state, &command, output);
+    assert(capture.length == 0);
+    command = parser_parse("u");
+    (void)game_execute(&state, &command, output);
+    assert(strcmp(capture.text, "NIE MOZESZ ISC W TYM KIERUNKU.\n") == 0);
 
     game_initialize(&state);
     state.room_id = ROOM_TELEPORT;
@@ -253,6 +266,29 @@ int main(void)
         "KORNIK SZUKA JAKIEGOS DRZEWA ABY COS PRZEKASIC") != NULL);
     assert(strstr(capture.text,
         "W TWYM POKOJU LEZY !STARY! ZARDZEWIALY MIECZ") != NULL);
+
+    state.world_actor_rooms[WORLD_ACTOR_MUCHA] = ROOM_ARENA_33;
+    clear_capture(&capture);
+    command = parser_parse("KTO");
+    (void)game_execute(&state, &command, output);
+    assert(strcmp(capture.text,
+        "KORNIK SZUKA JAKIEGOS DRZEWA ABY COS PRZEKASIC\n"
+        "MUCHA BZYKA SOBIE TO TU TO TAM\n") == 0);
+
+    state.room_id = ROOM_SHOP_STREET;
+    state.world_actor_rooms[WORLD_ACTOR_JAMNIK] = ROOM_SHOP_STREET;
+    clear_capture(&capture);
+    command = parser_parse("KTO");
+    (void)game_execute(&state, &command, output);
+    assert(capture.length == 0);
+
+    clear_capture(&capture);
+    command = parser_parse("CWICZ RECE");
+    (void)game_execute(&state, &command, output);
+    assert(capture.length == 0);
+    command = parser_parse("KUP");
+    (void)game_execute(&state, &command, output);
+    assert(capture.length == 0);
 
     clear_world_contents(&state);
     state.room_id = ROOM_CAGE_WEAK;

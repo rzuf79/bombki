@@ -63,10 +63,9 @@ repeating broad inspection of the original binaries or the project docs.
 
 ## Current handoff
 
-Milestones 1 through 6 are complete. Next is Milestone 7: resolve remaining
-gameplay placeholders, check recovered text, and play through the quest paths
-and river endpoint. Legacy-save import, multi-OS verification, and a seed flag
-are not part of the remaining game-reconstruction work.
+Milestones 1 through 7 are complete. Legacy-save import, multi-OS verification,
+and a seed flag are not part of the remaining game-reconstruction work. Do not
+invent player-facing text or mechanics for unrecovered commands.
 
 - Complete: the 23-item table, dexterity/backpack carrying limits, native save
   format version 16 with versions 1–15 import, the five room-object take/drop
@@ -158,6 +157,14 @@ are not part of the remaining game-reconstruction work.
   original room 103, where the river prevents further travel. No distinct
   winning state or credits exist in the retained artifacts. See
   `evidence/recovered/pseudocode/QUEST_MASTER.md`.
+- Milestone 7 removed the remaining player-facing port placeholders. `KTO`
+  follows `PRZEDM.KTO`, listing current-room arena actors from `KORNIK` through
+  `TRENER` in order; it does not list city or forest actors. `SCAN` retains its
+  recovered taunt, while retained command words without a handler remain silent.
+  The user-approved `POMOC`/`HELP` guide and blocked-action feedback remain.
+  A fresh interactive run verified the opening-to-cage route, and `make check`
+  plus `make evidence-check` passed after the quest, death/recovery, save/load,
+  and river tests.
 
 ## Useful recovered anchors
 

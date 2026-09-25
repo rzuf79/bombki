@@ -891,6 +891,23 @@ void game_describe_current_room(const GameState *state, GameOutput output)
     emit(output, "\n");
 }
 
+static void describe_arena_actors(const GameState *state, GameOutput output)
+{
+    size_t actor_id;
+
+    for (actor_id = WORLD_ACTOR_KORNIK;
+         actor_id <= WORLD_ACTOR_TRENER;
+         ++actor_id) {
+        const WorldActor *actor = world_actor_at(actor_id);
+
+        if (actor != NULL
+            && state->world_actor_rooms[actor_id] == state->room_id) {
+            emit(output, actor->description);
+            emit(output, "\n");
+        }
+    }
+}
+
 static void describe_skill_poster(const GameState *state, GameOutput output)
 {
     emit(output,
@@ -3855,11 +3872,6 @@ GameAction game_execute(GameState *state, const Command *command, GameOutput out
 
     if (parser_command_requires_argument(command->verb)
         && command->argument[0] == '\0') {
-        emit_formatted(
-            output,
-            "[PORT: KOMENDA %s WYMAGA ARGUMENTU]\n",
-            parser_command_name(command->verb)
-        );
         return GAME_ACTION_NONE;
     }
     switch (command->verb) {
@@ -3964,17 +3976,6 @@ GameAction game_execute(GameState *state, const Command *command, GameOutput out
         } else if (strcmp(command->argument, "POWROT") == 0
             && practice_returning(state, output)) {
             advance_turn(state, output);
-        } else if (strcmp(command->argument, "KOPAC") != 0
-            && strcmp(command->argument, "UCIEKAC") != 0
-            && strcmp(command->argument, "POROWNANIE") != 0
-            && strcmp(command->argument, "PAROWANIE") != 0
-            && strcmp(command->argument, "POTRAWKI") != 0
-            && strcmp(command->argument, "POWROT") != 0) {
-            emit_formatted(
-                output,
-                "[PORT: KOMENDA %s BEDZIE ZAIMPLEMENTOWANA W POZNIEJSZYM ETAPIE]\n",
-                parser_command_name(command->verb)
-            );
         }
         break;
     case COMMAND_ATTACK:
@@ -4037,11 +4038,7 @@ GameAction game_execute(GameState *state, const Command *command, GameOutput out
         emit(output, "FUNKCJA BEDZIE DOSTEPNA ZA DWA LATA , I TAK ZGINIESZ , I TAK :) \n");
         break;
     case COMMAND_WHO:
-        emit_formatted(
-            output,
-            "[PORT: KOMENDA %s BEDZIE ZAIMPLEMENTOWANA W POZNIEJSZYM ETAPIE]\n",
-            parser_command_name(command->verb)
-        );
+        describe_arena_actors(state, output);
         break;
     case COMMAND_HELP:
         emit(output,
@@ -4051,7 +4048,6 @@ GameAction game_execute(GameState *state, const Command *command, GameOutput out
     case COMMAND_QUIT:
         return GAME_ACTION_QUIT;
     case COMMAND_UNKNOWN:
-        emit(output, "NIE ROZUMIEM TEJ KOMENDY.\n");
         break;
     }
 
