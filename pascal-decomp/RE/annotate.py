@@ -81,10 +81,10 @@ PROCS = {  # img->(name, extra)
  0x13839:("PRZEDM_SLABO","HP1 DEX1 DMG2 loot Random(3)..roll Paczek"),
  
  
- 0x13B82:("PRZEDM_TRUDNO","strong NPC tier: HP Random(6)+60 Dex Random(3)+12 Dmg Random(3)+15; loot 20..59; 35% Serce"),0x13B87:("ZabijSilny_body","same body as ZabijSilny (shared code)"),0x13CA4:("PRZEDM_VEASY","HP R(10)+90 / Dex R(10)+14 / Dmg R(10)+17; loot R(0x37)"),
-0x13DD0:("PRZEDM_EASY","HP R(20)+100 / Dex 16 / Dmg R(20)+18; loot R(0x1E)"),
-0x13EF3:("PRZEDM_NEASY","HP R(20)+130 / Dex 20 / Dmg R(20)+19; loot R(0x2D)"),
-0x14016:("PRZEDM_BTRUDNO","HP R(3)+72 / Dex R(2)+13 / Dmg R(2)+16; loot R(0x32)"),
+  0x13B82:("PRZEDM_TRUDNO","strong NPC tier: HP Random(6)+60 Dex Random(3)+12 Dmg Random(3)+15; loot 20..59; 35% Serce"),0x13CA4:("PRZEDM_VEASY","HP R(10)+90 / Dex R(2)+14 / Dmg R(2)+17; loot R(55)+10"),
+ 0x13DD0:("PRZEDM_EASY","HP R(20)+100 / Dex 16 / Dmg R(2)+18; loot R(30)+30"),
+ 0x13EF3:("PRZEDM_NEASY","HP R(20)+130 / Dex 20 / Dmg R(2)+19; loot R(45)+20"),
+ 0x14016:("PRZEDM_BTRUDNO","HP R(3)+72 / Dex R(2)+13 / Dmg R(2)+16; loot R(50)+15"),
  
  0x1491B:("CompareDispatch","POROWNAC oracle: PowerLevel[0x686]=lvl+Sila+Zrec tier+Par+Kop; "
   "taunt per target tier; 3% learn POROWNYWANIE; BAKTERIA ManaCur+=5"),

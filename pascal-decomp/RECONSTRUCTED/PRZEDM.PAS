@@ -201,6 +201,174 @@ uses  dos, monstra, crt, System;
   { Proc $0108 Entry 264:0000 }
 implementation
 
+procedure SLABO;
+begin
+  WROGEN := 1;
+  WROGZRE := 1;
+  WROGSIL := 2;
+  WALKA;
+  if PASZOL = 0 then begin
+    CZY := Random(3);
+    WriteLn('WYCIAGASZ ', CZY, ' MONET Z CIALA');
+    FORSA := FORSA + CZY;
+    if wpisz = 'ZABIJ MROWKA' then begin
+      FUKS := Random(10);
+      if (FUKS < 7) and (PACZEK <> -10) then begin
+        WriteLn('WYCIAGASZ PACZEK Z CIALA MROWKI');
+        PACZEK := -10;
+        PRZED := PRZED + 1;
+      end;
+    end;
+  end;
+end;
+
+procedure MNIEJSLABO;
+begin
+  WROGEN := Random(3) + 34;
+  WROGZRE := Random(4) + 8;
+  WROGSIL := 10;
+  WALKA;
+  if PASZOL = 0 then begin
+    CZY := Random(21) + 10;
+    WriteLn('WYCIAGASZ ', CZY, ' MONET Z CIALA');
+    FORSA := FORSA + CZY;
+    if SERCE = 0 then begin
+      FUKS := Random(20);
+      if (FUKS < 5) and (SERCE <> -10) then begin
+        WriteLn('WYCIAGASZ SERCE Z CIALA TRUPA');
+        SERCE := -10;
+        PRZED := PRZED + 1;
+      end;
+    end;
+  end;
+end;
+
+procedure SREDNIO;
+begin
+  WROGEN := Random(5) + 50;
+  WROGZRE := Random(5) + 10;
+  WROGSIL := Random(2) + 13;
+  WALKA;
+  if PASZOL = 0 then begin
+    CZY := Random(30) + 30;
+    WriteLn('WYCIAGASZ ', CZY, ' MONET Z CIALA');
+    FORSA := FORSA + CZY;
+    if SERCE = 0 then begin
+      FUKS := Random(20);
+      if (FUKS < 7) and (SERCE <> -10) then begin
+        WriteLn('WYCIAGASZ SERCE Z CIALA TRUPA');
+        SERCE := -10;
+        PRZED := PRZED + 1;
+      end;
+    end;
+  end;
+end;
+
+procedure TRUDNO;
+begin
+  WROGEN := Random(6) + 60;
+  WROGZRE := Random(3) + 12;
+  WROGSIL := Random(3) + 15;
+  WALKA;
+  if PASZOL = 0 then begin
+    CZY := Random(40) + 20;
+    WriteLn('WYCIAGASZ ', CZY, ' MONET Z CIALA');
+    FORSA := FORSA + CZY;
+    if SERCE = 0 then begin
+      FUKS := Random(20);
+      if (FUKS < 7) and (SERCE <> -10) then begin
+        WriteLn('WYCIAGASZ SERCE Z CIALA TRUPA');
+        SERCE := -10;
+        PRZED := PRZED + 1;
+      end;
+    end;
+  end;
+end;
+
+procedure VEASY;
+begin
+  WROGEN := Random(10) + 90;
+  WROGZRE := Random(2) + 14;
+  WROGSIL := Random(2) + 17;
+  WALKA;
+  if (PASZOL = 0) and (ENERGIA > 0) then begin
+    CZY := Random(55) + 10;
+    WriteLn('WYCIAGASZ ', CZY, ' MONET Z CIALA');
+    FORSA := FORSA + CZY;
+    if SERCE = 0 then begin
+      FUKS := Random(20);
+      if (FUKS < 4) and (SERCE <> -10) then begin
+        WriteLn('WYCIAGASZ SERCE Z CIALA TRUPA');
+        SERCE := -10;
+        PRZED := PRZED + 1;
+      end;
+    end;
+  end;
+end;
+
+procedure EASY;
+begin
+  WROGEN := Random(20) + 100;
+  WROGZRE := 16;
+  WROGSIL := Random(2) + 18;
+  WALKA;
+  if (PASZOL = 0) and (ENERGIA > 0) then begin
+    CZY := Random(30) + 30;
+    WriteLn('WYCIAGASZ ', CZY, ' MONET Z CIALA');
+    FORSA := FORSA + CZY;
+    if SERCE = 0 then begin
+      FUKS := Random(20);
+      if (FUKS < 4) and (SERCE <> -10) then begin
+        WriteLn('WYCIAGASZ SERCE Z CIALA TRUPA');
+        SERCE := -10;
+        PRZED := PRZED + 1;
+      end;
+    end;
+  end;
+end;
+
+procedure NEASY;
+begin
+  WROGEN := Random(20) + 130;
+  WROGZRE := 20;
+  WROGSIL := Random(2) + 19;
+  WALKA;
+  if (PASZOL = 0) and (ENERGIA > 0) then begin
+    CZY := Random(45) + 20;
+    WriteLn('WYCIAGASZ ', CZY, ' MONET Z CIALA');
+    FORSA := FORSA + CZY;
+    if SERCE = 0 then begin
+      FUKS := Random(20);
+      if (FUKS < 4) and (SERCE <> -10) then begin
+        WriteLn('WYCIAGASZ SERCE Z CIALA TRUPA');
+        SERCE := -10;
+        PRZED := PRZED + 1;
+      end;
+    end;
+  end;
+end;
+
+procedure BTRUDNO;
+begin
+  WROGEN := Random(3) + 72;
+  WROGZRE := Random(2) + 13;
+  WROGSIL := Random(2) + 16;
+  WALKA;
+  if PASZOL = 0 then begin
+    CZY := Random(50) + 15;
+    WriteLn('WYCIAGASZ ', CZY, ' MONET Z CIALA');
+    FORSA := FORSA + CZY;
+    if SERCE = 0 then begin
+      FUKS := Random(20);
+      if (FUKS < 5) and (SERCE <> -10) then begin
+        WriteLn('WYCIAGASZ SERCE Z CIALA TRUPA');
+        SERCE := -10;
+        PRZED := PRZED + 1;
+      end;
+    end;
+  end;
+end;
+
 procedure GARNITURZYSK;
 begin
   FUKS := Random(1000);
