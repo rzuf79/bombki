@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    name: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - windows-latest
+          - macos-latest
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure (CMake)
+        run: cmake -S c-port -B build -DCMAKE_BUILD_TYPE=Debug
+
+      - name: Build
+        run: cmake --build build --config Debug
+
+      - name: Run tests
+        run: ctest --test-dir build --output-on-failure -C Debug
+
+      - name: Collect debug runtime DLLs next to Windows executable
+        if: ${{ runner.os == 'Windows' && !cancelled() }}
+        run: |
+          $exe = Get-ChildItem -Path build -Recurse -Filter bombki.exe | Select-Object -First 1
+          if ($exe) {
+            $dir = $exe.DirectoryName
+            foreach ($dll in @('vcruntime140d.dll', 'ucrtbased.dll')) {
+              $src = Join-Path $env:WINDIR "System32\$dll"
+              if (Test-Path $src) { Copy-Item $src (Join-Path $dir $dll) }
+            }
+          }
+
+      - name: Upload executables
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: executables-${{ matrix.os }}
+          path: |
+            build/**/bombki
+            build/**/bombki.exe
+            build/**/*.dll
+          if-no-files-found: ignore
