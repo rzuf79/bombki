@@ -54406,6 +54406,7 @@
 1AF94: 5354  push    bx
 1AF95: 5441  push    sp
 1AF96: 4155  inc     cx
+; ===== PROC PRZEDM_FIGHTSCENA @ img 1AF97 (para0129D:85C7) ZABIJ stage musicians/Liroy; Liroy success bonus and quest progress =====
 1AF97: 5589  push    bp
 1AF98: 89E5  mov     bp, sp
 1AF9A: 31C0  xor     ax, ax

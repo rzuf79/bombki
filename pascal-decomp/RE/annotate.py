@@ -72,6 +72,7 @@ PROCS = {  # img->(name, extra)
   0x15AE4:("PRZEDM_MODE","MIECHO2=MIECHO; MIECHO=1000"),
   0x15BCF:("PRZEDM_SCENA","stage-musician descriptions by MIECHO"),
   0x15E37:("PRZEDM_TLUM","concert-crowd descriptions by MIECHO"),
+  0x1AF97:("PRZEDM_FIGHTSCENA","ZABIJ stage musicians/Liroy; Liroy success bonus and quest progress"),
  0x18405:("ItemPickupDropDispatch","BIERZ/ODRZUC items; item field semantics: 0x00=never, 0xFFF6=carrying, roomctx=dropped"),0x18E95:("ItemUseDispatch","UZYJ/ODLORZ/ZNISZCZ/PATRZ consumables+outfits; Pigulka=[0x257] time-travel"),0x197F1:("ColorChangeDispatch","ZMIEN KOLOR/TLO"),0x2BA1:("save",""),0x7D80:("wczytaj",""),
  0x2395:("trening","skills"),0x36F3:("BAZAR","death/shop"),0x8740:("LevelUp","0x8740..0x8BA1"),
  0x12ACA:("Room","map gen + TRENUJ + ZABIJ MROWKA/TRUP"),

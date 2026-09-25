@@ -572,3 +572,15 @@ Full machine-verified register added to INTEGRATED-FIELD-MAP.md
 - The C port matches the stats, ranges, strings, and room placement on victory,
   but does not reproduce the original post-flee reward path (register entry L).
 
+## 2026-09-25 (23): PRZEDM FIGHTSCENA reconstructed
+
+- `FIGHTSCENA` is reconstructed from TPU source lines 1435..1461 and EXE img
+  0x1AF97..0x1B094, preserving command order and result-gate asymmetry.
+- PERKUSISTA/GITARZYSTA/ORGANISTA are cleared and call `KASETAZYSK` after
+  `VEASY` regardless of fight result. LIROY uses `NEASY` and requires
+  `MIECHO<>10000`, `ENERGIA>0`, and `PASZOL=0` before its exact message, 30
+  coins, cassette roll, optional `QUESTWYK-=150`, and actor clear.
+- The C port preserves profiles, cassette eligibility, and Liroy quest progress,
+  but omits his message/30 coins and makes all stage cleanup/drop timing depend
+  on generic victory handling (discrepancy entry M).
+

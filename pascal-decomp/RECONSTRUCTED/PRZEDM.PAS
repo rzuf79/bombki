@@ -486,6 +486,36 @@ begin
     WriteLn('REPORTER UWAZNIE ZAPISUJE WSZYSTKIE WULGARYZMY');
 end;
 
+procedure FIGHTSCENA;
+begin
+  if (wpisz = 'ZABIJ PERKUSISTA') and (PERKUSISTA = MIECHO) then begin
+    VEASY;
+    PERKUSISTA := 0;
+    KASETAZYSK;
+  end;
+  if (wpisz = 'ZABIJ GITARZYSTA') and (GITARZYSTA = MIECHO) then begin
+    VEASY;
+    GITARZYSTA := 0;
+    KASETAZYSK;
+  end;
+  if (wpisz = 'ZABIJ LIROY') and (LIROY = MIECHO) then begin
+    NEASY;
+    if (MIECHO <> 10000) and (ENERGIA > 0) and (PASZOL = 0) then begin
+      WriteLn('GRATULACJE !!! ZABILES LIROYA DOSTAJESZ ZA DARMO 30 KASY');
+      FORSA := FORSA + 30;
+      KASETAZYSK;
+      if QUEST > 1 then
+        QUESTWYK := QUESTWYK - 150;
+      LIROY := 0;
+    end;
+  end;
+  if (wpisz = 'ZABIJ ORGANISTA') and (ORGANISTA = MIECHO) then begin
+    VEASY;
+    ORGANISTA := 0;
+    KASETAZYSK;
+  end;
+end;
+
   (* Remaining bodies are still to be reconstructed from the retained TPU
      listings and BOMBKI.EXE disassembly. *)
 begin
