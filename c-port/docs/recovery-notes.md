@@ -214,9 +214,14 @@ Recorded so future work does not re-flag these as discrepancies:
   `game_state_is_valid` does not cap world-location items at 1. Hearts and
   paczki stack and print each drop. The teleport-diploma ownership clause is
   gone (the "all five cages dead" trigger stays). `LoadCapacity` bumps from
-  the original are not implemented — capacity is dex-derived
-  (`game_carrying_capacity`). Same note: `C-PORT-DISCREPANCIES.md` §J.
+  the original are not implemented — including the quest turn-in ±1, which is
+  the same sentinel-slot counter tracking (non-actionable). Capacity is
+  dex-derived (`game_carrying_capacity`). Same note: `C-PORT-DISCREPANCIES.md`
+  §F and §E.
 - **Native save format** is self-describing and versioned, not
   byte-compatible with the original text file (persistence.c); deliberate.
-- **Raw coins**, no `Forsa div Madrosc` load-time scaling (README §17);
-  deliberate.
+- **Raw coins** persisted: the original save encodes `coins × wisdom`
+  (net-worth value echoed on its save screen) and re-derives the wallet by
+  dividing on load — a within-format encoding, not an economy scaling. The
+  port writes the runtime pocket `coins` directly (folded into the save-format
+  deviation D); costs and quest turn-ins are unaffected.

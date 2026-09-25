@@ -1,20 +1,12 @@
 # C-PORT vs ORIGINAL — discrepancy report (human-readable)
 
-Audit date: 2026-09-24. Last cleaned: 2026-09-25 (A CWICZ, B flee, C
-max-stat dossier, I kill rewards removed — all resolved). Source of truth: the
-original x86-16 disassembly
+Source of truth: the original x86-16 disassembly
 (`RECONSTRUCTED\disasm\annotated-BOMBKI.asm`), cross-checked against the TP7
 save/load reconstructions. The "port" is `..\..\c-port\` relative to this file
 (e.g. `src\game.c`, `src\persistence.c`), and the disasm is
 `RECONSTRUCTED\disasm\annotated-BOMBKI.asm` under `pascal-decomp\`. Every
 formula below was re-derived from the raw instructions in this pass (not taken
 from earlier notes).
-
-Status notes (2026-09-25): A and C were resolved by the merged
-`fix/SIL-vs-MAD-mixup` swap correction; I was resolved on
-`fix/mrowka-paczek-drop` (MROWKA-specific PACZEK, SLABO heart roll dropped);
-B was resolved on `fix/flee-mana-cost` (skill-based flee roll + three-step
-mana economy).
 
 Verdict vocabulary:
 
@@ -30,12 +22,9 @@ different inputs/values; `minor` = cosmetic/faithfulness only.
 
 | # | topic | verdict | severity |
 |---|---|---|
-| D | Save-file format | PORT-DEVIATION (deliberate) | moderate |
-| E | Forsa / Madrosc wealth scaling | PORT-DEVIATION (deliberate) | moderate |
-| F | Quest turn-in side effects | PORT-DEVIATION | moderate |
-| G | Arena "3 LEVEL" placard | (no gate either side) | minor |
-| H | Room-number flavour nits | ORIGINAL clarifications | minor |
-| J | Item storage: countable quantities vs bool sentinels | PORT-DEVIATION (deliberate) | major |
+| D | Save-file format (incl. Forsa net-worth encoding) | PORT-DEVIATION (deliberate) | moderate |
+| E | Quest turn-in side effects | PORT-DEVIATION (deliberate) | moderate |
+| F | Item storage: countable quantities vs bool sentinels | PORT-DEVIATION (deliberate) | major |
 
 ---
 
@@ -46,7 +35,14 @@ different inputs/values; `minor` = cosmetic/faithfulness only.
 `PLIKI.TPU`-style text file, **unlabelled flat sequence** — 80 numeric lines
 + the player name, in the exact `save()` write order (WriteLn scalar, emission
 table in `disasm\procs\SAVE-FIELD-MAP.txt`). Inverse transforms live in
-`wczytaj()` (img 0x7D80..0x85FF).
+`wczytaj()` (img 0x7D80..0x85FF). Most fields are stored through an
+inverse-encoded raw form (Energy as `(E+0x28)<<2`, Level `+0x17`, Zrec `+0x0C`,
+Sila `−0x18`...). `Forsa` [0x21A:0x21C] is the biggest of these: the file holds
+the **net-worth product `coins × MadroscCur`** (`@LMul 0x1C71:0x7BD`, save img
+0x2E0F..0x2E25 — the same value echoed on the save screen), and `wczytaj()`
+re-derives the wallet as `raw div MadroscCur` (`@LDiv 0x1C71:0x7FA`, img
+0x7FA4..0x7FBB). The runtime wallet is always plain pocket coins; the factor
+never enters gameplay.
 
 ### PORT (persistence.c)
 
@@ -61,35 +57,16 @@ versa. The port schema is strictly a superset/invention for portability. This
 is a deliberate port decision, but it means any "ported save" is a re-serialised
 profile, never the original file.
 
----
-
-## E. Forsa / wealth scaling (moderate)
-
-### ORIGINAL
-
-On load, `wczytaj()` re-scales the persisted 32-bit wealth longint
-[0x21A:0x21C] with **`Forsa := Forsa div MadroscCur`** (img 0x7FA4..0x7FBB;
-the `shl/shrd/idiv` fast-path + 16-bit restoring division = TP7 RTL `@LDiv`
-at 0x1C71:0x7FA). The sign-in summary in `save()` prints the **product**
-`Forsa × Madrosc` (img 0x2E0F..0x2E22, RTL `@LMul` 0x1C71:0x7BD). So an
-original save's displayed wealth is `raw ÷ wisdom` at load time.
-
-### PORT
-
-Stores/loads a plain integer `coins` with no wisdom scaling. The port would
-need `coins = frac(coins / wisdom)` on load (and `coins * wisdom` in any
-display) to reproduce the original economy.
-
-### Comments
-
-Wealth behaves differently: the original effectively taxes your coins by your
-current wisdom on every load, and the "sign-in" line shows the inflated
-product. The port keeps raw coins — friendlier, but not faithful. (This is the
-same "Forsa div Madrosc" item already logged in README §17.)
+The Forsa `× wisdom` factor is a **within-format encoding, not an economy
+scaling**: costs, loot and quest turn-ins read only the in-memory pocket coins
+`[0x21A:0x21C]`, so no payable is affected. The port therefore persists the
+runtime `coins` directly — the same value the original keeps in memory — and
+only the original's save-screen "net worth" number differs (it shows the gross
+product). This supersedes the earlier "Forsa / wealth scaling" item.
 
 ---
 
-## F. Quest turn-in side effects (moderate)
+## E. Quest turn-in side effects (moderate)
 
 ### ORIGINAL (img 0x1276B..0x127C4 region)
 
@@ -108,31 +85,18 @@ Matches the rewards, pass grant (ITEM_QUEST_PASS++), Dyplom consumption,
 
 ### Comments
 
-The port already exercises the subtlest effect (wisdom −1 via the pipe's
-carried bonus). Only backpack capacity (LoadCapacity [0x182]) is left
-un-affected; minor unless the player is relying on the type-1 bonus to lift
-overburden.
+**Non-actionable.** The `LoadCapacity [0x182]` ±1 bumps are carried-item
+*counter* bookkeeping, not a stat effect: `[0x182]` (`PRZED`, `INTEGRATED-FIELD-MAP.md`
+0x45 / 0x321) is ±1 on **every** sentinel-slot acquisition/consume — type 1
++1 tracks granting the Przepustka pass, type 3 −1 tracks consuming the Fajka.
+The real capacity ceiling is `MaxLoad [0x1C2]`, which these quests never touch.
+Under the port's countable-items design (§F) there is no sentinel slot or
+`[0x182]` counter to keep, and capacity is dex-derived — reproducing the ±1
+would be meaningless. Recorded so a future audit does not re-flag it.
 
 ---
 
-## G. Arena "3 LEVEL" placard (no gate)
-
-Arena grids advertise "3 LEVEL" prose. There is no actual level gate on arena
-operations in the original or the port — flavour text only. No action.
-
----
-
-## H. Room-number flavour nits (minor)
-
-- 83 is a BLUSZCZ / PIERDUT-trees room; 84 is the overgrown-krzaki route to
-  the domek/grota — the earlier doc blurbs said a plain "forest". The map
-  (`RECONSTRUCTED\WORLD-MAP.md`) now reflects the real connectivity.
-- The concert district is 67 piwiarnia / 68 estrada / 69-72 scena (LIROY near
-  73), not a homogeneous "61-72". World map updated.
-
----
-
-## J. Item storage: countable quantities, not bool sentinels (major, deliberate)
+## F. Item storage: countable quantities, not bool sentinels (major, deliberate)
 
 ### What the ORIGINAL does
 
@@ -184,6 +148,13 @@ gates as a PORT-DEVIATION bug; this section is the standing record of the intent
 - Flee (ZWIEJ): three-step mana economy (attempt `MANA −= Random(2)+2`, gate
   `MANA > 14`, commit `MANA −= 15`) and success exactly `Random(100) <=
   Uciekanie` with KUNSZT −= 20 (img 0x17F55..0x1800B).
+- Arena "3 LEVEL" placard is flavour only: no level gate on attacking in the
+  original or the port. Every `POZIOM [0x25C]` read is display (`JESTES NA
+  N-tym LEVELU`), the level-up routine, or kick damage.
+- Concert district numbering matches: 61-66 crowd, 67 piwiarnia, 68 estrada,
+  69-72 scena, LIROY near 73 (port `original_room()`, game.c 2693-2706); 83
+  PIERDUT-trees side-west is ROOM_FOREST, 84 the overgrown krzaki route to
+  domek/grota (game.c 2713-2714, world.c 592/609). No port deviation.
 
 ---
 
@@ -192,6 +163,5 @@ gates as a PORT-DEVIATION bug; this section is the standing record of the intent
 | item | original | port |
 |---|---|---|
 | flee | img 0x17F55..0x1800B | game.c 2145-2173 (try_flee) |
-| save | SAVE-FIELD-MAP.txt / wczytaj img 0x7D80 | persistence.c 43-105 |
-| forsza scaling | img 0x7FA4..0x7FBB, 0x2E0F..0x2E22 | game.c coins ops |
+| save | SAVE-FIELD-MAP.txt / wczytaj img 0x7D80; f18 Forsa raw=coins×wisdom (@LMul img 0x2E0F..0x2E25, @LDiv img 0x7FA4..0x7FBB) | persistence.c 43-105 |
 | quest turn-in | img 0x1276B..0x127C4 | game.c 3471-3513 |
