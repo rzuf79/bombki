@@ -2140,36 +2140,33 @@ static int recovered_combat_chance(const GameState *state)
     return chance;
 }
 
+static void spend_mana(GameState *state, int amount);
+
 static bool try_flee(GameState *state, bool forced, GameOutput output)
 {
-    int chance;
-
-    if (state->flee_skill <= 0
-        || (!forced && state->energy >= state->flee_energy_threshold)) {
+    if (state->flee_skill <= 0) {
         return false;
     }
 
-    chance = recovered_combat_chance(state);
-    if (chance <= 14) {
-        if (forced) {
-            emit(output, "NIE UDALO CI SIE UCIEC !!!! WALCZYSZ DALEJ !!! \n");
+    spend_mana(state, (int)random_below(state, 2) + 2);
+    if ((!forced && state->energy >= state->flee_energy_threshold)
+        || state->mana <= 14) {
+        return false;
+    }
+    spend_mana(state, 15);
+
+    if ((int)random_below(state, 100) <= state->flee_skill) {
+        emit(output, "WSTYD !!! UCIEKLES Z POLA BITWY TRACISZ 20 KUNSZTU\n");
+        if (state->experience < INT_MIN + 20) {
+            state->experience = INT_MIN;
+        } else {
+            state->experience -= 20;
         }
-        return false;
+        game_clear_active_opponent(state);
+        return true;
     }
-    chance -= 15;
-    if ((int)random_below(state, 100) > chance) {
-        emit(output, "NIE UDALO CI SIE UCIEC !!!! WALCZYSZ DALEJ !!! \n");
-        return false;
-    }
-
-    emit(output, "WSTYD !!! UCIEKLES Z POLA BITWY TRACISZ 20 KUNSZTU\n");
-    if (state->experience < INT_MIN + 20) {
-        state->experience = INT_MIN;
-    } else {
-        state->experience -= 20;
-    }
-    game_clear_active_opponent(state);
-    return true;
+    emit(output, "NIE UDALO CI SIE UCIEC !!!! WALCZYSZ DALEJ !!! \n");
+    return false;
 }
 
 void game_set_flee_energy_threshold(GameState *state, int threshold)
