@@ -10,7 +10,7 @@ Two independent reconstructions, now reconciled field-for-field:
 
 Key result: addresses agree field-for-field; transforms are exact inverses;
 several names from the single-pass SAVE-side analysis were WRONG and are
-corrected here (Energy!=Money, 0x182=MaxLoad, 0x180=PreviousRoomContext,
+corrected here (Energy!=Money, 0x182=PRZED carried count, 0x180=PreviousRoomContext,
 0x1AC/0x1AE=ManaCur/ManaMax not monster HP).
 
 ## Headers / how the two reads agree
@@ -42,9 +42,11 @@ corrected here (Energy!=Money, 0x182=MaxLoad, 0x180=PreviousRoomContext,
    0x7C   f74     0                   0x7c "Piwo"        (item count)
    0x17E  f3     -100                 0x17e              Field_017E
    0x180  f10     10000               0x180 "PreviousRoomContext"
-   0x182  f27     4                   0x182 "MaxLoad"      = carry capacity
-                        (overburden "JESTES OBLADOWANY"; combat skill-up -> +1;
-                        WAS GIMMICK "KUNSZT(4)"; the %.-54 label is KUNSZT adjoint)
+   0x182  f27     4                   0x182 "PRZED"        = carried-item count
+                        (pick-up/drop and talent events -> +1; the overburden
+                        "JESTES OBLADOWANY" gate compares it to the carrying-
+                        capacity field; ceiling stat MaxLoad/PRO [0x1C2], outfits
+                        +7 SYF/+10 GARNITUR, Kaseta -8; WAS GIMMICK "KUNSZT(4)")
    0x184  f6     -100                 0x184              Field_0184
 0x186  f44    -10                  0x186              Item_Serce (sentinel -10 = none)
 0x188  f5     -10                  0x188              Item_DyplomMudSzkoly <- WAS "ZWIEJ(-10)"
@@ -117,7 +119,7 @@ corrected here (Energy!=Money, 0x182=MaxLoad, 0x180=PreviousRoomContext,
                         (relabelled from "FuksRoll")
 0x22E  f63     0                   0x22e  "KASETA LIROYA" ItemFlag_KasetaLiroya
 0x230  f75     0                   0x230  "SCROLL POROWNYWANIA" ItemFlag_ScrollPorownanie
-                        <- DropScroll acquires `-=10`; practice with 0x257/compare
+                        <- SCROLLPORZYSK acquires `-=10`
     0x248  f68     0                   0x248  "TWأ“J QUEST"  QuestType
     0x24A  f69     0                   0x24a               QuestMonstersRemaining
                         <- CONFIRMED: combat kill does [0x24A]-=1 when [0x248]>0;
@@ -128,11 +130,12 @@ corrected here (Energy!=Money, 0x182=MaxLoad, 0x180=PreviousRoomContext,
 
    Byte-flag cluster 0x255..0x262 (save f41,f64,f71,f73,f2,f22,f78,f79,f80):
    0x255  f79  0       0x255  Flag_0255
-   0x257  f64  0       0x257  PIGULKA / transport-pill item  <- CONFIRMED saved BYTE (f64,
-                         read back `[0x257]:=ReadLn` in wczytaj 0x83CF); the
-                         "POTRAWKI chance" text at 0x74 stays ambiguous
+0x257  f64  0       0x257  PIGULKA / transport-pill item  <- CONFIRMED saved BYTE (f64,
+                         read back `[0x257]:=ReadLn` in wczytaj 0x83CF); TPU
+                         `PIGULKA: Shortint` (gain -=10); 0x74 "Potrawki chance"
+                         is the CWICZ skill field, NOT the pill count
    0x258  f41  0       0x258  TalentChance   <- combat: if >0 && Random(100)<[258]
-                        => talent-up event `[0x259]-=10; MaxLoad+=1`  (was "Bigos")
+                        => talent-up event `[0x259]-=10; PRZED+=1`  (was "Bigos")
    0x259  f73  0       0x259  TalentPool     <- decremented 10 per talent proc (was "Listek")
 0x25B  f71  0       0x25b  LISTEK / lucky-leaf item (byte)
                         <- acquisition decrements it by 10; the distinct
@@ -197,22 +200,21 @@ grant the item. Only Kaseta, Listek, and Scroll guard against
 `context [0x1D6] == 10000`; Garnitur and Pigulka do not. String base for the
 loot texts is paragraph 0x17CB (img 0x1AA50..0x1AD7F):
 
-- 0x157B9 DropGarnitur: Random(1000)<=25 (26/1000; text says 2.5%) →
+- 0x157B9 GARNITURZYSK: Random(1000)<=25 (26/1000; text says 2.5%) →
   "ZYSKUJESZ GARNITUR !!!!".
-- 0x1586E DropPigulka: Random(1000)<=42 (43/1000) → "A TO CO ? , TOZ TO !!!
+- 0x1586E PIGULKAZYSK: Random(1000)<=42 (43/1000) → "A TO CO ? , TOZ TO !!!
   PIGULKA TRANSPORTUJACA !!!".
-- 0x15908 DropKaseta: Random(100)<2 → "WYCIAGASZ KASETE LIROYA..." (2%;
+- 0x15908 KASETAZYSK: Random(100)<2 → "WYCIAGASZ KASETE LIROYA..." (2%;
   +EnergyMax, -8 carrying ceiling, `PRZED` carried count +1, +1 Zrecznosc;
   Item_KasetaLiroya `-=10`).
-- 0x159E4 DropListek: Random(100)<6 (text says "UNIQE 4%") →
+- 0x159E4 LISTEKZYSK: Random(100)<6 (text says "UNIQE 4%") →
   "WYCIAGASZ LISTEK SZCZESCIA..."; LISTEK `[0x25B]-=10`,
   `PRZED`++, ManaMax+=0x28.
-- 0x15A91 DropScroll: Random(100)<10 → "WYCIAGASZ SCROLL POROWNANIA...";
+- 0x15A91 SCROLLPORZYSK: Random(100)<10 → "WYCIAGASZ SCROLL POROWNANIA...";
   Item_ScrollPorownanie `[0x230]-=10`, `PRZED`++.
-- 0x15AE4 GoToRoom1000: PreviousRoom `[0x180]=context`; context=0x3E8
+- 0x15AE4 PRZEDM_MODE: PreviousRoom `[0x180]=context`; context=0x3E8
   (the "cmd" helper called from the city square loop).
-- Item fields (Paczek/Ciastko/Kaseta/Liroya/Fajka/Serce/Potrawki/ScrollPorownanie)
-  use **-10 (0xFFF6) as their "owned/none" sentinel**; acquisition is `-= 10`.
+- Item fields (Paczek/Ciastko/Kaseta/Liroya/Fajka/Serce/ScrollPorownanie) use **-10 (0xFFF6) as their "owned/none" sentinel**; acquisition is `-= 10`.
 
 ## Kill router + fight launchers (KillDispatch 0x4F53, para 0x129D)
 
@@ -291,7 +293,7 @@ mismatches are original text.
 
 Special encounters call the drop procs directly after `Walka` win, e.g. the
 "MIESA LUDZKIEGO ... MOZGI" seduction fight (img 0xD091: HP 200/Dex 15/Dmg 18,
-woundA=5, woundB=1; win -> DropListek + DropPigulka + DropScroll, then
+woundA=5, woundB=1; win -> LISTEKZYSK + PIGULKAZYSK + SCROLLPORZYSK, then
 QuestPhase `[0x262] -= 0x32` if non-zero) -- that fight IS the POKRZYWA
 ("pokrzywa" = the strongest plant) encounter.
 
@@ -308,7 +310,7 @@ POROWNAC targets, NOT fights; actual kills are KillDispatch + these launchers.
 | ZABIJ D.J | `[0x67E]==0x45` (scene 'E') | PRZEDM_BTRUDNO 0x14016 | clear; `R(100)<0x19` → SuchaRacja [0x1A4]‑=10; `R(100)<3` → **Kaseta Liroya [0x22E]‑=10** +EnergyMax 5, MaxLoad‑=8, Zrecz+1 "UNIQE 3%" |
 | ZABIJ DRZWI | `[0x688]!=0` (door) | PRZEDM_NEASY 0x13EF3 | Energy>0 → `[0x688]=0` (door breaks) |
 | ZABIJ STARUCH | `[0x68A]!=0` (present) | PRZEDM_SLABO 0x13839 | `[0x68A]=0`; corpse-vanish text (no loot) |
-| ZABIJ PEDAL | garden | PRZEDM_EASY 0x13DD0 | DropPigulka on win |
+| ZABIJ PEDAL | garden | PRZEDM_EASY 0x13DD0 | PIGULKAZYSK on win |
 | ZABIJ PARA | garden | PRZEDM_BTRUDNO 0x14016 ×2 | two consecutive fights |
 | ZABIJ MACIEK | garden | PRZEDM_EASY 0x13DD0 | |
 
@@ -322,14 +324,14 @@ acquired**, **0xFFF6 (-10) = carrying/inventory**, otherwise **a room-context =
 the item is lying on the floor of that room**. Acquisition = `field -= 10`,
 consumption/drop-restore = `field += 10` (back to 0). Pickup (BIERZ X)
 requires `field == PreviousRoom[0x180]`; drop (ODRZUC X) requires `field == -10`
-then sets `field = PreviousRoom[0x180]`. LoadCapacity [0x182] ±1 tracks each.
+then sets `field = PreviousRoom[0x180]`. PRZED [0x182] ±1 tracks each.
 
 - Slots: 0x17E StaryMiecz, 0x184 MalaTarcza, 0x186 Serce, 0x188
   DyplomMudSzkoly, 0x18A Fajka, 0x216 KompletUbranSyf (SYF), 0x222
-  GarniturKolce, 0x22E KasetaLiroya, 0x230 ScrollPorownanie, 0x257 Pigulka/
-  Potrawki (byte), 0x259 Bigos (byte, TalentPool), 0x25B ListekSzczescia
+  GarniturKolce, 0x22E KasetaLiroya, 0x230 ScrollPorownanie, 0x257 Pigulka
+  (byte), 0x259 Bigos (byte, TalentPool), 0x25B ListekSzczescia
   (byte), longint **Przepustka 0x21E:0x220** (owned as -10 longint).
-- Food (UZYJ X → consume `field+=10`, LoadCapacity--, Energy += %, cap at
+- Food (UZYJ X → consume `field+=10`, PRZED--, Energy += %, cap at
   EnergyMax 0x664): Paczek [0x1A0] +8%, Ciastko [0x1A2] +12%, SuchaRacja
   [0x1A4] +16%, Bulka [0x1A8] +20%, Chleb [0x1A6] +26%, Weka [0x1AA] +34%,
   Bigos (0x259) +20%; PIWO [0x7C] +10 Energy **and** +10 Mana. Attempting to
@@ -337,7 +339,7 @@ then sets `field = PreviousRoom[0x180]`. LoadCapacity [0x182] ±1 tracks each.
 - UZYJ MALA BUTELKA MANY: gate `[0x192]==-10` (bottle count), `[0x182]--`,
   `[0x192]+=0xA` (consume), "WYPIJASZ MALA BUTELKE MANY I ODZYSKUJESZ 30
   MANY", **ManaCur [0x1AC] += 30** (0x1E) capped at **ManaMax [0x1AE]**.
-- UZYJ SERCE: field→0, Energy += 5, LoadCapacity--. UZYJ FAJKA: flavor smoke;
+- UZYJ SERCE: field→0, Energy += 5, PRZED--. UZYJ FAJKA: flavor smoke;
   BIERZ FAJKA when MadroscCur < MadroscMax → MadroscCur++ (dropping removes
   it back), per pipe acquisition rule.
 - UZYJ DYPLOM: prints the MUD-school diploma box; carrying DYPLOM [0x188]
@@ -357,7 +359,7 @@ then sets `field = PreviousRoom[0x180]`. LoadCapacity [0x182] ±1 tracks each.
   SYF KOMPLET (0x216) → MaxLoad[0x1C2]+=7; GARNITUR kolce (0x222) →
   MaxLoad+=0xA, OutfitZrecznoscBonus[0x1C4]+=1, HeavyBlow[0x224]+=0xF. ODLORZ X
   (only while matching name in 0x264) reverses all.
-- ZNISZCZ PRZEPUSTKA: Przepustka longint += 10 → 0, LoadCapacity++. PATRZ
+- ZNISZCZ PRZEPUSTKA: Przepustka longint += 10 → 0, PRZED++. PATRZ
   PRZEPUSTKA: prints the certificate box.
 - ColorChangeDispatch 0x197F1: ZMIEN KOLOR / ZMIEN TLO prompt a number and
   `lcall 0x1C0F:0x263 / 0x1C0F:0x27D`.
@@ -373,17 +375,17 @@ then sets `field = PreviousRoom[0x180]`. LoadCapacity [0x182] ±1 tracks each.
   - buy quest type 2: needs >99, pays 100 → QuestCount=200.
   - buy quest type 3: needs >49, pays 50 → QuestCount=200.
 - **Turn-in dispatcher** (all also reward `[0x21E:0x220] -= 10` = Przepustka):
-  - type 1 done (count<1): "ZYSKUJESZ..." KUNSZT+=100, LoadCapacity++.
+  - type 1 done (count<1): "ZYSKUJESZ..." KUNSZT+=100, PRZED++.
   - type 2 done && Item_0188 `[0x188]<=-10`: KUNSZT+=0xFA, EnergyMax-=5,
     clear `[0x188]`.
   - type 3 done && Item_Fajka `[0x18A]<=-10` && PRAKTYK `[0x194]>0`:
-    "TUR!!!! Z CIALA WROGA !!!!" KUNSZT+=0x1A9, LoadCapacity--, MadroscCur--,
+    "TUR!!!! Z CIALA WROGA !!!!" KUNSZT+=0x1A9, PRZED--, MadroscCur--,
     Fajka += 10, PRAKTYK-=1.
 - **Boss fight command** (str @2E31): woundB=10, woundA=20, MonsterDmg[0x1B6]=10,
   MonsterDex[0x1B8]=26, MonsterHP[0x1B0]=188, `lcall Walka`; if MonsterHP<1 →
   Przepustka `[0x21E:0x220]-=10`.
 - Room-change commands: "UNIQE..." → exit; one → context=0x16 (trees); one with
-  Przepustka owned → context=0x65; `lcall 0x129D:0x3114` (= GoToRoom1000) → 0x3E8.
+  Przepustka owned → context=0x65; `lcall 0x129D:0x3114` (= PRZEDM_MODE) → 0x3E8.
 - Loop back to scene display while context still 0x64.
 
 ## Room command vocabulary (complete, img 0x13190..0x15400)
@@ -437,7 +439,7 @@ Top-level shared dispatcher (no room-factory), contexts **0x20..0x39** = the
 5x5 arena (0x20 = entrance "WEJSCIE NA ARENE"; cells 0x21..0x39 = arena
 grid 33..57). Commands (ds:0x564 strcmp):
 
-- **MODE** (0x19C90) → GoToRoom1000.
+- **MODE** (0x19C90) → PRZEDM_MODE.
 - **ZABIJ <beast>** (0x19CA0..0x1A0D4): each gates `[0x1D6] == beast-pen` then
   calls a difficulty proc and zeroes the pen word on win:
 
@@ -468,9 +470,9 @@ grid 33..57). Commands (ds:0x564 strcmp):
 | [0x206] | WILK | SREDNIO | |
 | [0x208] | BIZON | SREDNIO | |
 | [0x20A] | PANTERA | SREDNIO | |
-| [0x20C] | GLADIATOR | TRUDNO | DropPigulka |
-| [0x20E] | WOJOWNIK | TRUDNO | DropPigulka |
-| [0x210] | TRENER | TRUDNO | DropGarnitur |
+| [0x20C] | GLADIATOR | TRUDNO | PIGULKAZYSK |
+| [0x20E] | WOJOWNIK | TRUDNO | PIGULKAZYSK |
+| [0x210] | TRENER | TRUDNO | GARNITURZYSK |
 
   (So the former "GardenSpot_01DA..0x210" labels are ARENA beast pens, not
   garden spots; annotate.py renamed to BeastKornik..ArenaTrener. Beasts with
@@ -735,11 +737,11 @@ the original.
   only the runtime wallet. The port persists runtime `coins` directly
   (save-format item D).
 - **F. Quest turn-in side effects** — `ORIGINAL`: type1 KUNSZT+100 + pass +
-  LoadCapacity[0x182]+1; type2 KUNSZT+250 + pass + consume Dyplom + EnergyMax-5;
-  type3 KUNSZT+425 + pass + consume Fajka + PRAKTYK-1 + LoadCapacity-1 +
+  PRZED[0x182]+1; type2 KUNSZT+250 + pass + consume Dyplom + EnergyMax-5;
+  type3 KUNSZT+425 + pass + consume Fajka + PRAKTYK-1 + PRZED-1 +
   Madrosc-1 ("removes the pipe's carried +1 wisdom"). `PORT-DEVIATION`: keeps
   KUNSZT/pass/consumes (and mirrors the Madrosc-1 via `apply_carried_item_effect
-  (PIPE,-1)`) but omits the LoadCapacity[0x182] +-1 bumps.
+  (PIPE,-1)`) but omits the PRZED[0x182] +-1 bumps.
 - **G. Arena level placard** — arena grids advertise "3 LEVEL" prose; no actual
   level gate on arena ops in either the original or the port (flavor-only).
 - **H. Townhall/room-number nits (low priority)** — 83 is a BLUSZCZ/PIERDUT
@@ -749,14 +751,14 @@ the original.
 - **I. Monster kill rewards (major)** — `ORIGINAL` (launcher tails img
   0x13839..0x14016): PAY coins `Random(N)`; MROWKA-only drop = **PACZEK**
   `[0x1A0]` when `R(10)<7` && `[0x1A0]!=-10`, then `[0x1A0]=0xFFF6` +
-  LoadCapacity[0x182]+1, text "WYCIAGASZ PACZEK Z CIALA MROWKI"; NO heart on
+  PRZED[0x182]+1, text "WYCIAGASZ PACZEK Z CIALA MROWKI"; NO heart on
   Mrowka. Every other launcher rolls a one-time **SERCE** `[0x186]` (only if
   `[0x186]==0`) at `R(20)<K` (MNIEJSLABO 25% @0x139E3, SREDNIO 35% @0x13B05,
-  etc), `[0x186]=0xFFF6` + LoadCapacity+1. Foods/heart are sentinel slots
-  (-10=carrying; eat PACZEK does `[0x1A0]+=0xA`, LoadCapacity-1 @0x19095).
+  etc), `[0x186]=0xFFF6` + PRZED+1. Foods/heart are sentinel slots
+  (-10=carrying; eat PACZEK does `[0x1A0]+=0xA`, PRZED-1 @0x19095).
   `PORT-DEVIATION`: enemies.c SLABO carries `bloody_heart={7,10}` (70%) so the
   Mrowka gives a heart instead of a PACZEK; no ZABIJ MROWKA paczek drop at all;
-  LoadCapacity bumps omitted; port stores PACZEK as stackable quantity.
+  PRZED bumps omitted; port stores PACZEK as stackable quantity.
   Details: `C-PORT-DISCREPANCIES.md` entry I.
 - Confirmed 1:1 (no change): arena N/S/E/W edge table & MINIARENA redistributed
   rooms 33-57; QuestMaster prices/counters/rewards; death penalty formula;
@@ -765,10 +767,9 @@ the original.
 
 ## Open items / conflicts to resolve
 
-- 0x74 vs 0x257: 0x257 is CONFIRMED saved (f64, ReadLn-back at 0x83CF). Ground
-  truth says PIGULKA is a catalogue quantity item with its own count; in the
-  original the pill marker may alias the 0x257 byte (potrawki count read as
-  carried pill = -10) OR the pill has a separate word somewhere. Still checking.
+- RESOLVED: 0x257 = PIGULKA (saved f64 byte; TPU `PIGULKA: Shortint`; pills are
+  gained by drop via `-=10` and used as the time-travel pill). 0x74 = the
+  separate "Potrawki" CWICZ-skill chance field, NOT a pill count.
 - 0x21A longint vs 0x194 word Money: **RESOLVED — not two cash pools.** Disasm +
   port evidence: FORSA/[0x21A:0x21C] = coins (monety: loot "WYCIAGASZ N MONET",
   DAWAJ KASE, BAZAR/staruch buy gates, shop prices 1999/4800); 0x194 = the

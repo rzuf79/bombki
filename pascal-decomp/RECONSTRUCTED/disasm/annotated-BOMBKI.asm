@@ -1829,7 +1829,7 @@
 00C13: 31C0  xor     ax, ax
 00C15: 509A  push    ax
 00C16: 9A01  lcall   0x1c71, 0x701
-00C1B: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+00C1B: A182  mov     ax, word ptr [0x182] ; data:PRZED
 00C1E: 9952  cdq     
 00C1F: 5250  push    dx
 00C20: 5031  push    ax
@@ -3923,7 +3923,7 @@
 01D56: 9AD4  lcall   0x129d, 0x12d4 ; call==PRZEDM_VEASY
 01D5B: 31C0  xor     ax, ax
 01D5D: A370  mov     word ptr [0x670], ax ; data:GardenAnimal_0670
-01D60: 9AE9  lcall   0x129d, 0x2de9 ; call==DropGarnitur
+01D60: 9AE9  lcall   0x129d, 0x2de9 ; call==GARNITURZYSK
 01D65: BF64  mov     di, 0x564
 01D68: 1E57  push    ds
 01D69: 57BF  push    di
@@ -3938,7 +3938,7 @@
 01D7F: 9AD4  lcall   0x129d, 0x12d4 ; call==PRZEDM_VEASY
 01D84: 31C0  xor     ax, ax
 01D86: A372  mov     word ptr [0x672], ax ; data:GardenAnimal_0672
-01D89: 9AE9  lcall   0x129d, 0x2de9 ; call==DropGarnitur
+01D89: 9AE9  lcall   0x129d, 0x2de9 ; call==GARNITURZYSK
 01D8E: BF64  mov     di, 0x564
 01D91: 1E57  push    ds
 01D92: 57BF  push    di
@@ -6187,7 +6187,7 @@
 02F1D: BF7E  mov     di, 0x7e
 02F20: 1E57  push    ds
 02F21: 57A1  push    di
-02F22: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+02F22: A182  mov     ax, word ptr [0x182] ; data:PRZED
 02F25: 9952  cdq     
 02F26: 5250  push    dx
 02F27: 5031  push    ax
@@ -7609,9 +7609,9 @@
 03ABB: 7C47  jl      0x3b04
 03ABD: 833E  cmp     word ptr [0x21a], 8 ; data:ForsaLo
 03AC2: 7240  jb      0x3b04
-03AC4: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+03AC4: A182  mov     ax, word ptr [0x182] ; data:PRZED
 03AC7: 40A3  inc     ax
-03AC8: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+03AC8: A382  mov     word ptr [0x182], ax ; data:PRZED
 03ACB: A1A0  mov     ax, word ptr [0x1a0] ; data:Item_Paczek
 03ACE: 2D0A  sub     ax, 0xa
 03AD1: A3A0  mov     word ptr [0x1a0], ax ; data:Item_Paczek
@@ -7645,9 +7645,9 @@
 03B1C: 7C47  jl      0x3b65
 03B1E: 833E  cmp     word ptr [0x21a], 0xc ; data:ForsaLo
 03B23: 7240  jb      0x3b65
-03B25: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+03B25: A182  mov     ax, word ptr [0x182] ; data:PRZED
 03B28: 40A3  inc     ax
-03B29: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+03B29: A382  mov     word ptr [0x182], ax ; data:PRZED
 03B2C: A1A2  mov     ax, word ptr [0x1a2] ; data:Item_Ciastko
 03B2F: 2D0A  sub     ax, 0xa
 03B32: A3A2  mov     word ptr [0x1a2], ax ; data:Item_Ciastko
@@ -7681,9 +7681,9 @@
 03B7D: 7C47  jl      0x3bc6
 03B7F: 833E  cmp     word ptr [0x21a], 0xf ; data:ForsaLo
 03B84: 7240  jb      0x3bc6
-03B86: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+03B86: A182  mov     ax, word ptr [0x182] ; data:PRZED
 03B89: 40A3  inc     ax
-03B8A: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+03B8A: A382  mov     word ptr [0x182], ax ; data:PRZED
 03B8D: A1A4  mov     ax, word ptr [0x1a4] ; data:Item_SuchaRacja
 03B90: 2D0A  sub     ax, 0xa
 03B93: A3A4  mov     word ptr [0x1a4], ax ; data:Item_SuchaRacja
@@ -7717,9 +7717,9 @@
 03BDE: 7C47  jl      0x3c27
 03BE0: 833E  cmp     word ptr [0x21a], 0x13 ; data:ForsaLo
 03BE5: 7240  jb      0x3c27
-03BE7: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+03BE7: A182  mov     ax, word ptr [0x182] ; data:PRZED
 03BEA: 40A3  inc     ax
-03BEB: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+03BEB: A382  mov     word ptr [0x182], ax ; data:PRZED
 03BEE: A1A8  mov     ax, word ptr [0x1a8] ; data:Item_Bulka
 03BF1: 2D0A  sub     ax, 0xa
 03BF4: A3A8  mov     word ptr [0x1a8], ax ; data:Item_Bulka
@@ -7753,9 +7753,9 @@
 03C3F: 7C47  jl      0x3c88
 03C41: 833E  cmp     word ptr [0x21a], 0x18 ; data:ForsaLo
 03C46: 7240  jb      0x3c88
-03C48: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+03C48: A182  mov     ax, word ptr [0x182] ; data:PRZED
 03C4B: 40A3  inc     ax
-03C4C: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+03C4C: A382  mov     word ptr [0x182], ax ; data:PRZED
 03C4F: A1A6  mov     ax, word ptr [0x1a6] ; data:Item_Chleb
 03C52: 2D0A  sub     ax, 0xa
 03C55: A3A6  mov     word ptr [0x1a6], ax ; data:Item_Chleb
@@ -7789,9 +7789,9 @@
 03CA0: 7C47  jl      0x3ce9
 03CA2: 833E  cmp     word ptr [0x21a], 0x1d ; data:ForsaLo
 03CA7: 7240  jb      0x3ce9
-03CA9: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+03CA9: A182  mov     ax, word ptr [0x182] ; data:PRZED
 03CAC: 40A3  inc     ax
-03CAD: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+03CAD: A382  mov     word ptr [0x182], ax ; data:PRZED
 03CB0: A1AA  mov     ax, word ptr [0x1aa] ; data:Item_Weka
 03CB3: 2D0A  sub     ax, 0xa
 03CB6: A3AA  mov     word ptr [0x1aa], ax ; data:Item_Weka
@@ -8168,9 +8168,9 @@
 03F4C: 7C4A  jl      0x3f98
 03F4E: 833E  cmp     word ptr [0x21a], 0x46 ; data:ForsaLo
 03F53: 7243  jb      0x3f98
-03F55: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+03F55: A182  mov     ax, word ptr [0x182] ; data:PRZED
 03F58: 40A3  inc     ax
-03F59: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+03F59: A382  mov     word ptr [0x182], ax ; data:PRZED
 03F5C: C706  mov     word ptr [0x17e], 0xfff6 ; data:Item_StaryMiecz
 03F62: A11A  mov     ax, word ptr [0x21a] ; data:ForsaLo
 03F65: 8B16  mov     dx, word ptr [0x21c] ; data:ForsaHi
@@ -8230,9 +8230,9 @@
 03FF8: 8916  mov     word ptr [0x21c], dx ; data:ForsaHi
 03FFC: 31C0  xor     ax, ax
 03FFE: A37E  mov     word ptr [0x17e], ax ; data:Item_StaryMiecz
-04001: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+04001: A182  mov     ax, word ptr [0x182] ; data:PRZED
 04004: 48A3  dec     ax
-04005: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+04005: A382  mov     word ptr [0x182], ax ; data:PRZED
 04008: BF64  mov     di, 0x564
 0400B: 1E57  push    ds
 0400C: 57BF  push    di
@@ -8248,9 +8248,9 @@
 04027: 7C44  jl      0x406d
 04029: 833E  cmp     word ptr [0x21a], 0xf ; data:ForsaLo
 0402E: 723D  jb      0x406d
-04030: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+04030: A182  mov     ax, word ptr [0x182] ; data:PRZED
 04033: 40A3  inc     ax
-04034: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+04034: A382  mov     word ptr [0x182], ax ; data:PRZED
 04037: C706  mov     word ptr [0x184], 0xfff6 ; data:Item_MalaTarcza
 0403D: A11A  mov     ax, word ptr [0x21a] ; data:ForsaLo
 04040: 8B16  mov     dx, word ptr [0x21c] ; data:ForsaHi
@@ -8296,9 +8296,9 @@
 040AA: 8916  mov     word ptr [0x21c], dx ; data:ForsaHi
 040AE: 31C0  xor     ax, ax
 040B0: A384  mov     word ptr [0x184], ax ; data:Item_MalaTarcza
-040B3: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+040B3: A182  mov     ax, word ptr [0x182] ; data:PRZED
 040B6: 48A3  dec     ax
-040B7: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+040B7: A382  mov     word ptr [0x182], ax ; data:PRZED
 040BA: 5DC3  pop     bp
 040BB: C305  ret     
 040BC: 054C  add     ax, 0x494c
@@ -8954,9 +8954,9 @@
 044E3: A18A  mov     ax, word ptr [0x18a] ; data:Item_Fajka
 044E6: 2D0A  sub     ax, 0xa
 044E9: A38A  mov     word ptr [0x18a], ax ; data:Item_Fajka
-044EC: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+044EC: A182  mov     ax, word ptr [0x182] ; data:PRZED
 044EF: 40A3  inc     ax
-044F0: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+044F0: A382  mov     word ptr [0x182], ax ; data:PRZED
 044F3: A18C  mov     ax, word ptr [0x18c] ; data:MadroscCur
 044F6: 40A3  inc     ax
 044F7: A38C  mov     word ptr [0x18c], ax ; data:MadroscCur
@@ -8995,9 +8995,9 @@
 04552: A116  mov     ax, word ptr [0x216] ; data:Item_KompletUbranSyf
 04555: 2D0A  sub     ax, 0xa
 04558: A316  mov     word ptr [0x216], ax ; data:Item_KompletUbranSyf
-0455B: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+0455B: A182  mov     ax, word ptr [0x182] ; data:PRZED
 0455E: 40A3  inc     ax
-0455F: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+0455F: A382  mov     word ptr [0x182], ax ; data:PRZED
 04562: BF64  mov     di, 0x564
 04565: 1E57  push    ds
 04566: 57BF  push    di
@@ -9036,9 +9036,9 @@
 045BB: A116  mov     ax, word ptr [0x216] ; data:Item_KompletUbranSyf
 045BE: 050A  add     ax, 0xa
 045C1: A316  mov     word ptr [0x216], ax ; data:Item_KompletUbranSyf
-045C4: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+045C4: A182  mov     ax, word ptr [0x182] ; data:PRZED
 045C7: 48A3  dec     ax
-045C8: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+045C8: A382  mov     word ptr [0x182], ax ; data:PRZED
 045CB: BF64  mov     di, 0x564
 045CE: 1E57  push    ds
 045CF: 57BF  push    di
@@ -9069,9 +9069,9 @@
 04613: A18A  mov     ax, word ptr [0x18a] ; data:Item_Fajka
 04616: 050A  add     ax, 0xa
 04619: A38A  mov     word ptr [0x18a], ax ; data:Item_Fajka
-0461C: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+0461C: A182  mov     ax, word ptr [0x182] ; data:PRZED
 0461F: 48A3  dec     ax
-04620: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+04620: A382  mov     word ptr [0x182], ax ; data:PRZED
 04623: A18C  mov     ax, word ptr [0x18c] ; data:MadroscCur
 04626: 48A3  dec     ax
 04627: A38C  mov     word ptr [0x18c], ax ; data:MadroscCur
@@ -9117,9 +9117,9 @@
 04697: A190  mov     ax, word ptr [0x190] ; data:ZrecznoscCur
 0469A: 40A3  inc     ax
 0469B: A390  mov     word ptr [0x190], ax ; data:ZrecznoscCur
-0469E: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+0469E: A182  mov     ax, word ptr [0x182] ; data:PRZED
 046A1: 40A3  inc     ax
-046A2: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+046A2: A382  mov     word ptr [0x182], ax ; data:PRZED
 046A5: BF64  mov     di, 0x564
 046A8: 1E57  push    ds
 046A9: 57BF  push    di
@@ -9153,9 +9153,9 @@
 046F7: A122  mov     ax, word ptr [0x222] ; data:Item_GarniturKolce
 046FA: 2D0A  sub     ax, 0xa
 046FD: A322  mov     word ptr [0x222], ax ; data:Item_GarniturKolce
-04700: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+04700: A182  mov     ax, word ptr [0x182] ; data:PRZED
 04703: 40A3  inc     ax
-04704: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+04704: A382  mov     word ptr [0x182], ax ; data:PRZED
 04707: BF64  mov     di, 0x564
 0470A: 1E57  push    ds
 0470B: 57BF  push    di
@@ -9192,9 +9192,9 @@
 04759: A122  mov     ax, word ptr [0x222] ; data:Item_GarniturKolce
 0475C: 050A  add     ax, 0xa
 0475F: A322  mov     word ptr [0x222], ax ; data:Item_GarniturKolce
-04762: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+04762: A182  mov     ax, word ptr [0x182] ; data:PRZED
 04765: 48A3  dec     ax
-04766: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+04766: A382  mov     word ptr [0x182], ax ; data:PRZED
 04769: BF64  mov     di, 0x564
 0476C: 1E57  push    ds
 0476D: 57BF  push    di
@@ -9234,9 +9234,9 @@
 047CC: A190  mov     ax, word ptr [0x190] ; data:ZrecznoscCur
 047CF: 48A3  dec     ax
 047D0: A390  mov     word ptr [0x190], ax ; data:ZrecznoscCur
-047D3: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+047D3: A182  mov     ax, word ptr [0x182] ; data:PRZED
 047D6: 48A3  dec     ax
-047D7: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+047D7: A382  mov     word ptr [0x182], ax ; data:PRZED
 047DA: 5DC3  pop     bp
 047DB: C305  ret     
 047DC: 054C  add     ax, 0x494c
@@ -9927,9 +9927,9 @@
 04C2C: A192  mov     ax, word ptr [0x192] ; data:Item_ButelkaMany
 04C2F: 2D0A  sub     ax, 0xa
 04C32: A392  mov     word ptr [0x192], ax ; data:Item_ButelkaMany
-04C35: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+04C35: A182  mov     ax, word ptr [0x182] ; data:PRZED
 04C38: 40A3  inc     ax
-04C39: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+04C39: A382  mov     word ptr [0x182], ax ; data:PRZED
 04C3C: BF64  mov     di, 0x564
 04C3F: 1E57  push    ds
 04C40: 57BF  push    di
@@ -9964,9 +9964,9 @@
 04C91: 982D  cwde    
 04C92: 2D0A  sub     ax, 0xa
 04C95: A25B  mov     byte ptr [0x25b], al ; data:Item_Listek
-04C98: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+04C98: A182  mov     ax, word ptr [0x182] ; data:PRZED
 04C9B: 40A3  inc     ax
-04C9C: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+04C9C: A382  mov     word ptr [0x182], ax ; data:PRZED
 04C9F: A1AE  mov     ax, word ptr [0x1ae] ; data:ManaMax
 04CA2: 0528  add     ax, 0x28
 04CA5: A3AE  mov     word ptr [0x1ae], ax ; data:ManaMax
@@ -10004,9 +10004,9 @@
 04CFD: 9805  cwde    
 04CFE: 050A  add     ax, 0xa
 04D01: A25B  mov     byte ptr [0x25b], al ; data:Item_Listek
-04D04: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+04D04: A182  mov     ax, word ptr [0x182] ; data:PRZED
 04D07: 48A3  dec     ax
-04D08: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+04D08: A382  mov     word ptr [0x182], ax ; data:PRZED
 04D0B: A1AE  mov     ax, word ptr [0x1ae] ; data:ManaMax
 04D0E: 2D28  sub     ax, 0x28
 04D11: A3AE  mov     word ptr [0x1ae], ax ; data:ManaMax
@@ -10044,9 +10044,9 @@
 04D69: 982D  cwde    
 04D6A: 2D0A  sub     ax, 0xa
 04D6D: A257  mov     byte ptr [0x257], al ; data:Item_Pigulka
-04D70: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+04D70: A182  mov     ax, word ptr [0x182] ; data:PRZED
 04D73: 40A3  inc     ax
-04D74: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+04D74: A382  mov     word ptr [0x182], ax ; data:PRZED
 04D77: BF64  mov     di, 0x564
 04D7A: 1E57  push    ds
 04D7B: 57BF  push    di
@@ -10078,9 +10078,9 @@
 04DC2: 9805  cwde    
 04DC3: 050A  add     ax, 0xa
 04DC6: A257  mov     byte ptr [0x257], al ; data:Item_Pigulka
-04DC9: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+04DC9: A182  mov     ax, word ptr [0x182] ; data:PRZED
 04DCC: 48A3  dec     ax
-04DCD: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+04DCD: A382  mov     word ptr [0x182], ax ; data:PRZED
 04DD0: BF64  mov     di, 0x564
 04DD3: 1E57  push    ds
 04DD4: 57BF  push    di
@@ -10114,9 +10114,9 @@
 04E21: A130  mov     ax, word ptr [0x230] ; data:Item_ScrollPorownanie
 04E24: 2D0A  sub     ax, 0xa
 04E27: A330  mov     word ptr [0x230], ax ; data:Item_ScrollPorownanie
-04E2A: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+04E2A: A182  mov     ax, word ptr [0x182] ; data:PRZED
 04E2D: 40A3  inc     ax
-04E2E: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+04E2E: A382  mov     word ptr [0x182], ax ; data:PRZED
 04E31: BF64  mov     di, 0x564
 04E34: 1E57  push    ds
 04E35: 57BF  push    di
@@ -10147,9 +10147,9 @@
 04E79: A130  mov     ax, word ptr [0x230] ; data:Item_ScrollPorownanie
 04E7C: 050A  add     ax, 0xa
 04E7F: A330  mov     word ptr [0x230], ax ; data:Item_ScrollPorownanie
-04E82: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+04E82: A182  mov     ax, word ptr [0x182] ; data:PRZED
 04E85: 48A3  dec     ax
-04E86: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+04E86: A382  mov     word ptr [0x182], ax ; data:PRZED
 04E89: 5DC3  pop     bp
 04E8A: C30D  ret     
 04E8B: 0D5A  or      ax, 0x415a
@@ -10304,7 +10304,7 @@
 04F51: 525A  push    dx
 04F52: 5A55  pop     dx
 
-; ===== PROC KillDispatch @ img 04F53 (para00000:4F53) ZABIJ <NPC> router: flag==context -> tier launcher (0xf77/0x1090/0x11b2 in para 0x129D) -> clear flag on win; Dziadek 5% Fajka, Goryl/Ochroniarz DropGarnitur =====
+; ===== PROC KillDispatch @ img 04F53 (para00000:4F53) ZABIJ <NPC> router: flag==context -> tier launcher (0xf77/0x1090/0x11b2 in para 0x129D) -> clear flag on win; Dziadek 5% Fajka, Goryl/Ochroniarz GARNITURZYSK =====
 04F53: 5589  push    bp
 04F54: 89E5  mov     bp, sp
 04F56: 31C0  xor     ax, ax
@@ -10490,7 +10490,7 @@
 05142: 833E  cmp     word ptr [0x1b0], 1 ; data:MonsterHP
 05147: 7D05  jge     0x514e
 05149: C606  mov     byte ptr [0x254], 0 ; RoomKillFlag_Goryl
-0514E: 9AE9  lcall   0x129d, 0x2de9 ; call==DropGarnitur
+0514E: 9AE9  lcall   0x129d, 0x2de9 ; call==GARNITURZYSK
 05153: BF64  mov     di, 0x564
 05156: 1E57  push    ds
 05157: 57BF  push    di
@@ -10507,7 +10507,7 @@
 05173: 833E  cmp     word ptr [0x1b0], 1 ; data:MonsterHP
 05178: 7D05  jge     0x517f
 0517A: C606  mov     byte ptr [0x252], 0 ; RoomKillFlag_Ochroniarz
-0517F: 9AE9  lcall   0x129d, 0x2de9 ; call==DropGarnitur
+0517F: 9AE9  lcall   0x129d, 0x2de9 ; call==GARNITURZYSK
 05184: 5DC3  pop     bp
 05185: C33C  ret     
 05186: 3C23  cmp     al, 0x23
@@ -10986,7 +10986,7 @@
 0555B: 579A  push    di
 0555C: 9AD7  lcall   0x1c71, 0x9d7
 05561: 7505  jne     0x5568
-05563: 9A14  lcall   0x129d, 0x3114 ; call==GoToRoom1000
+05563: 9A14  lcall   0x129d, 0x3114 ; call==PRZEDM_MODE
 05568: BF64  mov     di, 0x564
 0556B: 1E57  push    ds
 0556C: 57BF  push    di
@@ -11315,7 +11315,7 @@
 057EF: 579A  push    di
 057F0: 9AD7  lcall   0x1c71, 0x9d7
 057F5: 7505  jne     0x57fc
-057F7: 9A14  lcall   0x129d, 0x3114 ; call==GoToRoom1000
+057F7: 9A14  lcall   0x129d, 0x3114 ; call==PRZEDM_MODE
 057FC: BF64  mov     di, 0x564
 057FF: 1E57  push    ds
 05800: 57BF  push    di
@@ -11578,7 +11578,7 @@
 059CE: 579A  push    di
 059CF: 9AD7  lcall   0x1c71, 0x9d7
 059D4: 7505  jne     0x59db
-059D6: 9A14  lcall   0x129d, 0x3114 ; call==GoToRoom1000
+059D6: 9A14  lcall   0x129d, 0x3114 ; call==PRZEDM_MODE
 059DB: BF64  mov     di, 0x564
 059DE: 1E57  push    ds
 059DF: 57BF  push    di
@@ -12093,7 +12093,7 @@
 05D5E: 579A  push    di
 05D5F: 9AD7  lcall   0x1c71, 0x9d7
 05D64: 7505  jne     0x5d6b
-05D66: 9A14  lcall   0x129d, 0x3114 ; call==GoToRoom1000
+05D66: 9A14  lcall   0x129d, 0x3114 ; call==PRZEDM_MODE
 05D6B: BF64  mov     di, 0x564
 05D6E: 1E57  push    ds
 05D6F: 57BF  push    di
@@ -14047,7 +14047,7 @@
 06992: 579A  push    di
 06993: 9AD7  lcall   0x1c71, 0x9d7
 06998: 7505  jne     0x699f
-0699A: 9A14  lcall   0x129d, 0x3114 ; call==GoToRoom1000
+0699A: 9A14  lcall   0x129d, 0x3114 ; call==PRZEDM_MODE
 0699F: BF64  mov     di, 0x564
 069A2: 1E57  push    ds
 069A3: 57BF  push    di
@@ -14244,7 +14244,7 @@
 06B7F: 579A  push    di
 06B80: 9AD7  lcall   0x1c71, 0x9d7
 06B85: 7505  jne     0x6b8c
-06B87: 9A14  lcall   0x129d, 0x3114 ; call==GoToRoom1000
+06B87: 9A14  lcall   0x129d, 0x3114 ; call==PRZEDM_MODE
 06B8C: BF64  mov     di, 0x564
 06B8F: 1E57  push    ds
 06B90: 57BF  push    di
@@ -14382,7 +14382,7 @@
 06CD9: 579A  push    di
 06CDA: 9AD7  lcall   0x1c71, 0x9d7
 06CDF: 7505  jne     0x6ce6
-06CE1: 9A14  lcall   0x129d, 0x3114 ; call==GoToRoom1000
+06CE1: 9A14  lcall   0x129d, 0x3114 ; call==PRZEDM_MODE
 06CE6: BF64  mov     di, 0x564
 06CE9: 1E57  push    ds
 06CEA: 57BF  push    di
@@ -14551,7 +14551,7 @@
 06E82: 579A  push    di
 06E83: 9AD7  lcall   0x1c71, 0x9d7
 06E88: 7505  jne     0x6e8f
-06E8A: 9A14  lcall   0x129d, 0x3114 ; call==GoToRoom1000
+06E8A: 9A14  lcall   0x129d, 0x3114 ; call==PRZEDM_MODE
 06E8F: BF64  mov     di, 0x564
 06E92: 1E57  push    ds
 06E93: 57BF  push    di
@@ -14720,7 +14720,7 @@
 0702B: 579A  push    di
 0702C: 9AD7  lcall   0x1c71, 0x9d7
 07031: 7505  jne     0x7038
-07033: 9A14  lcall   0x129d, 0x3114 ; call==GoToRoom1000
+07033: 9A14  lcall   0x129d, 0x3114 ; call==PRZEDM_MODE
 07038: BF64  mov     di, 0x564
 0703B: 1E57  push    ds
 0703C: 57BF  push    di
@@ -14858,7 +14858,7 @@
 07185: 579A  push    di
 07186: 9AD7  lcall   0x1c71, 0x9d7
 0718B: 7505  jne     0x7192
-0718D: 9A14  lcall   0x129d, 0x3114 ; call==GoToRoom1000
+0718D: 9A14  lcall   0x129d, 0x3114 ; call==PRZEDM_MODE
 07192: BF64  mov     di, 0x564
 07195: 1E57  push    ds
 07196: 57BF  push    di
@@ -15033,7 +15033,7 @@
 07341: 579A  push    di
 07342: 9AD7  lcall   0x1c71, 0x9d7
 07347: 7505  jne     0x734e
-07349: 9A14  lcall   0x129d, 0x3114 ; call==GoToRoom1000
+07349: 9A14  lcall   0x129d, 0x3114 ; call==PRZEDM_MODE
 0734E: BF64  mov     di, 0x564
 07351: 1E57  push    ds
 07352: 57BF  push    di
@@ -15135,9 +15135,9 @@
 0744C: A17C  mov     ax, word ptr [0x7c]
 0744F: 2D0A  sub     ax, 0xa
 07452: A37C  mov     word ptr [0x7c], ax
-07455: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+07455: A182  mov     ax, word ptr [0x182] ; data:PRZED
 07458: 40A3  inc     ax
-07459: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+07459: A382  mov     word ptr [0x182], ax ; data:PRZED
 0745C: BF64  mov     di, 0x564
 0745F: 1E57  push    ds
 07460: 57BF  push    di
@@ -15169,9 +15169,9 @@
 074A8: A17C  mov     ax, word ptr [0x7c]
 074AB: 2D0A  sub     ax, 0xa
 074AE: A37C  mov     word ptr [0x7c], ax
-074B1: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+074B1: A182  mov     ax, word ptr [0x182] ; data:PRZED
 074B4: 40A3  inc     ax
-074B5: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+074B5: A382  mov     word ptr [0x182], ax ; data:PRZED
 074B8: BF64  mov     di, 0x564
 074BB: 1E57  push    ds
 074BC: 57BF  push    di
@@ -15278,7 +15278,7 @@
 075B9: 579A  push    di
 075BA: 9AD7  lcall   0x1c71, 0x9d7
 075BF: 7505  jne     0x75c6
-075C1: 9A14  lcall   0x129d, 0x3114 ; call==GoToRoom1000
+075C1: 9A14  lcall   0x129d, 0x3114 ; call==PRZEDM_MODE
 075C6: BF64  mov     di, 0x564
 075C9: 1E57  push    ds
 075CA: 57BF  push    di
@@ -15468,7 +15468,7 @@
 07791: 579A  push    di
 07792: 9AD7  lcall   0x1c71, 0x9d7
 07797: 7505  jne     0x779e
-07799: 9A14  lcall   0x129d, 0x3114 ; call==GoToRoom1000
+07799: 9A14  lcall   0x129d, 0x3114 ; call==PRZEDM_MODE
 0779E: BF64  mov     di, 0x564
 077A1: 1E57  push    ds
 077A2: 57BF  push    di
@@ -15548,9 +15548,9 @@
 07864: A1A4  mov     ax, word ptr [0x1a4] ; data:Item_SuchaRacja
 07867: 2D0A  sub     ax, 0xa
 0786A: A3A4  mov     word ptr [0x1a4], ax ; data:Item_SuchaRacja
-0786D: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+0786D: A182  mov     ax, word ptr [0x182] ; data:PRZED
 07870: 40A3  inc     ax
-07871: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+07871: A382  mov     word ptr [0x182], ax ; data:PRZED
 07874: 833E  cmp     word ptr [0x19e], 3 ; data:RandomScratch
 07879: 7D61  jge     0x78dc
 0787B: BFA2  mov     di, 0x7a2
@@ -15584,9 +15584,9 @@
 078C5: A1C2  mov     ax, word ptr [0x1c2] ; data:MaxLoad
 078C8: 2D08  sub     ax, 8
 078CB: A3C2  mov     word ptr [0x1c2], ax ; data:MaxLoad
-078CE: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+078CE: A182  mov     ax, word ptr [0x182] ; data:PRZED
 078D1: 40A3  inc     ax
-078D2: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+078D2: A382  mov     word ptr [0x182], ax ; data:PRZED
 078D5: A190  mov     ax, word ptr [0x190] ; data:ZrecznoscCur
 078D8: 40A3  inc     ax
 078D9: A390  mov     word ptr [0x190], ax ; data:ZrecznoscCur
@@ -15706,7 +15706,7 @@
 079F4: 579A  push    di
 079F5: 9AD7  lcall   0x1c71, 0x9d7
 079FA: 7505  jne     0x7a01
-079FC: 9A14  lcall   0x129d, 0x3114 ; call==GoToRoom1000
+079FC: 9A14  lcall   0x129d, 0x3114 ; call==PRZEDM_MODE
 07A01: BF64  mov     di, 0x564
 07A04: 1E57  push    ds
 07A05: 57BF  push    di
@@ -15854,7 +15854,7 @@
 07B67: 579A  push    di
 07B68: 9AD7  lcall   0x1c71, 0x9d7
 07B6D: 7505  jne     0x7b74
-07B6F: 9A14  lcall   0x129d, 0x3114 ; call==GoToRoom1000
+07B6F: 9A14  lcall   0x129d, 0x3114 ; call==PRZEDM_MODE
 07B74: BF64  mov     di, 0x564
 07B77: 1E57  push    ds
 07B78: 57BF  push    di
@@ -16002,7 +16002,7 @@
 07CDA: 579A  push    di
 07CDB: 9AD7  lcall   0x1c71, 0x9d7
 07CE0: 7505  jne     0x7ce7
-07CE2: 9A14  lcall   0x129d, 0x3114 ; call==GoToRoom1000
+07CE2: 9A14  lcall   0x129d, 0x3114 ; call==PRZEDM_MODE
 07CE7: BF64  mov     di, 0x564
 07CEA: 1E57  push    ds
 07CEB: 57BF  push    di
@@ -16311,7 +16311,7 @@
 0807A: 1E57  push    ds
 0807B: 579A  push    di
 0807C: 9A2D  lcall   0x1c71, 0x72d
-08081: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+08081: A382  mov     word ptr [0x182], ax ; data:PRZED
 08084: 9AFE  lcall   0x1c71, 0x5fe
 08089: 9A91  lcall   0x1c71, 0x291
 0808E: BF7E  mov     di, 0x7e
@@ -16957,7 +16957,7 @@
 0873C: BC02  mov     sp, 0x7c02
 0873F: 0780  pop     es
 
-; ===== PROC LevelUp @ img 08740 (para00000:8740) 0x8740..0x8BA1 =====
+; ===== PROC LevelUp @ img 0872E (para00000:872E) thresholds lvl1 700, lvl2 725, lvl3 730, 4-8 735+lvl, 9+ 735+2*lvl; body 0x87A2; epilogue 0x8BA2 =====
 08740: 803E  cmp     byte ptr [0x25c], 1 ; data:CharacterLevel
 08745: 745B  je      0x87a2
 08747: 813E  cmp     word ptr [0x1d4], 0x2d5 ; data:KUNSZT
@@ -24111,7 +24111,7 @@
 0B0EB: 9A1A  lcall   0x1c0f, 0x31a
 0B0F0: E8D0  call    0x51c3 ; ->Checkpoint
 0B0F3: E838  call    0x872e
-0B0F6: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+0B0F6: A182  mov     ax, word ptr [0x182] ; data:PRZED
 0B0F9: 3B06  cmp     ax, word ptr [0x62]
 0B0FD: 7F03  jg      0xb102
 0B0FF: E991  jmp     0xb193
@@ -24124,7 +24124,7 @@
 0B10C: 31C0  xor     ax, ax
 0B10E: 509A  push    ax
 0B10F: 9A01  lcall   0x1c71, 0x701
-0B114: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+0B114: A182  mov     ax, word ptr [0x182] ; data:PRZED
 0B117: 2B06  sub     ax, word ptr [0x62]
 0B11B: 9952  cdq     
 0B11C: 5250  push    dx
@@ -24149,7 +24149,7 @@
 0B147: 31C0  xor     ax, ax
 0B149: 509A  push    ax
 0B14A: 9A01  lcall   0x1c71, 0x701
-0B14F: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+0B14F: A182  mov     ax, word ptr [0x182] ; data:PRZED
 0B152: 2B06  sub     ax, word ptr [0x62]
 0B156: BA0A  mov     dx, 0xa
 0B159: F7E2  mul     dx
@@ -24167,7 +24167,7 @@
 0B16E: 9A01  lcall   0x1c71, 0x701
 0B173: 9ADD  lcall   0x1c71, 0x5dd
 0B178: 9A91  lcall   0x1c71, 0x291
-0B17D: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+0B17D: A182  mov     ax, word ptr [0x182] ; data:PRZED
 0B180: 2B06  sub     ax, word ptr [0x62]
 0B184: BA0A  mov     dx, 0xa
 0B187: F7E2  mul     dx
@@ -24359,7 +24359,7 @@
 0B378: 579A  push    di
 0B379: 9AD7  lcall   0x1c71, 0x9d7
 0B37E: 7505  jne     0xb385
-0B380: 9A14  lcall   0x129d, 0x3114 ; call==GoToRoom1000
+0B380: 9A14  lcall   0x129d, 0x3114 ; call==PRZEDM_MODE
 0B385: BF64  mov     di, 0x564
 0B388: 1E57  push    ds
 0B389: 57BF  push    di
@@ -24624,7 +24624,7 @@
 0B63F: 579A  push    di
 0B640: 9AD7  lcall   0x1c71, 0x9d7
 0B645: 7505  jne     0xb64c
-0B647: 9A14  lcall   0x129d, 0x3114 ; call==GoToRoom1000
+0B647: 9A14  lcall   0x129d, 0x3114 ; call==PRZEDM_MODE
 0B64C: BF64  mov     di, 0x564
 0B64F: 1E57  push    ds
 0B650: 57BF  push    di
@@ -25005,7 +25005,7 @@
 0BA5F: 579A  push    di
 0BA60: 9AD7  lcall   0x1c71, 0x9d7
 0BA65: 7505  jne     0xba6c
-0BA67: 9A14  lcall   0x129d, 0x3114 ; call==GoToRoom1000
+0BA67: 9A14  lcall   0x129d, 0x3114 ; call==PRZEDM_MODE
 0BA6C: BF64  mov     di, 0x564
 0BA6F: 1E57  push    ds
 0BA70: 57BF  push    di
@@ -25090,7 +25090,7 @@
 0BB30: 579A  push    di
 0BB31: 9AD7  lcall   0x1c71, 0x9d7
 0BB36: 7505  jne     0xbb3d
-0BB38: 9A14  lcall   0x129d, 0x3114 ; call==GoToRoom1000
+0BB38: 9A14  lcall   0x129d, 0x3114 ; call==PRZEDM_MODE
 0BB3D: BF64  mov     di, 0x564
 0BB40: 1E57  push    ds
 0BB41: 57BF  push    di
@@ -25339,7 +25339,7 @@
 0BDB3: 579A  push    di
 0BDB4: 9AD7  lcall   0x1c71, 0x9d7
 0BDB9: 7505  jne     0xbdc0
-0BDBB: 9A14  lcall   0x129d, 0x3114 ; call==GoToRoom1000
+0BDBB: 9A14  lcall   0x129d, 0x3114 ; call==PRZEDM_MODE
 0BDC0: BF64  mov     di, 0x564
 0BDC3: 1E57  push    ds
 0BDC4: 57BF  push    di
@@ -25613,7 +25613,7 @@
 0C06E: 579A  push    di
 0C06F: 9AD7  lcall   0x1c71, 0x9d7
 0C074: 7505  jne     0xc07b
-0C076: 9A14  lcall   0x129d, 0x3114 ; call==GoToRoom1000
+0C076: 9A14  lcall   0x129d, 0x3114 ; call==PRZEDM_MODE
 0C07B: BF64  mov     di, 0x564
 0C07E: 1E57  push    ds
 0C07F: 57BF  push    di
@@ -25725,7 +25725,7 @@
 0C181: 9A00  lcall   0x129d, 0x1400 ; call==PRZEDM_EASY
 0C186: 31C0  xor     ax, ax
 0C188: A380  mov     word ptr [0x680], ax
-0C18B: 9A9E  lcall   0x129d, 0x2e9e ; call==DropPigulka
+0C18B: 9A9E  lcall   0x129d, 0x2e9e ; call==PIGULKAZYSK
 0C190: BF64  mov     di, 0x564
 0C193: 1E57  push    ds
 0C194: 57BF  push    di
@@ -25848,7 +25848,7 @@
 0C2BC: 579A  push    di
 0C2BD: 9AD7  lcall   0x1c71, 0x9d7
 0C2C2: 7505  jne     0xc2c9
-0C2C4: 9A14  lcall   0x129d, 0x3114 ; call==GoToRoom1000
+0C2C4: 9A14  lcall   0x129d, 0x3114 ; call==PRZEDM_MODE
 0C2C9: BF64  mov     di, 0x564
 0C2CC: 1E57  push    ds
 0C2CD: 57BF  push    di
@@ -26038,7 +26038,7 @@
 0C49D: 579A  push    di
 0C49E: 9AD7  lcall   0x1c71, 0x9d7
 0C4A3: 7505  jne     0xc4aa
-0C4A5: 9A14  lcall   0x129d, 0x3114 ; call==GoToRoom1000
+0C4A5: 9A14  lcall   0x129d, 0x3114 ; call==PRZEDM_MODE
 0C4AA: BF64  mov     di, 0x564
 0C4AD: 1E57  push    ds
 0C4AE: 57BF  push    di
@@ -26167,7 +26167,7 @@
 0C5E2: 579A  push    di
 0C5E3: 9AD7  lcall   0x1c71, 0x9d7
 0C5E8: 7505  jne     0xc5ef
-0C5EA: 9A14  lcall   0x129d, 0x3114 ; call==GoToRoom1000
+0C5EA: 9A14  lcall   0x129d, 0x3114 ; call==PRZEDM_MODE
 0C5EF: BF64  mov     di, 0x564
 0C5F2: 1E57  push    ds
 0C5F3: 57BF  push    di
@@ -26307,7 +26307,7 @@
 0C743: 579A  push    di
 0C744: 9AD7  lcall   0x1c71, 0x9d7
 0C749: 7505  jne     0xc750
-0C74B: 9A14  lcall   0x129d, 0x3114 ; call==GoToRoom1000
+0C74B: 9A14  lcall   0x129d, 0x3114 ; call==PRZEDM_MODE
 0C750: BF64  mov     di, 0x564
 0C753: 1E57  push    ds
 0C754: 57BF  push    di
@@ -26605,7 +26605,7 @@
 0CA3C: 579A  push    di
 0CA3D: 9AD7  lcall   0x1c71, 0x9d7
 0CA42: 7505  jne     0xca49
-0CA44: 9A14  lcall   0x129d, 0x3114 ; call==GoToRoom1000
+0CA44: 9A14  lcall   0x129d, 0x3114 ; call==PRZEDM_MODE
 0CA49: BF64  mov     di, 0x564
 0CA4C: 1E57  push    ds
 0CA4D: 57BF  push    di
@@ -26734,7 +26734,7 @@
 0CB81: 579A  push    di
 0CB82: 9AD7  lcall   0x1c71, 0x9d7
 0CB87: 7505  jne     0xcb8e
-0CB89: 9A14  lcall   0x129d, 0x3114 ; call==GoToRoom1000
+0CB89: 9A14  lcall   0x129d, 0x3114 ; call==PRZEDM_MODE
 0CB8E: BF64  mov     di, 0x564
 0CB91: 1E57  push    ds
 0CB92: 57BF  push    di
@@ -26888,7 +26888,7 @@
 0CD0A: 579A  push    di
 0CD0B: 9AD7  lcall   0x1c71, 0x9d7
 0CD10: 7505  jne     0xcd17
-0CD12: 9A14  lcall   0x129d, 0x3114 ; call==GoToRoom1000
+0CD12: 9A14  lcall   0x129d, 0x3114 ; call==PRZEDM_MODE
 0CD17: BF64  mov     di, 0x564
 0CD1A: 1E57  push    ds
 0CD1B: 57BF  push    di
@@ -27089,7 +27089,7 @@
 0CF04: 579A  push    di
 0CF05: 9AD7  lcall   0x1c71, 0x9d7
 0CF0A: 7505  jne     0xcf11
-0CF0C: 9A14  lcall   0x129d, 0x3114 ; call==GoToRoom1000
+0CF0C: 9A14  lcall   0x129d, 0x3114 ; call==PRZEDM_MODE
 0CF11: BF64  mov     di, 0x564
 0CF14: 1E57  push    ds
 0CF15: 57BF  push    di
@@ -27249,9 +27249,9 @@
 0D0AD: 9AA6  lcall   0x129d, 0x44a6 ; call==Walka
 0D0B2: 833E  cmp     word ptr [0x1b0], 0 ; data:MonsterHP
 0D0B7: 7D20  jge     0xd0d9
-0D0B9: 9A14  lcall   0x129d, 0x3014 ; call==DropListek
-0D0BE: 9A9E  lcall   0x129d, 0x2e9e ; call==DropPigulka
-0D0C3: 9AC1  lcall   0x129d, 0x30c1 ; call==DropScroll
+0D0B9: 9A14  lcall   0x129d, 0x3014 ; call==LISTEKZYSK
+0D0BE: 9A9E  lcall   0x129d, 0x2e9e ; call==PIGULKAZYSK
+0D0C3: 9AC1  lcall   0x129d, 0x30c1 ; call==SCROLLPORZYSK
 0D0C8: 803E  cmp     byte ptr [0x262], 0 ; data:QuestPhase
 0D0CD: 740A  je      0xd0d9
 0D0CF: A062  mov     al, byte ptr [0x262] ; data:QuestPhase
@@ -27322,7 +27322,7 @@
 0D170: 579A  push    di
 0D171: 9AD7  lcall   0x1c71, 0x9d7
 0D176: 7505  jne     0xd17d
-0D178: 9A14  lcall   0x129d, 0x3114 ; call==GoToRoom1000
+0D178: 9A14  lcall   0x129d, 0x3114 ; call==PRZEDM_MODE
 0D17D: BF64  mov     di, 0x564
 0D180: 1E57  push    ds
 0D181: 57BF  push    di
@@ -27477,7 +27477,7 @@
 0D2F7: 579A  push    di
 0D2F8: 9AD7  lcall   0x1c71, 0x9d7
 0D2FD: 7505  jne     0xd304
-0D2FF: 9A14  lcall   0x129d, 0x3114 ; call==GoToRoom1000
+0D2FF: 9A14  lcall   0x129d, 0x3114 ; call==PRZEDM_MODE
 0D304: BF64  mov     di, 0x564
 0D307: 1E57  push    ds
 0D308: 57BF  push    di
@@ -27843,10 +27843,10 @@
 0D6AF: A1D4  mov     ax, word ptr [0x1d4] ; data:KUNSZT
 0D6B2: 0532  add     ax, 0x32
 0D6B5: A3D4  mov     word ptr [0x1d4], ax ; data:KUNSZT
-0D6B8: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+0D6B8: A182  mov     ax, word ptr [0x182] ; data:PRZED
 0D6BB: 4848  dec     ax
 0D6BC: 48A3  dec     ax
-0D6BD: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+0D6BD: A382  mov     word ptr [0x182], ax ; data:PRZED
 0D6C0: BF64  mov     di, 0x564
 0D6C3: 1E57  push    ds
 0D6C4: 57BF  push    di
@@ -27916,7 +27916,7 @@
 0D765: 579A  push    di
 0D766: 9AD7  lcall   0x1c71, 0x9d7
 0D76B: 7505  jne     0xd772
-0D76D: 9A14  lcall   0x129d, 0x3114 ; call==GoToRoom1000
+0D76D: 9A14  lcall   0x129d, 0x3114 ; call==PRZEDM_MODE
 0D772: BF64  mov     di, 0x564
 0D775: 1E57  push    ds
 0D776: 57BF  push    di
@@ -28043,7 +28043,7 @@
 0D8A0: 579A  push    di
 0D8A1: 9AD7  lcall   0x1c71, 0x9d7
 0D8A6: 7505  jne     0xd8ad
-0D8A8: 9A14  lcall   0x129d, 0x3114 ; call==GoToRoom1000
+0D8A8: 9A14  lcall   0x129d, 0x3114 ; call==PRZEDM_MODE
 0D8AD: BF64  mov     di, 0x564
 0D8B0: 1E57  push    ds
 0D8B1: 57BF  push    di
@@ -28232,7 +28232,7 @@
 0DA7A: 579A  push    di
 0DA7B: 9AD7  lcall   0x1c71, 0x9d7
 0DA80: 7505  jne     0xda87
-0DA82: 9A14  lcall   0x129d, 0x3114 ; call==GoToRoom1000
+0DA82: 9A14  lcall   0x129d, 0x3114 ; call==PRZEDM_MODE
 0DA87: BF64  mov     di, 0x564
 0DA8A: 1E57  push    ds
 0DA8B: 57BF  push    di
@@ -28431,7 +28431,7 @@
 0DC6B: 579A  push    di
 0DC6C: 9AD7  lcall   0x1c71, 0x9d7
 0DC71: 7505  jne     0xdc78
-0DC73: 9A14  lcall   0x129d, 0x3114 ; call==GoToRoom1000
+0DC73: 9A14  lcall   0x129d, 0x3114 ; call==PRZEDM_MODE
 0DC78: BF64  mov     di, 0x564
 0DC7B: 1E57  push    ds
 0DC7C: 57BF  push    di
@@ -28628,7 +28628,7 @@
 0DE53: 579A  push    di
 0DE54: 9AD7  lcall   0x1c71, 0x9d7
 0DE59: 7505  jne     0xde60
-0DE5B: 9A14  lcall   0x129d, 0x3114 ; call==GoToRoom1000
+0DE5B: 9A14  lcall   0x129d, 0x3114 ; call==PRZEDM_MODE
 0DE60: BF64  mov     di, 0x564
 0DE63: 1E57  push    ds
 0DE64: 57BF  push    di
@@ -28819,7 +28819,7 @@
 0E02F: 579A  push    di
 0E030: 9AD7  lcall   0x1c71, 0x9d7
 0E035: 7505  jne     0xe03c
-0E037: 9A14  lcall   0x129d, 0x3114 ; call==GoToRoom1000
+0E037: 9A14  lcall   0x129d, 0x3114 ; call==PRZEDM_MODE
 0E03C: BF64  mov     di, 0x564
 0E03F: 1E57  push    ds
 0E040: 57BF  push    di
@@ -28982,7 +28982,7 @@
 0E1CA: 579A  push    di
 0E1CB: 9AD7  lcall   0x1c71, 0x9d7
 0E1D0: 7505  jne     0xe1d7
-0E1D2: 9A14  lcall   0x129d, 0x3114 ; call==GoToRoom1000
+0E1D2: 9A14  lcall   0x129d, 0x3114 ; call==PRZEDM_MODE
 0E1D7: BF64  mov     di, 0x564
 0E1DA: 1E57  push    ds
 0E1DB: 57BF  push    di
@@ -29152,7 +29152,7 @@
 0E370: 579A  push    di
 0E371: 9AD7  lcall   0x1c71, 0x9d7
 0E376: 7505  jne     0xe37d
-0E378: 9A14  lcall   0x129d, 0x3114 ; call==GoToRoom1000
+0E378: 9A14  lcall   0x129d, 0x3114 ; call==PRZEDM_MODE
 0E37D: BF64  mov     di, 0x564
 0E380: 1E57  push    ds
 0E381: 57BF  push    di
@@ -29299,7 +29299,7 @@
 0E4DB: 579A  push    di
 0E4DC: 9AD7  lcall   0x1c71, 0x9d7
 0E4E1: 7505  jne     0xe4e8
-0E4E3: 9A14  lcall   0x129d, 0x3114 ; call==GoToRoom1000
+0E4E3: 9A14  lcall   0x129d, 0x3114 ; call==PRZEDM_MODE
 0E4E8: BF64  mov     di, 0x564
 0E4EB: 1E57  push    ds
 0E4EC: 57BF  push    di
@@ -29436,7 +29436,7 @@
 0E62D: 579A  push    di
 0E62E: 9AD7  lcall   0x1c71, 0x9d7
 0E633: 7505  jne     0xe63a
-0E635: 9A14  lcall   0x129d, 0x3114 ; call==GoToRoom1000
+0E635: 9A14  lcall   0x129d, 0x3114 ; call==PRZEDM_MODE
 0E63A: BF64  mov     di, 0x564
 0E63D: 1E57  push    ds
 0E63E: 57BF  push    di
@@ -29583,7 +29583,7 @@
 0E796: 579A  push    di
 0E797: 9AD7  lcall   0x1c71, 0x9d7
 0E79C: 7505  jne     0xe7a3
-0E79E: 9A14  lcall   0x129d, 0x3114 ; call==GoToRoom1000
+0E79E: 9A14  lcall   0x129d, 0x3114 ; call==PRZEDM_MODE
 0E7A3: BF64  mov     di, 0x564
 0E7A6: 1E57  push    ds
 0E7A7: 57BF  push    di
@@ -29733,7 +29733,7 @@
 0E90E: 579A  push    di
 0E90F: 9AD7  lcall   0x1c71, 0x9d7
 0E914: 7505  jne     0xe91b
-0E916: 9A14  lcall   0x129d, 0x3114 ; call==GoToRoom1000
+0E916: 9A14  lcall   0x129d, 0x3114 ; call==PRZEDM_MODE
 0E91B: BF64  mov     di, 0x564
 0E91E: 1E57  push    ds
 0E91F: 57BF  push    di
@@ -30147,9 +30147,9 @@
 0ED17: 9A01  lcall   0x1c71, 0x701
 0ED1C: 9ADD  lcall   0x1c71, 0x5dd
 0ED21: 9A91  lcall   0x1c71, 0x291
-0ED26: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+0ED26: A182  mov     ax, word ptr [0x182] ; data:PRZED
 0ED29: 48A3  dec     ax
-0ED2A: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+0ED2A: A382  mov     word ptr [0x182], ax ; data:PRZED
 0ED2D: A19C  mov     ax, word ptr [0x19c] ; data:Energy
 0ED30: 050A  add     ax, 0xa
 0ED33: A39C  mov     word ptr [0x19c], ax ; data:Energy
@@ -30653,9 +30653,9 @@
 0F21D: A17A  mov     ax, word ptr [0x7a]
 0F220: 050A  add     ax, 0xa
 0F223: A37A  mov     word ptr [0x7a], ax
-0F226: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+0F226: A182  mov     ax, word ptr [0x182] ; data:PRZED
 0F229: 48A3  dec     ax
-0F22A: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+0F22A: A382  mov     word ptr [0x182], ax ; data:PRZED
 0F22D: A19E  mov     ax, word ptr [0x19e] ; data:RandomScratch
 0F230: 3B06  cmp     ax, word ptr [0x78]
 0F234: 7F2B  jg      0xf261
@@ -30735,9 +30735,9 @@
 0F2FF: A130  mov     ax, word ptr [0x230] ; data:Item_ScrollPorownanie
 0F302: 050A  add     ax, 0xa
 0F305: A330  mov     word ptr [0x230], ax ; data:Item_ScrollPorownanie
-0F308: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+0F308: A182  mov     ax, word ptr [0x182] ; data:PRZED
 0F30B: 48A3  dec     ax
-0F30C: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+0F30C: A382  mov     word ptr [0x182], ax ; data:PRZED
 0F30F: BF64  mov     di, 0x564
 0F312: 1E57  push    ds
 0F313: 57BF  push    di
@@ -31399,7 +31399,7 @@
 0F82D: 579A  push    di
 0F82E: 9AD7  lcall   0x1c71, 0x9d7
 0F833: 7505  jne     0xf83a
-0F835: 9A14  lcall   0x129d, 0x3114 ; call==GoToRoom1000
+0F835: 9A14  lcall   0x129d, 0x3114 ; call==PRZEDM_MODE
 0F83A: BF64  mov     di, 0x564
 0F83D: 1E57  push    ds
 0F83E: 57BF  push    di
@@ -32498,7 +32498,7 @@
 0FFC2: 579A  push    di
 0FFC3: 9AD7  lcall   0x1c71, 0x9d7
 0FFC8: 7505  jne     0xffcf
-0FFCA: 9A14  lcall   0x129d, 0x3114 ; call==GoToRoom1000
+0FFCA: 9A14  lcall   0x129d, 0x3114 ; call==PRZEDM_MODE
 0FFCF: BF64  mov     di, 0x564
 0FFD2: 1E57  push    ds
 0FFD3: 57BF  push    di
@@ -33207,7 +33207,7 @@
 104FC: 579A  push    di
 104FD: 9AD7  lcall   0x1c71, 0x9d7
 10502: 7505  jne     0x10509
-10504: 9A14  lcall   0x129d, 0x3114 ; call==GoToRoom1000
+10504: 9A14  lcall   0x129d, 0x3114 ; call==PRZEDM_MODE
 10509: BF64  mov     di, 0x564
 1050C: 1E57  push    ds
 1050D: 57BF  push    di
@@ -33791,7 +33791,7 @@
 1092B: 579A  push    di
 1092C: 9AD7  lcall   0x1c71, 0x9d7
 10931: 7505  jne     0x10938
-10933: 9A14  lcall   0x129d, 0x3114 ; call==GoToRoom1000
+10933: 9A14  lcall   0x129d, 0x3114 ; call==PRZEDM_MODE
 10938: BF64  mov     di, 0x564
 1093B: 1E57  push    ds
 1093C: 57BF  push    di
@@ -34152,7 +34152,7 @@
 10C26: 579A  push    di
 10C27: 9AD7  lcall   0x1c71, 0x9d7
 10C2C: 7505  jne     0x10c33
-10C2E: 9A14  lcall   0x129d, 0x3114 ; call==GoToRoom1000
+10C2E: 9A14  lcall   0x129d, 0x3114 ; call==PRZEDM_MODE
 10C33: BF64  mov     di, 0x564
 10C36: 1E57  push    ds
 10C37: 57BF  push    di
@@ -34267,7 +34267,7 @@
 10D40: 579A  push    di
 10D41: 9AD7  lcall   0x1c71, 0x9d7
 10D46: 7505  jne     0x10d4d
-10D48: 9A14  lcall   0x129d, 0x3114 ; call==GoToRoom1000
+10D48: 9A14  lcall   0x129d, 0x3114 ; call==PRZEDM_MODE
 10D4D: BF64  mov     di, 0x564
 10D50: 1E57  push    ds
 10D51: 57BF  push    di
@@ -34382,7 +34382,7 @@
 10E5A: 579A  push    di
 10E5B: 9AD7  lcall   0x1c71, 0x9d7
 10E60: 7505  jne     0x10e67
-10E62: 9A14  lcall   0x129d, 0x3114 ; call==GoToRoom1000
+10E62: 9A14  lcall   0x129d, 0x3114 ; call==PRZEDM_MODE
 10E67: BF64  mov     di, 0x564
 10E6A: 1E57  push    ds
 10E6B: 57BF  push    di
@@ -34497,7 +34497,7 @@
 10F74: 579A  push    di
 10F75: 9AD7  lcall   0x1c71, 0x9d7
 10F7A: 7505  jne     0x10f81
-10F7C: 9A14  lcall   0x129d, 0x3114 ; call==GoToRoom1000
+10F7C: 9A14  lcall   0x129d, 0x3114 ; call==PRZEDM_MODE
 10F81: BF64  mov     di, 0x564
 10F84: 1E57  push    ds
 10F85: 57BF  push    di
@@ -35095,7 +35095,7 @@
 11353: 579A  push    di
 11354: 9AD7  lcall   0x1c71, 0x9d7
 11359: 7505  jne     0x11360
-1135B: 9A14  lcall   0x129d, 0x3114 ; call==GoToRoom1000
+1135B: 9A14  lcall   0x129d, 0x3114 ; call==PRZEDM_MODE
 11360: BF64  mov     di, 0x564
 11363: 1E57  push    ds
 11364: 57BF  push    di
@@ -35557,7 +35557,7 @@
 116ED: 579A  push    di
 116EE: 9AD7  lcall   0x1c71, 0x9d7
 116F3: 7505  jne     0x116fa
-116F5: 9A14  lcall   0x129d, 0x3114 ; call==GoToRoom1000
+116F5: 9A14  lcall   0x129d, 0x3114 ; call==PRZEDM_MODE
 116FA: BF64  mov     di, 0x564
 116FD: 1E57  push    ds
 116FE: 57BF  push    di
@@ -35951,7 +35951,7 @@
 119CF: 579A  push    di
 119D0: 9AD7  lcall   0x1c71, 0x9d7
 119D5: 7505  jne     0x119dc
-119D7: 9A14  lcall   0x129d, 0x3114 ; call==GoToRoom1000
+119D7: 9A14  lcall   0x129d, 0x3114 ; call==PRZEDM_MODE
 119DC: BF64  mov     di, 0x564
 119DF: 1E57  push    ds
 119E0: 57BF  push    di
@@ -36362,7 +36362,7 @@
 11CAD: 579A  push    di
 11CAE: 9AD7  lcall   0x1c71, 0x9d7
 11CB3: 7505  jne     0x11cba
-11CB5: 9A14  lcall   0x129d, 0x3114 ; call==GoToRoom1000
+11CB5: 9A14  lcall   0x129d, 0x3114 ; call==PRZEDM_MODE
 11CBA: BF64  mov     di, 0x564
 11CBD: 1E57  push    ds
 11CBE: 57BF  push    di
@@ -36755,7 +36755,7 @@
 11FAA: 579A  push    di
 11FAB: 9AD7  lcall   0x1c71, 0x9d7
 11FB0: 7505  jne     0x11fb7
-11FB2: 9A14  lcall   0x129d, 0x3114 ; call==GoToRoom1000
+11FB2: 9A14  lcall   0x129d, 0x3114 ; call==PRZEDM_MODE
 11FB7: BF64  mov     di, 0x564
 11FBA: 1E57  push    ds
 11FBB: 57BF  push    di
@@ -37567,7 +37567,7 @@
 124CE: 579A  push    di
 124CF: 9AD7  lcall   0x1c71, 0x9d7
 124D4: 7505  jne     0x124db
-124D6: 9A14  lcall   0x129d, 0x3114 ; call==GoToRoom1000
+124D6: 9A14  lcall   0x129d, 0x3114 ; call==PRZEDM_MODE
 124DB: BF64  mov     di, 0x564
 124DE: 1E57  push    ds
 124DF: 57BF  push    di
@@ -37839,9 +37839,9 @@
 127AE: 83DA  sbb     dx, 0
 127B1: A31E  mov     word ptr [0x21e], ax
 127B4: 8916  mov     word ptr [0x220], dx
-127B8: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+127B8: A182  mov     ax, word ptr [0x182] ; data:PRZED
 127BB: 40A3  inc     ax
-127BC: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+127BC: A382  mov     word ptr [0x182], ax ; data:PRZED
 127BF: 833E  cmp     word ptr [0x248], 2 ; data:QuestType
 127C4: 757B  jne     0x12841
 127C6: 833E  cmp     word ptr [0x24a], 1 ; data:QuestCount
@@ -37925,9 +37925,9 @@
 128A1: A1D4  mov     ax, word ptr [0x1d4] ; data:KUNSZT
 128A4: 05A9  add     ax, 0x1a9
 128A7: A3D4  mov     word ptr [0x1d4], ax ; data:KUNSZT
-128AA: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+128AA: A182  mov     ax, word ptr [0x182] ; data:PRZED
 128AD: 48A3  dec     ax
-128AE: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+128AE: A382  mov     word ptr [0x182], ax ; data:PRZED
 128B1: A18C  mov     ax, word ptr [0x18c] ; data:MadroscCur
 128B4: 48A3  dec     ax
 128B5: A38C  mov     word ptr [0x18c], ax ; data:MadroscCur
@@ -39824,9 +39824,9 @@
 138F6: 9ADD  lcall   0x1c71, 0x5dd
 138FB: 9A91  lcall   0x1c71, 0x291
 13900: C706  mov     word ptr [0x1a0], 0xfff6 ; data:Item_Paczek
-13906: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+13906: A182  mov     ax, word ptr [0x182] ; data:PRZED
 13909: 40A3  inc     ax
-1390A: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+1390A: A382  mov     word ptr [0x182], ax ; data:PRZED
 1390D: 5DCB  pop     bp
 1390E: CB0A  retf    
 1390F: 0A57  or      dl, byte ptr [bx + 0x59]
@@ -39949,9 +39949,9 @@
 13A0F: 9ADD  lcall   0x1c71, 0x5dd
 13A14: 9A91  lcall   0x1c71, 0x291
 13A19: C706  mov     word ptr [0x186], 0xfff6 ; data:Item_Serce
-13A1F: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+13A1F: A182  mov     ax, word ptr [0x182] ; data:PRZED
 13A22: 40A3  inc     ax
-13A23: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+13A23: A382  mov     word ptr [0x182], ax ; data:PRZED
 13A26: 5DCB  pop     bp
 13A27: CB0A  retf    
 13A28: 0A57  or      dl, byte ptr [bx + 0x59]
@@ -40078,9 +40078,9 @@
 13B31: 9ADD  lcall   0x1c71, 0x5dd
 13B36: 9A91  lcall   0x1c71, 0x291
 13B3B: C706  mov     word ptr [0x186], 0xfff6 ; data:Item_Serce
-13B41: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+13B41: A182  mov     ax, word ptr [0x182] ; data:PRZED
 13B44: 40A3  inc     ax
-13B45: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+13B45: A382  mov     word ptr [0x182], ax ; data:PRZED
 13B48: 5DCB  pop     bp
 13B49: CB0A  retf    
 13B4A: 0A57  or      dl, byte ptr [bx + 0x59]
@@ -40208,9 +40208,9 @@
 13C53: 9ADD  lcall   0x1c71, 0x5dd
 13C58: 9A91  lcall   0x1c71, 0x291
 13C5D: C706  mov     word ptr [0x186], 0xfff6 ; data:Item_Serce
-13C63: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+13C63: A182  mov     ax, word ptr [0x182] ; data:PRZED
 13C66: 40A3  inc     ax
-13C67: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+13C67: A382  mov     word ptr [0x182], ax ; data:PRZED
 13C6A: 5DCB  pop     bp
 13C6B: CB0A  retf    
 13C6C: 0A57  or      dl, byte ptr [bx + 0x59]
@@ -40340,9 +40340,9 @@
 13D7F: 9ADD  lcall   0x1c71, 0x5dd
 13D84: 9A91  lcall   0x1c71, 0x291
 13D89: C706  mov     word ptr [0x186], 0xfff6 ; data:Item_Serce
-13D8F: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+13D8F: A182  mov     ax, word ptr [0x182] ; data:PRZED
 13D92: 40A3  inc     ax
-13D93: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+13D93: A382  mov     word ptr [0x182], ax ; data:PRZED
 13D96: 5DCB  pop     bp
 13D97: CB0A  retf    
 13D98: 0A57  or      dl, byte ptr [bx + 0x59]
@@ -40468,9 +40468,9 @@
 13EA2: 9ADD  lcall   0x1c71, 0x5dd
 13EA7: 9A91  lcall   0x1c71, 0x291
 13EAC: C706  mov     word ptr [0x186], 0xfff6 ; data:Item_Serce
-13EB2: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+13EB2: A182  mov     ax, word ptr [0x182] ; data:PRZED
 13EB5: 40A3  inc     ax
-13EB6: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+13EB6: A382  mov     word ptr [0x182], ax ; data:PRZED
 13EB9: 5DCB  pop     bp
 13EBA: CB0A  retf    
 13EBB: 0A57  or      dl, byte ptr [bx + 0x59]
@@ -40596,9 +40596,9 @@
 13FC5: 9ADD  lcall   0x1c71, 0x5dd
 13FCA: 9A91  lcall   0x1c71, 0x291
 13FCF: C706  mov     word ptr [0x186], 0xfff6 ; data:Item_Serce
-13FD5: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+13FD5: A182  mov     ax, word ptr [0x182] ; data:PRZED
 13FD8: 40A3  inc     ax
-13FD9: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+13FD9: A382  mov     word ptr [0x182], ax ; data:PRZED
 13FDC: 5DCB  pop     bp
 13FDD: CB0A  retf    
 13FDE: 0A57  or      dl, byte ptr [bx + 0x59]
@@ -40725,9 +40725,9 @@
 140E7: 9ADD  lcall   0x1c71, 0x5dd
 140EC: 9A91  lcall   0x1c71, 0x291
 140F1: C706  mov     word ptr [0x186], 0xfff6 ; data:Item_Serce
-140F7: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+140F7: A182  mov     ax, word ptr [0x182] ; data:PRZED
 140FA: 40A3  inc     ax
-140FB: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+140FB: A382  mov     word ptr [0x182], ax ; data:PRZED
 140FE: 5DCB  pop     bp
 140FF: CB1D  retf    
 14100: 1D4B  sbb     ax, 0x4f4b
@@ -43902,7 +43902,7 @@
 157B5: 2121  and     word ptr [bx + di], sp
 157B7: 2120  and     word ptr [bx + si], sp
 
-; ===== PROC DropGarnitur @ img 157B9 (para0129D:2DE9) Random(1000)<=25: GARNITUR-=10, PRZED++; text says 2.5% =====
+; ===== PROC GARNITURZYSK @ img 157B9 (para0129D:2DE9) Random(1000)<=25: GARNITUR-=10, PRZED++; text says 2.5% =====
 157B9: 5589  push    bp
 157BA: 89E5  mov     bp, sp
 157BC: 31C0  xor     ax, ax
@@ -43938,9 +43938,9 @@
 1580E: A122  mov     ax, word ptr [0x222] ; data:Item_GarniturKolce
 15811: 2D0A  sub     ax, 0xa
 15814: A322  mov     word ptr [0x222], ax ; data:Item_GarniturKolce
-15817: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+15817: A182  mov     ax, word ptr [0x182] ; data:PRZED
 1581A: 40A3  inc     ax
-1581B: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+1581B: A382  mov     word ptr [0x182], ax ; data:PRZED
 1581E: 5DCB  pop     bp
 1581F: CB4D  retf    
 15820: 4D48  dec     bp
@@ -43997,7 +43997,7 @@
 1586C: 4741  inc     di
 1586D: 4155  inc     cx
 
-; ===== PROC DropPigulka @ img 1586E (para0129D:2E9E) Random(1000)<=42: PIGULKA-=10, PRZED++ =====
+; ===== PROC PIGULKAZYSK @ img 1586E (para0129D:2E9E) Random(1000)<=42: PIGULKA-=10, PRZED++ =====
 1586E: 5589  push    bp
 1586F: 89E5  mov     bp, sp
 15871: 31C0  xor     ax, ax
@@ -44023,9 +44023,9 @@
 158AA: 982D  cwde    
 158AB: 2D0A  sub     ax, 0xa
 158AE: A257  mov     byte ptr [0x257], al ; data:Item_Pigulka
-158B1: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+158B1: A182  mov     ax, word ptr [0x182] ; data:PRZED
 158B4: 40A3  inc     ax
-158B5: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+158B5: A382  mov     word ptr [0x182], ax ; data:PRZED
 158B8: 5DCB  pop     bp
 158B9: CB32  retf    
 158BA: 3257  xor     dl, byte ptr [bx + 0x59]
@@ -44084,7 +44084,7 @@
 15901: 2032  and     byte ptr [bp + si], dh
 15903: 2520  and     ax, 0x2120
 15906: 2121  and     word ptr [bx + di], sp
-; ===== PROC DropKaseta @ img 15908 (para0129D:2F38) Random(100)<2 && context!=10000: KASETA-=10 and stat effects =====
+; ===== PROC KASETAZYSK @ img 15908 (para0129D:2F38) Random(100)<2 && context!=10000: KASETA-=10 and stat effects =====
 15908: 5589  push    bp
 15909: 89E5  mov     bp, sp
 1590B: 31C0  xor     ax, ax
@@ -44129,9 +44129,9 @@
 15977: A1C2  mov     ax, word ptr [0x1c2] ; data:MaxLoad
 1597A: 2D08  sub     ax, 8
 1597D: A3C2  mov     word ptr [0x1c2], ax ; data:MaxLoad
-15980: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+15980: A182  mov     ax, word ptr [0x182] ; data:PRZED
 15983: 40A3  inc     ax
-15984: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+15984: A382  mov     word ptr [0x182], ax ; data:PRZED
 15987: A190  mov     ax, word ptr [0x190] ; data:ZrecznoscCur
 1598A: 40A3  inc     ax
 1598B: A390  mov     word ptr [0x190], ax ; data:ZrecznoscCur
@@ -44198,7 +44198,7 @@
 159DF: 2520  and     ax, 0x2120
 159E2: 2121  and     word ptr [bx + di], sp
 
-; ===== PROC DropListek @ img 159E4 (para0129D:3014) Random(100)<6 && context!=10000: LISTEK-=10, PRZED++, ManaMax+=40; text says 4% =====
+; ===== PROC LISTEKZYSK @ img 159E4 (para0129D:3014) Random(100)<6 && context!=10000: LISTEK-=10, PRZED++, ManaMax+=40; text says 4% =====
 159E4: 5589  push    bp
 159E5: 89E5  mov     bp, sp
 159E7: 31C0  xor     ax, ax
@@ -44237,9 +44237,9 @@
 15A44: 982D  cwde    
 15A45: 2D0A  sub     ax, 0xa
 15A48: A25B  mov     byte ptr [0x25b], al ; data:Item_Listek
-15A4B: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+15A4B: A182  mov     ax, word ptr [0x182] ; data:PRZED
 15A4E: 40A3  inc     ax
-15A4F: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+15A4F: A382  mov     word ptr [0x182], ax ; data:PRZED
 15A52: A1AE  mov     ax, word ptr [0x1ae] ; data:ManaMax
 15A55: 0528  add     ax, 0x28
 15A58: A3AE  mov     word ptr [0x1ae], ax ; data:ManaMax
@@ -44286,7 +44286,7 @@
 15A8F: 4349  inc     bx
 15A90: 4955  dec     cx
 
-; ===== PROC DropScroll @ img 15A91 (para0129D:30C1) Random(100)<10 && context!=10000: SCROLLPOR-=10, PRZED++ =====
+; ===== PROC SCROLLPORZYSK @ img 15A91 (para0129D:30C1) Random(100)<10 && context!=10000: SCROLLPOR-=10, PRZED++ =====
 15A91: 5589  push    bp
 15A92: 89E5  mov     bp, sp
 15A94: 31C0  xor     ax, ax
@@ -44313,9 +44313,9 @@
 15AD2: A130  mov     ax, word ptr [0x230] ; data:Item_ScrollPorownanie
 15AD5: 2D0A  sub     ax, 0xa
 15AD8: A330  mov     word ptr [0x230], ax ; data:Item_ScrollPorownanie
-15ADB: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+15ADB: A182  mov     ax, word ptr [0x182] ; data:PRZED
 15ADE: 40A3  inc     ax
-15ADF: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+15ADF: A382  mov     word ptr [0x182], ax ; data:PRZED
 15AE2: 5DCB  pop     bp
 15AE3: CB55  retf    
 
@@ -49014,9 +49014,9 @@
 18145: 982D  cwde    
 18146: 2D0A  sub     ax, 0xa
 18149: A259  mov     byte ptr [0x259], al ; TalentPool
-1814C: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+1814C: A182  mov     ax, word ptr [0x182] ; data:PRZED
 1814F: 40A3  inc     ax
-18150: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+18150: A382  mov     word ptr [0x182], ax ; data:PRZED
 18153: 833E  cmp     word ptr [0x19e], 1 ; data:RandomScratch
 18158: 7D34  jge     0x1818e
 1815A: 803E  cmp     byte ptr [0x258], 0x64 ; TalentChance
@@ -49526,9 +49526,9 @@
 1843C: 9ADD  lcall   0x1c71, 0x5dd
 18441: 9A91  lcall   0x1c71, 0x291
 18446: C706  mov     word ptr [0x17e], 0xfff6 ; data:Item_StaryMiecz
-1844C: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+1844C: A182  mov     ax, word ptr [0x182] ; data:PRZED
 1844F: 40A3  inc     ax
-18450: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+18450: A382  mov     word ptr [0x182], ax ; data:PRZED
 18453: BF64  mov     di, 0x564
 18456: 1E57  push    ds
 18457: 57BF  push    di
@@ -49552,9 +49552,9 @@
 1847F: 9ADD  lcall   0x1c71, 0x5dd
 18484: 9A91  lcall   0x1c71, 0x291
 18489: C706  mov     word ptr [0x184], 0xfff6 ; data:Item_MalaTarcza
-1848F: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+1848F: A182  mov     ax, word ptr [0x182] ; data:PRZED
 18492: 40A3  inc     ax
-18493: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+18493: A382  mov     word ptr [0x182], ax ; data:PRZED
 18496: BF64  mov     di, 0x564
 18499: 1E57  push    ds
 1849A: 57BF  push    di
@@ -49578,9 +49578,9 @@
 184C2: 9ADD  lcall   0x1c71, 0x5dd
 184C7: 9A91  lcall   0x1c71, 0x291
 184CC: C706  mov     word ptr [0x186], 0xfff6 ; data:Item_Serce
-184D2: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+184D2: A182  mov     ax, word ptr [0x182] ; data:PRZED
 184D5: 40A3  inc     ax
-184D6: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+184D6: A382  mov     word ptr [0x182], ax ; data:PRZED
 184D9: BF64  mov     di, 0x564
 184DC: 1E57  push    ds
 184DD: 57BF  push    di
@@ -49607,9 +49607,9 @@
 18515: A164  mov     ax, word ptr [0x664] ; data:EnergyMax
 18518: 0505  add     ax, 5
 1851B: A364  mov     word ptr [0x664], ax ; data:EnergyMax
-1851E: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+1851E: A182  mov     ax, word ptr [0x182] ; data:PRZED
 18521: 40A3  inc     ax
-18522: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+18522: A382  mov     word ptr [0x182], ax ; data:PRZED
 18525: BF64  mov     di, 0x564
 18528: 1E57  push    ds
 18529: 57BF  push    di
@@ -49633,9 +49633,9 @@
 18551: 9ADD  lcall   0x1c71, 0x5dd
 18556: 9A91  lcall   0x1c71, 0x291
 1855B: C706  mov     word ptr [0x18a], 0xfff6 ; data:Item_Fajka
-18561: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+18561: A182  mov     ax, word ptr [0x182] ; data:PRZED
 18564: 40A3  inc     ax
-18565: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+18565: A382  mov     word ptr [0x182], ax ; data:PRZED
 18568: A18C  mov     ax, word ptr [0x18c] ; data:MadroscCur
 1856B: 3B06  cmp     ax, word ptr [0x196] ; data:MadroscMax
 1856F: 7D07  jge     0x18578
@@ -49665,9 +49665,9 @@
 185A7: 9A91  lcall   0x1c71, 0x291
 185AC: A180  mov     ax, word ptr [0x180] ; data:PreviousRoom
 185AF: A37E  mov     word ptr [0x17e], ax ; data:Item_StaryMiecz
-185B2: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+185B2: A182  mov     ax, word ptr [0x182] ; data:PRZED
 185B5: 48A3  dec     ax
-185B6: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+185B6: A382  mov     word ptr [0x182], ax ; data:PRZED
 185B9: BF64  mov     di, 0x564
 185BC: 1E57  push    ds
 185BD: 57BF  push    di
@@ -49691,9 +49691,9 @@
 185E8: 9A91  lcall   0x1c71, 0x291
 185ED: A180  mov     ax, word ptr [0x180] ; data:PreviousRoom
 185F0: A38A  mov     word ptr [0x18a], ax ; data:Item_Fajka
-185F3: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+185F3: A182  mov     ax, word ptr [0x182] ; data:PRZED
 185F6: 48A3  dec     ax
-185F7: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+185F7: A382  mov     word ptr [0x182], ax ; data:PRZED
 185FA: A18C  mov     ax, word ptr [0x18c] ; data:MadroscCur
 185FD: 48A3  dec     ax
 185FE: A38C  mov     word ptr [0x18c], ax ; data:MadroscCur
@@ -49720,9 +49720,9 @@
 18630: 9A91  lcall   0x1c71, 0x291
 18635: A180  mov     ax, word ptr [0x180] ; data:PreviousRoom
 18638: A384  mov     word ptr [0x184], ax ; data:Item_MalaTarcza
-1863B: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+1863B: A182  mov     ax, word ptr [0x182] ; data:PRZED
 1863E: 48A3  dec     ax
-1863F: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+1863F: A382  mov     word ptr [0x182], ax ; data:PRZED
 18642: BF64  mov     di, 0x564
 18645: 1E57  push    ds
 18646: 57BF  push    di
@@ -49746,9 +49746,9 @@
 18671: 9A91  lcall   0x1c71, 0x291
 18676: A180  mov     ax, word ptr [0x180] ; data:PreviousRoom
 18679: A386  mov     word ptr [0x186], ax ; data:Item_Serce
-1867C: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+1867C: A182  mov     ax, word ptr [0x182] ; data:PRZED
 1867F: 48A3  dec     ax
-18680: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+18680: A382  mov     word ptr [0x182], ax ; data:PRZED
 18683: BF64  mov     di, 0x564
 18686: 1E57  push    ds
 18687: 57BF  push    di
@@ -49775,9 +49775,9 @@
 186BD: A164  mov     ax, word ptr [0x664] ; data:EnergyMax
 186C0: 2D05  sub     ax, 5
 186C3: A364  mov     word ptr [0x664], ax ; data:EnergyMax
-186C6: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+186C6: A182  mov     ax, word ptr [0x182] ; data:PRZED
 186C9: 48A3  dec     ax
-186CA: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+186CA: A382  mov     word ptr [0x182], ax ; data:PRZED
 186CD: 5DCB  pop     bp
 186CE: CB0A  retf    
 186CF: 0A55  or      dl, byte ptr [di + 0x5a]
@@ -51230,9 +51230,9 @@
 18F1C: 7E06  jle     0x18f24
 18F1E: A164  mov     ax, word ptr [0x664] ; data:EnergyMax
 18F21: A39C  mov     word ptr [0x19c], ax ; data:Energy
-18F24: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+18F24: A182  mov     ax, word ptr [0x182] ; data:PRZED
 18F27: 48A3  dec     ax
-18F28: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+18F28: A382  mov     word ptr [0x182], ax ; data:PRZED
 18F2B: BF64  mov     di, 0x564
 18F2E: 1E57  push    ds
 18F2F: 57BF  push    di
@@ -51376,9 +51376,9 @@
 1908C: 754B  jne     0x190d9
 1908E: 833E  cmp     word ptr [0x1a0], -0xa ; data:Item_Paczek
 19093: 7F44  jg      0x190d9
-19095: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+19095: A182  mov     ax, word ptr [0x182] ; data:PRZED
 19098: 48A3  dec     ax
-19099: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+19099: A382  mov     word ptr [0x182], ax ; data:PRZED
 1909C: A1A0  mov     ax, word ptr [0x1a0] ; data:Item_Paczek
 1909F: 050A  add     ax, 0xa
 190A2: A3A0  mov     word ptr [0x1a0], ax ; data:Item_Paczek
@@ -51411,9 +51411,9 @@
 190E8: 754B  jne     0x19135
 190EA: 833E  cmp     word ptr [0x1a2], -0xa ; data:Item_Ciastko
 190EF: 7F44  jg      0x19135
-190F1: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+190F1: A182  mov     ax, word ptr [0x182] ; data:PRZED
 190F4: 48A3  dec     ax
-190F5: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+190F5: A382  mov     word ptr [0x182], ax ; data:PRZED
 190F8: A1A2  mov     ax, word ptr [0x1a2] ; data:Item_Ciastko
 190FB: 050A  add     ax, 0xa
 190FE: A3A2  mov     word ptr [0x1a2], ax ; data:Item_Ciastko
@@ -51446,9 +51446,9 @@
 19144: 754B  jne     0x19191
 19146: 833E  cmp     word ptr [0x1a4], -0xa ; data:Item_SuchaRacja
 1914B: 7F44  jg      0x19191
-1914D: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+1914D: A182  mov     ax, word ptr [0x182] ; data:PRZED
 19150: 48A3  dec     ax
-19151: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+19151: A382  mov     word ptr [0x182], ax ; data:PRZED
 19154: A1A4  mov     ax, word ptr [0x1a4] ; data:Item_SuchaRacja
 19157: 050A  add     ax, 0xa
 1915A: A3A4  mov     word ptr [0x1a4], ax ; data:Item_SuchaRacja
@@ -51481,9 +51481,9 @@
 191A0: 754B  jne     0x191ed
 191A2: 833E  cmp     word ptr [0x1a8], -0xa ; data:Item_Bulka
 191A7: 7F44  jg      0x191ed
-191A9: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+191A9: A182  mov     ax, word ptr [0x182] ; data:PRZED
 191AC: 48A3  dec     ax
-191AD: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+191AD: A382  mov     word ptr [0x182], ax ; data:PRZED
 191B0: A1A8  mov     ax, word ptr [0x1a8] ; data:Item_Bulka
 191B3: 050A  add     ax, 0xa
 191B6: A3A8  mov     word ptr [0x1a8], ax ; data:Item_Bulka
@@ -51536,9 +51536,9 @@
 19234: 83D2  adc     dx, 0
 19237: A31E  mov     word ptr [0x21e], ax
 1923A: 8916  mov     word ptr [0x220], dx
-1923E: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+1923E: A182  mov     ax, word ptr [0x182] ; data:PRZED
 19241: 40A3  inc     ax
-19242: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+19242: A382  mov     word ptr [0x182], ax ; data:PRZED
 19245: BF64  mov     di, 0x564
 19248: 1E57  push    ds
 19249: 57BF  push    di
@@ -51642,9 +51642,9 @@
 19342: 754B  jne     0x1938f
 19344: 833E  cmp     word ptr [0x1a6], -0xa ; data:Item_Chleb
 19349: 7F44  jg      0x1938f
-1934B: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+1934B: A182  mov     ax, word ptr [0x182] ; data:PRZED
 1934E: 48A3  dec     ax
-1934F: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+1934F: A382  mov     word ptr [0x182], ax ; data:PRZED
 19352: A1A6  mov     ax, word ptr [0x1a6] ; data:Item_Chleb
 19355: 050A  add     ax, 0xa
 19358: A3A6  mov     word ptr [0x1a6], ax ; data:Item_Chleb
@@ -51696,9 +51696,9 @@
 193CB: 754B  jne     0x19418
 193CD: 833E  cmp     word ptr [0x1aa], -0xa ; data:Item_Weka
 193D2: 7F44  jg      0x19418
-193D4: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+193D4: A182  mov     ax, word ptr [0x182] ; data:PRZED
 193D7: 48A3  dec     ax
-193D8: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+193D8: A382  mov     word ptr [0x182], ax ; data:PRZED
 193DB: A1AA  mov     ax, word ptr [0x1aa] ; data:Item_Weka
 193DE: 050A  add     ax, 0xa
 193E1: A3AA  mov     word ptr [0x1aa], ax ; data:Item_Weka
@@ -51731,9 +51731,9 @@
 19427: 754B  jne     0x19474
 19429: 833E  cmp     word ptr [0x192], -0xa ; data:Item_ButelkaMany
 1942E: 7F44  jg      0x19474
-19430: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+19430: A182  mov     ax, word ptr [0x182] ; data:PRZED
 19433: 48A3  dec     ax
-19434: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+19434: A382  mov     word ptr [0x182], ax ; data:PRZED
 19437: A192  mov     ax, word ptr [0x192] ; data:Item_ButelkaMany
 1943A: 050A  add     ax, 0xa
 1943D: A392  mov     word ptr [0x192], ax ; data:Item_ButelkaMany
@@ -51766,9 +51766,9 @@
 19483: 754C  jne     0x194d1
 19485: 803E  cmp     byte ptr [0x259], 0xf6 ; TalentPool
 1948A: 7F45  jg      0x194d1
-1948C: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+1948C: A182  mov     ax, word ptr [0x182] ; data:PRZED
 1948F: 48A3  dec     ax
-19490: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+19490: A382  mov     word ptr [0x182], ax ; data:PRZED
 19493: A059  mov     al, byte ptr [0x259] ; TalentPool
 19496: 9805  cwde    
 19497: 050A  add     ax, 0xa
@@ -52802,7 +52802,7 @@
 19C95: 9AD7  lcall   0x1c71, 0x9d7
 19C9A: 7504  jne     0x19ca0
 19C9C: 0EE8  push    cs
-19C9D: E844  call    0x15ae4 ; ->GoToRoom1000
+19C9D: E844  call    0x15ae4 ; ->PRZEDM_MODE
 19CA0: BF64  mov     di, 0x564
 19CA3: 1E57  push    ds
 19CA4: 57BF  push    di
@@ -53224,7 +53224,7 @@
 1A07D: 31C0  xor     ax, ax
 1A07F: A30C  mov     word ptr [0x20c], ax ; data:ArenaGladiator
 1A082: 0EE8  push    cs
-1A083: E8E8  call    0x1586e ; ->DropPigulka
+1A083: E8E8  call    0x1586e ; ->PIGULKAZYSK
 1A086: BF64  mov     di, 0x564
 1A089: 1E57  push    ds
 1A08A: 57BF  push    di
@@ -53241,7 +53241,7 @@
 1A0A4: 31C0  xor     ax, ax
 1A0A6: A30E  mov     word ptr [0x20e], ax ; data:ArenaWojownik
 1A0A9: 0EE8  push    cs
-1A0AA: E8C1  call    0x1586e ; ->DropPigulka
+1A0AA: E8C1  call    0x1586e ; ->PIGULKAZYSK
 1A0AD: BF64  mov     di, 0x564
 1A0B0: 1E57  push    ds
 1A0B1: 57BF  push    di
@@ -53258,7 +53258,7 @@
 1A0CB: 31C0  xor     ax, ax
 1A0CD: A310  mov     word ptr [0x210], ax ; data:ArenaTrener
 1A0D0: 0EE8  push    cs
-1A0D1: E8E5  call    0x157b9 ; ->DropGarnitur
+1A0D1: E8E5  call    0x157b9 ; ->GARNITURZYSK
 1A0D4: BF64  mov     di, 0x564
 1A0D7: 1E57  push    ds
 1A0D8: 57BF  push    di
@@ -55514,9 +55514,9 @@
 1B6D3: 83DA  sbb     dx, 0
 1B6D6: A31A  mov     word ptr [0x21a], ax ; data:ForsaLo
 1B6D9: 8916  mov     word ptr [0x21c], dx ; data:ForsaHi
-1B6DD: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+1B6DD: A182  mov     ax, word ptr [0x182] ; data:PRZED
 1B6E0: 40A3  inc     ax
-1B6E1: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+1B6E1: A382  mov     word ptr [0x182], ax ; data:PRZED
 1B6E4: BF64  mov     di, 0x564
 1B6E7: 1E57  push    ds
 1B6E8: 57BF  push    di
@@ -55555,9 +55555,9 @@
 1B743: 982D  cwde    
 1B744: 2D0A  sub     ax, 0xa
 1B747: A255  mov     byte ptr [0x255], al ; Flag_0255
-1B74A: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
+1B74A: A182  mov     ax, word ptr [0x182] ; data:PRZED
 1B74D: 40A3  inc     ax
-1B74E: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
+1B74E: A382  mov     word ptr [0x182], ax ; data:PRZED
 1B751: BF64  mov     di, 0x564
 1B754: 1E57  push    ds
 1B755: 57BF  push    di

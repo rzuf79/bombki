@@ -171,8 +171,10 @@ addr-adjacency strings. RHETRO-CORRECTIONS to my earlier DGROUP naming:
 
   OLD (INCORRECT)              CORRECT
   0x180 = MIECHO (stat)        0x180 = PreviousRoomContext (raw 10000 = room id)
-  0x182 = KUNSZT (4)           0x182 = MaxLoad (4)  ["JESTES OBLADOWANY";
-                                +1 on combat talent events, see §(9)]
+  0x182 = KUNSZT (4)           0x182 = PRZED, carried-item count (±1 per pick-up/
+                                drop and talent event); the "JESTES OBLADOWANY"
+                                gate compares it to the capacity field, see §(9).
+                                Ceiling stat = MaxLoad/PRO [0x1C2]
   0x19C = FORSA / Money        0x19C = Energy (55; save (E+40)*4=380; max=0x664)
   0x194 = -                    0x194 = Money (0 here)
   0x1AC..0x1D4 = MONSTRA HP     0x1AC/0x1AE = ManaCur/ManaMax (250/250);
@@ -185,7 +187,8 @@ addr-adjacency strings. RHETRO-CORRECTIONS to my earlier DGROUP naming:
   CharacterLevel unknown        0x25C = level, saved as lvl+0x17 (24 => lvl 1)
 
 Also confirmed: Money vs 0x21A:0x21C longint pool (BAZAR buy gates) still open;
-0x74 vs 0x257 "POTRAWKI" chance/count ambiguity (both 0) still open. Full merged
+0x257 = PIGULKA (saved byte, drop-count shortint); the 0x74 "POTRAWKI chance"
+name is a separate CWICZ field, not a count - ambiguity resolved. Full merged
 record incl. byte-flag cluster 0x255..0x262 and TPlayerMisc (0x664=EnergiaMax,
 0x668+ monster trackers): RECONSTRUCTED\INTEGRATED-FIELD-MAP.md. WSTEP-
 reconstructed.pas's "proven MONSTRA band" header is RETRACTED (see (8)).
@@ -227,7 +230,7 @@ EXE proc **paragraph 0x129D:0x44A6 = img 0x16E76..0x181C6** (old "BODY-A
   **KUNSZT −20**; exit loop on Energy<1 | MonsterHP<1 | fled.
 - **Kill reward** 0x18037: clip by skilled stats (EnergiaMax>75/115, Parowanie
   >50/75/95, Kopanie>50/95), "ZYSKALES", `KUNSZT+=rw`, quest `[0x24A]-=1`,
-  talent event `Random(100)<[0x258]` ⇒ `[0x259]-=10; MaxLoad[0x182]+=1`.
+  talent event `Random(100)<[0x258]` ⇒ `[0x259]-=10; PRZED[0x182]+=1`.
 - **Knock-out** 0x1818E: Energy<1 ⇒ defeat text, sound(3000),
   `CurrentContext:=10000` (vs BAZAR death → 20), `[0x1B4]:=0`.
 - **Monster launchers**: room 12 → 20/3/3/R10 · room 14 → 20/30/3/R15 · room
@@ -238,8 +241,10 @@ EXE proc **paragraph 0x129D:0x44A6 = img 0x16E76..0x181C6** (old "BODY-A
 - **Money resolved**: combat rewards and BAZAR buy gates both use the 32-bit
   `[0x21A:0x21C]` (=1424, f18). `0x194` ("Money" per load-side) is separate
   (used by training costs); relationship open until a nonzero-money save.
-- **0x182 = MaxLoad** (overburden "JESTES OBLADOWANY"; +1 on talent events),
-  not Capacity/CurrentLoad. 0x1B2 = combat margin/reward scratch.
+- **0x182 = PRZED**, the carried-item count (±1 per sentinel pick-up/drop and
+  talent events); the overburden "JESTES OBLADOWANY" gate compares it to the
+  carrying-capacity field. (The stat bumped by outfits +7 SYF/+10 GARNITUR and
+  Kaseta's PRO −8 is MaxLoad/PRO [0x1C2].) 0x1B2 = combat margin/reward scratch.
 - Doc: `INTEGRATED-FIELD-MAP.md` §"Combat engine"; reconstruction:
   `RECONSTRUCTED\WALKA-CombatEngine-reconstructed.pas` (Pascal body with
   offsets, string ids, launcher table, formulas).
@@ -255,7 +260,7 @@ EXE proc **paragraph 0x129D:0x44A6 = img 0x16E76..0x181C6** (old "BODY-A
   Zrecznosc=`v-0x0C`, Sila=`v+0x18`; f18 net-worth longint read into
   `[0x21A]/[0x21C]` then **`div Madrosc` via @LDiv 0x7FA**, the inverse of
   save's `Forsa * Madrosc` encoding;
-  `0x257` confirmed as a saved **byte** (f64, Potrawki count); the byte-flag
+  `0x257` confirmed as a saved **byte** (f64, PIGULKA drop-count shortint); the
   cluster and monster trackers visibly load in file order (f33..f40 =
   0x56/0x58/0x68C/0x5A/0x5C/0x5E/0x60/0x6E).
 - **trening block img 0x2396..0x2B73** (before save()): each training command
@@ -266,9 +271,10 @@ EXE proc **paragraph 0x129D:0x44A6 = img 0x16E76..0x181C6** (old "BODY-A
   - Parowanie[0x1C6] += Madrosc+Zrecznosc-14  (needs Madrosc>15 & Zrec>11, cap 0x5A)
   - [0x25D] += 3*Madrosc-9                     (needs Madrosc>11, byte, cap 0x5A)
   - Talent[0x258] += Madrosc+1                 (needs Madrosc>18, cap 0x5A)
-- **Level gates img 0x872D**: lvl1 needs KUNSZT>=725 (0x2D5), lvl2 >=730
-  (0x2DA), lvl>=3 threshold = 0x2DF+2*level; reaching → jump 0x8BA2 (the
-  actual level-up handler).
+- **Level-up proc img 0x872E..0x8BA2**: lvl1 700, lvl2 725 (0x2D5), lvl3 730
+  (0x2DA), lvl4-8 735+POZIOM, lvl9+ 735+2*POZIOM. Body at 0x87A2; 0x8BA2 is the
+  common epilogue (pop bp; retf), not a level-up entry. Porter costs 725/730/735,
+  +POZIOM (4-8), +2*POZIOM (9+) per LEVELING.md (c-port evidence).
 - save() itself (img 0x2BA1..0x356E) re-verified: writes f1..f80 with the
   WriteLn/WriteLongint helpers; f18 emitted via `0x7BD` from
   `[0x21A]:[0x21C]`.
@@ -304,9 +310,9 @@ The 0x129D paragraph contains a whole second game layer beyond Walka:
   "compare params" note was wrong — the prompt string is the fight-menu header.
 - **GardenOgladaj @ 0x1362A** and **GardenZwierzaki @ 0x155F2** = the
   look-at-plant / look-at-animal flavortext procs.
-- **Kill drops**: DropGarnitur 0x157B9 (`Random(1000)<=25` → Garnitur kolce),
-  DropPigulka 0x1586E (`<=42`), DropKaseta 0x15908 (`Random(100)<2` →
-  Kaseta Liroya +EnergyMax/-8 carrying ceiling/+PRZED/+Zrecznosc). Item flags use
+- **Kill drops**: GARNITURZYSK 0x157B9 (`Random(1000)<=25` → Garnitur kolce),
+  PIGULKAZYSK 0x1586E (`<=42`), KASETAZYSK 0x15908 (`Random(100)<2` →
+  Kaseta Liroya +EnergyMax/-8 load/+PRZED/+Zrecznosc). Item flags use
   **-10 (0xFFF6) "owned/none" sentinel**; acquisition is `field -= 10`.
 - **Boss encounter** inside the 0x12414..0x129C6 dispatcher: stats 188/26/10,
   wounds 20/10, `lcall Walka`; the "TUR!!!! Z CIALA WROGA" quest reward
@@ -330,18 +336,18 @@ The 0x129D paragraph contains a whole second game layer beyond Walka:
   POROWNYWANIE": `[0x25D]+=1`, KUNSZT+=5; BAKTERIA → "MAGIC RESISTANCE",
   ManaCur += 5.
 - **Full drop family (img 0x157B9..0x15AE3)**: only Kaseta/Listek/Scroll are
-  guarded by `context != 0x2710`; Garnitur/Pigulka are not. DropGarnitur
-  0x157B9 (26/1000; text says 2.5%), DropPigulka 0x1586E (43/1000), DropKaseta 0x15908
-  (2%, +EnergyMax −8 load +LoadCap +Zrecznosc), **DropListek 0x159E4** (6%;
-  `[0x25B]-=10`, LoadCapacity++, ManaMax+=0x28, text "UNIQE 4%"), **DropScroll
-  0x15A91** (10%; Item_ScrollPorownanie `[0x230]-=10`, LoadCapacity++),
-  **GoToRoom1000 0x15AE4** (PreviousRoom `[0x180]=context`; context=0x3E8).
+  guarded by `context != 0x2710`; Garnitur/Pigulka are not. GARNITURZYSK
+  0x157B9 (26/1000; text says 2.5%), PIGULKAZYSK 0x1586E (43/1000), KASETAZYSK 0x15908
+  (2%, +EnergyMax −8 load +PRZED +Zrecznosc), **LISTEKZYSK 0x159E4** (6%;
+  `[0x25B]-=10`, PRZED++, ManaMax+=0x28, text "UNIQE 4%"), **SCROLLPORZYSK
+  0x15A91** (10%; Item_ScrollPorownanie `[0x230]-=10`, PRZED++),
+  **PRZEDM_MODE 0x15AE4** (PreviousRoom `[0x180]=context`; context=0x3E8).
 - **City-square proc 0x12414..0x129C6 (context==0x64)** fully decoded: street
   bios, quest sales (type1/2/3 at 200/100/50 money from longint MoneyLo/Hi,
   counts 75/200/200), turn-in rewards (+KUNSZT, Przepustka `[0x21E:0x220]-=10`;
   type2 needs Item_0188, type3 needs Fajka+word-Money), boss fight
   (188HP/26DEX/10DMG, wounds 20/10 → Przepustka on win), room-change cmds
-  (→0x16 trees / 0x65 / GoToRoom1000 / exit).
+  (→0x16 trees / 0x65 / PRZEDM_MODE / exit).
 - **0x25B = LISTEK**, the byte-sized lucky-leaf item (drop decrements it by 10);
   0x25D = POR, the actual SkillPorownywanie counter. Item_ScrollPorownanie is at 0x230.
 - Symbols renamed: BossWin 0x159E4/0x15A91 → DropListek/DropScroll; FIELDS
@@ -361,7 +367,7 @@ The 0x129D paragraph contains a whole second game layer beyond Walka:
   OCHRONIARZ 0x252, DZIADEK 0x253, GORYL 0x254, REPORTER 0x256. (The old
   annotate labels for 0x24D..0x256 were SHIFTED/incorrect — fixed.)
   Bonuses: DZIADEK → Random(100)<5 Fajka + MadroscCur++; GORYL/OCHRONIARZ →
-  DropGarnitur; all Serce-eligible.
+  GARNITURZYSK; all Serce-eligible.
 - **Fight launcher tiers** (each: set MonsterHP/Dex/Dmg, `lcall Walka`, skip if
   fled `[0x1D2]`, loot `[0x212]`→money `[0x21A:0x21C]`, then Serce `[0x186]` roll
   if `[0x186]==0` → `=0xFFF6` + `PRZED`++):
@@ -376,8 +382,8 @@ The 0x129D paragraph contains a whole second game layer beyond Walka:
   72-74, Dex 14-15/16/20/13-14, Dmg 17-18/18-19/19-20/16-17; loot
   10..64/30..59/20..64/15..64).
 - **Special encounters call drops directly**: "MIESA LUDZKIEGO... MOZGI"
-  seduction fight (HP 200/Dex 15/Dmg 18, wounds 20/10) → on win DropListek +
-  DropPigulka + DropScroll, and `[0x262]`(QuestPhase) -= 0x32 while non-zero.
+  seduction fight (HP 200/Dex 15/Dmg 18, wounds 20/10) → on win LISTEKZYSK +
+  PIGULKAZYSK + SCROLLPORZYSK, and `[0x262]`(QuestPhase) -= 0x32 while non-zero.
 - KillDispatch `call`s confirmed from rooms (0x6A20, 0x6BF1, 0x6D67, 0x6F10,
   0x709D, 0x71F7, 0x73B3, 0x7647...) alongside "ZABIJ MINI-BARMAN", "ZABIJ
   GRUBAS", "ZABIJ D.J", "ZABIJ POTWOR", "ZABIJ PEDAL/PARA/MACIEK", "ZABIJ
@@ -393,7 +399,7 @@ The 0x129D paragraph contains a whole second game layer beyond Walka:
   `0xFFF6 (-10) = carrying`, else **room-context = dropped on floor of that
   room**. Pickup (BIERZ X) needs `field == PreviousRoom[0x180]`; drop
   (ODRZUC X) needs `field == -10` → sets PreviousRoom; acquire `-=10`,
-  consume `+=10`. LoadCapacity [0x182] ±1.
+  consume `+=10`. PRZED [0x182] ±1.
 - **ItemPickupDropDispatch 0x18405..0x186CE**: BIERZ/ODRZUC for StaryMiecz
   0x17E, MalaTarcza 0x184, Serce 0x186, DyplomMudSzkoly 0x188 (MUD school
   diploma = the old "Item_0188" quest reward! +5 EnergyMax when picked, −5 on
@@ -408,7 +414,7 @@ The 0x129D paragraph contains a whole second game layer beyond Walka:
 - **Outfits**: wear flag OutfitEquipped [0x218], worn-name buffer ds:0x264.
   UZYJ KOMPLET SYF (0x216) → MaxLoad [0x1C2]+=7; UZYJ GARNITUR (0x222) →
   MaxLoad+=0xA, OutfitZrecznoscBonus [0x1C4]+=1, HeavyBlow [0x224]+=0xF.
-  ODLORZ reverses. Item_Bigos byte 0x259 (+20% E), Bigos-slots 0x257 byte.
+  ODLORZ reverses. Item_Bigos byte 0x259 (+20% E).
 - **ColorChangeDispatch 0x197F1**: ZMIEN KOLOR/ZMIEN TLO → lcall 0x1C0F:0x263/
   0x1C0F:0x27D with a user number.
 - annotate.py: FIELDS 0x17E/0x184/0x188/0x1C2/0x1C4/0x218 renamed (StaryMiecz,
@@ -427,7 +433,7 @@ The 0x129D paragraph contains a whole second game layer beyond Walka:
   UNIQE** = `[0x22E]-=10`, EnergyMax+5, **MaxLoad-8**, Zrecznosc+1), DRZWI
   `[0x688]!=0` door → `[0x688]=0` (high-tier Potwor3 fight to break the door),
   STARUCH `[0x68A]!=0` → corpse-vanish no-loot, PEDAL/MACIEK → ZabijPotwor2 +
-  DropPigulka, PARA → ZabijPotwor4 twice.
+  PIGULKAZYSK, PARA → ZabijPotwor4 twice.
 - **Kaseta flavor resolved**: "SMIEC . S.Z -8 MAXE +5 ZRE +1" == MaxLoad [0x1C2]
   −8 / EnergyMax [0x664] +5 / ZrecznoscCur [0x190] +1 — confirms MaxLoad at
   0x1C2.
@@ -471,7 +477,7 @@ The 0x129D paragraph contains a whole second game layer beyond Walka:
 - Located the "0x19C00 region": it is the **arena grid shared dispatcher**,
   contexts 0x20..0x39 (0x20 entrance, 0x21..0x39 = cells). Commands: MODE,
   **ZABIJ <28 beasts/NPCs>** (KORNIK..PANTERA by tier SLABO/MNIEJSLABO/SREDNIO;
-  GLADIATOR/WOJOWNIK +DropPigulka, TRENER +DropGarnitur; pens = the old
+  GLADIATOR/WOJOWNIK +PIGULKAZYSK, TRENER +GARNITURZYSK; pens = the old
   "GardenSpot_01DA..0x210" words), **EXIT**, **WYJSCIE**, and the N/E/S/W grid
   moves guarded by **ArenaMoveLatch [0x214]** / **ArenaSouthLatch [0x1D8]**.
   Full 26-cell N/E/S/W edge table recovered (EXIT text matches maps) and added
@@ -509,10 +515,10 @@ Full machine-verified register added to INTEGRATED-FIELD-MAP.md
   char-select init 0x1748..0x18B9; LEVELING dossier had them swapped.
 - **Save format**: original = unlabelled flat ReadLn sequence; port = labeled
   key=value lines (not byte-compatible).
-- **Quest turn-in**: original adds LoadCapacity[0x182] +-1 (type 1/3) plus a
+- **Quest turn-in**: original adds PRZED[0x182] +-1 (type 1/3) plus a
   MadroscCur-1 step (type 3 "remove pipe's wisdom bonus" — the port *does*
   mirror that one via `apply_carried_item_effect(PIPE,-1)`, but omits the
-  LoadCapacity bumps).
+  PRZED bumps).
 - Confirmed 1:1 instead: arena edges, quest prices/counters/rewards, death
   penalty, TRENUJ 3/2/3, monster tiers, food/mana percentages, POROWNANIE
   formula.
