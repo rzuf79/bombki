@@ -25,6 +25,7 @@ different inputs/values; `minor` = cosmetic/faithfulness only.
 | D | Save-file format (incl. Forsa net-worth encoding) | PORT-DEVIATION (deliberate) | moderate |
 | E | Quest turn-in side effects | PORT-DEVIATION (deliberate) | moderate |
 | F | Item storage: countable quantities vs bool sentinels | PORT-DEVIATION (deliberate) | major |
+| I | Kaseta unique-drop carrying penalty | PORT-DEVIATION | major |
 
 ---
 
@@ -133,6 +134,27 @@ gates as a PORT-DEVIATION bug; this section is the standing record of the intent
 
 ---
 
+## I. Kaseta unique-drop carrying penalty (major)
+
+### ORIGINAL (`PRZEDM.KASETAZYSK`, img 0x15908..0x1598F)
+
+On `Random(100) < 2` while `MIECHO <> 10000`, the drop grants Kaseta and applies
+`MAXE += 5`, `PRO -= 8`, `PRZED += 1`, and `ZRE += 1`. TPU symbols and the EXE
+bind `PRO` to the carrying ceiling at 0x1C2; the item's own description also
+states `S.Z -8 MAXE +5 ZRE +1`.
+
+### PORT (`try_unique_drop`, `apply_carried_item_effect`)
+
+The port increments the Kaseta quantity and applies maximum-energy +5 and
+dexterity +1, but does not apply the `PRO -= 8` carrying-ceiling penalty. Its
+carrying ceiling is recomputed from dexterity, so the +1 can leave capacity
+unchanged or increase it instead. The generic drop helper also has no equivalent
+of the original `MIECHO <> 10000` guard, although current callers are combat-loot
+paths. `PRZED += 1` is not separately actionable because carried count is derived
+from quantities under the deliberate item model in section F.
+
+---
+
 ## Confirmed 1:1 (checked, no deviation)
 
 - Arena N/S/E/W edge table (cells 33-57, entrance 17/32) + "EXIT" texts.
@@ -165,3 +187,4 @@ gates as a PORT-DEVIATION bug; this section is the standing record of the intent
 | flee | img 0x17F55..0x1800B | game.c 2145-2173 (try_flee) |
 | save | SAVE-FIELD-MAP.txt / wczytaj img 0x7D80; f18 Forsa raw=coins×wisdom (@LMul img 0x2E0F..0x2E25, @LDiv img 0x7FA4..0x7FBB) | persistence.c 43-105 |
 | quest turn-in | img 0x1276B..0x127C4 | game.c 3471-3513 |
+| Kaseta drop | PRZEDM.KASETAZYSK / img 0x15908..0x1598F | game.c 1527-1533, 1580-1586, 1607-1612 |
