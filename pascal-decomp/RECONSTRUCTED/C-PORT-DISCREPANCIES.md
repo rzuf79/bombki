@@ -8,6 +8,10 @@ save/load reconstructions. The "port" is `..\..\c-port\` relative to this file
 formula below was re-derived from the raw instructions in this pass (not taken
 from earlier notes).
 
+Status notes (2026-09-25): A and C were resolved by the merged
+`fix/SIL-vs-MAD-mixup` swap correction; I was resolved on
+`fix/mrowka-paczek-drop` (MROWKA-specific PACZEK, SLABO heart roll dropped).
+
 Verdict vocabulary:
 
 - `ORIGINAL` — this is how the original game works; the port should match it.
@@ -238,6 +242,8 @@ operations in the original or the port — flavour text only. No action.
 
 ## I. Monster kill rewards — PACZEK wired as SERCE (major)
 
+**Status: RESOLVED on `fix/mrowka-paczek-drop`.**
+
 ### What the ORIGINAL does
 
 Every kill launcher pays **coins** (`Random(N)` -> Forsa longint [0x21A:0x21C],
@@ -283,15 +289,15 @@ Status: RESOLVED for the PACZEK/SERCE mis-attribution. Storage is now uniformly
 countable (§J): ITEM_DOUGHNUT and ITEM_BLOODY_HEART are stackable quantities and
 no give-once gate remains for any monster drop.
 
-**Shared-launcher note (verified):** PRZEDM_SLABO (img 0x13839) is the fight
-used by ALL weak monsters — the arena-pen dispatcher routes
-`ZABIJ KORNIK/MUCHA/SLIMAK/ZUK/KARALUCH/MROWKA/PAJAK` to the same
+**Shared-launcher note (verified and since fixed):** PRZEDM_SLABO (img
+0x13839) is the fight used by ALL weak monsters — the arena-pen dispatcher
+routes `ZABIJ KORNIK/MUCHA/SLIMAK/ZUK/KARALUCH/MROWKA/PAJAK` to the same
 `call 0x13839` (0x19CBB..0x19DE8) and the Staruch cage fight also calls it
 (0x0D712). Yet the paczek branch is gated on the typed command
 (`strcmp(cmd,"ZABIJ MROWKA")` @ 0x138BE), so the item is STRICTLY Mrowka-only:
-every other SLABO kill pays just coins `R(3)=0..2`. The port therefore errs for
-ALL SLABO actors: it rolls `{7,10}` as a heart for KORNIK/MUCHA/BAKTERIA/SLIMAK/
-ZUK/KARALUCH/PAJAK/STARUCH too, where the original drops nothing edible at all.
+every other SLABO kill pays just coins `R(3)=0..2`. The port's kill launcher
+now keys on the defeated actor id, so it matches: coins-only for the other
+SLABO actors, PACZEK for MROWKA.
 
 ---
 

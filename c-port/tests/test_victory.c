@@ -242,7 +242,6 @@ static void test_standard_heart_rewards_stack(void)
     assert(state.item_quantities[ITEM_BLOODY_HEART] == 2);
     assert_victory_state(&state, WORLD_ACTOR_DZIK);
 }
-
 static void test_mrowka_drops_paczek(void)
 {
     GameState state;
