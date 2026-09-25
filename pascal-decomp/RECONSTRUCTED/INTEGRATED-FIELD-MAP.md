@@ -724,9 +724,12 @@ the original.
   line (WCZYTANIE reconstruction). `PORT-DEVIATION`: persistence.c writes
   stable `key=value` lines (coins=, practices=...) — not byte-compatible with
   original save files. "Native v16 / imports v1-15" refers to the port schema.
-- **E. Forsa scaling** — confirmed earlier: original divides raw coins by
-  Madrosc on load (@LDiv) and shows Forsa x Madrosc on save (@LMul); port
-  keeps raw coins. See open-items entry below.
+- **E. Forsa (f18 net-worth encoding; folded into D)** — the save file holds
+  `coins × Madrosc` (written via @LMul, echoed on the save screen) and
+  `wczytaj()` re-derives the wallet with the matching @LDiv; the pair is a
+  reversible field transform, **not** an economy scaling — costs/payables read
+  only the runtime wallet. The port persists runtime `coins` directly
+  (save-format item D).
 - **F. Quest turn-in side effects** — `ORIGINAL`: type1 KUNSZT+100 + pass +
   LoadCapacity[0x182]+1; type2 KUNSZT+250 + pass + consume Dyplom + EnergyMax-5;
   type3 KUNSZT+425 + pass + consume Fajka + PRAKTYK-1 + LoadCapacity-1 +
@@ -782,12 +785,15 @@ the original.
   mov dx,[0x21c]; lcall 0x1C71:0x7FA` = TP7 RTL **@LDiv** (CPU-detected: the
   486 fast path `shl/shrd eax/ecx/16; idiv ecx` prefixed by `cmp byte [0x4c],2`,
   plus a 16-bit restoring-division fallback); quotient (DX:AX) is stored back
-  into [0x21A:0x21C]. So the SAVE file carries a 32-bit *raw* wealth longint
-  (here 1424) and the effective runtime coins = raw div Madrosc. Inverse
-  curiosity: the sign-in summary block in save() (img 0x2E0F..0x2E22) computes
-  and displays **Forsa × Madrosc** (`lcall 0x1C71:0x7BD` = @LMul from the same
-  operands). The c-port persists/displays raw coins without this scaling (port
-  deviation; PlayerState.pas has no mirror either).
+  into [0x21A:0x21C]. So the SAVE file carries the 32-bit **net-worth product
+  coins × Madrosc** (reference file: 1424 = 89 × 16) and wczytaj() divides it
+  back into the runtime wallet. The sign-in summary block in save() (img
+  0x2E0F..0x2E22) computes and displays **Forsa × Madrosc** (`lcall
+  0x1C71:0x7BD` = @LMul from the same operands) — the inverse of this @LDiv.
+  Reversible field transform, not a scaling; costs/payables use the runtime
+  wallet only. The c-port persists the runtime `coins` directly (save-format
+  deviation D; PlayerState.pas has no mirror either). RESOLVED — folded into
+  discrepancy D.
 - Monster HP stats (JAMNIK/OWCZAREK/SPANIEL...) are NOT in the saved record;
   the earlier "MONSTRA band 0x1AC..0x1D4" reading in WSTEP-reconstructed.pas
   must be retracted - those offsets are player stats/skills.
