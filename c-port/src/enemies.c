@@ -8,7 +8,7 @@
  */
 static const EnemyProfile profiles[] = {
     {ENEMY_PROFILE_SLABO, "SLABO", {1, 1}, {2, 2}, {1, 1},
-     {ENEMY_REWARD_STANDARD, {0, 2}, {0, 0}, {0, 0}, {7, 10}}},
+     {ENEMY_REWARD_STANDARD, {0, 2}, {0, 0}, {0, 0}, {0, 0}}},
     {ENEMY_PROFILE_MNIEJSLABO, "MNIEJSLABO", {34, 36}, {10, 10}, {8, 11},
      {ENEMY_REWARD_STANDARD, {10, 30}, {0, 0}, {0, 0}, {5, 20}}},
     {ENEMY_PROFILE_SREDNIO, "SREDNIO", {50, 54}, {13, 14}, {10, 14},

@@ -1768,6 +1768,7 @@ static void place_recovered_world_drop(
 
 static void resolve_ordinary_enemy_rewards(
     GameState *state,
+    WorldActorId actor,
     const EnemyRewardProfile *rewards,
     GameOutput output
 )
@@ -1783,7 +1784,15 @@ static void resolve_ordinary_enemy_rewards(
     switch (rewards->kind) {
     case ENEMY_REWARD_STANDARD:
         emit_formatted(output, "WYCIAGASZ %d MONET Z CIALA\n", coins);
-        if (recovered_world_drop_is_available(state, ITEM_BLOODY_HEART)
+        if (actor == WORLD_ACTOR_MROWKA) {
+            EnemyDropChance paczek = {7, 10};
+
+            if (state->item_quantities[ITEM_DOUGHNUT] == 0
+                && reward_roll_succeeds(state, paczek)) {
+                state->item_quantities[ITEM_DOUGHNUT] = 1;
+                emit(output, "WYCIAGASZ PACZEK Z CIALA MROWKI\n");
+            }
+        } else if (recovered_world_drop_is_available(state, ITEM_BLOODY_HEART)
             && reward_roll_succeeds(state, rewards->bloody_heart)) {
             state->item_quantities[ITEM_BLOODY_HEART] = 1;
             emit(output, "WYCIAGASZ SERCE Z CIALA TRUPA\n");
@@ -1932,7 +1941,7 @@ bool game_resolve_active_opponent_victory(
     if (state->energy > 0) {
         resolve_victory_kunszt(state, output);
     }
-    resolve_ordinary_enemy_rewards(state, &profile->rewards, output);
+    resolve_ordinary_enemy_rewards(state, actor, &profile->rewards, output);
     if (state->energy > 0) {
         try_cook_defeated_enemy(state, output);
     }
