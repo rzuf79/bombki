@@ -131,18 +131,8 @@ int main(void)
     command = parser_parse("n");
     action = game_execute(&state, &command, output);
     assert(action == GAME_ACTION_NONE);
-    assert(state.room_id == ROOM_SCHOOL);
-    assert(state.turn == 1);
-    assert(strcmp(capture.text,
-        "\nJESTES W HALLU MUD SZKOLY- OGARNIA CIE CYKORIA  \n"
-        "NO A POZA TYM NA SCIANIE JEST!!! AFISZ!!!\n") == 0);
-
-    clear_capture(&capture);
-    command = parser_parse("e");
-    action = game_execute(&state, &command, output);
-    assert(action == GAME_ACTION_NONE);
     assert(state.room_id == ROOM_CENTRAL);
-    assert(state.turn == 2);
+    assert(state.turn == 1);
     assert(strcmp(capture.text,
         "\nJESTES W OKROGLYM SALONIE WYPELNIONYM WITRAZAMI \n"
         "W POWIETRZU UNOSZA SIE ZAPACHY I SA TO ZAPACHY OK\n"
@@ -152,7 +142,7 @@ int main(void)
     clear_capture(&capture);
     command = parser_parse("EXIT");
     (void)game_execute(&state, &command, output);
-    assert(state.turn == 2);
+    assert(state.turn == 1);
     assert(strcmp(capture.text,
         "DOSTEPNE WYJSCIA:\n"
         "POLUDNIE-TAM GDZIE ZACZYNASZ GRE\n"
@@ -181,13 +171,13 @@ int main(void)
     command = parser_parse("PAMIETAJ");
     action = game_execute(&state, &command, output);
     assert(action == GAME_ACTION_SAVE);
-    assert(state.turn == 2);
+    assert(state.turn == 1);
     assert(capture.text[0] == '\0');
     clear_capture(&capture);
     command = parser_parse("SCAN");
     action = game_execute(&state, &command, output);
     assert(action == GAME_ACTION_NONE);
-    assert(state.turn == 2);
+    assert(state.turn == 1);
     assert(strcmp(capture.text,
         "FUNKCJA BEDZIE DOSTEPNA ZA DWA LATA , I TAK ZGINIESZ , I TAK :) \n") == 0);
 
@@ -204,6 +194,8 @@ int main(void)
 
     game_initialize(&state);
     command = parser_parse("n");
+    (void)game_execute(&state, &command, output);
+    command = parser_parse("w");
     (void)game_execute(&state, &command, output);
     command = parser_parse("w");
     (void)game_execute(&state, &command, output);

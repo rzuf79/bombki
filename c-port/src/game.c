@@ -2707,9 +2707,9 @@ static int native_room_for_original_location(int original_room)
     case 10: return ROOM_SCHOOL_DOWN_ROOM;
     case 11: return ROOM_CAGE_HALL;
     case 12: return ROOM_CAGE_WEAK;
-    case 13: return ROOM_CAGE_DEXTEROUS;
-    case 14: return ROOM_CAGE_RESISTANT;
-    case 15: return ROOM_CAGE_STRONG;
+    case 13: return ROOM_CAGE_STRONG;
+    case 14: return ROOM_CAGE_DEXTEROUS;
+    case 15: return ROOM_CAGE_RESISTANT;
     case 16: return ROOM_CAGE_ALL;
     case 17: return ROOM_TELEPORT;
     case 18: return ROOM_TELEPORT_EFFECT;
