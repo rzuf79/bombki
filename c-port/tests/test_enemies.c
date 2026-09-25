@@ -87,7 +87,7 @@ int main(void)
     assert_profile(ENEMY_PROFILE_CAGE_ALL, "direct room assignment", 40, 40, 10, 10, 11, 11);
 
     assert_rewards(ENEMY_PROFILE_SLABO, ENEMY_REWARD_STANDARD,
-        0, 2, 0, 0, 7, 10);
+        0, 2, 0, 0, 0, 0);
     assert_rewards(ENEMY_PROFILE_MNIEJSLABO, ENEMY_REWARD_STANDARD,
         10, 30, 0, 0, 5, 20);
     assert_rewards(ENEMY_PROFILE_SREDNIO, ENEMY_REWARD_STANDARD,

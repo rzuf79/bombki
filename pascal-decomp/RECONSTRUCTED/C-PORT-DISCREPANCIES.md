@@ -30,7 +30,8 @@ different inputs/values; `minor` = cosmetic/faithfulness only.
 | F | Quest turn-in side effects | PORT-DEVIATION | moderate |
 | G | Arena "3 LEVEL" placard | (no gate either side) | minor |
 | H | Room-number flavour nits | ORIGINAL clarifications | minor |
-| I | Monster kill rewards (PACZEK / SERCE) | PORT-DEVIATION | major |
+| I | Monster kill rewards (PACZEK / SERCE) | RESOLVED (fix/mrowka-paczek-drop) | major |
+| J | Item storage: countable quantities vs bool sentinels | PORT-DEVIATION (deliberate) | major |
 
 ---
 
@@ -263,29 +264,24 @@ carrying, 0 = consumed. Eating PACZEK does `[0x1A0] += 0xA` and
 `LoadCapacity -= 1` (img 0x19095..0x190A2); pickup prints the item only when
 the slot is exactly -10. You hold at most one paczek and one heart.
 
-### What the PORT does (enemies.c 9-43, game.c 1802-1862)
+### What the PORT does (enemies.c 9-43, game.c 1805-1820)
 
-- SLABO profile: `coins {0,2}` (matches R(3)=0..2) but
-  **`bloody_heart = {7,10}` = 70% ITEM_BLOODY_HEART** ("WYCIAGASZ SERCE Z CIALA
-  TRUPA"). There is **no PACZEK drop and no ZABIJ MROWKA special case anywhere
-  in game.c** (grep: only bakery buy + eat + protected-food list hit PACZEK).
-- Heart chances for the other tiers match the original operands
-  ({5,20},{7,20},{4,20},{5,20}) and the "give once" gate is roughly mirrored
-  by `recovered_world_drop_is_available` (quantity==0 && not dropped).
+- **RESOLVED** (`fix/mrowka-paczek-drop` / `688a4d4`): SLABO `bloody_heart` is
+  now `{0,0}` (no heart) and `resolve_ordinary_enemy_rewards` special-cases
+  `WORLD_ACTOR_MROWKA` to a 70% `R(10)<7` PACZEK drop ("WYCIAGASZ PACZEK Z
+  CIALA MROWKI") that increments ITEM_DOUGHNUT. Every other SLABO kill now pays
+  coins `R(3)=0..2` only.
+- Heart chances for the other tiers stay faithful ({5,20},{7,20},{4,20},
+  {5,20}). The original's "never owned / already carrying" give-once gates are
+  gone by the countable-items policy (see J below).
 - **Omitted: `LoadCapacity` bumps** on heart/paczek acquisition (and the -1 on
-  eating).
-- Storage model: ITEM_DOUGHNUT is `ITEM_STORAGE_QUANTITY` (stackable, no
-  capacity charge) vs the original's single-slot sentinel with per-item load.
+  eating) — deliberate, see J.
 
 ### Comments
 
-The 70% "drop" on the Mrowka targets the **wrong item**: the original gives a
-PACZEK, the port gives a heart. This is exactly the mis-attribution the earlier
-§16 note ("enemies.c bloody_heart label retracted") flagged — but the current
-enemies.c still carries `{7,10}` under `bloody_heart`, so the port keeps doing
-the wrong thing. Fix = a MROWKA-specific PACZEK drop (and drop the SLABO heart
-roll). The food sentinel-vs-quantity storage is a deliberate port relaxation;
-behavioural impact is small (you simply can stack paczki in the port).
+Status: RESOLVED for the PACZEK/SERCE mis-attribution. Storage is now uniformly
+countable (§J): ITEM_DOUGHNUT and ITEM_BLOODY_HEART are stackable quantities and
+no give-once gate remains for any monster drop.
 
 **Shared-launcher note (verified):** PRZEDM_SLABO (img 0x13839) is the fight
 used by ALL weak monsters — the arena-pen dispatcher routes
@@ -296,6 +292,43 @@ used by ALL weak monsters — the arena-pen dispatcher routes
 every other SLABO kill pays just coins `R(3)=0..2`. The port therefore errs for
 ALL SLABO actors: it rolls `{7,10}` as a heart for KORNIK/MUCHA/BAKTERIA/SLIMAK/
 ZUK/KARALUCH/PAJAK/STARUCH too, where the original drops nothing edible at all.
+
+---
+
+## J. Item storage: countable quantities, not bool sentinels (major, deliberate)
+
+### What the ORIGINAL does
+
+World-location items are byte slots holding `0xFFF6` (-10 = carrying) or `0`
+(consumed). Gates treat the slot like a bool "owned or not": monster drops
+require `!= -10` (the heart additionally that `[0x186]` never left the -10
+state), and `LoadCapacity [0x182]` is +/-1 on pick-up/drop of each sentinel
+item. You effectively can never own two hearts or two paczki — a repeat drop
+prints nothing.
+
+### What the PORT does (decision 2026-09-25, game.c)
+
+By explicit project decision, **all items are countable quantities, not bools**:
+
+- Gaining an item always **increments** its count (`take_item` and every reward
+  drop); no "you may only have 1 before giving it" gate exists anywhere.
+  Removed in the abstract: `recovered_world_drop_is_available`, the monster
+  give-once checks (heart/paczek), and the teleport-diploma ownership clause
+  (the "all five cages dead" trigger is kept). `take_item`/reward writes use
+  clamped `++` instead of `= 1`.
+- `game_state_is_valid` no longer caps world-location items at 1.
+- Consequence: hearts and paczki stack; each successful drop prints its message
+  and raises the count (test 02 `test_standard_heart_rewards_stack`,
+  `test_mrowka_drops_paczek_again_when_carrying`).
+- `LoadCapacity` bumps (+1 heart/paczek, -1 eating) remain unimplemented —
+  capacity is dex-derived in the port (game.c `game_carrying_capacity`).
+
+### Why / how to audit
+
+The pascal `-10` sentinel is an x86-16 memory/UI shortcut, not a design
+constraint the port wants to reproduce; the project chose a uniform, predictable
+inventory model. Do **not** re-flag quantity-stacking or lack of the give-once
+gates as a PORT-DEVIATION bug; this section is the standing record of the intent.
 
 ---
 

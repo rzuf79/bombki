@@ -487,8 +487,7 @@ bool game_state_is_valid(const GameState *state)
         }
     }
     for (index = 0; index < BOMBKI_ITEM_SLOTS; ++index) {
-        if (state->item_quantities[index] < 0
-            || (index <= ITEM_PIPE && state->item_quantities[index] > 1)) {
+        if (state->item_quantities[index] < 0) {
             return false;
         }
     }
@@ -1060,7 +1059,9 @@ static ItemActionResult take_item(
 
     emit(output, messages[index]);
     state->world_object_rooms[index] = BOMBKI_ROOM_NOWHERE;
-    state->item_quantities[index] = 1;
+    if (state->item_quantities[index] < INT_MAX) {
+        ++state->item_quantities[index];
+    }
     if (item->id == ITEM_SCHOOL_DIPLOMA) {
         state->maximum_energy += 5;
     } else if (item->id == ITEM_PIPE && state->wisdom < state->maximum_wisdom) {
@@ -1730,15 +1731,6 @@ static bool loot_source_for_actor(
     }
 }
 
-static bool recovered_world_drop_is_available(
-    const GameState *state,
-    ItemId item
-)
-{
-    return state->item_quantities[item] == 0
-        && state->world_object_rooms[item] == BOMBKI_ROOM_NOWHERE;
-}
-
 static bool reward_roll_succeeds(
     GameState *state,
     EnemyDropChance chance
@@ -1757,8 +1749,7 @@ static void place_recovered_world_drop(
     GameOutput output
 )
 {
-    if (!recovered_world_drop_is_available(state, item)
-        || !reward_roll_succeeds(state, chance)) {
+    if (!reward_roll_succeeds(state, chance)) {
         return;
     }
 
@@ -1768,6 +1759,7 @@ static void place_recovered_world_drop(
 
 static void resolve_ordinary_enemy_rewards(
     GameState *state,
+    WorldActorId actor,
     const EnemyRewardProfile *rewards,
     GameOutput output
 )
@@ -1783,9 +1775,19 @@ static void resolve_ordinary_enemy_rewards(
     switch (rewards->kind) {
     case ENEMY_REWARD_STANDARD:
         emit_formatted(output, "WYCIAGASZ %d MONET Z CIALA\n", coins);
-        if (recovered_world_drop_is_available(state, ITEM_BLOODY_HEART)
-            && reward_roll_succeeds(state, rewards->bloody_heart)) {
-            state->item_quantities[ITEM_BLOODY_HEART] = 1;
+        if (actor == WORLD_ACTOR_MROWKA) {
+            EnemyDropChance paczek = {7, 10};
+
+            if (reward_roll_succeeds(state, paczek)) {
+                if (state->item_quantities[ITEM_DOUGHNUT] < INT_MAX) {
+                    ++state->item_quantities[ITEM_DOUGHNUT];
+                }
+                emit(output, "WYCIAGASZ PACZEK Z CIALA MROWKI\n");
+            }
+        } else if (reward_roll_succeeds(state, rewards->bloody_heart)) {
+            if (state->item_quantities[ITEM_BLOODY_HEART] < INT_MAX) {
+                ++state->item_quantities[ITEM_BLOODY_HEART];
+            }
             emit(output, "WYCIAGASZ SERCE Z CIALA TRUPA\n");
         }
         break;
@@ -1932,7 +1934,7 @@ bool game_resolve_active_opponent_victory(
     if (state->energy > 0) {
         resolve_victory_kunszt(state, output);
     }
-    resolve_ordinary_enemy_rewards(state, &profile->rewards, output);
+    resolve_ordinary_enemy_rewards(state, actor, &profile->rewards, output);
     if (state->energy > 0) {
         try_cook_defeated_enemy(state, output);
     }
@@ -3606,9 +3608,6 @@ static bool move_player(GameState *state, Direction direction, GameOutput output
     game_clear_active_opponent(state);
     state->room_id = destination_id;
     if (state->room_id == ROOM_TELEPORT
-        && state->item_quantities[ITEM_SCHOOL_DIPLOMA] == 0
-        && state->world_object_rooms[WORLD_OBJECT_SCHOOL_DIPLOMA]
-            == BOMBKI_ROOM_NOWHERE
         && state->world_actor_rooms[WORLD_ACTOR_CAGE_WEAK]
             == BOMBKI_ROOM_NOWHERE
         && state->world_actor_rooms[WORLD_ACTOR_CAGE_DEXTEROUS]
