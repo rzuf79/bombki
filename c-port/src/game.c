@@ -148,6 +148,26 @@ bool game_combat_is_active(const GameState *state)
     return state != NULL && state->active_opponent_actor != BOMBKI_NO_ACTOR;
 }
 
+static bool actor_is_in_current_room(const GameState *state, const char *name)
+{
+    size_t index;
+
+    if (state == NULL || name == NULL || name[0] == '\0') {
+        return false;
+    }
+
+    for (index = 0; index < world_actor_count(); ++index) {
+        const WorldActor *actor = world_actor_at(index);
+
+        if (actor != NULL
+            && state->world_actor_rooms[index] == state->room_id
+            && strcmp(actor->name, name) == 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
 bool game_select_opponent(GameState *state, const char *target)
 {
     size_t index;
@@ -910,87 +930,17 @@ static void describe_arena_actors(const GameState *state, GameOutput output)
 
 static void describe_skill_poster(const GameState *state, GameOutput output)
 {
+    (void)state;
     emit(output,
         "NA PLAKACIE PISZE:\n"
-        "MOZESZ CWICZYC UZYWAJAC KOMENDY CWICZ RAZEM Z \n"
-    );
-    if (state->wisdom < 11) {
-        emit(output, "Z NICZYM BO MASZ ZA MALA MADROSC\n");
-    }
-    if (state->wisdom > 10 && state->strength > 11) {
-        emit(output, "KOPAC - KOMENDA:KOP \n");
-    }
-    if (state->wisdom > 10 && state->dexterity > 10) {
-        emit(output, "UCIEKAC - KOMENDA : ZWIEJ \n");
-    }
-    if (state->wisdom > 15 && state->dexterity > 11) {
-        emit(output, "PAROWANIE - SAMOCZYNNIE \n");
-    }
-    if (state->wisdom > 11) {
-        emit(output, "POROWNANIE-KOMEDA POROWNAJ\n");
-    }
-    if (state->wisdom > 18) {
-        emit(output, "POTRAWKI-SAMOCZYNNIE , PO WALCE\n");
-    }
-    if (state->wisdom > 17) {
-        emit(output, "POWROT-KOMEDA POWROT\n");
-    }
-    if (state->dexterity > 20) {
-        emit(output, "ZRECZNE RECE - KOMENDA : RECE\n");
-    }
-    if (state->strength > 20 && state->dexterity > 10) {
-        emit(output, "KRZEPA : SAMOCZYNNIE\n");
-    }
-    if (state->wisdom > 19 && state->dexterity > 10 && state->strength > 10) {
-        emit(output, "TARGOWANIE SIE : SAMOCZYNNIE\n");
-    }
-    if (state->strength > 25 && state->wisdom > 12) {
-        emit(output, "WIROWANIE - SAMOCZYNNIE \n");
-    }
-    if (state->strength > 29 && state->wisdom > 14) {
-        emit(output, "FATALITY - SAMOCZYNNIE \n");
-    }
-    if (state->dexterity > 22) {
-        emit(output, "COMBO - SAMOCZYNNIE \n");
-    }
-    if (state->dexterity > 28) {
-        emit(output, "SUPER COMBO - SAMOCZYNNIE \n");
-    }
-    if (state->wisdom > 22) {
-        emit(output, "TRUCIZNA - SAMOCZYNNIE\n");
-    }
-    if (state->wisdom > 23) {
-        emit(output, "UZDRAWIANIE - KOMENDA UZDROW\n");
-    }
-    if (state->dexterity > 24 && state->wisdom > 14 && state->strength > 14) {
-        emit(output, "MOCNY SEN - SAMOCZYNNIE \n");
-    }
-    if (state->wisdom > 24) {
-        emit(output, "OSLEPIANIE  - KOMEDA OSLEP \n");
-    }
-    if (state->wisdom > 26) {
-        emit(output, "NEKROMANCJA - SAMOCZYNNIE \n");
-    }
-    if (state->strength > 12 && state->wisdom > 19 && state->dexterity > 12) {
-        emit(output, "SZAL - KOMEDNA SZAL\n");
-    }
-    if (state->dexterity > 22 && state->wisdom > 16) {
-        emit(output, "SIATKA - KOMENDA SIATKA\n");
-    }
-    if (state->dexterity > 30) {
-        emit(output, "CIOS W PLECY - KOMENDA CIOS W (COS)\n");
-    }
-    if (state->wisdom > 29) {
-        emit(output, "ROZPALANIE OGNISKA - KOMENDA ROZPAL\n");
-    }
-    if (state->wisdom > 19) {
-        emit(output, "HIPER SPEED - KOMENDA SPEED\n");
-    }
-    if (state->wisdom > 23 && state->dexterity > 12) {
-        emit(output, "PIECZENIE - KOMENDA PIECZ\n");
-    }
-    emit(output,
-        "W STANIE PODSWIADOMOSCI KOMEDA ZDOLNOSCI SPRAWDZI TWE ZDOLNOSCI\n"
+        "CWICZ KOPAC , UCIEKAC , PAROWANIE , POROWNANIE , POTRAWKI LUB POWROT\n"
+        "JAK MASZ PRAKTYKI I DOBRA GLOWE TO BEDZIESZ KOZAK\n"
+        "KOPAC - KOMENDA:KOP \n"
+        "UCIEKAC - KOMENDA : ZWIEJ \n"
+        "PAROWANIE I POTRAWKI - SAMOCZYNNIE \n"
+        "POROWNANIE-KOMEDA POROWNAJ\n"
+        "POWROT-KOMEDA POWROT\n"
+        "KOMENDA ZDOLNOSCI SPRAWDZI TWE ZDOLNOSCI\n"
     );
 }
 
@@ -3941,11 +3891,19 @@ GameAction game_execute(GameState *state, const Command *command, GameOutput out
         if (strcmp(command->argument, "DUNCAN") == 0) {
             if (talk_to_duncan(state, output)) {
                 advance_turn(state, output);
+            } else {
+                emit(output, "NIE MA TU NIKOGO TAKIEGO!\n");
             }
         } else if (strcmp(command->argument, "STARUCH") == 0) {
             if (talk_to_old_elf(state, output)) {
                 advance_turn(state, output);
+            } else {
+                emit(output, "NIE MA TU NIKOGO TAKIEGO!\n");
             }
+        } else if (actor_is_in_current_room(state, command->argument)) {
+            emit(output, "NIE MA CI NIC DO POWIEDZENIA!\n");
+        } else {
+            emit(output, "NIE MA TU NIKOGO TAKIEGO!\n");
         }
         break;
     case COMMAND_SELL:
@@ -4042,8 +4000,12 @@ GameAction game_execute(GameState *state, const Command *command, GameOutput out
         break;
     case COMMAND_HELP:
         emit(output,
-            "KOMENDY: PATRZ, EXIT, POLNOC, POLUDNIE, WSCHOD, ZACHOD, GORA, DOL,\n"
-            "         N, S, W, E, U, D, JA, PAMIETAJ, WLACZ POSTAC, KONIEC.\n");
+            "KOMENDY DLA ODWAZNYCH:\n"
+            "PATRZ, EXIT, POLNOC, POLUDNIE, WSCHOD, ZACHOD, GORA, DOL\n"
+            "N, S, W, E, U, D, JA, KTO (NA ARENIE), BIERZ, ODRZUC, UZYJ, ODLOZ, ZABIJ\n"
+            "ROZMAWIAJ, KUP, SPRZEDAJ, LISTA, CWICZ, TRENUJ, POROWNAJ, KOP, ZWIEJ\n"
+            "POWROT, ZDOLNOSCI, SPIJ, PAMIETAJ, WLACZ POSTAC, KONIEC.\n"
+            "RESZTE ODKRYJ SAM !!\n");
         break;
     case COMMAND_QUIT:
         return GAME_ACTION_QUIT;

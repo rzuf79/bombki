@@ -75,7 +75,9 @@ invent player-facing text or mechanics for unrecovered commands.
   unique-loot resolver with exact enemy eligibility and random thresholds.
 - The portable game has one command state: all supported gameplay commands
   work directly, without the original `MODE`/`UNMODE` switch. The removed flag
-  is ignored when loading older saves; the original school-poster text is kept.
+  is ignored when loading older saves; user-approved school posters now explain
+  the direct, implemented commands instead of the removed state and dormant
+  abilities.
 - `JA` now follows the original inventory/equipment/level/stat/quest sequence
   from executable file offsets `0x05ab9`–`0x066e5`. It displays stored item
   quantities as negative tens, keeps the original strength/wisdom label swap,

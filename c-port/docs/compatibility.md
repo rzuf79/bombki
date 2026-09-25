@@ -29,8 +29,8 @@ documented intentional difference.
 - `PLIKI.TPU` is line-oriented game state, not a compiled Pascal unit.
 - Polish text in `CZYTAJ.TXT` is encoded using DOS code page 852.
 - In the original game, `EXIT` lists exits. It does not terminate the process.
-- `PAMIETAJ` saves and `WLACZ POSTAC` loads while in subconscious (`MODE`)
-  mode.
+- `PAMIETAJ` saves and `WLACZ POSTAC` loads directly; the portable game has no
+  subconscious (`MODE`) gate.
 
 The DOS dispatcher also retains the direction abbreviations `PN`, `PD`, `W`,
 `Z`, `G`, and `D`, plus `E` for `EXIT` and `M` for `MODE`. The portable parser
@@ -38,11 +38,11 @@ accepts the non-conflicting Polish direction abbreviations. At the user's reques
 `n`, `s`, `w`, `e`, `u`, and `d` follow conventional terminal directions, so
 `w` means west and `e` means east; `WSCHOD` and `EXIT` remain unambiguous.
 The portable game omits the original command-state switch: all gameplay commands
-are available together, while its original school-poster wording is preserved.
+are available together, and the school posters explain those direct mechanics.
 
 ## Compatibility layers
 
-1. **Parser:** accepted commands, whitespace, case conversion, and mode gating.
+1. **Parser:** accepted commands, whitespace, case conversion, and routing.
 2. **World:** descriptions, exits, room-local commands, actors, and encounters.
 3. **State:** player statistics, inventory, monsters, quests, and world flags.
 4. **Mechanics:** combat probabilities, training, shops, drops, and progression.
@@ -132,6 +132,14 @@ for the original. The standing rule is also recorded in
 | `SWIAT.TPU:0x0e20` | `ę NA PLAKACIE PISZE:` | `NA PLAKACIE PISZE:` |
 | `BOMBKI.EXE:0x0a70d` | `ę NA PLAKACIE PISZE:` | `NA PLAKACIE PISZE:` |
 | `SWIAT.TPU:0x0147e` | `ę NA AFISZU BYNAJMNIEJ PISZE` | `NA AFISZU BYNAJMNIEJ PISZE` |
+
+### User-approved communication updates
+
+The user approved replacing the stale `MODE`/`UNMODE` and subconscious-state
+instructions, plus the underground poster's dormant-ability list. The portable
+posters and `POMOC` now describe only direct, implemented mechanics in the
+game's established all-caps tone. Recovered text outside those communications
+remains unchanged.
 
 ## Recovered player setup
 
