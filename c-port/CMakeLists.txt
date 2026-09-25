@@ -20,13 +20,7 @@ target_include_directories(bombki_core
     PRIVATE src
 )
 
-if(MSVC)
-    target_compile_options(bombki_core PRIVATE /W4 /utf-8)
-else()
-    target_compile_options(
-        bombki_core PRIVATE -Wall -Wextra -Wpedantic -Wno-missing-field-initializers
-    )
-endif()
+target_compile_options(bombki_core PRIVATE -Wall -Wextra -Wpedantic -Wno-missing-field-initializers)
 
 add_executable(bombki
     src/main.c
@@ -36,11 +30,7 @@ add_executable(bombki
 target_include_directories(bombki PRIVATE src)
 target_link_libraries(bombki PRIVATE bombki_core)
 
-if(MSVC)
-    target_compile_options(bombki PRIVATE /W4 /utf-8)
-else()
-    target_compile_options(bombki PRIVATE -Wall -Wextra -Wpedantic)
-endif()
+target_compile_options(bombki PRIVATE -Wall -Wextra -Wpedantic)
 
 include(CTest)
 
