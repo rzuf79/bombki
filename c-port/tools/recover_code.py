@@ -587,7 +587,7 @@ def check_outputs(output: Path, expected: dict[str, str]) -> list[str]:
 def parse_args() -> argparse.Namespace:
     project = Path(__file__).resolve().parents[1]
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--source", type=Path, default=project.parent)
+    parser.add_argument("--source", type=Path, default=project.parent / "og")
     parser.add_argument("--output", type=Path, default=project / "evidence" / "recovered")
     parser.add_argument("--unit", help="limit output to one TPU unit")
     parser.add_argument("--procedure", help="limit output to one exact procedure name")

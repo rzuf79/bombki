@@ -37,7 +37,7 @@ check: $(TEST_BINARIES)
 
 evidence-check:
 	python3 tests/test_evidence.py
-	python3 tools/evidence.py --source .. --output evidence/generated --check
+	python3 tools/evidence.py --source ../og --output evidence/generated --check
 
 clean:
 	rm -rf -- "$(OBJECT_DIR)" "$(TEST_DIR)"

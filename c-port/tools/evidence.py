@@ -1065,7 +1065,7 @@ def check_outputs(output: Path, reports: dict[str, str]) -> list[str]:
 def parse_args(argv: list[str]) -> argparse.Namespace:
     project = Path(__file__).resolve().parents[1]
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--source", type=Path, default=project.parent, help="original artifact directory")
+    parser.add_argument("--source", type=Path, default=project.parent / "og", help="original artifact directory")
     parser.add_argument("--output", type=Path, default=project / "evidence" / "generated", help="report directory")
     parser.add_argument("--check", action="store_true", help="fail if committed reports are missing or stale")
     parser.add_argument("--dump-tpu", type=Path, help="print one TPUQ metadata report as JSON")
