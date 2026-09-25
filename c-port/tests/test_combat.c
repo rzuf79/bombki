@@ -292,7 +292,7 @@ static void test_flee_practice_and_threshold_prompt(void)
     Capture capture = {{0}, 0};
 
     game_initialize(&state);
-    state.strength = 13;
+    state.wisdom = 13;
     state.dexterity = 13;
 
     execute(&state, &capture, "CWICZ UCIEKAC");
@@ -331,6 +331,7 @@ static void test_kick_practice_and_threshold_prompt(void)
     game_initialize(&state);
     state.strength = 13;
     state.dexterity = 13;
+    state.wisdom = 13;
 
     execute(&state, &capture, "CWICZ KOPAC");
     assert(strcmp(capture.text,
@@ -353,7 +354,7 @@ static void test_kick_practice_and_threshold_prompt(void)
     assert(state.kick_energy_threshold == 37);
     assert(state.kick_mana_threshold == 8);
 
-    state.dexterity = 11;
+    state.wisdom = 10;
     memset(&capture, 0, sizeof(capture));
     execute(&state, &capture, "CWICZ KOPAC");
     assert(capture.length == 0);
@@ -546,8 +547,8 @@ static void test_parry_practice(void)
     Capture capture = {{0}, 0};
 
     game_initialize(&state);
-    state.strength = 16;
-    state.maximum_strength = 16;
+    state.wisdom = 16;
+    state.maximum_wisdom = 16;
     state.dexterity = 12;
 
     execute(&state, &capture, "CWICZ PAROWANIE");
@@ -731,8 +732,8 @@ static void test_cooking_practice_and_automatic_learning(void)
     GameOutput output = {capture_write, &capture};
 
     game_initialize(&state);
-    state.strength = 19;
-    state.maximum_strength = 20;
+    state.wisdom = 19;
+    state.maximum_wisdom = 20;
 
     execute(&state, &capture, "CWICZ POTRAWKI");
     assert(strcmp(capture.text,
@@ -768,8 +769,8 @@ static void test_return_training_and_spell_outcomes(void)
     Capture capture = {{0}, 0};
 
     game_initialize(&state);
-    state.strength = 18;
-    state.maximum_strength = 30;
+    state.wisdom = 18;
+    state.maximum_wisdom = 30;
     state.practices = 2;
     execute(&state, &capture, "CWICZ POWROT");
     assert(strcmp(capture.text,
