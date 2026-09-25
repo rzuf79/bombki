@@ -128,16 +128,15 @@ corrected here (Energy!=Money, 0x182=MaxLoad, 0x180=PreviousRoomContext,
 
    Byte-flag cluster 0x255..0x262 (save f41,f64,f71,f73,f2,f22,f78,f79,f80):
    0x255  f79  0       0x255  Flag_0255
-   0x257  f64  0       0x257  ItemCount_Potrawki  <- CONFIRMED saved BYTE (f64,
-                        read back `[0x257]:=ReadLn` in wczytaj 0x83CF); the
-                        "POTRAWKI chance" text at 0x74 stays ambiguous
+   0x257  f64  0       0x257  PIGULKA / transport-pill item  <- CONFIRMED saved BYTE (f64,
+                         read back `[0x257]:=ReadLn` in wczytaj 0x83CF); the
+                         "POTRAWKI chance" text at 0x74 stays ambiguous
    0x258  f41  0       0x258  TalentChance   <- combat: if >0 && Random(100)<[258]
                         => talent-up event `[0x259]-=10; MaxLoad+=1`  (was "Bigos")
    0x259  f73  0       0x259  TalentPool     <- decremented 10 per talent proc (was "Listek")
-0x25B  f71  0       0x25b  SkillChance_Porownywanie (byte)
-                        <- CORRECTED semantics: decremented 10 by Listek-drop
-                        (the compare-skill counter is 0x25D; 0x25B is its
-                        training-% bank: chance scales roll -> grant on 0x25D)
+0x25B  f71  0       0x25b  LISTEK / lucky-leaf item (byte)
+                        <- acquisition decrements it by 10; the distinct
+                        compare-skill counter is POR at 0x25D
 0x25C  f2   24 (-0x17 → lvl 1)  0x25c CharacterLevel  <- CORRECTED from RaceId
 0x25D  f22  0       0x25d  (byte)  SkillPorownywanie (trainable: +=3*Madrosc-9
                         AND 3%-per-POROWNAC learn; cap 0x64)
@@ -193,21 +192,23 @@ Random(15) loot + 25% Serce drop into [0x186].) Real map+flavor setup:
 
 ## Kill drops (img 0x157B9..0x15AE3)
 
-All five drop handlers share the pattern:
-`Random(1000|100)` gate, **guard `context [0x1D6] != 0x2710`**, print loot text
-(always "WYCIAGASZ... Z CIALA..."), then grant. String base for the loot texts
-is paragraph 0x17CB (img 0x1AA50..0x1AD7F):
+All five drop handlers roll `Random(1000|100)`, print exact loot text, then
+grant the item. Only Kaseta, Listek, and Scroll guard against
+`context [0x1D6] == 10000`; Garnitur and Pigulka do not. String base for the
+loot texts is paragraph 0x17CB (img 0x1AA50..0x1AD7F):
 
-- 0x157B9 DropGarnitur: Random(1000)<=0x19 → "ZYSKUJESZ GARNITUR !!!!" (2.5%).
-- 0x1586E DropPigulka: Random(1000)<=0x2A → "A TO CO ? , TOZ TO !!! PIGULKA
-  TRANSPORTUJACA !!!" (4.2%).
-- 0x1590D DropKaseta: Random(100)<=2 → "WYCIAGASZ KASETE LIROYA..." (2%;
-  +EnergyMax, -8 load, +1 LoadCapacity, +1 Zrecznosc; Item_KasetaLiroya `-=10`).
+- 0x157B9 DropGarnitur: Random(1000)<=25 (26/1000; text says 2.5%) →
+  "ZYSKUJESZ GARNITUR !!!!".
+- 0x1586E DropPigulka: Random(1000)<=42 (43/1000) → "A TO CO ? , TOZ TO !!!
+  PIGULKA TRANSPORTUJACA !!!".
+- 0x15908 DropKaseta: Random(100)<2 → "WYCIAGASZ KASETE LIROYA..." (2%;
+  +EnergyMax, -8 carrying ceiling, `PRZED` carried count +1, +1 Zrecznosc;
+  Item_KasetaLiroya `-=10`).
 - 0x159E4 DropListek: Random(100)<6 (text says "UNIQE 4%") →
-  "WYCIAGASZ LISTEK SZCZESCIA..."; SkillChance_Porownywanie `[0x25B]-=10`,
-  LoadCapacity++, ManaMax+=0x28.
+  "WYCIAGASZ LISTEK SZCZESCIA..."; LISTEK `[0x25B]-=10`,
+  `PRZED`++, ManaMax+=0x28.
 - 0x15A91 DropScroll: Random(100)<10 → "WYCIAGASZ SCROLL POROWNANIA...";
-  Item_ScrollPorownanie `[0x230]-=10`, LoadCapacity++.
+  Item_ScrollPorownanie `[0x230]-=10`, `PRZED`++.
 - 0x15AE4 GoToRoom1000: PreviousRoom `[0x180]=context`; context=0x3E8
   (the "cmd" helper called from the city square loop).
 - Item fields (Paczek/Ciastko/Kaseta/Liroya/Fajka/Serce/Potrawki/ScrollPorownanie)

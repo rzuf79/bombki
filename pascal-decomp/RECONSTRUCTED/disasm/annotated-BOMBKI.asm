@@ -1697,7 +1697,7 @@
 00AC7: 9A89  lcall   0x1c71, 0x789
 00ACC: 9ADD  lcall   0x1c71, 0x5dd
 00AD1: 9A91  lcall   0x1c71, 0x291
-00AD6: 803E  cmp     byte ptr [0x25b], 0xf6 ; data:SkillChance_Porownywanie
+00AD6: 803E  cmp     byte ptr [0x25b], 0xf6 ; data:Item_Listek
 00ADB: 7F2B  jg      0xb08
 00ADD: BFA2  mov     di, 0x7a2
 00AE0: 1E57  push    ds
@@ -1708,7 +1708,7 @@
 00AE7: 31C0  xor     ax, ax
 00AE9: 509A  push    ax
 00AEA: 9A01  lcall   0x1c71, 0x701
-00AEF: A05B  mov     al, byte ptr [0x25b] ; data:SkillChance_Porownywanie
+00AEF: A05B  mov     al, byte ptr [0x25b] ; data:Item_Listek
 00AF2: 9899  cwde    
 00AF3: 9952  cdq     
 00AF4: 5250  push    dx
@@ -1738,7 +1738,7 @@
 00B2A: 9A89  lcall   0x1c71, 0x789
 00B2F: 9ADD  lcall   0x1c71, 0x5dd
 00B34: 9A91  lcall   0x1c71, 0x291
-00B39: 803E  cmp     byte ptr [0x257], 0xf6 ; ItemCount_Potrawki
+00B39: 803E  cmp     byte ptr [0x257], 0xf6 ; data:Item_Pigulka
 00B3E: 7F2B  jg      0xb6b
 00B40: BFA2  mov     di, 0x7a2
 00B43: 1E57  push    ds
@@ -1749,7 +1749,7 @@
 00B4A: 31C0  xor     ax, ax
 00B4C: 509A  push    ax
 00B4D: 9A01  lcall   0x1c71, 0x701
-00B52: A057  mov     al, byte ptr [0x257] ; ItemCount_Potrawki
+00B52: A057  mov     al, byte ptr [0x257] ; data:Item_Pigulka
 00B55: 9899  cwde    
 00B56: 9952  cdq     
 00B57: 5250  push    dx
@@ -6632,7 +6632,7 @@
 0334F: BF7E  mov     di, 0x7e
 03352: 1E57  push    ds
 03353: 57A0  push    di
-03354: A057  mov     al, byte ptr [0x257] ; ItemCount_Potrawki
+03354: A057  mov     al, byte ptr [0x257] ; data:Item_Pigulka
 03357: 9899  cwde    
 03358: 9952  cdq     
 03359: 5250  push    dx
@@ -6717,7 +6717,7 @@
 0341B: BF7E  mov     di, 0x7e
 0341E: 1E57  push    ds
 0341F: 57A0  push    di
-03420: A05B  mov     al, byte ptr [0x25b] ; data:SkillChance_Porownywanie
+03420: A05B  mov     al, byte ptr [0x25b] ; data:Item_Listek
 03423: 9899  cwde    
 03424: 9952  cdq     
 03425: 5250  push    dx
@@ -9960,10 +9960,10 @@
 04C84: 83DA  sbb     dx, 0
 04C87: A31A  mov     word ptr [0x21a], ax ; data:ForsaLo
 04C8A: 8916  mov     word ptr [0x21c], dx ; data:ForsaHi
-04C8E: A05B  mov     al, byte ptr [0x25b] ; data:SkillChance_Porownywanie
+04C8E: A05B  mov     al, byte ptr [0x25b] ; data:Item_Listek
 04C91: 982D  cwde    
 04C92: 2D0A  sub     ax, 0xa
-04C95: A25B  mov     byte ptr [0x25b], al ; data:SkillChance_Porownywanie
+04C95: A25B  mov     byte ptr [0x25b], al ; data:Item_Listek
 04C98: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
 04C9B: 40A3  inc     ax
 04C9C: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
@@ -10000,10 +10000,10 @@
 04CF0: 83D2  adc     dx, 0
 04CF3: A31A  mov     word ptr [0x21a], ax ; data:ForsaLo
 04CF6: 8916  mov     word ptr [0x21c], dx ; data:ForsaHi
-04CFA: A05B  mov     al, byte ptr [0x25b] ; data:SkillChance_Porownywanie
+04CFA: A05B  mov     al, byte ptr [0x25b] ; data:Item_Listek
 04CFD: 9805  cwde    
 04CFE: 050A  add     ax, 0xa
-04D01: A25B  mov     byte ptr [0x25b], al ; data:SkillChance_Porownywanie
+04D01: A25B  mov     byte ptr [0x25b], al ; data:Item_Listek
 04D04: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
 04D07: 48A3  dec     ax
 04D08: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
@@ -10040,10 +10040,10 @@
 04D5C: 83DA  sbb     dx, 0
 04D5F: A31A  mov     word ptr [0x21a], ax ; data:ForsaLo
 04D62: 8916  mov     word ptr [0x21c], dx ; data:ForsaHi
-04D66: A057  mov     al, byte ptr [0x257] ; ItemCount_Potrawki
+04D66: A057  mov     al, byte ptr [0x257] ; data:Item_Pigulka
 04D69: 982D  cwde    
 04D6A: 2D0A  sub     ax, 0xa
-04D6D: A257  mov     byte ptr [0x257], al ; ItemCount_Potrawki
+04D6D: A257  mov     byte ptr [0x257], al ; data:Item_Pigulka
 04D70: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
 04D73: 40A3  inc     ax
 04D74: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
@@ -10055,7 +10055,7 @@
 04D80: 579A  push    di
 04D81: 9AD7  lcall   0x1c71, 0x9d7
 04D86: 7548  jne     0x4dd0
-04D88: 803E  cmp     byte ptr [0x257], 0xa ; ItemCount_Potrawki
+04D88: 803E  cmp     byte ptr [0x257], 0xa ; data:Item_Pigulka
 04D8D: 7F41  jg      0x4dd0
 04D8F: BFA2  mov     di, 0x7a2
 04D92: 1E57  push    ds
@@ -10074,10 +10074,10 @@
 04DB5: 83D2  adc     dx, 0
 04DB8: A31A  mov     word ptr [0x21a], ax ; data:ForsaLo
 04DBB: 8916  mov     word ptr [0x21c], dx ; data:ForsaHi
-04DBF: A057  mov     al, byte ptr [0x257] ; ItemCount_Potrawki
+04DBF: A057  mov     al, byte ptr [0x257] ; data:Item_Pigulka
 04DC2: 9805  cwde    
 04DC3: 050A  add     ax, 0xa
-04DC6: A257  mov     byte ptr [0x257], al ; ItemCount_Potrawki
+04DC6: A257  mov     byte ptr [0x257], al ; data:Item_Pigulka
 04DC9: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
 04DCC: 48A3  dec     ax
 04DCD: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
@@ -16570,7 +16570,7 @@
 083CD: 1E57  push    ds
 083CE: 579A  push    di
 083CF: 9A2D  lcall   0x1c71, 0x72d
-083D4: A257  mov     byte ptr [0x257], al ; ItemCount_Potrawki
+083D4: A257  mov     byte ptr [0x257], al ; data:Item_Pigulka
 083D7: 9AFE  lcall   0x1c71, 0x5fe
 083DC: 9A91  lcall   0x1c71, 0x291
 083E1: BF7E  mov     di, 0x7e
@@ -16619,7 +16619,7 @@
 0846E: 1E57  push    ds
 0846F: 579A  push    di
 08470: 9A2D  lcall   0x1c71, 0x72d
-08475: A25B  mov     byte ptr [0x25b], al ; data:SkillChance_Porownywanie
+08475: A25B  mov     byte ptr [0x25b], al ; data:Item_Listek
 08478: 9AFE  lcall   0x1c71, 0x5fe
 0847D: 9A91  lcall   0x1c71, 0x291
 08482: BF7E  mov     di, 0x7e
@@ -43903,7 +43903,7 @@
 157B5: 2121  and     word ptr [bx + di], sp
 157B7: 2120  and     word ptr [bx + si], sp
 
-; ===== PROC DropGarnitur @ img 157B9 (para0129D:2DE9) Random(1000)<=0x19: Garnitur kolce 2.5% =====
+; ===== PROC DropGarnitur @ img 157B9 (para0129D:2DE9) Random(1000)<=25: GARNITUR-=10, PRZED++; text says 2.5% =====
 157B9: 5589  push    bp
 157BA: 89E5  mov     bp, sp
 157BC: 31C0  xor     ax, ax
@@ -43998,7 +43998,7 @@
 1586C: 4741  inc     di
 1586D: 4155  inc     cx
 
-; ===== PROC DropPigulka @ img 1586E (para0129D:2E9E) Random(1000)<=0x2a: Pigulka transportujaca 4.2% =====
+; ===== PROC DropPigulka @ img 1586E (para0129D:2E9E) Random(1000)<=42: PIGULKA-=10, PRZED++ =====
 1586E: 5589  push    bp
 1586F: 89E5  mov     bp, sp
 15871: 31C0  xor     ax, ax
@@ -44020,10 +44020,10 @@
 15898: 9A01  lcall   0x1c71, 0x701
 1589D: 9ADD  lcall   0x1c71, 0x5dd
 158A2: 9A91  lcall   0x1c71, 0x291
-158A7: A057  mov     al, byte ptr [0x257] ; ItemCount_Potrawki
+158A7: A057  mov     al, byte ptr [0x257] ; data:Item_Pigulka
 158AA: 982D  cwde    
 158AB: 2D0A  sub     ax, 0xa
-158AE: A257  mov     byte ptr [0x257], al ; ItemCount_Potrawki
+158AE: A257  mov     byte ptr [0x257], al ; data:Item_Pigulka
 158B1: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
 158B4: 40A3  inc     ax
 158B5: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
@@ -44085,11 +44085,11 @@
 15901: 2032  and     byte ptr [bp + si], dh
 15903: 2520  and     ax, 0x2120
 15906: 2121  and     word ptr [bx + di], sp
+; ===== PROC DropKaseta @ img 15908 (para0129D:2F38) Random(100)<2 && context!=10000: KASETA-=10 and stat effects =====
 15908: 5589  push    bp
 15909: 89E5  mov     bp, sp
 1590B: 31C0  xor     ax, ax
 
-; ===== PROC DropKaseta @ img 1590D (para0129D:2F3D) Random(100)<=2: Kaseta Liroya 2% =====
 1590D: 9ACD  lcall   0x1c71, 0x2cd
 15912: B864  mov     ax, 0x64
 15915: 509A  push    ax
@@ -44199,7 +44199,7 @@
 159DF: 2520  and     ax, 0x2120
 159E2: 2121  and     word ptr [bx + di], sp
 
-; ===== PROC DropListek @ img 159E4 (para0129D:3014) Listek Szczescia 6%: Random(100)<6 && ctx!=0x2710 -> [0x25B]-=10 LoadCapacity++ ManaMax+=0x28; text 'UNIQE 4%' =====
+; ===== PROC DropListek @ img 159E4 (para0129D:3014) Random(100)<6 && context!=10000: LISTEK-=10, PRZED++, ManaMax+=40; text says 4% =====
 159E4: 5589  push    bp
 159E5: 89E5  mov     bp, sp
 159E7: 31C0  xor     ax, ax
@@ -44234,10 +44234,10 @@
 15A32: 9A01  lcall   0x1c71, 0x701
 15A37: 9ADD  lcall   0x1c71, 0x5dd
 15A3C: 9A91  lcall   0x1c71, 0x291
-15A41: A05B  mov     al, byte ptr [0x25b] ; data:SkillChance_Porownywanie
+15A41: A05B  mov     al, byte ptr [0x25b] ; data:Item_Listek
 15A44: 982D  cwde    
 15A45: 2D0A  sub     ax, 0xa
-15A48: A25B  mov     byte ptr [0x25b], al ; data:SkillChance_Porownywanie
+15A48: A25B  mov     byte ptr [0x25b], al ; data:Item_Listek
 15A4B: A182  mov     ax, word ptr [0x182] ; data:LoadCapacity
 15A4E: 40A3  inc     ax
 15A4F: A382  mov     word ptr [0x182], ax ; data:LoadCapacity
@@ -44287,7 +44287,7 @@
 15A8F: 4349  inc     bx
 15A90: 4955  dec     cx
 
-; ===== PROC DropScroll @ img 15A91 (para0129D:30C1) Scroll Porownania 10%: Random(100)<0xA && ctx!=0x2710 -> Item_ScrollPorownanie[0x230]-=10 LoadCapacity++ =====
+; ===== PROC DropScroll @ img 15A91 (para0129D:30C1) Random(100)<10 && context!=10000: SCROLLPOR-=10, PRZED++ =====
 15A91: 5589  push    bp
 15A92: 89E5  mov     bp, sp
 15A94: 31C0  xor     ax, ax
@@ -51872,7 +51872,7 @@
 1958F: 579A  push    di
 19590: 9AD7  lcall   0x1c71, 0x9d7
 19595: 7523  jne     0x195ba
-19597: 803E  cmp     byte ptr [0x25b], 0xf6 ; data:SkillChance_Porownywanie
+19597: 803E  cmp     byte ptr [0x25b], 0xf6 ; data:Item_Listek
 1959C: 7F1C  jg      0x195ba
 1959E: BFA2  mov     di, 0x7a2
 195A1: 1E57  push    ds
@@ -51936,7 +51936,7 @@
 19631: 9AD7  lcall   0x1c71, 0x9d7
 19636: 7403  je      0x1963b
 19638: E911  jmp     0x1974c
-1963B: 803E  cmp     byte ptr [0x257], 0xf6 ; ItemCount_Potrawki
+1963B: 803E  cmp     byte ptr [0x257], 0xf6 ; data:Item_Pigulka
 19640: 7E03  jle     0x19645
 19642: E907  jmp     0x1974c
 19645: BFA2  mov     di, 0x7a2
@@ -51950,10 +51950,10 @@
 19652: 9A01  lcall   0x1c71, 0x701
 19657: 9ADD  lcall   0x1c71, 0x5dd
 1965C: 9A91  lcall   0x1c71, 0x291
-19661: A057  mov     al, byte ptr [0x257] ; ItemCount_Potrawki
+19661: A057  mov     al, byte ptr [0x257] ; data:Item_Pigulka
 19664: 9805  cwde    
 19665: 050A  add     ax, 0xa
-19668: A257  mov     byte ptr [0x257], al ; ItemCount_Potrawki
+19668: A257  mov     byte ptr [0x257], al ; data:Item_Pigulka
 1966B: 0EE8  push    cs
 1966C: E85B  call    0x12aca ; ->Room
 1966F: 833E  cmp     word ptr [0x18c], 0xa ; data:MadroscCur

@@ -304,9 +304,9 @@ The 0x129D paragraph contains a whole second game layer beyond Walka:
   "compare params" note was wrong — the prompt string is the fight-menu header.
 - **GardenOgladaj @ 0x1362A** and **GardenZwierzaki @ 0x155F2** = the
   look-at-plant / look-at-animal flavortext procs.
-- **Kill drops**: DropGarnitur 0x157B9 (`Random(1000)<=0x19` → Garnitur kolce),
-  DropPigulka 0x1586E (`<=0x2A`), DropKaseta 0x1590D (`Random(100)<=2` →
-  Kaseta Liroya +EnergyMax/-8/+LoadCapacity/+Zrecznosc). Item flags use
+- **Kill drops**: DropGarnitur 0x157B9 (`Random(1000)<=25` → Garnitur kolce),
+  DropPigulka 0x1586E (`<=42`), DropKaseta 0x15908 (`Random(100)<2` →
+  Kaseta Liroya +EnergyMax/-8 carrying ceiling/+PRZED/+Zrecznosc). Item flags use
   **-10 (0xFFF6) "owned/none" sentinel**; acquisition is `field -= 10`.
 - **Boss encounter** inside the 0x12414..0x129C6 dispatcher: stats 188/26/10,
   wounds 20/10, `lcall Walka`; the "TUR!!!! Z CIALA WROGA" quest reward
@@ -329,8 +329,9 @@ The 0x129D paragraph contains a whole second game layer beyond Walka:
   if `[0x19E]<3` && SkillPorownywanie `[0x25D]<0x64` → "UCZYSZ SIE ZDOLNOSCI
   POROWNYWANIE": `[0x25D]+=1`, KUNSZT+=5; BAKTERIA → "MAGIC RESISTANCE",
   ManaCur += 5.
-- **Full drop family (img 0x157B9..0x15AE3)**, all guarded by `context != 0x2710`:
-  DropGarnitur 0x157B9 (2.5%), DropPigulka 0x1586E (4.2%), DropKaseta 0x1590D
+- **Full drop family (img 0x157B9..0x15AE3)**: only Kaseta/Listek/Scroll are
+  guarded by `context != 0x2710`; Garnitur/Pigulka are not. DropGarnitur
+  0x157B9 (26/1000; text says 2.5%), DropPigulka 0x1586E (43/1000), DropKaseta 0x15908
   (2%, +EnergyMax −8 load +LoadCap +Zrecznosc), **DropListek 0x159E4** (6%;
   `[0x25B]-=10`, LoadCapacity++, ManaMax+=0x28, text "UNIQE 4%"), **DropScroll
   0x15A91** (10%; Item_ScrollPorownanie `[0x230]-=10`, LoadCapacity++),
@@ -341,8 +342,8 @@ The 0x129D paragraph contains a whole second game layer beyond Walka:
   type2 needs Item_0188, type3 needs Fajka+word-Money), boss fight
   (188HP/26DEX/10DMG, wounds 20/10 → Przepustka on win), room-change cmds
   (→0x16 trees / 0x65 / GoToRoom1000 / exit).
-- **0x25B = SkillChance_Porownywanie** bank (Listek-drop decrements it by 10);
-  0x25D = actual SkillPorownywanie counter. Item_ScrollPorownanie at 0x230.
+- **0x25B = LISTEK**, the byte-sized lucky-leaf item (drop decrements it by 10);
+  0x25D = POR, the actual SkillPorownywanie counter. Item_ScrollPorownanie is at 0x230.
 - Symbols renamed: BossWin 0x159E4/0x15A91 → DropListek/DropScroll; FIELDS
   0x686 "PowerLevel", 0x25D "SkillPorownywanie", 0x230 already present.
   annotate.py PROCS duplicate key (0x1586E BossWin) removed. Listing regenerated;
@@ -460,8 +461,8 @@ The 0x129D paragraph contains a whole second game layer beyond Walka:
   (SWIAT POKOJ0/5/11/30/60/75/83/100/…) added; stores/price oddities, race
   init, save schema (PLIKI.TPU flat ReadLn text dump), parser vocab recorded.
 - Open-items updated: `[0x17E]` post-kill event RESOLVED = StaryMiecz drop
-  ladder gate; skill gates confirmed saved fields (f56/57/59); 0x257 pill-vs-
-  potrawki and FORSA-vs-0x194 money still open.
+  ladder gate; skill gates confirmed saved fields (f56/57/59); 0x257 is
+  PIGULKA (not POTRAWKI), while FORSA-vs-0x194 money was still open here.
 
 ## 2026-09-24 (17): Arena grid command box (img 0x19C90..0x1AF1E) + money split
 
@@ -524,6 +525,22 @@ Full machine-verified register added to INTEGRATED-FIELD-MAP.md
   `SCENA` prints by equality with `MIECHO`, and `FIGHTSCENA` tests/clears the
   same fields for the four `ZABIJ` commands.
 - The C port preserves the 14 actor strings and random placement categories.
-  It deliberately has no `MODE` state: commands operate directly, while the
+  It has no direct `MODE` state: commands operate directly, while the
   original helper saves `MIECHO` to `MIECHO2` and enters context 1000.
+
+## 2026-09-25 (20): PRZEDM unique-drop family reconstructed
+
+- `PRZEDM.PAS` now contains source-equivalent bodies for `GARNITURZYSK`,
+  `PIGULKAZYSK`, `KASETAZYSK`, `LISTEKZYSK`, and `SCROLLPORZYSK` from TPU
+  source lines 490..540 and EXE img 0x157B9..0x15AE3.
+- Exact roll comparisons are preserved, including the displayed-rate quirks:
+  Garnitur is `<=25` of `Random(1000)`, Pigulka is `<=42`, Kaseta is `<2` of
+  `Random(100)`, Listek is `<6` while its text says 4%, and Scroll is `<10`.
+- TPU symbols resolve byte 0x257 as `PIGULKA` and byte 0x25B as `LISTEK`,
+  replacing stale semantic guesses in the annotation map.
+- The C port preserves the rolls, text, grants, Kaseta `MAXE +5`/`ZRE +1`, and
+  Listek `MAXMANA +40`. It omits Kaseta's original `PRO -8` carrying-ceiling
+  penalty. Its generic helper also does not model the `MIECHO <> 10000` guard on
+  Kaseta/Listek/Scroll; current port call sites invoke it through combat loot.
+  The Kaseta penalty is discrepancy-register entry I.
 

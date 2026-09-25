@@ -201,6 +201,63 @@ uses  dos, monstra, crt, System;
   { Proc $0108 Entry 264:0000 }
 implementation
 
+procedure GARNITURZYSK;
+begin
+  FUKS := Random(1000);
+  if FUKS <= 25 then begin
+    WriteLn('ZYSKUJESZ GARNITUR !!!! Z CIALA WROGA !!!!');
+    WriteLn('PRZEDMIOT UNIQE !!! 2.5% !!! ');
+    GARNITUR := GARNITUR - 10;
+    PRZED := PRZED + 1;
+  end;
+end;
+
+procedure PIGULKAZYSK;
+begin
+  FUKS := Random(1000);
+  if FUKS <= 42 then begin
+    WriteLn('HMMM , A TO CO ? , TOZ TO !!! PIGULKA TRANSPORTUJACA !!! PROSTO Z CIALA WROGA');
+    PIGULKA := PIGULKA - 10;
+    PRZED := PRZED + 1;
+  end;
+end;
+
+procedure KASETAZYSK;
+begin
+  FUKS := Random(100);
+  if (FUKS < 2) and (MIECHO <> 10000) then begin
+    WriteLn('WYCIAGASZ KASETE LIROYA Z CIALA BIEDNEGO CZLOWIEKA');
+    WriteLn('!!! PRZEDMIOT UNIQE 2% !!!');
+    kaseta := kaseta - 10;
+    MAXE := MAXE + 5;
+    PRO := PRO - 8;
+    PRZED := PRZED + 1;
+    ZRE := ZRE + 1;
+  end;
+end;
+
+procedure LISTEKZYSK;
+begin
+  FUKS := Random(100);
+  if (FUKS < 6) and (MIECHO <> 10000) then begin
+    WriteLn('WYCIAGASZ LISTEK SZCZESCIA Z CIALA WROGIEJ TOBIE POSTACI');
+    WriteLn('!!! PRZEDMIOT UNIQE 4% !!!');
+    LISTEK := LISTEK - 10;
+    PRZED := PRZED + 1;
+    MAXMANA := MAXMANA + 40;
+  end;
+end;
+
+procedure SCROLLPORZYSK;
+begin
+  FUKS := Random(100);
+  if (FUKS < 10) and (MIECHO <> 10000) then begin
+    WriteLn('WYCIAGASZ SCROLL POROWNANIA Z WROGIEJ TOBIE POSTACI');
+    SCROLLPOR := SCROLLPOR - 10;
+    PRZED := PRZED + 1;
+  end;
+end;
+
 procedure MODE;
 begin
   MIECHO2 := MIECHO;

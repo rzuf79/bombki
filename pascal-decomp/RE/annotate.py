@@ -52,7 +52,7 @@ FIELDS = {  # DGROUP offset -> name
  0x234:"PlantStokrotka",0x236:"PlantKoniczynka",0x238:"PlantMlecz",0x23A:"PlantDmuchawiec",
  0x23C:"PlantRoza",0x23E:"PlantJezyna",0x240:"PlantOset",0x242:"PlantAgrest",
  0x244:"PlantMalina",0x246:"PlantTrava",0x248:"QuestType",
- 0x24A:"QuestCount",0x25B:"SkillChance_Porownywanie",0x25C:"CharacterLevel",
+ 0x24A:"QuestCount",0x25C:"CharacterLevel",
  0x25D:"SkillPorownywanie",0x25E:"woundA",0x25F:"woundB",0x260:"bleed",0x262:"QuestPhase",
  0x664:"EnergyMax",0x666:"GardenAnimal_0666",0x668:"GardenAnimal_0668",0x66A:"GardenAnimal_066A",
  0x66C:"GardenAnimal_066C",0x66E:"GardenAnimal_066E",0x670:"GardenAnimal_0670",0x672:"GardenAnimal_0672",
@@ -62,13 +62,13 @@ FIELDS = {  # DGROUP offset -> name
 BYTEF = {0x24C:"RoomKillFlag_Dziecko",0x24D:"RoomKillFlag_Wariat",0x24E:"RoomKillFlag_Sluchacz",
          0x24F:"RoomKillFlag_Fan",0x250:"RoomKillFlag_Czlowiek",0x251:"RoomKillFlag_Policjant",
          0x252:"RoomKillFlag_Ochroniarz",0x253:"RoomKillFlag_Dziadek",0x254:"RoomKillFlag_Goryl",
-         0x256:"RoomKillFlag_Reporter",0x255:"Flag_0255",0x257:"ItemCount_Potrawki",
+         0x256:"RoomKillFlag_Reporter",0x255:"Flag_0255",0x257:"Item_Pigulka",
+         0x25B:"Item_Listek",
          0x258:"TalentChance",0x259:"TalentPool",0x261:"DuncanFarmer"}
 
 PROCS = {  # img->(name, extra)
   0x1691B:("EnemyTurnHelper",""),0x16E76:("Walka","combat engine"),
-  0x159E4:("DropListek","Listek Szczescia 6%: Random(100)<6 && ctx!=0x2710 -> "
-   "[0x25B]-=10 LoadCapacity++ ManaMax+=0x28; text 'UNIQE 4%'"),0x15A91:("DropScroll","Scroll Porownania 10%: Random(100)<0xA && ctx!=0x2710 -> Item_ScrollPorownanie[0x230]-=10 LoadCapacity++"),
+  0x159E4:("DropListek","Random(100)<6 && context!=10000: LISTEK-=10, PRZED++, ManaMax+=40; text says 4%"),0x15A91:("DropScroll","Random(100)<10 && context!=10000: SCROLLPOR-=10, PRZED++"),
   0x15AE4:("PRZEDM_MODE","MIECHO2=MIECHO; MIECHO=1000"),
   0x15BCF:("PRZEDM_SCENA","stage-musician descriptions by MIECHO"),
   0x15E37:("PRZEDM_TLUM","concert-crowd descriptions by MIECHO"),
@@ -89,9 +89,9 @@ PROCS = {  # img->(name, extra)
  0x1491B:("CompareDispatch","POROWNAC oracle: PowerLevel[0x686]=lvl+Sila+Zrec tier+Par+Kop; "
   "taunt per target tier; 3% learn POROWNYWANIE; BAKTERIA ManaCur+=5"),
   0x155F0:("GardenZwierzaki","garden animals flavortext by context"),
- 0x157B9:("DropGarnitur","Random(1000)<=0x19: Garnitur kolce 2.5%"),
- 0x1586E:("DropPigulka","Random(1000)<=0x2a: Pigulka transportujaca 4.2%"),
- 0x1590D:("DropKaseta","Random(100)<=2: Kaseta Liroya 2%"),
+  0x157B9:("DropGarnitur","Random(1000)<=25: GARNITUR-=10, PRZED++; text says 2.5%"),
+  0x1586E:("DropPigulka","Random(1000)<=42: PIGULKA-=10, PRZED++"),
+  0x15908:("DropKaseta","Random(100)<2 && context!=10000: KASETA-=10 and stat effects"),
  0x1362A:("GardenOgladaj","Duncan garden: plant flavortext by context"),
 }
 
