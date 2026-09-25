@@ -29,6 +29,7 @@ different inputs/values; `minor` = cosmetic/faithfulness only.
 | J | High-tier ordinary-reward energy gate | PORT-DEVIATION | moderate |
 | K | Coin-reward overflow behavior | PORT-DEVIATION | minor |
 | L | WALKAPIES rewards after fleeing | PORT-DEVIATION | moderate |
+| M | Stage-fight result handling and Liroy bonus | PORT-DEVIATION | major |
 
 ---
 
@@ -205,6 +206,20 @@ does not grant the original dog coins or attempt the heart drop.
 
 ---
 
+## M. Stage-fight result handling and Liroy bonus (major)
+
+Original `FIGHTSCENA` clears PERKUSISTA/GITARZYSTA/ORGANISTA and calls
+`KASETAZYSK` immediately after `VEASY`, without checking its result. LIROY alone
+requires `MIECHO<>10000`, `ENERGIA>0`, and `PASZOL=0`; success prints
+`GRATULACJE !!! ZABILES LIROYA DOSTAJESZ ZA DARMO 30 KASY`, adds 30 coins,
+rolls Kaseta, optionally subtracts 150 quest progress, and clears LIROY.
+
+The port handles actor removal and cassette loot only through confirmed generic
+victory. It preserves Liroy's profile, cassette eligibility, and quest-progress
+subtraction, but omits the exact congratulation line and extra 30 coins.
+
+---
+
 ## Confirmed 1:1 (checked, no deviation)
 
 - Arena N/S/E/W edge table (cells 33-57, entrance 17/32) + "EXIT" texts.
@@ -240,3 +255,4 @@ does not grant the original dog coins or attempt the heart drop.
 | Kaseta drop | PRZEDM.KASETAZYSK / img 0x15908..0x1598F | game.c 1527-1533, 1580-1586, 1607-1612 |
 | difficulty rewards | PRZEDM.SLABO..BTRUDNO / img 0x13839..0x140FF | enemies.c 9-25; game.c 1760-1792, 1909-1940 |
 | dog rewards | PRZEDM.WALKAPIES / img 0x12A16..0x12AC9 | enemies.c 31-32; game.c 1794-1802, 1909-1940 |
+| stage fights | PRZEDM.FIGHTSCENA / img 0x1AF97..0x1B094 | game.c 1654-1660, 1941-1957 |
