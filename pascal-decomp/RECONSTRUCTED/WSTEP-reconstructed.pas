@@ -1,7 +1,7 @@
 { WSTEP-reconstructed.pas
   BODY-A = EXE para 0E42:9A57 (abs 17E77) -- combat-damage routine.
 
-  CORRECTED 2026-09-24 by INTEGRATION with help-you-need (see
+  CORRECTED 2026-09-24 by the merged load/save record (see
   INTEGRATED-FIELD-MAP.md):
   - The "proven MONSTRA band 0x1AC..0x1D4 = MAXE..SILNY" claim is RETRACTED.
     Per the merged save/load map those slots are player stats/skills:
