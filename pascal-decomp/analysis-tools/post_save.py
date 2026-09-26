@@ -8,5 +8,5 @@ md=Cs(CS_ARCH_X86,CS_MODE_16)
 out=[]
 for ins in md.disasm(img[0x2DC0:0x3800],0x2DC0):
     out.append("%04X  %-16s %s %s" % (ins.address," ".join("%02x"%b for b in ins.bytes[:8]),ins.mnemonic,ins.op_str))
-open(r"E:\Develop\Reverse\bombki\RE\post_save.txt","w",encoding="utf-8").write("\n".join(out))
+open(r"E:\Develop\Reverse\bombki\analysis-results\post_save.txt","w",encoding="utf-8").write("\n".join(out))
 print("done",len(out))

@@ -1,7 +1,7 @@
 # BOMBKI integrated player-state + save-field map
 
 Two independent reconstructions, now reconciled field-for-field:
-- **this repo** (`RECONSTRUCTED\disasm\procs\SAVE-FIELD-MAP.txt`) - SAVE side:
+- **this repo** (`analysis-results\disasm\procs\SAVE-FIELD-MAP.txt`) - SAVE side:
   the EXE's save() proc (img 0x2BA1) writes 80 fields to PLIKI.TPU as text.
 - **load-side reconstruction** (`WCZYTANIE-LoadEngine-reconstructed.pas`):
   PLIKI.TPU read back by the load routine (word-strided record 0x52..0x262),

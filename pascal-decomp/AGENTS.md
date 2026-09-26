@@ -11,6 +11,10 @@ Read, in order: `CONTRIBUTING.md`, then the areas the task touches
 `C-PORT-DISCREPANCIES.md`). Re-read any of these that change mid-task before
 acting on the new state.
 
+Research layout: tooling scripts live under `analysis-tools\`; machine
+evidence (disasm listings, TPU/EXE reports, raw dumps) under
+`analysis-results\`.
+
 ## Branch workflow
 
 - Always work on a branch; never commit directly to `main`.

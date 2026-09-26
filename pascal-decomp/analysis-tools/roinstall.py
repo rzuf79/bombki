@@ -1,6 +1,6 @@
 import io,re,sys
 sys.stdout.reconfigure(encoding="utf-8",errors="replace")
-lines=io.open(r"E:\Develop\Reverse\bombki\RECONSTRUCTED\disasm\annotated-BOMBKI.asm",encoding="utf-8").read().splitlines()
+lines=io.open(r"E:\Develop\Reverse\bombki\analysis-results\disasm\annotated-BOMBKI.asm",encoding="utf-8").read().splitlines()
 pat=re.compile(r'mov\s+word ptr \[(0x[0-9A-Fa-f]{3,4})\], ax\s*;?\s*(data:(\w+))?|mov\s+byte ptr \[(0x[0-9A-Fa-f]{3,4})\], al\s*;?\s*(data:(\w+))?')
 for l in lines:
     l=l.strip()

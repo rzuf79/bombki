@@ -51,5 +51,5 @@ for r in rows:
     except Exception: iv=None;raw="?"
     print("%3d %2s   %-5s  %-25s %-10s %s"%(f,szs,sls,es,v,raw))
     lines.append("%d\t%s\t%s\t%s\t%s\t%s"%(f,szs,sls,es,v,raw))
-open(r"E:\Develop\Reverse\bombki\RECONSTRUCTED\disasm\procs\SAVE-FIELD-MAP.txt","w",encoding="cp437",errors="replace").write("\n".join(lines)+"\n")
+open(r"E:\Develop\Reverse\bombki\analysis-results\disasm\procs\SAVE-FIELD-MAP.txt","w",encoding="cp437",errors="replace").write("\n".join(lines)+"\n")
 print("ok")

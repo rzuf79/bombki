@@ -6,7 +6,7 @@ d=open(r"E:\Develop\Reverse\bombki\BOMBKI.EXE","rb").read()
 img=d[hdr*16:]
 md=Cs(CS_ARCH_X86,CS_MODE_16)
 out=[]
-for ins in md.disasm(img[0x7D00:0x8820],0x7D00):
+for ins in md.disasm(img[0x2880:0x2DC0],0x2880):
     out.append("%04X  %-16s %s %s" % (ins.address," ".join("%02x"%b for b in ins.bytes[:8]),ins.mnemonic,ins.op_str))
-open(r"E:\Develop\Reverse\bombki\RE\wczytaj_cand.txt","w",encoding="utf-8").write("\n".join(out))
+open(r"E:\Develop\Reverse\bombki\analysis-results\wczytaj_region.txt","w",encoding="utf-8").write("\n".join(out))
 print("done",len(out))

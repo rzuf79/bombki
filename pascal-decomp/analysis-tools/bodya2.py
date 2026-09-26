@@ -12,6 +12,6 @@ end=start+0x3000
 out=[]
 for ins in md.disasm(img[start:end],start):
     out.append("%04X  %-16s %s %s" % (ins.address," ".join("%02x"%b for b in ins.bytes[:8]),ins.mnemonic,ins.op_str))
-open(r"E:\Develop\Reverse\bombki\RE\body_a_raw.txt","w",encoding="utf-8").write("\n".join(out))
+open(r"E:\Develop\Reverse\bombki\analysis-results\body_a_raw.txt","w",encoding="utf-8").write("\n".join(out))
 print("n:",len(out))
 # show where RET/long computation sits; list all lcall/r calls and 0x1xx dispatches

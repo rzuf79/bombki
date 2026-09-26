@@ -10,5 +10,5 @@ for s,e,name in windows:
     out=[]
     for ins in md.disasm(img[s:e],s):
         out.append("%04X  %-16s %s %s" % (ins.address," ".join("%02x"%b for b in ins.bytes[:8]),ins.mnemonic,ins.op_str))
-    open(r"E:\Develop\Reverse\bombki\RE\%s.txt"%name,"w",encoding="utf-8").write("\n".join(out))
+    open(r"E:\Develop\Reverse\bombki\analysis-results\%s.txt"%name,"w",encoding="utf-8").write("\n".join(out))
     print(name,len(out))

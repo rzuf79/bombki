@@ -5,10 +5,11 @@ d=open(r"E:\Develop\Reverse\bombki\BOMBKI.EXE","rb").read()
 (mag,pp,cnt,rels,hdr,m1,m2,ss,sp,ip,tab,ovl)=struct.unpack_from("<12H",d,0)
 img=d[hdr*16:]
 md=Cs(CS_ARCH_X86,CS_MODE_16)
-windows=[(0xB670,0xB720,"w_b670"),(0xB840,0xB8F0,"w_b840")]
-for s,e,name in windows:
+for start in (0x17200,0x173BC):
+    end=start+0x1BC if start==0x17200 else start+0x40
     out=[]
-    for ins in md.disasm(img[s:e],s):
+    for ins in md.disasm(img[start:end],start):
         out.append("%04X  %-16s %s %s" % (ins.address," ".join("%02x"%b for b in ins.bytes[:8]),ins.mnemonic,ins.op_str))
-    open(r"E:\Develop\Reverse\bombki\RE\%s.txt"%name,"w",encoding="utf-8").write("\n".join(out))
-    print(name,len(out))
+    fn=r"E:\Develop\Reverse\bombki\analysis-results\entry_%x.txt" % start
+    open(fn,"w",encoding="utf-8").write("\n".join(out))
+    print(fn,"ins:",len(out))

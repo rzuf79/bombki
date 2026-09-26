@@ -1,7 +1,7 @@
 import os, re, struct
-self="E:\\Develop\\Reverse\\bombki\\RE\\t_snap.py"
+self="E:\\Develop\\Reverse\\bombki\\analysis-tools\\t_snap.py"
 EXE=r"E:\Develop\Reverse\bombki\BOMBKI.EXE"
-OUT=r"E:\Develop\Reverse\bombki\RECONSTRUCTED\disasm\procs\BODIES.PAS"
+OUT=r"E:\Develop\Reverse\bombki\analysis-results\disasm\procs\BODIES.PAS"
 d=open(EXE,"rb").read()
 def u16(b,o): return struct.unpack_from("<H",b,o)[0]
 hdr=u16(d,0x18); rels=u16(d,6); tab=u16(d,0x18+4)  # relo tab at ofs 0x18? actually e_lfanew-ish; use MZ fields

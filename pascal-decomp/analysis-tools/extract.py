@@ -1,5 +1,5 @@
 import io
-src=io.open(r"E:\Develop\Reverse\bombki\RECONSTRUCTED\disasm\annotated-BOMBKI.asm",encoding="utf-8",errors="replace").read().splitlines()
+src=io.open(r"E:\Develop\Reverse\bombki\analysis-results\disasm\annotated-BOMBKI.asm",encoding="utf-8",errors="replace").read().splitlines()
 out=io.open(r"C:\TEMP\opencode\dispatch12414b.txt","w",encoding="utf-8")
 for l in src:
     l=l.strip()
