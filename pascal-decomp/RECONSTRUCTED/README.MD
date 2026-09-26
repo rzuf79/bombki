@@ -799,3 +799,37 @@ Full machine-verified register added to INTEGRATED-FIELD-MAP.md
   `random_below(state, strength)`) — same mutable-stat family as entries
   S/U.
 
+## 2026-09-26 (31): PRZEDM MINIARENA reconstructed (final interface body)
+
+- Added the `MINIARENA` body at the marker (source 1124-1433, TPU 0x00E8,
+  bytes 0x0299..0x1689), completing every interface procedure: the arena's
+  self-contained command loop is now reconstructed. Gate `MIECHO` cells
+  33-57 → `ARENA := 1` + the `JESTES NA ARENIE I CZUJESZ POTRZEBE
+  ZABIJANIA` line + a one-shot `KTO` crowd list; then the
+  `repeat write(ENERGIA, '%.', KUNSZT, '>') ReadLn(wpisz) KOMENDY MODE
+  [fights] EXIT WYJSCIE [moves] STOP := 0 until (ARENA = 0) or
+  (MIECHO = 1000)` loop — chains all decoded from the raw cmp/je pairs.
+- 30 `ZABIJ X` fighters (BAKTERIA..TRENER), each gated on the creature's
+  room anchor and dispatched to the reconstructed difficulty procs
+  (SLABO/MNIEJSLABO/SREDNIO/TRUDNO); the four `PASZOL = 0`-gated drops
+  (SLIMAK/KORNIK/MUCHA/ZUK) keep the creature alive when the player fled,
+  and the TRUDNO trio (GLADIATOR/WOJOWNIK/TRENER) also trigger the
+  PIGULKAZYSK / GARNITURZYSK give-aways.
+- `EXIT` prints the per-cell exit menu — all ten variants
+  (DOSTEPNE WYJSCIA / DOSTEPNE WYJSCIE / MOZESZ WYJSC NA : /
+  MOZESZ ISC NA :); `WYJSCIE` jumps straight out of the loop; the four
+  direction blocks (POLODNIE/POLNOC/WSCHOD/ZACHOD) remap every arena cell
+  33-57 — including the 33→32 entrance edge, the `ARENA := 1` blocked
+  edges, and the POLNOC/WSCHOD/ZACHOD `STOP`-flag chains decoded from raw.
+- Cross-checked 1:1 against the port: all 25 cells × 4 directions match
+  the world.c arena grid (entrance 32, asserted by test_world.c 243-268),
+  all ten exit-list variants match world.c 718-939, the tier dispatch
+  matches the enemies.c profiles, and the GLADIATOR/WOJOWNIK/TRENER
+  give-aways match game.c 1555-1685. Registered deviations (entry W, all
+  minor): the `%.` status prompt and the one-shot arena `KTO` list are not
+  printed by the port's CLI, the `WYJSCIE` leave word is not ported, and
+  arena drops clear only on kill (the original also clears most creatures
+  when the player fled).
+- This was the last pending interface body — no prose bodies remain at
+  the marker.
+

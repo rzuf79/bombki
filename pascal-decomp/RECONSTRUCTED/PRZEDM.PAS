@@ -1708,6 +1708,675 @@ begin
   MINIKUNSZT := 0;
 end;
 
+procedure MINIARENA;
+begin
+  if (MIECHO = 33) or (MIECHO = 34) or (MIECHO = 35) or (MIECHO = 36) or (MIECHO = 37) or
+     (MIECHO = 38) or (MIECHO = 39) or (MIECHO = 40) or (MIECHO = 41) or (MIECHO = 42) or
+     (MIECHO = 43) or (MIECHO = 44) or (MIECHO = 45) or (MIECHO = 46) or (MIECHO = 47) or
+     (MIECHO = 48) or (MIECHO = 49) or (MIECHO = 50) or (MIECHO = 51) or (MIECHO = 52) or
+     (MIECHO = 53) or (MIECHO = 54) or (MIECHO = 55) or (MIECHO = 56) or (MIECHO = 57) then
+  begin
+    ARENA := 1;
+    WriteLn('JESTES NA ARENIE I CZUJESZ POTRZEBE ZABIJANIA');
+    KTO;
+    repeat
+      write(ENERGIA, '%.', KUNSZT, '>');
+      ReadLn(wpisz);
+      KOMENDY;
+      if wpisz = 'MODE' then
+        MODE;
+      if (wpisz = 'ZABIJ BAKTERIA') and (MIECHO = BAKTERIA) then
+      begin
+        SLABO;
+        BAKTERIA := 0;
+        WriteLn('BUUUUU! BIEDNA BAKTERIA ');
+      end;
+      if (wpisz = 'ZABIJ SLIMAK') and (MIECHO = SLIMAK) then
+      begin
+        SLABO;
+        if PASZOL = 0 then
+          SLIMAK := 0;
+      end;
+      if (wpisz = 'ZABIJ KORNIK') and (MIECHO = KORNIK) then
+      begin
+        SLABO;
+        if PASZOL = 0 then
+          KORNIK := 0;
+      end;
+      if (wpisz = 'ZABIJ MUCHA') and (MIECHO = MUCHA) then
+      begin
+        SLABO;
+        if PASZOL = 0 then
+          MUCHA := 0;
+      end;
+      if (wpisz = 'ZABIJ ZUK') and (MIECHO = ZUK) then
+      begin
+        SLABO;
+        if PASZOL = 0 then
+          ZUK := 0;
+      end;
+      if (wpisz = 'ZABIJ KARALUCH') and (MIECHO = KARALUCH) then
+      begin
+        SLABO;
+        KARALUCH := 0;
+      end;
+      if (wpisz = 'ZABIJ MROWKA') and (MIECHO = MROWKA) then
+      begin
+        SLABO;
+        MROWKA := 0;
+      end;
+      if (wpisz = 'ZABIJ PAJAK') and (MIECHO = PAJAK) then
+      begin
+        SLABO;
+        PAJAK := 0;
+      end;
+      if (wpisz = 'ZABIJ DZIK') and (MIECHO = DZIK) then
+      begin
+        MNIEJSLABO;
+        DZIK := 0;
+      end;
+      if (wpisz = 'ZABIJ WILCZUR') and (MIECHO = WILCZUR) then
+      begin
+        WriteLn('WILCZUR PRZYJA PROPOZYCJE Z GODNOSCIA');
+        MNIEJSLABO;
+        WILCZUR := 0;
+      end;
+      if (wpisz = 'ZABIJ SZCZUR') and (MIECHO = SZCZUR) then
+      begin
+        MNIEJSLABO;
+        SZCZUR := 0;
+      end;
+      if (wpisz = 'ZABIJ LIS') and (MIECHO = LIS) then
+      begin
+        MNIEJSLABO;
+        LIS := 0;
+      end;
+      if (wpisz = 'ZABIJ KUROPATWA') and (MIECHO = KUROPATWA) then
+      begin
+        MNIEJSLABO;
+        KUROPATWA := 0;
+      end;
+      if (wpisz = 'ZABIJ ZAJAC') and (MIECHO = ZAJAC) then
+      begin
+        MNIEJSLABO;
+        ZAJAC := 0;
+      end;
+      if (wpisz = 'ZABIJ ORZEL') and (MIECHO = ORZEL) then
+      begin
+        MNIEJSLABO;
+        ORZEL := 0;
+      end;
+      if (wpisz = 'ZABIJ SARNA') and (MIECHO = SARNA) then
+      begin
+        MNIEJSLABO;
+        SARNA := 0;
+      end;
+      if (wpisz = 'ZABIJ SLON') and (MIECHO = SLON) then
+      begin
+        SREDNIO;
+        SLON := 0;
+      end;
+      if (wpisz = 'ZABIJ LEW') and (MIECHO = LEW) then
+      begin
+        SREDNIO;
+        LEW := 0;
+      end;
+      if (wpisz = 'ZABIJ ZYRAFA') and (MIECHO = ZYRAFA) then
+      begin
+        SREDNIO;
+        ZYRAFA := 0;
+      end;
+      if (wpisz = 'ZABIJ WILK') and (MIECHO = WILK) then
+      begin
+        SREDNIO;
+        WILK := 0;
+      end;
+      if (wpisz = 'ZABIJ WIELBLAD') and (MIECHO = WIELBLAD) then
+      begin
+        SREDNIO;
+        WIELBLAD := 0;
+      end;
+      if (wpisz = 'ZABIJ STRUS') and (MIECHO = STRUS) then
+      begin
+        SREDNIO;
+        STRUS := 0;
+      end;
+      if (wpisz = 'ZABIJ BOA') and (MIECHO = BOA) then
+      begin
+        SREDNIO;
+        BOA := 0;
+      end;
+      if (wpisz = 'ZABIJ BIZON') and (MIECHO = BIZON) then
+      begin
+        SREDNIO;
+        BIZON := 0;
+      end;
+      if (wpisz = 'ZABIJ PANTERA') and (MIECHO = PANTERA) then
+      begin
+        SREDNIO;
+        PANTERA := 0;
+      end;
+      if (wpisz = 'ZABIJ GLADIATOR') and (MIECHO = GLADIATOR) then
+      begin
+        TRUDNO;
+        GLADIATOR := 0;
+        PIGULKAZYSK;
+      end;
+      if (wpisz = 'ZABIJ WOJOWNIK') and (MIECHO = WOJOWNIK) then
+      begin
+        TRUDNO;
+        WOJOWNIK := 0;
+        PIGULKAZYSK;
+      end;
+      if (wpisz = 'ZABIJ TRENER') and (MIECHO = TRENER) then
+      begin
+        TRUDNO;
+        TRENER := 0;
+        GARNITURZYSK;
+      end;
+      if wpisz = 'EXIT' then
+        if MIECHO = 33 then begin
+          WriteLn('DOSTEPNE WYJSCIA:');
+          WriteLn('POLODNIE-WEJSCIE NA ARENE');
+          WriteLn('POLNOC-ARENA');
+          WriteLn('WSCHOD-ARENA');
+          WriteLn('ZACHOD-ARENA');
+        end
+        else if (MIECHO = 34) or (MIECHO = 37) or (MIECHO = 38) or (MIECHO = 39) or
+                (MIECHO = 42) or (MIECHO = 43) or (MIECHO = 44) or (MIECHO = 48) or
+                (MIECHO = 49) then begin
+          WriteLn('DOSTEPNE WYJSCIA:');
+          WriteLn('POLODNIE-ARENA');
+          WriteLn('POLNOC-ARENA');
+          WriteLn('WSCHOD-ARENA');
+          WriteLn('ZACHOD-ARENA');
+        end
+        else if (MIECHO = 35) or (MIECHO = 36) then begin
+          WriteLn('DOSTEPNE WYJSCIA:');
+          WriteLn('POLNOC-ARENA');
+          WriteLn('WSCHOD-ARENA');
+          WriteLn('ZACHOD-ARENA');
+        end
+        else if MIECHO = 40 then begin
+          WriteLn('DOSTEPNE WYJSCIA:');
+          WriteLn('POLNOC-ARENA');
+          WriteLn('ZACHOD-ARENA');
+        end
+        else if MIECHO = 41 then begin
+          WriteLn('DOSTEPNE WYJSCIA:');
+          WriteLn('POLNOC-ARENA');
+          WriteLn('WSCHOD-ARENA');
+        end
+        else if (MIECHO = 45) or (MIECHO = 50) or (MIECHO = 54) then begin
+          WriteLn('MOZESZ WYJSC NA :');
+          WriteLn('POLNOC-ARENA');
+          WriteLn('POLODNIE-ARENA');
+          WriteLn('ZACHOD-ARENA');
+        end
+        else if (MIECHO = 46) or (MIECHO = 51) or (MIECHO = 55) then begin
+          WriteLn('MOZESZ WYJSC NA :');
+          WriteLn('POLNOC-ARENA');
+          WriteLn('POLODNIE-ARENA');
+          WriteLn('WSCHOD-ARENA');
+        end
+        else if (MIECHO = 47) or (MIECHO = 52) or (MIECHO = 53) then begin
+          WriteLn('MOZESZ ISC NA :');
+          WriteLn('POLODNIE-ARENA');
+          WriteLn('WSCHOD-ARENA');
+          WriteLn('ZACHOD-ARENA');
+        end
+        else if MIECHO = 56 then begin
+          WriteLn('DOSTEPNE WYJSCIE:');
+          WriteLn('POLODNIE-ARENA');
+          WriteLn('ZACHOD-ARENA');
+        end
+        else if MIECHO = 57 then begin
+          WriteLn('DOSTEPNE WYJSCIE:');
+          WriteLn('POLODNIE-ARENA');
+          WriteLn('WSCHOD-ARENA');
+        end;
+      if wpisz = 'WYJSCIE' then
+        exit;
+      if wpisz = 'POLODNIE' then
+      begin
+        ARENA := 0;
+        if MIECHO = 33 then
+          MIECHO := 32;
+        if MIECHO = 34 then
+          MIECHO := 33;
+        if (MIECHO = 35) or (MIECHO = 36) or (MIECHO = 40) or (MIECHO = 41) then
+          ARENA := 1;
+        if MIECHO = 37 then
+          MIECHO := 34;
+        if MIECHO = 38 then
+          MIECHO := 35;
+        if MIECHO = 39 then
+          MIECHO := 36;
+        if MIECHO = 42 then
+          MIECHO := 37;
+        if MIECHO = 43 then
+          MIECHO := 38;
+        if MIECHO = 44 then
+          MIECHO := 39;
+        if MIECHO = 45 then
+          MIECHO := 40;
+        if MIECHO = 46 then
+          MIECHO := 41;
+        if MIECHO = 47 then
+          MIECHO := 42;
+        if MIECHO = 48 then
+          MIECHO := 43;
+        if MIECHO = 49 then
+          MIECHO := 44;
+        if MIECHO = 50 then
+          MIECHO := 45;
+        if MIECHO = 51 then
+          MIECHO := 46;
+        if MIECHO = 52 then
+          MIECHO := 48;
+        if MIECHO = 53 then
+          MIECHO := 49;
+        if MIECHO = 54 then
+          MIECHO := 50;
+        if MIECHO = 55 then
+          MIECHO := 51;
+        if MIECHO = 56 then
+          MIECHO := 54;
+        if MIECHO = 57 then
+          MIECHO := 55;
+      end;
+      if wpisz = 'POLNOC' then
+      begin
+        ARENA := 0;
+        if MIECHO = 33 then
+        begin
+          MIECHO := 34;
+          STOP := 1;
+        end;
+        if (MIECHO = 34) and (STOP = 0) then
+        begin
+          MIECHO := 37;
+          STOP := 1;
+        end;
+        if (MIECHO = 35) and (STOP = 0) then
+        begin
+          MIECHO := 38;
+          STOP := 1;
+        end;
+        if (MIECHO = 36) and (STOP = 0) then
+        begin
+          MIECHO := 39;
+          STOP := 1;
+        end;
+        if (MIECHO = 37) and (STOP = 0) then
+        begin
+          MIECHO := 42;
+          STOP := 1;
+        end;
+        if (MIECHO = 38) and (STOP = 0) then
+        begin
+          MIECHO := 43;
+          STOP := 1;
+        end;
+        if (MIECHO = 39) and (STOP = 0) then
+        begin
+          MIECHO := 44;
+          STOP := 1;
+        end;
+        if (MIECHO = 40) and (STOP = 0) then
+        begin
+          MIECHO := 45;
+          STOP := 1;
+        end;
+        if (MIECHO = 41) and (STOP = 0) then
+        begin
+          MIECHO := 46;
+          STOP := 1;
+        end;
+        if (MIECHO = 42) and (STOP = 0) then
+        begin
+          MIECHO := 47;
+          STOP := 1;
+        end;
+        if (MIECHO = 43) and (STOP = 0) then
+        begin
+          MIECHO := 48;
+          STOP := 1;
+        end;
+        if (MIECHO = 44) and (STOP = 0) then
+        begin
+          MIECHO := 49;
+          STOP := 1;
+        end;
+        if (MIECHO = 45) and (STOP = 0) then
+        begin
+          MIECHO := 50;
+          STOP := 1;
+        end;
+        if (MIECHO = 46) and (STOP = 0) then
+        begin
+          MIECHO := 51;
+          STOP := 1;
+        end;
+        if (MIECHO = 47) and (STOP = 0) then
+        begin
+          ARENA := 1;
+          STOP := 1;
+        end;
+        if (MIECHO = 48) and (STOP = 0) then
+        begin
+          MIECHO := 52;
+          STOP := 1;
+        end;
+        if (MIECHO = 49) and (STOP = 0) then
+        begin
+          MIECHO := 53;
+          STOP := 1;
+        end;
+        if (MIECHO = 50) and (STOP = 0) then
+        begin
+          MIECHO := 54;
+          STOP := 1;
+        end;
+        if (MIECHO = 51) and (STOP = 0) then
+        begin
+          MIECHO := 55;
+          STOP := 1;
+        end;
+        if (MIECHO = 52) and (STOP = 0) then
+        begin
+          ARENA := 1;
+          STOP := 1;
+        end;
+        if (MIECHO = 53) and (STOP = 0) then
+        begin
+          ARENA := 1;
+          STOP := 1;
+        end;
+        if (MIECHO = 54) and (STOP = 0) then
+        begin
+          MIECHO := 56;
+          STOP := 1;
+        end;
+        if (MIECHO = 55) and (STOP = 0) then
+        begin
+          MIECHO := 57;
+          STOP := 1;
+        end;
+        if (MIECHO = 56) and (STOP = 0) then
+        begin
+          ARENA := 1;
+          STOP := 1;
+        end;
+        if (MIECHO = 57) and (STOP = 0) then
+        begin
+          ARENA := 1;
+          STOP := 1;
+        end;
+      end;
+      if wpisz = 'WSCHOD' then
+      begin
+        ARENA := 0;
+        if (MIECHO = 33) and (STOP = 0) then
+        begin
+          MIECHO := 35;
+          STOP := 1;
+        end;
+        if (MIECHO = 34) and (STOP = 0) then
+        begin
+          MIECHO := 38;
+          STOP := 1;
+        end;
+        if (MIECHO = 35) and (STOP = 0) then
+        begin
+          MIECHO := 40;
+          STOP := 1;
+        end;
+        if (MIECHO = 36) and (STOP = 0) then
+        begin
+          MIECHO := 33;
+          STOP := 1;
+        end;
+        if (MIECHO = 37) and (STOP = 0) then
+        begin
+          MIECHO := 43;
+          STOP := 1;
+        end;
+        if (MIECHO = 38) and (STOP = 0) then
+        begin
+          MIECHO := 45;
+          STOP := 1;
+        end;
+        if (MIECHO = 39) and (STOP = 0) then
+        begin
+          MIECHO := 34;
+          STOP := 1;
+        end;
+        if (MIECHO = 40) and (STOP = 0) then
+        begin
+          ARENA := 1;
+          STOP := 1;
+        end;
+        if (MIECHO = 41) and (STOP = 0) then
+        begin
+          MIECHO := 36;
+          STOP := 1;
+        end;
+        if (MIECHO = 42) and (STOP = 0) then
+        begin
+          MIECHO := 48;
+          STOP := 1;
+        end;
+        if (MIECHO = 43) and (STOP = 0) then
+        begin
+          MIECHO := 50;
+          STOP := 1;
+        end;
+        if (MIECHO = 44) and (STOP = 0) then
+        begin
+          MIECHO := 37;
+          STOP := 1;
+        end;
+        if (MIECHO = 45) and (STOP = 0) then
+        begin
+          ARENA := 1;
+          STOP := 1;
+        end;
+        if (MIECHO = 46) and (STOP = 0) then
+        begin
+          MIECHO := 39;
+          STOP := 1;
+        end;
+        if (MIECHO = 47) and (STOP = 0) then
+        begin
+          MIECHO := 52;
+          STOP := 1;
+        end;
+        if (MIECHO = 48) and (STOP = 0) then
+        begin
+          MIECHO := 54;
+          STOP := 1;
+        end;
+        if (MIECHO = 49) and (STOP = 0) then
+        begin
+          MIECHO := 42;
+          STOP := 1;
+        end;
+        if (MIECHO = 50) and (STOP = 0) then
+        begin
+          ARENA := 1;
+          STOP := 1;
+        end;
+        if (MIECHO = 51) and (STOP = 0) then
+        begin
+          MIECHO := 44;
+          STOP := 1;
+        end;
+        if (MIECHO = 52) and (STOP = 0) then
+        begin
+          MIECHO := 56;
+          STOP := 1;
+        end;
+        if (MIECHO = 53) and (STOP = 0) then
+        begin
+          MIECHO := 47;
+          STOP := 1;
+        end;
+        if (MIECHO = 54) and (STOP = 0) then
+        begin
+          ARENA := 1;
+          STOP := 1;
+        end;
+        if (MIECHO = 55) and (STOP = 0) then
+        begin
+          MIECHO := 49;
+          STOP := 1;
+        end;
+        if (MIECHO = 56) and (STOP = 0) then
+        begin
+          ARENA := 1;
+          STOP := 1;
+        end;
+        if (MIECHO = 57) and (STOP = 0) then
+        begin
+          MIECHO := 53;
+          STOP := 1;
+        end;
+      end;
+      if wpisz = 'ZACHOD' then
+      begin
+        ARENA := 0;
+        if (MIECHO = 33) and (STOP = 0) then
+        begin
+          MIECHO := 36;
+          STOP := 1;
+        end;
+        if (MIECHO = 34) and (STOP = 0) then
+        begin
+          MIECHO := 39;
+          STOP := 1;
+        end;
+        if (MIECHO = 35) and (STOP = 0) then
+        begin
+          MIECHO := 33;
+          STOP := 1;
+        end;
+        if (MIECHO = 36) and (STOP = 0) then
+        begin
+          MIECHO := 41;
+          STOP := 1;
+        end;
+        if (MIECHO = 37) and (STOP = 0) then
+        begin
+          MIECHO := 44;
+          STOP := 1;
+        end;
+        if (MIECHO = 38) and (STOP = 0) then
+        begin
+          MIECHO := 34;
+          STOP := 1;
+        end;
+        if (MIECHO = 39) and (STOP = 0) then
+        begin
+          MIECHO := 46;
+          STOP := 1;
+        end;
+        if (MIECHO = 40) and (STOP = 0) then
+        begin
+          MIECHO := 35;
+          STOP := 1;
+        end;
+        if (MIECHO = 41) and (STOP = 0) then
+        begin
+          ARENA := 1;
+          STOP := 1;
+        end;
+        if (MIECHO = 42) and (STOP = 0) then
+        begin
+          MIECHO := 49;
+          STOP := 1;
+        end;
+        if (MIECHO = 43) and (STOP = 0) then
+        begin
+          MIECHO := 37;
+          STOP := 1;
+        end;
+        if (MIECHO = 44) and (STOP = 0) then
+        begin
+          MIECHO := 51;
+          STOP := 1;
+        end;
+        if (MIECHO = 45) and (STOP = 0) then
+        begin
+          MIECHO := 38;
+          STOP := 1;
+        end;
+        if (MIECHO = 46) and (STOP = 0) then
+        begin
+          ARENA := 1;
+          STOP := 1;
+        end;
+        if (MIECHO = 47) and (STOP = 0) then
+        begin
+          MIECHO := 53;
+          STOP := 1;
+        end;
+        if (MIECHO = 48) and (STOP = 0) then
+        begin
+          MIECHO := 42;
+          STOP := 1;
+        end;
+        if (MIECHO = 49) and (STOP = 0) then
+        begin
+          MIECHO := 55;
+          STOP := 1;
+        end;
+        if (MIECHO = 50) and (STOP = 0) then
+        begin
+          MIECHO := 43;
+          STOP := 1;
+        end;
+        if (MIECHO = 51) and (STOP = 0) then
+        begin
+          ARENA := 1;
+          STOP := 1;
+        end;
+        if (MIECHO = 52) and (STOP = 0) then
+        begin
+          MIECHO := 47;
+          STOP := 1;
+        end;
+        if (MIECHO = 53) and (STOP = 0) then
+        begin
+          MIECHO := 57;
+          STOP := 1;
+        end;
+        if (MIECHO = 54) and (STOP = 0) then
+        begin
+          MIECHO := 48;
+          STOP := 1;
+        end;
+        if (MIECHO = 55) and (STOP = 0) then
+        begin
+          ARENA := 1;
+          STOP := 1;
+        end;
+        if (MIECHO = 56) and (STOP = 0) then
+        begin
+          MIECHO := 52;
+          STOP := 1;
+        end;
+        if (MIECHO = 57) and (STOP = 0) then
+        begin
+          ARENA := 1;
+          STOP := 1;
+        end;
+      end;
+      STOP := 0;
+    until (ARENA = 0) or (MIECHO = 1000);
+  end;
+end;
+
   (* Remaining bodies are still to be reconstructed from the retained TPU
      listings and BOMBKI.EXE disassembly. *)
 begin
