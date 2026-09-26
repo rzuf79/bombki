@@ -3,10 +3,10 @@
 Two independent reconstructions, now reconciled field-for-field:
 - **this repo** (`RECONSTRUCTED\disasm\procs\SAVE-FIELD-MAP.txt`) - SAVE side:
   the EXE's save() proc (img 0x2BA1) writes 80 fields to PLIKI.TPU as text.
-- **help-you-need/** - LOAD side: PLIKI.TPU read back by the load routine,
-  plus PlayerState.pas (word-strided record 0x52..0x262), which was
-  cross-validated against the character-sheet display routine
-  (0x11ba-0x1405), the level-up routine (0x8990-0x8ba0), and PRZEDM strings.
+- **load-side reconstruction** (`WCZYTANIE-LoadEngine-reconstructed.pas`):
+  PLIKI.TPU read back by the load routine (word-strided record 0x52..0x262),
+  cross-validated against the character-sheet display routine (0x11ba-0x1405),
+  the level-up routine (0x8990-0x8ba0), and PRZEDM strings.
 
 Key result: addresses agree field-for-field; transforms are exact inverses;
 several names from the single-pass SAVE-side analysis were WRONG and are
@@ -550,7 +550,7 @@ grid 33..57). Commands (ds:0x564 strcmp):
    PlayerState.pas mislabels 0x194. (The port's two-field save schema:
    `C-PORT-DISCREPANCIES.md` entry 1.)
 5. CharacterLevel = 0x25C, saved as level+0x17 (file shows 24 ⇒ level 1);
-   level-up routine is 0x8990-0x8ba0 (see help-you-need PlayerState.pas).
+   level-up routine is 0x8990-0x8ba0 (see WCZYTANIE-LoadEngine-reconstructed.pas).
 6. **KUNSZT = 0x1D4** (f8=99). Death penalty (BAZAR proc img 0x36F5,
    decoded 0x37DC-0x3811) is **level-based**:
    `[0x1D4] -= 250 - Random(50) - 5*[0x25C]` (level from 0x25C),
@@ -609,7 +609,7 @@ were a miscalculated paragraph; img offsets are authoritative (0E42*16+9A57 =
 ## Ground truth (retained TPU units + portable-port recovery, 2026-09-24)
 
 Corroborated against the retained TPU units and the recovery dossiers in
-help-you-need/: docs/compatibility.md (recovered-facts register),
+c-port/: docs/compatibility.md (recovered-facts register),
 evidence/recovered/PRZEDM.*.md (symbol-aware per-proc listings from
 MONSTRA/PRZEDM/SWIAT.TPU), evidence/generated/inventories.md (full TPU symbol
 hash), and docs/{todo,recovery-notes}.md. Port comparisons are tracked in

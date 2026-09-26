@@ -159,15 +159,16 @@ cs-const path string '/Users/zrfu/gry/BOMBKI/PRZEDM.TPU' (field 15; dev box remn
 author 'zrfu' built on Linux/macOS). File = 80 numeric lines + name.
 Full table: RECONSTRUCTED\disasm\procs\SAVE-FIELD-MAP.txt
 
-## 2026-09-24 (7): INTEGRATION with help-you-need reconstruction - corrections
-A second, independent reconstruction exists at `..\help-you-need\` (load-side
-PLIKI.TPU readback + PlayerState.pas record + 616 string-compare call-sites,
-380 resolved; CurrentContext/PreviousRoomContext + MODE/UNMODE + one shared
-combat engine SWIAT:0x46 + per-monster room trackers at 0x668,+6/ea). Its
-address map and my save-side map agree field-for-field; transforms are exact
-inverses. Names were cross-validated against the character-sheet display
-routine (0x11ba-0x1405), the level-up routine (0x8990-0x8ba0), and PRZEDM
-addr-adjacency strings. RHETRO-CORRECTIONS to my earlier DGROUP naming:
+## 2026-09-24 (7): Load-side readback reconstruction integrated - corrections
+A second, independent load-side reconstruction (PLIKI.TPU readback +
+PlayerState.pas record + 616 string-compare call-sites, 380 resolved;
+CurrentContext/PreviousRoomContext + MODE/UNMODE + one shared combat engine
+SWIAT:0x46 + per-monster room trackers at 0x668,+6/ea) was integrated with the
+save-side map (WCZYTANIE-LoadEngine-reconstructed.pas). Its address map and my
+save-side map agree field-for-field; transforms are exact inverses. Names were
+cross-validated against the character-sheet display routine (0x11ba-0x1405),
+the level-up routine (0x8990-0x8ba0), and PRZEDM addr-adjacency strings.
+RHETRO-CORRECTIONS to my earlier DGROUP naming:
 
   OLD (INCORRECT)              CORRECT
   0x180 = MIECHO (stat)        0x180 = PreviousRoomContext (raw 10000 = room id)
@@ -445,10 +446,9 @@ The 0x129D paragraph contains a whole second game layer beyond Walka:
 
 ## 2026-09-24 (16): Ground-truth cross-check vs retained TPU units + portable port
 
-- Two help directories were provided: `help-you-need/` (WIP PlayerState.pas +
-  JSON docs, corroborating only) and `more-help-you-need/bombki/c-port/`
-  (authoritative: docs/compatibility.md fact register, evidence/recovered/*.md
-  TPU dossiers, evidence/generated/*.tsv|.md|.json symbol/proc tables, src/*).
+- Cross-checked against the retained TPU units + portable port under `c-port/`
+  (docs/compatibility.md fact register, evidence/recovered/*.md TPU dossiers,
+  evidence/generated/*.tsv|.md|.json symbol/proc tables, src/*).
 - **Launcher procs ARE the PRZEDM difficulty procedures** (matched via stat
   comparison + PRZEDM dossiers): 0x13839 SLABO (drop = **PACZEK** [0x1A0]
   `R(10)<7`, not Serce — `enemies.c` "bloody_heart" label retracted),
