@@ -21,7 +21,7 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up MinGW w64 32-bit (Windows)
         if: ${{ runner.os == 'Windows' }}
@@ -92,7 +92,7 @@ jobs:
 
       - name: Upload executables
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: executables-${{ matrix.os }}
           path: |
