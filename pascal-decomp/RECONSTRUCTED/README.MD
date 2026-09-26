@@ -639,3 +639,28 @@ Full machine-verified register added to INTEGRATED-FIELD-MAP.md
   (enemies.c 116). The DUNQ quest itself is 1:1 (offer at 75, completion at
   `duncan_quest == 131`, −50 per pokrzywa kill via game.c 1958-1959).
 
+## 2026-09-26 (26): PRZEDM ULSKLEPIKOWA + POROWNANIE + TRAIN reconstructed
+
+- Added the source-equivalent bodies for the three remaining procedures
+  (after `FIGHTBLUSZCZ`):
+  - `ULSKLEPIKOWA` (source 475-487, TPU 0x0070): 10 × `if MONSTRA.X = MIECHO
+    then WriteLn(...)` street/dog descriptions — the strings match the port's
+    world.c actor descriptions verbatim (world.c 1227-1246).
+  - `POROWNANIE` (source 385-472, TPU 0x0816..0x12E9): the comparison oracle.
+    `if MANA > 9` gate; `FUKS := Random(100)`; ReadLn target; `OGOL :=
+    POZIOM + SIL` plus ZRE tiers (8/9→+4 ... 20/21→+10), `PAR > 75/50` +1/+1,
+    `KOP > 10/70` +2/+2; nine target groups with banded advice; dogs give an
+    unconditional kill line; learn gate `FUKS < 3 and POR < 100` →
+    `***************** UCZYSZ SIE ZDOLNOSCI POROWNYWANIE *****************`,
+    `POR + 1`, `KUNSZT + 5`; `BAKTERIA` → `MANA + 5`. LIROY advice keeps the
+    Polish diacritics (`SPROOBÓJ...`, `MORDĄ`) as UTF-8.
+  - `TRAIN` (source 166-189, TPU 0x0010): `if wpisz = 'TRENUJ' then
+    WriteLn('CO CHCESZ TRENOWAC?')`, then SILA/ZRECZNOSC/MADROSC branches with
+    gates `PRA > 2/1/2` and costs 3/2/3 — mirrors the port's `train_attribute`
+    (confirmed 1:1, game.c 2835-2875).
+- Registered (entry P): the port's basic/street advice middle band is
+  `score > 21 && score < 28` (game.c 3077) — off by one vs the original band
+  `22 < OGOL < 28`; score 22 prints 'RACZEJ NIE...' in the port where the
+  original printed nothing. The oracle formula itself is 1:1 (the port's
+  `ZRE div 2` reproduces all seven tier bumps).
+
