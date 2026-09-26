@@ -1132,6 +1132,165 @@ begin
   end;
 end;
 
+procedure UZYWANIE;
+begin
+  if (wpisz = 'UZYJ FAJKA') and (FAJKA = -10) then
+    WriteLn('ZAPALASZ FAJECZKE I PYKASZ Z ZADOWOLENIEM');
+  if (wpisz = 'UZYJ SERCE') and (SERCE = -10) then begin
+    SERCE := 0;
+    WriteLn('ZJADASZ ZAKRWAWIONE SERCE I ODZYSKUJESZ 5% ENERGII');
+    ENERGIA := ENERGIA + 5;
+    if ENERGIA > MONSTRA.MAXE then
+      ENERGIA := MONSTRA.MAXE;
+    PRZED := PRZED - 1;
+  end;
+  if (wpisz = 'UZYJ DYPLOM') and (DYPLOM = -10) then begin
+    WriteLn('PATRZYSZ SIE NA DYPLOM:');
+    WriteLn('--------------------------------------');
+    WriteLn('|         DYPLOM MUD SZKOLY          |');
+    WriteLn('|                                    |');
+    WriteLn('|                                    |');
+    WriteLn('|                                    |');
+    WriteLn('|  BRAWO! BEZ WIEKSZYCH PROBLEMOW    |');
+    WriteLn('|  PRZEBRNALES PRZEZ MUD SZKOLE      |');
+    WriteLn('|  W NAGRODE ZA DUZA AKTYWNOSC       |');
+    WriteLn('|  DAJE CI OTO TEN DYPLOM MUD SZKOLY |');
+    WriteLn('|____________________________________|');
+  end;
+  if (wpisz = 'UZYJ PACZEK') and (PACZEK <= -10) then begin
+    PRZED := PRZED - 1;
+    PACZEK := PACZEK + 10;
+    WriteLn('ZJADASZ PACZKA I TYJESZ 1 KILO (DOSTAJESZ 8%ENERGII)');
+    ENERGIA := ENERGIA + 8;
+    if ENERGIA > MONSTRA.MAXE then
+      ENERGIA := MONSTRA.MAXE;
+  end;
+  if (wpisz = 'UZYJ CIASTKO') and (CIASTKO <= -10) then begin
+    PRZED := PRZED - 1;
+    CIASTKO := CIASTKO + 10;
+    WriteLn('ZJADASZ CIASTKO I TYJESZ 2 KILO (DOSTAJESZ 12% ENERGII)');
+    ENERGIA := ENERGIA + 12;
+    if ENERGIA > MONSTRA.MAXE then
+      ENERGIA := MONSTRA.MAXE;
+  end;
+  if (wpisz = 'UZYJ SUCHA RACJA') and (SUCHA <= -10) then begin
+    PRZED := PRZED - 1;
+    SUCHA := SUCHA + 10;
+    WriteLn('ZJADASZ SUCHA RACJE I CHUDNIESZ 3 KILO (DOSTAJESZ 16% ENERGII)');
+    ENERGIA := ENERGIA + 16;
+    if ENERGIA > MONSTRA.MAXE then
+      ENERGIA := MONSTRA.MAXE;
+  end;
+  if (wpisz = 'UZYJ BULKA') and (BULKA <= -10) then begin
+    PRZED := PRZED - 1;
+    BULKA := BULKA + 10;
+    WriteLn('ZJADASZ BULKE I STWIERDZASZ ZE ZYSKALES 20%');
+    ENERGIA := ENERGIA + 20;
+    if ENERGIA > MONSTRA.MAXE then
+      ENERGIA := MONSTRA.MAXE;
+  end;
+  if (wpisz = 'ZNISZCZ PRZEPUSTKA') and (PRZEPUSTKA < -1) then begin
+    WriteLn('GRRRRRRRRR .... GLUPIA PRZEPUSTKA');
+    PRZEPUSTKA := PRZEPUSTKA + 10;
+    PRZED := PRZED + 1;
+  end;
+  if (wpisz = 'PATRZ PRZEPUSTKA') and (PRZEPUSTKA < -1) then begin
+    WriteLn('|========================|');
+    WriteLn('| Niniejszym zaswiadczam |');
+    WriteLn('|  Iz osoba posiadajaca  |');
+    WriteLn('|      Ten dokument      |');
+    WriteLn('|   Ukonczyla pozytywnie |');
+    WriteLn('| Jeden z moich questów  |');
+    WriteLn('|========================|');
+  end;
+  if (wpisz = 'UZYJ CHLEB') and (CHLEB <= -10) then begin
+    PRZED := PRZED - 1;
+    CHLEB := CHLEB + 10;
+    WriteLn('ZJADASZ DUZY CIEPLY CHLEB I JESTES PELEN (ZYSKUJESZ 26%)');
+    ENERGIA := ENERGIA + 26;
+    if ENERGIA > MONSTRA.MAXE then
+      ENERGIA := MONSTRA.MAXE;
+  end;
+  if wpisz = 'UZYJ KASETA' then
+    WriteLn('TEN PRZEMIOT JEST TYPU : SMIEC . S.Z -8 MAXE +5 ZRE +1 ');
+  if (wpisz = 'UZYJ WEKA') and (WEKA <= -10) then begin
+    PRZED := PRZED - 1;
+    WEKA := WEKA + 10;
+    WriteLn('ZJADASZ DLUGASNA WEKE I TYJAC 15 KILO ZYSKUJESZ 34%');
+    ENERGIA := ENERGIA + 34;
+    if ENERGIA > MONSTRA.MAXE then
+      ENERGIA := MONSTRA.MAXE;
+  end;
+  if (wpisz = 'UZYJ MALA BUTELKA MANY') and (MBUTELKA <= -10) then begin
+    PRZED := PRZED - 1;
+    MBUTELKA := MBUTELKA + 10;
+    WriteLn('WYPIJASZ MALA BUTELKE MANY I ODZYSKUJESZ 30 MANY');
+    MANA := MANA + 30;
+    if MANA > MAXMANA then
+      MANA := MAXMANA;
+  end;
+  if (wpisz = 'UZYJ BIGOS') and (BIGOS <= -10) then begin
+    PRZED := PRZED - 1;
+    BIGOS := BIGOS + 10;
+    WriteLn('ZJADASZ BIGOS Z WROGA I ODZYSKUJESZ 20% ENERGI');
+    ENERGIA := ENERGIA + 20;
+    if ENERGIA > MONSTRA.MAXE then
+      ENERGIA := MONSTRA.MAXE;
+  end;
+  if (wpisz = 'UZYJ KOMPLET') and (KOMPLET <= -10) and (JAKIEUB = '') then begin
+    WriteLn('NAKLADASZ KOMPLET UBRAN FIRMY "SYF"');
+    PRO := PRO + 7;
+    CIALO := 1;
+    JAKIEUB := 'SYF';
+  end;
+  if (wpisz = 'ODLORZ KOMPLET') and (KOMPLET <= -10) and (JAKIEUB = 'SYF') then begin
+    WriteLn('ZDEJMUJESZ KOMPLET UBRAN FIRMY "SYF"');
+    CIALO := 0;
+    PRO := PRO - 7;
+    JAKIEUB := '';
+  end;
+  if (wpisz = 'UZYJ LISTEK') and (LISTEK <= -10) then
+    WriteLn('LISTEK JEST TYPU SMIEC MAX PRZEDMIOTOW + 3 ');
+  if (wpisz = 'UZYJ GARNITUR') and (GARNITUR <= -10) and (JAKIEUB = '') then begin
+    WriteLn('NAKLADASZ GARNITUR Z KOLCAMI NA SWE (NIE)WYSPORTOWANE CIALO');
+    CIALO := 1;
+    ILOSC := ILOSC + 1;
+    PRO := PRO + 10;
+    FUKSROLL := FUKSROLL + 15;
+    JAKIEUB := 'GARNITUR';
+  end;
+  if (wpisz = 'UZYJ PIGULKA') and (PIGULKA <= -10) then begin
+    WriteLn('WSZYSTKO ZACZYNA WIROWAC , POTEM NAGLY BLYSK I ZNAJDUJESZ SIE W PRZESZLOSCI');
+    PIGULKA := PIGULKA + 10;
+    POTWORY;
+    if MAD < 10 then begin
+      WriteLn('BRAK OBYCIA W POSLUGIWANIU SIE MAGICZNYMI PRZEDMIOTAMI SPRAWIL ZE ');
+      WriteLn('ZNACZNIE OPADLES Z SIL I STALES SIE BARDZO ZMECZONY');
+      MONSTRA.MAXE := MONSTRA.MAXE - 1;
+      ENERGIA := 1;
+      KUNSZT := KUNSZT - 50;
+    end;
+    if (MAD > 9) and (MAD < 16) then begin
+      WriteLn('MASZ PEWNE OBYCIE W MAGICZNYCH PRZEDMIOTACH ALE MIMO WSZYSTKO');
+      WriteLn('OPADLES Z SIL I STALES SIE ZMECZONY');
+      ENERGIA := ENERGIA - 40;
+      if ENERGIA < 1 then
+        ENERGIA := 1;
+      KUNSZT := KUNSZT - 30;
+    end;
+    if MAD > 15 then
+      WriteLn('ZNASZ SIE NA TEGO TYPU PRZEDMIOTACH , WYSZEDLES Z TEGO BEZ SZWANKU');
+  end;
+  if (wpisz = 'ODLORZ GARNITUR') and (GARNITUR <= -10) and (JAKIEUB = 'GARNITUR') then begin
+    WriteLn('ZDEJMUJESZ GARNITUR Z KOLCAMI ZE SWEGO (NIE)WYSPORTOWANEGO CIALA');
+    CIALO := 0;
+    ILOSC := ILOSC - 1;
+    PRO := PRO - 10;
+    FUKSROLL := FUKSROLL - 15;
+    JAKIEUB := '';
+  end;
+end;
+
   (* Remaining bodies are still to be reconstructed from the retained TPU
      listings and BOMBKI.EXE disassembly. *)
 begin
