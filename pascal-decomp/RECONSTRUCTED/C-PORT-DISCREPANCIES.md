@@ -40,6 +40,7 @@ different inputs/values; `minor` = cosmetic/faithfulness only.
 | U | Item use (UZYWANIE): stat side-effects (PRO/CIALO/ILOSC/FUKSROLL) folded into equipped_clothing; pill's POTWORY re-roll missing | PORT-DEVIATION | minor |
 | V | WALKA: kill-reward reductions key off opponent max HP (original: player MONSTRA.MAXE); per-round/per-parry reward accrual and FUKSROLL heavy-blow reroll missing | PORT-DEVIATION | moderate |
 | W | MINIARENA: `%.` ENERGIA/KUNSZT status prompt and one-shot arena KTO list not printed; WYJSCIE leave-arena word not ported; arena drops clear only on kill (original clears most monsters even when the player fled) | PORT-DEVIATION | minor |
+| X | Armour and shield combat mitigation | PORT-DEVIATION | major |
 
 ---
 
@@ -664,6 +665,39 @@ anchors). Deviations, all minor:
   ZUK), which behave the same as the port. The other monsters' flee-clear
   is an original quirk the port does not reproduce. Same robustness
   family as entry L.
+
+---
+
+## X. Armour and shield combat mitigation (major)
+
+### ORIGINAL (`PRZEDM.UZYWANIE`, `PRZEDM.TARCZA`, `PRZEDM.WALKA`)
+
+The original keeps combat-defense state rather than merely displaying armour
+values. Wearing `KOMPLET UBRAN FIRMY "SYF"` adds 7 to `PRO`; removing it
+subtracts 7. Wearing `GARNITUR Z KOLCAMI` increments `ILOSC`, adds 10 to
+`PRO`, and adds 15 to `FUKSROLL`; removing it reverses all three changes.
+
+Every ordinary enemy hit in `WALKA` calls the common `TARCZA` routine before
+automatic parrying. It rolls `Random(100)` and, when the result is at most
+`PRO`, subtracts `ILOSC` from the incoming damage, clamping the result at zero.
+`FUKSROLL` is also read by the player's attack roll. Thus the clothing fields
+are live combat state, and the shield/armour defense is one combined mechanism,
+not separate cosmetic totals.
+
+### PORT (`src/game.c`)
+
+`describe_status` builds a local `protection` value for `JA` only: small shield
++25, SYF +7, and spiked suit +20/+15 displayed luck. That local value is
+discarded after printing. Neither clothing item participates in an incoming-hit
+calculation, and the spiked suit's +10 `PRO`, +1 `ILOSC`, and +15 `FUKSROLL`
+effects are absent from combat.
+
+The port instead has `apply_small_shield`: when the small shield is equipped,
+it independently rolls 0 through 99, succeeds on 0 through 10, and removes one
+point of damage. It neither incorporates the equipped clothing nor uses the
+original `PRO`/`ILOSC` state. This means SYF has no combat benefit at all in the
+port, the spiked suit has no combat defense or attack-luck benefit, and any
+shield-and-armour interaction differs from the original.
 
 ---
 
