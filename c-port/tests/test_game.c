@@ -69,6 +69,7 @@ static void test_status_sheet(void)
 
     state.item_quantities[ITEM_OLD_SWORD] = 1;
     state.item_quantities[ITEM_SMALL_SHIELD] = 1;
+    state.item_quantities[ITEM_BLOODY_HEART] = 3;
     state.item_quantities[ITEM_CAKE] = 2;
     state.item_quantities[ITEM_PIPE] = 1;
     state.item_quantities[ITEM_SPIKED_SUIT] = 1;
@@ -97,10 +98,11 @@ static void test_status_sheet(void)
         "NOSISZ ZE SOBA:\n"
         "STARY ZARDZEWIALY MIECZ\n"
         "OKRAGLA MALA TARCZA\n"
-        "SMACZNE CIASTKO " "       -20\n"
+        "ZAKRWAWIONE SERCE (3)\n"
+        "SMACZNE CIASTKO (2)\n"
         "CIEZKA FAJKA OD DZIADA MROZA" "       -10\n"
         "GARNITUR Z KOLCAMI" "       -10\n"
-        "W SUMIE MASZ 7/17 PRZEDMIOTOW\n"
+        "W SUMIE MASZ 10/17 PRZEDMIOTOW\n"
         "MASZ NA SOBIE GRANITUR Z KOLCAMI \n"
         "TWOJA OCHRONA JEST MALA TARCZA\n"
         "JAKO BRONI UZYWASZ STAREGO MIECZA\n"

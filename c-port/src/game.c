@@ -3665,7 +3665,15 @@ static void describe_status(const GameState *state, GameOutput output)
         if (state->item_quantities[id] <= 0) {
             continue;
         }
-        if (id <= ITEM_SCHOOL_DIPLOMA) {
+        if (state->item_quantities[id] > 1) {
+            size_t length = strlen(item->inventory_text);
+
+            emit(output, item->inventory_text);
+            if (length == 0 || item->inventory_text[length - 1] != ' ') {
+                emit(output, " ");
+            }
+            emit_formatted(output, "(%d)\n", state->item_quantities[id]);
+        } else if (id <= ITEM_SCHOOL_DIPLOMA) {
             emit_formatted(output, "%s\n", item->inventory_text);
         } else {
             emit_formatted(output, "%s%10lld\n", item->inventory_text,
