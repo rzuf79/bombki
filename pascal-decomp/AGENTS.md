@@ -7,7 +7,7 @@ concrete checks and procedures, not a restatement of the rules.
 ## Start of task
 
 Read, in order: `CONTRIBUTING.md`, then the areas the task touches
-(`RECONSTRUCTED/README.MD`, `INTEGRATED-FIELD-MAP.md`,
+(`RECONSTRUCTED/RECONSTRUCTION-LOG.md`, `INTEGRATED-FIELD-MAP.md`,
 `C-PORT-DISCREPANCIES.md`). Re-read any of these that change mid-task before
 acting on the new state.
 
@@ -27,7 +27,7 @@ acting on the new state.
   `C-PORT-DISCREPANCIES.md`.
 - Undecided facts: write them as OPEN items with their evidence state; mark
   RESOLVED only after machine verification.
-- Do not complete or reword `BODY TODO` stubs (scoped cut, `README.MD` §3).
+- Do not complete or reword `BODY TODO` stubs (scoped cut, `RECONSTRUCTION-LOG.md` §3).
 - `../og/` must never appear in a staged change.
 
 ## Committing
