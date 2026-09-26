@@ -1,0 +1,16 @@
+# pas-manifest.txt -- conformance expectations for the BOMBKI reconstruction.
+# Format per line:  <path> | <PASS|FAIL|scaffold> | <note>
+#   PASS      -> must compile cleanly in FPC Turbo-Pascal mode (-Mtp)
+#   FAIL      -> must NOT compile yet (documented reconstruction gap)
+#   scaffold  -> tracked for completeness, never compiled (fragments/listing)
+# Flip FAIL -> PASS as BODY TODO bodies land; the conformance job fails if a
+# target's observed status drifts from what is recorded here.
+pascal-decomp/reconstructed/BOMBKI.PAS | FAIL | main skeleton: uses SWIAT/PRZEDM/MONSTRA (all BODY TODO)
+pascal-decomp/reconstructed/MONSTRA.PAS | FAIL | unit skeleton: interface procs not implemented (BODY TODO)
+pascal-decomp/reconstructed/SWIAT.PAS   | FAIL | unit skeleton: interface procs not implemented (BODY TODO)
+pascal-decomp/reconstructed/PRZEDM.PAS  | FAIL | fullest unit, but uses MONSTRA skeleton + BODY TODO stubs
+pascal-decomp/reconstructed/BOMBKI-body.pas | scaffold | EXE disassembly listing, not compilable source
+pascal-decomp/reconstructed/WALKA-CombatEngine-reconstructed.pas | scaffold | combat-engine fragment; needs unit wrapper
+pascal-decomp/reconstructed/WSTEP-reconstructed.pas              | scaffold | WSTEP fragment; needs unit wrapper
+pascal-decomp/reconstructed/WCZYTANIE-LoadEngine-reconstructed.pas | scaffold | load-engine fragment; needs unit wrapper
+pascal-decomp/reconstructed/BAZAR-death.pas                      | scaffold | death/revival fragment; needs unit wrapper

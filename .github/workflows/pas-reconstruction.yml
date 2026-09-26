@@ -1,0 +1,43 @@
+name: pas-reconstruction
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'pascal-decomp/**'
+      - '.github/workflows/pas-reconstruction.yml'
+  pull_request:
+    paths:
+      - 'pascal-decomp/**'
+      - '.github/workflows/pas-reconstruction.yml'
+  workflow_dispatch:
+
+# Compiles the reconstructed TP7 sources (pascal-decomp/reconstructed/) with
+# Free Pascal in Turbo-Pascal mode (-Mtp). Nothing links yet -- MONSTRA/SWIAT
+# are BODY TODO skeletons, PRZEDM depends on them, and the W*/BAZAR files are
+# fragments awaiting unit wrappers. The sweep pins current expectations in
+# analysis-tools/pas-manifest.txt and goes red on drift (a regression, or a
+# stale manifest entry when a body finally lands). See
+# pascal-decomp/CI-PROPOSAL.md for the future 16-bit (i8086-msdos) build, the
+# DOSBox run hook, and the DGROUP test-harness hook.
+
+jobs:
+  conformance:
+    name: TP-mode conformance sweep
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Free Pascal
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq fpc
+
+      - name: Verify FPC
+        run: fpc -iV
+
+      - name: Run conformance sweep
+        shell: bash
+        working-directory: pascal-decomp
+        run: bash analysis-tools/pas-conformance.sh
