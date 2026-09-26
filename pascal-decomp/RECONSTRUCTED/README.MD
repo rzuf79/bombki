@@ -531,7 +531,9 @@ Full machine-verified register added to INTEGRATED-FIELD-MAP.md
 - `[0x226..0x22C]` are confirmed as GITARZYSTA/PERKUSISTA/ORGANISTA/LIROY
   room positions, not garden spots: `Room` assigns each `Random(3)+70`,
   `SCENA` prints by equality with `MIECHO`, and `FIGHTSCENA` tests/clears the
-  same fields for the four `ZABIJ` commands.
+  same fields for the four `ZABIJ` commands. (Crowd NPCs seed separately:
+  DZIECKO `[0x24C]` = `Random(7)+0x3C` re-rolling `≤0x3C`, so rooms **61-66** —
+  the port adds `ROOM_BEER_HALL`/67 as a reachable 7th candidate.)
 - The C port preserves the 14 actor strings and random placement categories.
   It has no direct `MODE` state: commands operate directly, while the
   original helper saves `MIECHO` to `MIECHO2` and enters context 1000.
@@ -549,8 +551,10 @@ Full machine-verified register added to INTEGRATED-FIELD-MAP.md
 - The C port preserves the rolls, text, grants, Kaseta `MAXE +5`/`ZRE +1`, and
   Listek `MAXMANA +40`. It omits Kaseta's original `PRO -8` carrying-ceiling
   penalty. Its generic helper also does not model the `MIECHO <> 10000` guard on
-  Kaseta/Listek/Scroll; current port call sites invoke it through combat loot.
-  The Kaseta penalty is discrepancy-register entry I.
+  Kaseta/Listek/Scroll. That guard is *reachable* on a simultaneous knockout:
+  the port resolves loot (game.c 1941-1944) before the player-death check
+  (game.c 2505-2508), so the drops can fire on the death turn where the original
+  sets context 10000 and suppresses them (register entries I and N).
 
 ## 2026-09-25 (21): PRZEDM difficulty procedures reconstructed
 
@@ -575,8 +579,10 @@ Full machine-verified register added to INTEGRATED-FIELD-MAP.md
 - It sets enemy HP/Dex/Dmg to 10/10/5, calls `WALKA`, then unconditionally
   grants `Random(15)` coins. If `SERCE = 0`, it rolls 25% and stores `MIECHO`
   in `SERCE`, placing the heart in the current room rather than carrying it.
-- The C port matches the stats, ranges, strings, and room placement on victory,
-  but does not reproduce the original post-flee reward path (register entry L).
+- The C port matches the stats, ranges, strings, and room placement on victory.
+  On a flee it skips the original's still-run coin reward and heart drop, does
+  not clear the dog's room anchor, and omits the SPANIEL/PUDEL speech that the
+  original shows after a successful flee (register entry L).
 
 ## 2026-09-25 (23): PRZEDM FIGHTSCENA reconstructed
 
@@ -587,6 +593,26 @@ Full machine-verified register added to INTEGRATED-FIELD-MAP.md
   `MIECHO<>10000`, `ENERGIA>0`, and `PASZOL=0` before its exact message, 30
   coins, cassette roll, optional `QUESTWYK-=150`, and actor clear.
 - The C port preserves profiles, cassette eligibility, and Liroy quest progress,
-  but omits his message/30 coins and makes all stage cleanup/drop timing depend
-  on generic victory handling (discrepancy entry M).
+  but omits his message/30 coins and gates all stage cleanup/drop on the generic
+  victory resolver. Because that resolver (game.c 1941-1944) runs before the
+  death handler (game.c 2505-2508), a simultaneous knockout can grant the bonus
+  or clear musicians on the death turn where the original's context 10000 would
+  suppress them — the "clean victory" phrasing previously used was misleading
+  (discrepancy entry M).
+
+## 2026-09-26 (24): non-stage kill callers + KO-turn loot ordering audited
+
+- KillDispatch/room code pushes **non-stage** drop callers through the same
+  fight→drop shape as WALKAPIES/FIGHTSCENA: `TAKSOWKARZ`/`SPRZEDAWCA` →
+  `VEASY`+`GARNITURZYSK`, `PEDAL`/`MACIEK` → `PIGULKAZYSK`, `D.J` (arena 'E')
+  → cassette. The port only grants these via the zero-energy victory resolver
+  (register entry N).
+- Re-derivation confirms the original's `MIECHO <> 10000` guard is **reachable**
+  in the port: loot runs before the death handler on a same-turn KO, so the
+  context-10000 suppression the original applies can be bypassed (entries I/N,
+  game.c 1941-1944 vs 2505-2508).
+- Crowd spawn-set clarification: DZIECKO seeds rooms 61-66
+  (`Random(7)+0x3C`, re-roll ≤ `0x3C`); the port's `concert_spawn_rooms[]`
+  (game.c 51-60) can place it in 67/`ROOM_BEER_HALL` — numbered register only,
+  not a deviation row.
 

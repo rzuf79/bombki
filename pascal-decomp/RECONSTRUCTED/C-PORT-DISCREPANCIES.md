@@ -30,6 +30,7 @@ different inputs/values; `minor` = cosmetic/faithfulness only.
 | K | Coin-reward overflow behavior | PORT-DEVIATION | minor |
 | L | WALKAPIES rewards after fleeing | PORT-DEVIATION | moderate |
 | M | Stage-fight result handling and Liroy bonus | PORT-DEVIATION | major |
+| N | Non-stage kill callers roll unique drops unconditionally | PORT-DEVIATION | moderate |
 
 ---
 
@@ -77,20 +78,20 @@ product). This supersedes the earlier "Forsa / wealth scaling" item.
 
 | type | reward | side effects |
 |---|---|---|
-| 1 | KUNSZT +100 | pass granted (longint [0x21E:0x220] −=10), **LoadCapacity [0x182] +1** |
+| 1 | KUNSZT +100 | pass granted (longint [0x21E:0x220] −=10), **PRZED [0x182] +1** |
 | 2 | KUNSZT +250 | pass granted, consumes Dyplom, **EnergyMax −5** |
-| 3 | KUNSZT +425 | pass granted, consumes Fajka, **PRAKTYK −1**, **LoadCapacity [0x182] −1**, **MadroscCur −1** (removes the pipe's carried +1 wisdom) |
+| 3 | KUNSZT +425 | pass granted, consumes Fajka, **PRAKTYK −1**, **PRZED [0x182] −1**, **MadroscCur −1** (removes the pipe's carried +1 wisdom) |
 
 ### PORT (sell_shop_item "QUEST", game.c 3471-3513)
 
 Matches the rewards, pass grant (ITEM_QUEST_PASS++), Dyplom consumption,
 `maximum_energy −= 5` (type 2), `practices −−` and the wisdom mirror
-`apply_carried_item_effect(PIPE, -1)` (type 3). **Omitted: the LoadCapacity
+`apply_carried_item_effect(PIPE, -1)` (type 3). **Omitted: the PRZED
 ±1 bumps** for types 1 and 3.
 
 ### Comments
 
-**Non-actionable.** The `LoadCapacity [0x182]` ±1 bumps are carried-item
+**Non-actionable.** The `PRZED [0x182]` ±1 bumps are carried-item
 *counter* bookkeeping, not a stat effect: `[0x182]` (`PRZED`, `INTEGRATED-FIELD-MAP.md`
 0x45 / 0x321) is ±1 on **every** sentinel-slot acquisition/consume — type 1
 +1 tracks granting the Przepustka pass, type 3 −1 tracks consuming the Fajka.
@@ -108,7 +109,7 @@ would be meaningless. Recorded so a future audit does not re-flag it.
 World-location items are byte slots holding `0xFFF6` (-10 = carrying) or `0`
 (consumed). Gates treat the slot like a bool "owned or not": monster drops
 require `!= -10` (the heart additionally that `[0x186]` never left the -10
-state), and `LoadCapacity [0x182]` is +/-1 on pick-up/drop of each sentinel
+state), and `PRZED [0x182]` is +/-1 on pick-up/drop of each sentinel
 item. You effectively can never own two hearts or two paczki — a repeat drop
 prints nothing.
 
@@ -130,7 +131,7 @@ By explicit project decision, **all items are countable quantities, not bools**:
   port rolls on every eligible non-Mrowka ordinary reward. Mrowka similarly
   rolls before its original `PACZEK <> -10` check. Countable repeats therefore
   also change subsequent RNG consumption, not just inventory quantities.
-- `LoadCapacity` bumps (+1 heart/paczek, -1 eating) remain unimplemented —
+- `PRZED` bumps (+1 heart/paczek, -1 eating) remain unimplemented —
   capacity is dex-derived in the port (game.c `game_carrying_capacity`).
 
 ### Why / how to audit
@@ -157,9 +158,14 @@ The port increments the Kaseta quantity and applies maximum-energy +5 and
 dexterity +1, but does not apply the `PRO -= 8` carrying-ceiling penalty. Its
 carrying ceiling is recomputed from dexterity, so the +1 can leave capacity
 unchanged or increase it instead. The generic drop helper also has no equivalent
-of the original `MIECHO <> 10000` guard, although current callers are combat-loot
-paths. `PRZED += 1` is not separately actionable because carried count is derived
-from quantities under the deliberate item model in section F.
+of the original `MIECHO <> 10000` guard. Most callers are combat-loot paths
+where the guard never fires, so this is largely latent — but it *is* reachable:
+on a simultaneous knockout the port resolves loot before checking player death
+(`game_resolve_active_opponent_victory` runs its loot block at game.c 1941-1944,
+*then* the death handler at 2505-2508), so Kaseta/Listek/Scroll can be granted
+on a turn where the original sets context 10000 and suppresses the drop.
+`PRZED += 1` is not separately actionable because carried count is derived from
+quantities under the deliberate item model in section F.
 
 ---
 
@@ -176,7 +182,10 @@ BTRUDNO require only `PASZOL = 0`.
 Kunszt and cooking are gated by `state->energy > 0`, but
 `resolve_ordinary_enemy_rewards` is called unconditionally. If victory reaches
 this path with nonpositive player energy, VEASY/EASY/NEASY still grant coins and
-roll their ordinary item reward, unlike the original.
+roll their ordinary item reward, unlike the original. (In the original the
+`ENERGIA > 0` gate and the `MIECHO = 10000` knockout context are distinct
+safeguards; the port's omission of both is logged together with the loot
+ordering under entries I/L/M/N.)
 
 ---
 
@@ -196,13 +205,17 @@ the original arithmetic behavior.
 `WALKAPIES` calls `WALKA` and then, without checking `PASZOL`, always rolls and
 grants `Random(15)` coins. If `SERCE = 0`, it also makes the 25% heart roll and
 sets `SERCE := MIECHO`, placing the heart in the current room. A successful flee
-therefore still reaches the dog reward code.
+therefore still reaches the dog reward code. The dog's room anchor (its kill-flag
+presence) is likewise removed unconditionally, and on the street maps the three
+`SPANIEL`/`PUDEL` speech lines play after the fight even when the player fled.
 
-### PORT (`game_resolve_active_opponent_victory`)
+### PORT (`game_resolve_active_opponent_victory` / `try_flee`)
 
 Dog rewards are represented accurately by `ENEMY_REWARD_DOG`, but are emitted
-only by the victory resolver after the opponent reaches zero energy. Fleeing
-does not grant the original dog coins or attempt the heart drop.
+only by the victory resolver after the opponent reaches zero energy (game.c
+1941-1944). Fleeing does not grant the original dog coins or attempt the heart
+drop, does not clear the dog anchor, and skips the SPANIEL/PUDEL speech that the
+original still shows after a successful flee (`try_flee`, game.c 2145-2166).
 
 ---
 
@@ -212,11 +225,56 @@ Original `FIGHTSCENA` clears PERKUSISTA/GITARZYSTA/ORGANISTA and calls
 `KASETAZYSK` immediately after `VEASY`, without checking its result. LIROY alone
 requires `MIECHO<>10000`, `ENERGIA>0`, and `PASZOL=0`; success prints
 `GRATULACJE !!! ZABILES LIROYA DOSTAJESZ ZA DARMO 30 KASY`, adds 30 coins,
-rolls Kaseta, optionally subtracts 150 quest progress, and clears LIROY.
+rolls Kaseta, optionally subtracts 150 quest progress, and clears LIROY. So on a
+simultaneous knockout the musicians still have their flags cleared and the 30
+bonus is refused the same way — the original's defeat path sets context 10000,
+which the Liroy gate and the Kaseta/Listek/Scroll guard both honour.
 
-The port handles actor removal and cassette loot only through confirmed generic
-victory. It preserves Liroy's profile, cassette eligibility, and quest-progress
-subtraction, but omits the exact congratulation line and extra 30 coins.
+### PORT (game.c 1654-1660, 1941-1957)
+
+The port runs stage cleanup and cassette loot through the generic victory
+resolver, which fires **only when the opponent reached zero energy**. That is
+*not* "confirmed victory" — the resolver runs before the player-death check
+(game.c 2505-2508), so a simultaneous knockout is exactly where the two games
+diverge:
+
+- Liroy's bonus (30 coins, cassette roll, `-150` quest) requires the opponent KO
+  in the port too, but the port's resolver does not reproduce the `ENERGIA > 0`
+  gate, so bonus/cassette eligibility is decided by loot ordering rather than by
+  the context value the original uses.
+- Musicians: on a same-turn KO the port clears the actor in the resolver and may
+  run the cassette roll (game.c 1941-1944) before the death handler, where the
+  original set context 10000 first and suppressed it.
+
+The port does not reproduce the exact `GRATULACJE` line either way (the 30 coins
+and quest step only apply on a clean Liroy KO).
+
+---
+
+## N. Non-stage kill callers roll unique drops unconditionally (moderate)
+
+### ORIGINAL
+
+KillDispatch and the room handlers push several non-stage callers through the
+same fight-early/drop-late shape as WALKAPIES/FIGHTSCENA: the drop routine is
+called right after `WALKA` with no result check. Affected non-stage callers:
+
+- `TAKSOWKARZ` / `SPRZEDAWCA` → `VEASY` + `GARNITURZYSK`
+- `PEDAL` / `MACIEK` → `PIGULKAZYSK`
+- `D.J` (cassette block, arena 'E' 0x67E) → Kaseta roll
+
+On a knockout these are the same triple: the wake-up caller still reaches the
+drop code, and only the drop's own `MIECHO <> 10000` guard (context 10000)
+suppresses Kaseta/Listek/Scroll; the Garnitur/Pigulka rolls have no such guard.
+
+### PORT (game.c 1934-1957)
+
+`game_resolve_active_opponent_victory` fires only when the opponent reached zero
+energy, so these non-stage kills behave like the stage calls in entry M: a
+same-turn knockout decides eligibility by loot-ordering, not by the original's
+context-driven guard. Non-entity kill paths (D.J cassette, MINI-BARMAN/GRUBAS
+arena) are handled separately; the D.J cassette grant is `game.c 1527-1533`.
+Reachability of the omitted `MIECHO <> 10000` guard is shared with entry I.
 
 ---
 
@@ -241,7 +299,12 @@ subtraction, but omits the exact congratulation line and extra 30 coins.
 - Concert district numbering matches: 61-66 crowd, 67 piwiarnia, 68 estrada,
   69-72 scena, LIROY near 73 (port `original_room()`, game.c 2693-2706); 83
   PIERDUT-trees side-west is ROOM_FOREST, 84 the overgrown krzaki route to
-  domek/grota (game.c 2713-2714, world.c 592/609). No port deviation.
+  domek/grota (game.c 2713-2714, world.c 592/609). No port deviation **in the
+  numbering**. The crowd *spawn set* differs slightly: original DZIECKO uses
+  `Random(7)+0x3C` re-rolling `≤0x3C` → rooms 61-66 (6 candidates, never 67);
+  the port's `concert_spawn_rooms[]` (game.c 51-60) has 8 entries and DZIECKO
+  may land in `ROOM_BEER_HALL` (67, piwiarnia) as a 7th candidate. Minor, so it
+  is logged in the anchors row, not as a numbered deviation.
 
 ---
 
@@ -254,5 +317,6 @@ subtraction, but omits the exact congratulation line and extra 30 coins.
 | quest turn-in | img 0x1276B..0x127C4 | game.c 3471-3513 |
 | Kaseta drop | PRZEDM.KASETAZYSK / img 0x15908..0x1598F | game.c 1527-1533, 1580-1586, 1607-1612 |
 | difficulty rewards | PRZEDM.SLABO..BTRUDNO / img 0x13839..0x140FF | enemies.c 9-25; game.c 1760-1792, 1909-1940 |
-| dog rewards | PRZEDM.WALKAPIES / img 0x12A16..0x12AC9 | enemies.c 31-32; game.c 1794-1802, 1909-1940 |
-| stage fights | PRZEDM.FIGHTSCENA / img 0x1AF97..0x1B094 | game.c 1654-1660, 1941-1957 |
+| dog rewards | PRZEDM.WALKAPIES / img 0x12A16..0x12AC9 | enemies.c 31-32; game.c 1794-1802 (dog anchors), 1941-1957; try_flee 2145-2166 |
+| stage fights | PRZEDM.FIGHTSCENA / img 0x1AF97..0x1B094 | game.c 1654-1660, 1934-1957, 2505-2508 |
+| concert crowd spawn | Room @ img 0x12E54..0x12EC0 (`Random(7)+0x3C`, re-roll ≤0x3C → 61-66) | game.c 51-60, 265-277 |
