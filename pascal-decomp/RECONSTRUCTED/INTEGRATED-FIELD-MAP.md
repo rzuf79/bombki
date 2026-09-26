@@ -661,7 +661,7 @@ C-PORT-DISCREPANCIES.md.
   quests reset 50 (easy) / 200 (medium+hard).
 - Leveling: thresholds + costs + practice/resource-cap gains; special level-12
   max-stat raise; bright "DWUNASTY POZIOM"; maxes creep faster than currents
-  (matches 0x8990..0x8BA0 decode). Level-up zeroes [0x6C] (ExperienceCounter).
+  (matches 0x8990..0x8BA0 decode). Level-up zeroes [0x6C] (CheckpointStage).
 - Skills: CWICZ UCIEKAC (85-pt gate) configures ZWIEJ (combat exit -20 KUNSZT,
   combined E/S/Z score); CWICZ PAROWANIE (90-pt, Random(140)<=PAR, damage cut
   0/-2/-3 by strength tier, zero-roll +skill +5 KUNSZT); CWICZ POWROT (90-pt,
