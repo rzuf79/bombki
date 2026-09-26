@@ -39,6 +39,7 @@ different inputs/values; `minor` = cosmetic/faithfulness only.
 | T | Monster regeneration (POTWORY): numeric state model + re-roll guards vs room-placement spawns | PORT-DEVIATION (deliberate) | moderate |
 | U | Item use (UZYWANIE): stat side-effects (PRO/CIALO/ILOSC/FUKSROLL) folded into equipped_clothing; pill's POTWORY re-roll missing | PORT-DEVIATION | minor |
 | V | WALKA: kill-reward reductions key off opponent max HP (original: player MONSTRA.MAXE); per-round/per-parry reward accrual and FUKSROLL heavy-blow reroll missing | PORT-DEVIATION | moderate |
+| W | MINIARENA: `%.` ENERGIA/KUNSZT status prompt and one-shot arena KTO list not printed; WYJSCIE leave-arena word not ported; arena drops clear only on kill (original clears most monsters even when the player fled) | PORT-DEVIATION | minor |
 
 ---
 
@@ -623,6 +624,49 @@ test); flee (`try_flee` 2145-2170, verbatim WSTYD/NIE UDALO lines, `KUNSZT
 
 ---
 
+## W. MINIARENA: arena loop ceremony, WYJSCIE word, flee drop-clear quirk (minor)
+
+### ORIGINAL (`PRZEDM.MINIARENA`, PRZEDM.PAS:1124-1433, TPU 0x00E8, bytes
+0x0299..0x1689)
+
+`MINIARENA` is the arena's self-contained command loop. Gate `MIECHO` cells
+33-57, then `ARENA := 1` + the `JESTES NA ARENIE I CZUJESZ POTRZEBE
+ZABIJANIA` line, a one-shot `KTO` crowd list, and a `repeat` loop:
+`write(ENERGIA, '%.', KUNSZT, '>')` status prompt, `ReadLn(wpisz)`,
+`KOMENDY`, `MODE`, the 30 `ZABIJ X` fight blocks (SLABO / MNIEJSLABO /
+SREDNIO / TRUDNO per monster tier, `PASZOL = 0`-gated drops for
+SLIMAK/KORNIK/MUCHA/ZUK, PIGULKAZYSK/GARNITURZYSK give-aways after the
+TRUDNO trio), the `EXIT` per-cell exit menu, the `WYJSCIE` instant-leave
+word, and the POLODNIE/POLNOC/WSCHOD/ZACHOD move tables, until
+`(ARENA = 0) or (MIECHO = 1000)`.
+
+### PORT (world.c 718-939, parser.c 42-68/129-153/156, game.c 171-215,
+1555-1685, 1909-1957, 2417-2514)
+
+The arena grid, all ten per-cell exit-list variants, the 25-cell ×
+4-direction edge table (entrance 32 via POLODNIE from 33; test_world.c
+243-268 asserts the grid) and the difficulty-tier dispatch are 1:1 (see
+anchors). Deviations, all minor:
+
+- The `%.` status prompt is not ported — the original prints
+  `write(ENERGIA, '%.', KUNSZT, '>')` before every arena input and calls
+  `KTO` once on entry; the port's CLI reads commands without a prompt
+  (main.c) and prints the crowd list only on the `KTO`/`JA` command
+  (game.c 3994-3996).
+- The original's `WYJSCIE` leave-the-arena word is not ported — the port
+  accepts only the full `EXIT`/`WYJSCIA` exits-list words (parser.c 156)
+  and leaves the arena via the direction words. Extends the row-Q
+  command-loss family.
+- Arena drops clear on kill only (`game_resolve_active_opponent_victory`,
+  game.c 1941), so the port keeps a fled monster in its arena room; the
+  original clears the anchor after every fight even when the player fled,
+  except for the four `PASZOL = 0`-gated monsters (SLIMAK/KORNIK/MUCHA/
+  ZUK), which behave the same as the port. The other monsters' flee-clear
+  is an original quirk the port does not reproduce. Same robustness
+  family as entry L.
+
+---
+
 ## Confirmed 1:1 (checked, no deviation)
 
 - Arena N/S/E/W edge table (cells 33-57, entrance 17/32) + "EXIT" texts.
@@ -705,4 +749,5 @@ test); flee (`try_flee` 2145-2170, verbatim WSTYD/NIE UDALO lines, `KUNSZT
 | monster regeneration | PRZEDM.POTWORY / TPU 0x0000..0x05D8 (source 70-164) | game.c 227-294 (game_regenerate_encounters) |
 | use-item dispatcher | PRZEDM.UZYWANIE / TPU 0x00D8 (source 965-1108) | game.c 1140-1431 (use_item/unequip_item/destroy_item) |
 | combat round WALKA | PRZEDM.WALKA / TPU 0x04EC (source 611-905) | game.c 1835-1869 (resolve_victory_kunszt), 1871-1896 (try_cook), 1984-2029 (recovered_dodge_roll), 2031-2141 (recovered_combat_chance), 2196-2228 (try_kick), 2230-2272 (damage tiers), 2292-2340 (apply_automatic_parry), 2417-2508 (resolve_basic_combat_round) |
+| arena loop MINIARENA | PRZEDM.MINIARENA / TPU 0x00E8 (source 1124-1433, bytes 0x0299..0x1689) | world.c 718-939 (arena rooms + exit lists); game.c 171-215 (game_select_opponent), 1555-1685 (unique drops), 1909-1957 (victory), 2417-2514 (resolve_basic_combat_round); parser.c 42-68, 129-153, 156 |
 | armour and shield mitigation | PRZEDM.UZYWANIE 0x0e3d..0x0eaf and 0x0f26..0x0f42; PRZEDM.TARCZA 0x0030..0x0054; PRZEDM.WALKA 0x112a | game.c 2305-2320, 2507-2508, 3739-3757 |
