@@ -2,8 +2,9 @@ unit PRZEDM;
 { checksum = $647E }
 interface
 
-uses  dos, monstra, crt, System;
+uses  dos, monstra, crt;
 
+var
   MMIECZ: Integer;
   MIECHO2: Integer;
   PRZED: Integer;

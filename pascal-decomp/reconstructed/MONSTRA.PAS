@@ -2,8 +2,9 @@ unit MONSTRA;
 { checksum = $242F }
 interface
 
-uses  crt, System;
+uses  crt;
 
+var
   MAXE: Integer;
   JAMNIK: Integer;
   OWCZAREK: Integer;
@@ -28,9 +29,51 @@ uses  crt, System;
   procedure WSTEP;
   { Proc $0008 Entry 0:022B }
 implementation
-  (* BODY TODO: reconstruct from BOMBKI.EXE code disassembly.
-     Linked code blocks & entries are documented in
-     analysis-results\tpu_reports\MONSTRA.*.txt and analysis-results\exe_reports\exe.*.txt *)
+
+procedure WSTEP;
+begin
+  ClrScr;
+  MAXE := 50;
+  WriteLn('         |||||| ');
+  WriteLn('         ||||||                     M&M=MILY MUD ');
+  WriteLn('         ||||||     ');
+  WriteLn(' /-----------------------\       /\  /\   | |   \./  ');
+  WriteLn('|   /\           /\       |     /  \/  \  | |__  | ');
+  WriteLn('|   \/           \/       |');
+  WriteLn('|        /                |     /\  /\   |   |  |-\ ');
+  WriteLn('| \     /___)      /      |    /  \/  \  |___|  |_/ ');
+  WriteLn('|  \______________/       |');
+  WriteLn('|   \____________/        |');
+  WriteLn('\_________________________/');
+  WriteLn('VERSJA CETA 0.86 23.05.99 - LAST MODYFIKACIONEN');
+  WriteLn('NACISNIJ DOWOLNY KLAWISZ ABY ROZPOCZAC GRE');
+  WriteLn('KORZYSTAJ Z DUZYCH LITER !!!!!!!!!!!!!!!!!');
+  repeat
+    Sound(100);
+    Delay(100);
+    Sound(200);
+    Delay(100);
+    Sound(300);
+    Delay(100);
+    Sound(400);
+    Delay(100);
+    Sound(500);
+    Delay(100);
+    Sound(600);
+    Delay(100);
+    Sound(500);
+    Delay(100);
+    Sound(400);
+    Delay(100);
+    Sound(300);
+    Delay(100);
+    Sound(200);
+    Delay(100);
+    WriteLn('TICK !!!');
+  until KeyPressed;
+  NoSound;
+end;
+
 begin
   { unit-initialization: runs once at program start }
 end.

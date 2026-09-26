@@ -683,6 +683,24 @@ formula.
 - This was the last pending interface body — no prose bodies remain at the
   marker. (Arena grid 1:1 + minor exit/prompt deltas: register entry 18.)
 
+### 2026-09-26 (32): TPU source-filename ground truth + BOMBKI.EXE entry-trace correction
+
+- **Source-filename ground truth.** Each TPU's `ofs_src_name` record names the exact `.PAS` file it was compiled from:
+  - `MONSTRA.TPU` → `MONSTRA.PAS`
+  - `SWIAT.TPU` → `SWIAT.PAS`
+  - `PRZEDM.TPU` → `PRZEDM.PAS`
+  These match our reconstructed filenames 1:1 — no rename needed, confirming the reconstruction maps to the original units. Persisted as per-unit `*.src.txt` reports in `analysis-results/tpu_reports/` (date cell kept raw, not DOS-decoded).
+- **Checksums / uses.** MONSTRA `$242F`, SWIAT `$3B76`, PRZEDM `$647E`; uses chains MONSTRA(`crt,System`), PRZEDM(`dos,monstra,crt,System`), SWIAT(`przedm,monstra,crt,System`) match the reconstruction interfaces.
+- **PLIKI.TPU is not a unit.** It is the in-game saved-game text file (a save record), not a TP7 unit; `tpuq` correctly refuses to parse it as `TPUQ`.
+- **Correction of the §4.2 "entry sweep" claim.** The earlier claim that the loader's entry IP lands on the Pascal string `"NOSISZ ZE SOBA:"` mixed up image-relative and file-relative offsets:
+  - MZ header: `CS:IP = 0000:B0CF`, header paragraphs `0x52E`, image length `0x1D4F0`. With `img = file[0x52E*16:]`, the entry is at **img 0xB0CF**, not img 0x00000.
+  - Bytes at img 0xB0CF are `9A 00 00 71 1C` = **`lcall 1C71:0000`** — real code, the System bootstrap (DS=DGROUP 0x1D49, BSS zeroed 0x52..0x8EE, CPU probe, heap init).
+  - The string `'NOSISZ ZE SOBA:'` (0F-length prefix) sits at **img 0x00000**, at the literal-pool start — it is not the entry target.
+- **Traced startup order (img-relative):** `0xB0CF` `lcall 1C71:0000` (System bootstrap) → `1C0F:000D` (std TextRec init) → main prologue `0xB0D9` (`push bp; mov bp,sp; xor ax,ax`) → `1C71:02CD` (heap check) → `1C71:0C79` (`GetTime` → `Randomize` seed) → `call 0x116EF` → `1C0F:031A` → `call 0x51C3` (`Checkpoint`) → `call 0x872E` (`LevelUp`) → `mov ax,[0x182]` (PRZED) / `cmp [0x62]` (MaxLoad) / `jg` overload-print block → `jmp 0xB193` main loop.
+- **Open nuance — first game call.** `call 0x116EF` at img 0xB0E8 (`E8 04 66`) computes target `0x116EF`, which is **byte 2 of the 5-byte `lcall 1C71:09D7`** at img 0x116EE (`9A D7 09 71 1C`) — off-by-one against the linear sweep. The enclosing routine's prologue is at img 0x11638 (`push bp; mov bp,sp; xor ax,ax`); taking img 0x116EE as the start yields the clean stream (`lcall 1C71:0291`; `mov di,0x564`; push/push; `lcall 1C71:09D7`; `jne`; `lcall 129D:3114` `PRZEDM_MODE`). Not blocking — the startup/input-overwrite routine writes textrec 0x564 with strings cs:0x1FEE/0x1FF3/0x1FF8 and calls `PRZEDM_MODE`.
+- **Stat-table writes are spread, not central.** `OWCZAREK` `[0x1B0]` (`mov word [0x1B0],imm`) hits at 0x5DB4, 0xB3CE, 0xB695, 0xB85E, 0xD091, 0x10981, 0x12995, 0x12A20, 0x13843; `[0x1B8]` at 0x5DBA, 0xB3D4, 0xB69B, 0xB864, 0xD097, 0x10987, 0x1298F, 0x12A26, 0x13849, 0x13DE9, 0x13F0C; `StaryMiecz` `[0x17E]` at 0x3F5C, 0xEC33, 0xED5E, 0xEDB5, 0x18446 — i.e. stats are written inside many game procs (WSTEP, spawns, LevelUp), not a single central init block. The proc at 0x5C36 reads textrec 0x564 with string cs:0x5B7C, checks `[0x58]==0xC`, then writes fresh MONSTRA stats and calls `WALKA 0x129D:0x44A6`.
+- **Unit inits live in the program-body prologue.** The RTL/System zone (paras `0x1C0F..0x1D4F`) never calls game code below `0x1C00`, so unit initialization blocks are emitted into the program-body prologue after the traced head rather than being called from System/CRT.
+
 ## 6. Open items
 
 - Exact name per 0x1D8..0x218 slot — solvable by pairing save()/wczytaj()
