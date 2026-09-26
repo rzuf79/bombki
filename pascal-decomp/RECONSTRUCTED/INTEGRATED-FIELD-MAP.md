@@ -759,7 +759,7 @@ the original.
   `PORT-DEVIATION`: enemies.c SLABO carries `bloody_heart={7,10}` (70%) so the
   Mrowka gives a heart instead of a PACZEK; no ZABIJ MROWKA paczek drop at all;
   PRZED bumps omitted; port stores PACZEK as stackable quantity.
-  Details: `C-PORT-DISCREPANCIES.md` entry I.
+  Details: `C-PORT-DISCREPANCIES.md` entry 4.
 - Confirmed 1:1 (no change): arena N/S/E/W edge table & MINIARENA redistributed
   rooms 33-57; QuestMaster prices/counters/rewards; death penalty formula;
   TRENUJ costs 3/2/3 with gates >2/>1/>2; monster stat tiers; food/mana

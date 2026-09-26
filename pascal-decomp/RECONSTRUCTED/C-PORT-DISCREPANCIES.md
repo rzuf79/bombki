@@ -21,30 +21,30 @@ different inputs/values; `minor` = cosmetic/faithfulness only.
 ## Summary matrix
 
 | # | topic | verdict | severity |
-|---|---|---|
-| D | Save-file format (incl. Forsa net-worth encoding) | PORT-DEVIATION (deliberate) | moderate |
-| E | Quest turn-in side effects | PORT-DEVIATION (deliberate) | moderate |
-| F | Item storage: countable quantities vs bool sentinels | PORT-DEVIATION (deliberate) | major |
-| I | Kaseta unique-drop carrying penalty | PORT-DEVIATION | major |
-| J | High-tier ordinary-reward energy gate | PORT-DEVIATION | moderate |
-| K | Coin-reward overflow behavior | PORT-DEVIATION | minor |
-| L | WALKAPIES rewards after fleeing | PORT-DEVIATION | moderate |
-| M | Stage-fight result handling and Liroy bonus | PORT-DEVIATION | major |
-| N | Non-stage kill callers roll unique drops unconditionally | PORT-DEVIATION | moderate |
-| O | FIGHTBLUSZCZ: market gate + plant kill clears | PORT-DEVIATION | moderate |
-| P | POROWNANIE basic/street advice band off-by-one (score==22) | PORT-DEVIATION | minor |
-| Q | Command abbreviations (KOMENDY): 'W'→west, 'E'→east, 'M'/'E'→MODE/EXIT lost, N/S/U added | PORT-DEVIATION | moderate |
-| R | PIERDOLY colour commands (ZMIEN KOLOR / ZMIEN TLO) not ported | PORT-DEVIATION | minor |
-| S | Small-shield block (TARCZA): mutable PRO/ILOSC vs fixed 10%/1pt | PORT-DEVIATION | moderate |
-| T | Monster regeneration (POTWORY): numeric state model + re-roll guards vs room-placement spawns | PORT-DEVIATION (deliberate) | moderate |
-| U | Item use (UZYWANIE): stat side-effects (PRO/CIALO/ILOSC/FUKSROLL) folded into equipped_clothing; pill's POTWORY re-roll missing | PORT-DEVIATION | minor |
-| V | WALKA: kill-reward reductions key off opponent max HP (original: player MONSTRA.MAXE); per-round/per-parry reward accrual and FUKSROLL heavy-blow reroll missing | PORT-DEVIATION | moderate |
-| W | MINIARENA: `%.` ENERGIA/KUNSZT status prompt and one-shot arena KTO list not printed; WYJSCIE leave-arena word not ported; arena drops clear only on kill (original clears most monsters even when the player fled) | PORT-DEVIATION | minor |
-| X | Armour and shield combat mitigation | PORT-DEVIATION | major |
+|---|---|---|---|
+| 1 | Save-file format (incl. Forsa net-worth encoding) | PORT-DEVIATION (deliberate) | moderate |
+| 2 | Quest turn-in side effects | PORT-DEVIATION (deliberate) | moderate |
+| 3 | Item storage: countable quantities vs bool sentinels | PORT-DEVIATION (deliberate) | major |
+| 4 | Kaseta unique-drop carrying penalty | PORT-DEVIATION | major |
+| 5 | High-tier ordinary-reward energy gate | PORT-DEVIATION | moderate |
+| 6 | Coin-reward overflow behavior | PORT-DEVIATION | minor |
+| 7 | WALKAPIES rewards after fleeing | PORT-DEVIATION | moderate |
+| 8 | Stage-fight result handling and Liroy bonus | PORT-DEVIATION | major |
+| 9 | Non-stage kill callers roll unique drops unconditionally | PORT-DEVIATION | moderate |
+| 10 | FIGHTBLUSZCZ: market gate + plant kill clears | PORT-DEVIATION | moderate |
+| 11 | POROWNANIE basic/street advice band off-by-one (score==22) | PORT-DEVIATION | minor |
+| 12 | Command abbreviations (KOMENDY): 'W'→west, 'E'→east, 'M'/'E'→MODE/EXIT lost, N/S/U added | PORT-DEVIATION | moderate |
+| 13 | PIERDOLY colour commands (ZMIEN KOLOR / ZMIEN TLO) not ported | PORT-DEVIATION | minor |
+| 14 | Small-shield block (TARCZA): mutable PRO/ILOSC vs fixed 10%/1pt | PORT-DEVIATION | moderate |
+| 15 | Monster regeneration (POTWORY): numeric state model + re-roll guards vs room-placement spawns | PORT-DEVIATION (deliberate) | moderate |
+| 16 | Item use (UZYWANIE): stat side-effects (PRO/CIALO/ILOSC/FUKSROLL) folded into equipped_clothing; pill's POTWORY re-roll missing | PORT-DEVIATION | minor |
+| 17 | WALKA: kill-reward reductions key off opponent max HP (original: player MONSTRA.MAXE); per-round/per-parry reward accrual and FUKSROLL heavy-blow reroll missing | PORT-DEVIATION | moderate |
+| 18 | MINIARENA: `%.` ENERGIA/KUNSZT status prompt and one-shot arena KTO list not printed; WYJSCIE leave-arena word not ported; arena drops clear only on kill (original clears most monsters even when the player fled) | PORT-DEVIATION | minor |
+| 19 | Armour and shield combat mitigation | PORT-DEVIATION | major |
 
 ---
 
-## D. Save-file format (moderate)
+## 1. Save-file format (moderate)
 
 ### ORIGINAL
 
@@ -82,7 +82,7 @@ product). This supersedes the earlier "Forsa / wealth scaling" item.
 
 ---
 
-## E. Quest turn-in side effects (moderate)
+## 2. Quest turn-in side effects (moderate)
 
 ### ORIGINAL (img 0x1276B..0x127C4 region)
 
@@ -112,7 +112,7 @@ would be meaningless. Recorded so a future audit does not re-flag it.
 
 ---
 
-## F. Item storage: countable quantities, not bool sentinels (major, deliberate)
+## 3. Item storage: countable quantities, not bool sentinels (major, deliberate)
 
 ### What the ORIGINAL does
 
@@ -153,7 +153,7 @@ gates as a PORT-DEVIATION bug; this section is the standing record of the intent
 
 ---
 
-## I. Kaseta unique-drop carrying penalty (major)
+## 4. Kaseta unique-drop carrying penalty (major)
 
 ### ORIGINAL (`PRZEDM.KASETAZYSK`, img 0x15908..0x1598F)
 
@@ -179,7 +179,7 @@ quantities under the deliberate item model in section F.
 
 ---
 
-## J. High-tier ordinary-reward energy gate (moderate)
+## 5. High-tier ordinary-reward energy gate (moderate)
 
 ### ORIGINAL (`PRZEDM.VEASY/EASY/NEASY`)
 
@@ -195,11 +195,11 @@ this path with nonpositive player energy, VEASY/EASY/NEASY still grant coins and
 roll their ordinary item reward, unlike the original. (In the original the
 `ENERGIA > 0` gate and the `MIECHO = 10000` knockout context are distinct
 safeguards; the port's omission of both is logged together with the loot
-ordering under entries I/L/M/N.)
+ordering under entries 4/7/8/9.)
 
 ---
 
-## K. Coin-reward overflow behavior (minor)
+## 6. Coin-reward overflow behavior (minor)
 
 The original difficulty procedures add the 16-bit roll directly to signed
 Longint `FORSA`. The port checks `INT_MAX - coins` and saturates at `INT_MAX`
@@ -208,7 +208,7 @@ the original arithmetic behavior.
 
 ---
 
-## L. WALKAPIES rewards after fleeing (moderate)
+## 7. WALKAPIES rewards after fleeing (moderate)
 
 ### ORIGINAL (`PRZEDM.WALKAPIES`, img 0x12A16..0x12AC9)
 
@@ -229,7 +229,7 @@ original still shows after a successful flee (`try_flee`, game.c 2145-2166).
 
 ---
 
-## M. Stage-fight result handling and Liroy bonus (major)
+## 8. Stage-fight result handling and Liroy bonus (major)
 
 Original `FIGHTSCENA` clears PERKUSISTA/GITARZYSTA/ORGANISTA and calls
 `KASETAZYSK` immediately after `VEASY`, without checking its result. LIROY alone
@@ -261,7 +261,7 @@ and quest step only apply on a clean Liroy KO).
 
 ---
 
-## N. Non-stage kill callers roll unique drops unconditionally (moderate)
+## 9. Non-stage kill callers roll unique drops unconditionally (moderate)
 
 ### ORIGINAL
 
@@ -280,15 +280,15 @@ suppresses Kaseta/Listek/Scroll; the Garnitur/Pigulka rolls have no such guard.
 ### PORT (game.c 1934-1957)
 
 `game_resolve_active_opponent_victory` fires only when the opponent reached zero
-energy, so these non-stage kills behave like the stage calls in entry M: a
+energy, so these non-stage kills behave like the stage calls in entry 8: a
 same-turn knockout decides eligibility by loot-ordering, not by the original's
 context-driven guard. Non-entity kill paths (D.J cassette, MINI-BARMAN/GRUBAS
 arena) are handled separately; the D.J cassette grant is `game.c 1527-1533`.
-Reachability of the omitted `MIECHO <> 10000` guard is shared with entry I.
+Reachability of the omitted `MIECHO <> 10000` guard is shared with entry 4.
 
 ---
 
-## O. FIGHTBLUSZCZ: market gate + plant kill clears (moderate)
+## 10. FIGHTBLUSZCZ: market gate + plant kill clears (moderate)
 
 ### ORIGINAL
 
@@ -333,7 +333,7 @@ KO-only resolver:
 - The DUNQ quest itself is otherwise 1:1: offer/DUNQ=75, reminder, completion
   at `duncan_quest == 131` (== -125 signed), +125 exp, DUNQ=0; the −50
   decrement per pokrzywa kill is game.c 1958-1959. Pass ownership is adapted
-  to an item quantity + `quest_passage` flag (entry F family).
+  to an item quantity + `quest_passage` flag (entry 3 family).
 - Plants are cleared only by the KO resolver (`active_opponent_energy == 0`,
   game.c 1941). The unconditional clears of SZCZAW/KONICZYNKA/MLECZ/
   DMUCHAWIEC and the `ENERGIA > 0` semantics of the remaining five are lost —
@@ -344,7 +344,7 @@ KO-only resolver:
 
 ---
 
-## P. POROWNANIE basic/street advice band off-by-one (minor)
+## 11. POROWNANIE basic/street advice band off-by-one (minor)
 
 ### ORIGINAL
 
@@ -374,7 +374,7 @@ dogs) and the BAKTERIA +5 MANA / learn gate (`FUKS < 3 and POR < 100` →
 
 ---
 
-## Q. Command abbreviations (KOMENDY) (moderate)
+## 12. Command abbreviations (KOMENDY) (moderate)
 
 ### ORIGINAL (`PRZEDM.KOMENDY`, PRZEDM.PAS:1560-1570, TPU 0x0043..0x016F)
 
@@ -410,7 +410,7 @@ deliberate design choice.
 
 ---
 
-## R. PIERDOLY colour commands not ported (minor)
+## 13. PIERDOLY colour commands not ported (minor)
 
 ### ORIGINAL (`PRZEDM.PIERDOLY`, PRZEDM.PAS:1111-1122, TPU 0x003B..0x00E1)
 
@@ -430,7 +430,7 @@ through to the unrecognised-command path. Cosmetic only.
 
 ---
 
-## S. Small-shield block (TARCZA) (moderate)
+## 14. Small-shield block (TARCZA) (moderate)
 
 ### ORIGINAL (`PRZEDM.TARCZA`, PRZEDM.PAS:601-608, TPU 0x0022..0x0090)
 
@@ -456,7 +456,7 @@ modelled.
 
 ---
 
-## T. Monster regeneration model (POTWORY) (moderate)
+## 15. Monster regeneration model (POTWORY) (moderate)
 
 ### ORIGINAL (`PRZEDM.POTWORY`, PRZEDM.PAS:70-164, TPU 0x0000..0x05D8)
 
@@ -497,7 +497,7 @@ room list.
 
 ---
 
-## U. Item-use stat effects and pill re-roll (UZYWANIE) (minor)
+## 16. Item-use stat effects and pill re-roll (UZYWANIE) (minor)
 
 ### ORIGINAL (`PRZEDM.UZYWANIE`, PRZEDM.PAS:965-1108, TPU 0x00D8, bytes
 0x07C6-0x10E7)
@@ -539,7 +539,7 @@ are 1:1 (`restore_energy`/`restore_mana` cap exactly like MAXE/MAXMANA). The
   the item definitions' armour values; the original's mutable
   `PRO`/`CIALO`/`ILOSC`/`FUKSROLL` stats (including `FUKSROLL + 15` for the
   spiked suit) have no analog — same family of deviation as the small-shield
-  block (entry S).
+  block (entry 14).
 - `ZNISZCZ PRZEPUSTKA`: the original bumps `PRZED + 1` (its carried-count
   model); the port decrements the pass quantity and recomputes
   `quest_passage_open`. `PATRZ PRZEPUSTKA` is not part of the port's use
@@ -550,7 +550,7 @@ are 1:1 (`restore_energy`/`restore_mana` cap exactly like MAXE/MAXMANA). The
 
 ---
 
-## V. WALKA: reward accrual, kill-reward reductions, heavy-blow reroll (moderate)
+## 17. WALKA: reward accrual, kill-reward reductions, heavy-blow reroll (moderate)
 
 ### ORIGINAL (`PRZEDM.WALKA`, PRZEDM.PAS:611-905, TPU 0x04EC, source rows for
 the full fight loop)
@@ -604,7 +604,7 @@ and KO handling:
   against high-HP monsters. Gameplay-visible difference in `ZABILES GO !`.
 - The `FUKSROLL` heavy-blow reroll has no port analog: the player's strike is a
   single `random_below(state, state->strength)` (game.c 2483-2486). This is the
-  same mutable-stat family as entries S/U (`FUKSROLL` only rises via the
+  same mutable-stat family as entries 14/16 (`FUKSROLL` only rises via the
   GARNITUR suit, which the port folds into `equipped_clothing`).
 
 ### Confirmed 1:1 (all other WALKA mechanics)
@@ -613,7 +613,7 @@ Dodge double-table (`recovered_dodge_roll` 1984-2029) in both directions with
 the four verbatim dodge strings; `WALCZYSZ - <<<<TWOJ WROG MA ...` header;
 enemy/player damage-tier strings (2230-2272) incl. the `!MASAKRUJE!`/`FLAKI`
 variants and the trailing `% ENERGII`; `MINIKUNSZT + 1` after the tier print
-and the `TARCZA` call order (apply_small_shield 2274-2290, entry S covers its
+and the `TARCZA` call order (apply_small_shield 2274-2290, entry 14 covers its
 fixed 10%/1pt); parry roll/bands and its learn line; FIREBALL/POISON/ILEPOI
 magic block (2342-2375); KOP (`try_kick` 2196-2228, incl. the per-round
 auto-kick attempt and both mana costs); reward message + `KUNSZT +=
@@ -625,7 +625,7 @@ test); flee (`try_flee` 2145-2170, verbatim WSTYD/NIE UDALO lines, `KUNSZT
 
 ---
 
-## W. MINIARENA: arena loop ceremony, WYJSCIE word, flee drop-clear quirk (minor)
+## 18. MINIARENA: arena loop ceremony, WYJSCIE word, flee drop-clear quirk (minor)
 
 ### ORIGINAL (`PRZEDM.MINIARENA`, PRZEDM.PAS:1124-1433, TPU 0x00E8, bytes
 0x0299..0x1689)
@@ -656,7 +656,7 @@ anchors). Deviations, all minor:
   (game.c 3994-3996).
 - The original's `WYJSCIE` leave-the-arena word is not ported — the port
   accepts only the full `EXIT`/`WYJSCIA` exits-list words (parser.c 156)
-  and leaves the arena via the direction words. Extends the row-Q
+  and leaves the arena via the direction words. Extends the row-12
   command-loss family.
 - Arena drops clear on kill only (`game_resolve_active_opponent_victory`,
   game.c 1941), so the port keeps a fled monster in its arena room; the
@@ -664,11 +664,11 @@ anchors). Deviations, all minor:
   except for the four `PASZOL = 0`-gated monsters (SLIMAK/KORNIK/MUCHA/
   ZUK), which behave the same as the port. The other monsters' flee-clear
   is an original quirk the port does not reproduce. Same robustness
-  family as entry L.
+  family as entry 7.
 
 ---
 
-## X. Armour and shield combat mitigation (major)
+## 19. Armour and shield combat mitigation (major)
 
 ### ORIGINAL (`PRZEDM.UZYWANIE`, `PRZEDM.TARCZA`, `PRZEDM.WALKA`)
 
@@ -723,7 +723,7 @@ shield-and-armour interaction differs from the original.
 - BRANIE take/drop handler: all 10 messages and side-effects match
   `take_item`/`drop_item` (game.c 1036-1114) 1:1 — DYPLOM `MAXE ±5`, FAJKA
   `MAD +1` (gated `< MAXMAD`) / `-1`, `-10` carried sentinel vs `MIECHO2`
-  pickup gate. The port's countable-quantity storage (entry F) replaces
+  pickup gate. The port's countable-quantity storage (entry 3) replaces
   `PRZED` bookkeeping and the sentinel values, and it additionally refuses to
   drop an equipped OLD SWORD / SMALL SHIELD.
 - UZYWANIE use-item dispatcher: every message is verbatim (incl. the trailing
@@ -738,7 +738,7 @@ shield-and-armour interaction differs from the original.
   small mana bottle +30, capped at max).
 - POROWNANIE oracle formula components (Sila + Zrecznosc-tier + PAR/KOP
   bonuses); advice-branch thresholds 1:1 except the basic/street middle band —
-  see entry P.
+  see entry 11.
 - Flee (ZWIEJ): three-step mana economy (attempt `MANA −= Random(2)+2`, gate
   `MANA > 14`, commit `MANA −= 15`) and success exactly `Random(100) <=
   Uciekanie` with KUNSZT −= 20 (img 0x17F55..0x1800B).
