@@ -1,19 +1,19 @@
 #!/usr/bin/env python3
 # -*- coding: cp437 -*-
-"""pack.py - assemble RECONSTRUCTED\\ skeleton package.
+"""pack.py - assemble reconstructed\\ skeleton package.
 
 Reads the resolved per-unit interface dumps (analysis-results\\tpu_reports) and emits:
-  RECONSTRUCTED\\MONSTRA.PAS   (unit skeleton, exports + body stubs)
-  RECONSTRUCTED\\SWIAT.PAS
+  reconstructed\\MONSTRA.PAS   (unit skeleton, exports + body stubs)
+  reconstructed\\SWIAT.PAS
   RECONSTRUKCJA: PRZEDM.PAS
-  RECONSTRUCTED\\BOMBKI.PAS    (main skeleton)
+  reconstructed\\BOMBKI.PAS    (main skeleton)
   ..\\RECONSTRUCTION-LOG.md     (method notes + save-file format)
 """
 import os, re, struct, sys
 
 RELDIR = os.path.dirname(os.path.abspath(__file__))
 REPORTS = os.path.join(RELDIR, '..', 'analysis-results', 'tpu_reports')
-OUT = os.path.join(RELDIR, '..', 'RECONSTRUCTED')
+OUT = os.path.join(RELDIR, '..', 'reconstructed')
 LOG = os.path.normpath(os.path.join(RELDIR, '..', 'RECONSTRUCTION-LOG.md'))
 EXE = r'E:\Develop\Reverse\bombki\BOMBKI.EXE'
 SAVE = r'E:\Develop\Reverse\bombki\PLIKI.TPU'

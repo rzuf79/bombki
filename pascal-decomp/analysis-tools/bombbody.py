@@ -3,7 +3,7 @@ from collections import defaultdict, Counter
 
 EXE=r"E:\Develop\Reverse\bombki\BOMBKI.EXE"
 OUT=os.path.join(os.path.dirname(os.path.abspath(__file__)), "..",
-                 "RECONSTRUCTED", "disasm", "BOMBKI-body-procs.asm")
+                 "analysis-results", "disasm", "BOMBKI-body-procs.asm")
 CODE_PARAS=(0x0E42, 0x05DD)      # loader histogram: SWIAT body + PRZEDM body
 
 def u16(b,o): return struct.unpack_from("<H",b,o)[0]

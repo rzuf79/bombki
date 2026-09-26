@@ -1,6 +1,6 @@
 import os, struct, re
 EXE=r"E:\Develop\Reverse\bombki\BOMBKI.EXE"
-OUT=r"E:\Develop\Reverse\bombki\RECONSTRUCTED\BOMBKI-body.pas"
+OUT=r"E:\Develop\Reverse\bombki\reconstructed\BOMBKI-body.pas"
 d=open(EXE,"rb").read()
 def u16(b,o): return struct.unpack_from("<H",b,o)[0]
 (mag,pp,cnt,rels,hdr,m1,m2,ss,sp,ip,tab,ovl)=struct.unpack_from("<12H",d,0)

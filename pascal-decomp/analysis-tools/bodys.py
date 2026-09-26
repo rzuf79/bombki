@@ -8,14 +8,14 @@ The EXE's far-pointer histogram shows the game lives in TWO paragraphs:
 Any cell that stores (seg==0E42 or seg==05DD) is a loader-fixed FAR CALL/JMP
 TARGET into that body.  Recursive descent seeded at every such target (and at
 the MZ exeip) with capstone x86/16 recovers each proc body head (until retf /
-iret / unconditional bleed).  Output RECONSTRUCTED\\disasm\\BOMBKI-body.asm.
+iret / unconditional bleed).  Output analysis-results\\disasm\\BOMBKI-body.asm.
 """
 import os, sys, struct
 from collections import Counter, defaultdict
 
 EXE=r"E:\Develop\Reverse\bombki\BOMBKI.EXE"
 OUTD=os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                  "..","RECONSTRUCTED","disasm")
+                  "..","analysis-results","disasm")
 BODY_PARA=(0x0E42,0x05DD)
 MAXP=700
 WINDOW=0x400
