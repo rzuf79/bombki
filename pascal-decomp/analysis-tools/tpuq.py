@@ -599,6 +599,16 @@ class Tpu:
             L.append('  unit record=%04X target=%d checksum=%04X name=%s'%(urs,target,cks,name))
         return '\n'.join(L)
 
+    def src_report(self):
+        L=['Source-file records (ofs  ft  w1  date_raw  source file)']
+        for (ofs,ft,w1,date,name) in self.src_files:
+            L.append('  %04X  %02X  %04X  %08X  %s'%(ofs,ft,w1,date,name))
+        L.append('')
+        L.append('The ofs_src_name..ofs_line_count region names the exact .PAS')
+        L.append('files this unit was compiled from (TP7 source-file records).')
+        L.append('date_raw is the raw 4-byte TP7 date cell, kept undecoded.')
+        return '\n'.join(L)
+
     def entry_report(self):
         pn=self.proc_entry_map()
         L=['Entry records (ofs  code_block:offset  exported  proc)']
@@ -681,6 +691,8 @@ def main():
         f.write(t.header_report()+'\n')
     with open(os.path.join(OUTDIR,name+'.units.txt'),'w') as f:
         f.write(t.unit_report()+'\n')
+    with open(os.path.join(OUTDIR,name+'.src.txt'),'w',newline='') as f:
+        f.write(t.src_report()+'\n')
     with open(os.path.join(OUTDIR,name+'.entries.txt'),'w') as f:
         f.write(t.entry_report()+'\n')
     with open(os.path.join(OUTDIR,name+'.codeblocks.txt'),'w') as f:

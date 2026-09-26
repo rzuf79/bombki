@@ -1,0 +1,6 @@
+Source-file records (ofs  ft  w1  date_raw  source file)
+  1516  04  0000  26C19BB0  PRZEDM.PAS
+
+The ofs_src_name..ofs_line_count region names the exact .PAS
+files this unit was compiled from (TP7 source-file records).
+date_raw is the raw 4-byte TP7 date cell, kept undecoded.
