@@ -4,13 +4,13 @@
   WALKA img 0x16E76..0x181C6, para 0x129D:0x44A6). The earlier "SWIAT:0x46
   shared engine, not yet traced" note refers to this same engine; it is now
   traced (see WALKA-CombatEngine-reconstructed.pas and the combat engine
-  section of INTEGRATED-FIELD-MAP.md).
+  section of ..\INTEGRATED-FIELD-MAP.md).
 
   Operand names are the corrected merged map (2026-09-24): the retracted
   MONSTRA band 0x1AC..0x1D4 are player stats/skills (ManaCur, skill gates,
   Uciekanie, KUNSZT), NOT monster HP. Monster HP/Dmg/Dex live in the unsaved
   slots [0x1B0]/[0x1B6]/[0x1B8], written per fight by the launchers (see the
-  launcher table in INTEGRATED-FIELD-MAP.md).
+  launcher table in ..\INTEGRATED-FIELD-MAP.md).
 
   BODY-B = para 05DD:1C71 (abs 07A41) is a STAGE/DIALOGUE routine (PRZEDM
   SCENA/TLUM), NOT a WSTEP sibling; its 0x1D6 writes are menu room options.

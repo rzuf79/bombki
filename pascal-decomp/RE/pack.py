@@ -7,13 +7,14 @@ Reads the resolved per-unit interface dumps and emits:
   RECONSTRUCTED\\SWIAT.PAS
   RECONSTRUKCJA: PRZEDM.PAS
   RECONSTRUCTED\\BOMBKI.PAS    (main skeleton)
-  RECONSTRUCTED\\RECONSTRUCTION-LOG.md     (method notes + save-file format)
+  ..\\RECONSTRUCTION-LOG.md     (method notes + save-file format)
 """
 import os, re, struct, sys
 
 RELDIR = os.path.dirname(os.path.abspath(__file__))
 REPORTS = os.path.join(RELDIR, 'tpu_reports')
 OUT = os.path.join(RELDIR, '..', 'RECONSTRUCTED')
+LOG = os.path.normpath(os.path.join(RELDIR, '..', 'RECONSTRUCTION-LOG.md'))
 EXE = r'E:\Develop\Reverse\bombki\BOMBKI.EXE'
 SAVE = r'E:\Develop\Reverse\bombki\PLIKI.TPU'
 
@@ -95,9 +96,9 @@ def main():
     with open(os.path.join(OUT, 'BOMBKI.PAS'), 'w', encoding='cp437') as f:
         f.write(build_main())
     print('wrote %s' % os.path.join(OUT, 'BOMBKI.PAS'))
-    with open(os.path.join(OUT, 'RECONSTRUCTION-LOG.md'), 'w', encoding='cp437') as f:
+    with open(LOG, 'w', encoding='cp437') as f:
         f.write(save_format_doc() + '\n')
-    print('wrote %s' % os.path.join(OUT, 'RECONSTRUCTION-LOG.md'))
+    print('wrote %s' % LOG)
 
 if __name__ == '__main__':
     main()

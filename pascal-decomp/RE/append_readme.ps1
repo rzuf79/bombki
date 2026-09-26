@@ -1,4 +1,4 @@
-$r = "E:\Develop\Reverse\bombki\RECONSTRUCTED\RECONSTRUCTION-LOG.md"
+$r = "E:\Develop\Reverse\bombki\RECONSTRUCTION-LOG.md"
 $add = @"
 ## 2026-09-24 (6): save() proc decoded - SAVE-FIELD-MAP.txt (80 fields = file 1:1)
 PRZEDM.save() = EXE paragraph at img 0x2BA1 (write order = file order):
