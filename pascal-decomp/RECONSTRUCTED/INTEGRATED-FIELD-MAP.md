@@ -98,7 +98,7 @@ corrected here (Energy!=Money, 0x182=PRZED carried count, 0x180=PreviousRoomCont
                       [0x1D4] -= 250 - Random(50) + 5*[0x25C]  (img 0x3800-0x3811)
                     ("TRACISZ KUNSZT ADEKWATNIE DO TWOJEGO LEVELKA").
                     "%."x54 labels are the adjoint percent display (SZ%/chance).
-   0x1D6  (not saved)    0x1d6 = CurrentContext (room/interface id); 1000=COMMON_MODE
+   0x1D6  (not saved)    0x1d6 = CurrentContext (room/interface id); 1000=STAN PODSWIADOMOSCI (MODE)
    0x1D8  f61     1                   0x1d8               ArenaSouthLatch (1 = arena N/E/W move blocked)
 0x1DA  f65     57                  0x1da               BeastKornik pen (ZABIJ -> PRZEDM_SLABO)
 0x1DC  f66     52                  0x1dc               BeastMucha pen   (arena; WAS GardenSpot)
@@ -536,7 +536,7 @@ grid 33..57). Commands (ds:0x564 strcmp):
    ("JESTES OBLADOWANY"). Monster stat band hypothesis (MIECHO/KUNSZT/PASZOL/
    WIMP/ZWIEJ at 0x180..0x188) is WRONG as named - those slots are
    PreviousRoomContext/CurrentLoad/unnamed fields.
-3. **0x1D6 = CurrentContext** (room/interface id; 1000 = COMMON_MODE, entered
+3. **0x1D6 = CurrentContext** (room/interface id; 1000 = STAN PODSWIADOMOSCI (MODE), entered
    via MODE/Unmode which save/restore the room in 0x180). BODY-B's writes of
    'E','F','G','H' into 0x1D6 are menu-selected room/context ids, consistent
    with the string-compare command dispatch (no central parser).
