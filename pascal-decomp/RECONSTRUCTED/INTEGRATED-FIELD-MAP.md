@@ -701,54 +701,39 @@ Every entry opposed the c-port evidence against the original disasm. Verdicts:
 differently from the disasm; `DOSSIER-ERROR` = a recovered dossier misstates
 the original.
 
-- **A. CWICZ formula stat (major)** — `ORIGINAL`: ALL six CWICZ commands key off
-  **MadroscCur [0x18C]** (img 0x27D5..0x2B73; each costs 1 PRAKTYK [0x194]):
-  - KOPANIE [0x1C8]  + MAD,            gates MAD>0xA(10) && SIL>0xB(11) // no cap
-  - UCIEKANIE [0x1CE] + MAD+ZRE-5,     gates MAD>0xA(10) && ZRE>0xA(10),  cap 0x55
-  - POWROT [0x78]    + 2*MAD-3,        gate MAD>0x11(17),                 cap 0x5A
-                                        (shl/2 then -3; NOT +MAD)
-  - PAROWANIE [0x1C6] + MAD+ZRE-14,    gates MAD>0xF(15) && ZRE>0xB(11),  cap 0x5A
-  - POROWNYWANIE [0x25D] + 3*MAD-9,    gate MAD>0xB(11),                  cap 0x5A
-  - POTRAWKI [0x258] + MAD+1,          gate MAD>0x12(18),                 cap 0x5A
-  `PORT-DEVIATION`: game.c has all six `practice_*` (wired at 3925-3942, so the
-  earlier "drops UCIEKANIE/KOPANIE" claim was stale) but keys every gate AND
-  formula on **strength** instead of wisdom (game.c 2543-2679). Gate nits:
-  KOPAC uses dexterity>11 where original used SIL>0xB; all caps/formulas match
-  otherwise. Skill poster/ZDOLNOSCI likewise strength-gated (894-919, 2783-2806).
-  Full table + comments: `RECONSTRUCTED\C-PORT-DISCREPANCIES.md` entry A.
-- **B. Flee (ZWIEJ)** — `ORIGINAL`: attempt drains Mana-(Random(2)+2); gates
+- **A. Flee (ZWIEJ)** — `ORIGINAL`: attempt drains Mana-(Random(2)+2); gates
   Uciekanie>0 && Energy<[0x1D0] && ManaCur>14; Mana-=15; success iff
   Random(100)<=Uciekanie -> FleeFlag=1 + KUNSZT-=20. `PORT-DEVIATION`:
   game.c `try_flee` gates on `flee_skill>0 && energy<flee_energy_threshold`,
   resolves success by dex-score (chance-15 vs Random(100)), costs only 20
   KUNSZT (no mana). (Doc's old "costs 15 Mana" was incomplete, not wrong.)
-- **C. Max-stat offsets** — `ORIGINAL` (char-select init 0x1748..0x18B9):
+- **B. Max-stat offsets** — `ORIGINAL` (char-select init 0x1748..0x18B9):
   0x196=MadroscMax, 0x198=SilaMax, 0x19A=ZrecznoscMax. `DOSSIER-ERROR`: the
   LEVELING extraction swapped them (claimed MAXSIL=[0x196], MAXZRE=[0x19A],
   MAXMAD=[0x198]). Field table above is correct.
-- **D. Save file format** — `ORIGINAL`: unlabelled flat sequence, one value per
+- **C. Save file format** — `ORIGINAL`: unlabelled flat sequence, one value per
   line (WCZYTANIE reconstruction). `PORT-DEVIATION`: persistence.c writes
   stable `key=value` lines (coins=, practices=...) — not byte-compatible with
   original save files. "Native v16 / imports v1-15" refers to the port schema.
-- **E. Forsa (f18 net-worth encoding; folded into D)** — the save file holds
+- **D. Forsa (f18 net-worth encoding; folded into C)** — the save file holds
   `coins × Madrosc` (written via @LMul, echoed on the save screen) and
   `wczytaj()` re-derives the wallet with the matching @LDiv; the pair is a
   reversible field transform, **not** an economy scaling — costs/payables read
   only the runtime wallet. The port persists runtime `coins` directly
-  (save-format item D).
-- **F. Quest turn-in side effects** — `ORIGINAL`: type1 KUNSZT+100 + pass +
+  (save-format item C).
+- **E. Quest turn-in side effects** — `ORIGINAL`: type1 KUNSZT+100 + pass +
   PRZED[0x182]+1; type2 KUNSZT+250 + pass + consume Dyplom + EnergyMax-5;
   type3 KUNSZT+425 + pass + consume Fajka + PRAKTYK-1 + PRZED-1 +
   Madrosc-1 ("removes the pipe's carried +1 wisdom"). `PORT-DEVIATION`: keeps
   KUNSZT/pass/consumes (and mirrors the Madrosc-1 via `apply_carried_item_effect
   (PIPE,-1)`) but omits the PRZED[0x182] +-1 bumps.
-- **G. Arena level placard** — arena grids advertise "3 LEVEL" prose; no actual
+- **F. Arena level placard** — arena grids advertise "3 LEVEL" prose; no actual
   level gate on arena ops in either the original or the port (flavor-only).
-- **H. Townhall/room-number nits (low priority)** — 83 is a BLUSZCZ/PIERDUT
+- **G. Townhall/room-number nits (low priority)** — 83 is a BLUSZCZ/PIERDUT
   tree room, 84 the overgrown-krzaki route to the domek/grota (doc said plain
   "forest"); the concert district is 67 piwiarnia / 68 estrada / 69-72 scena /
   LIROY ~73 rather than a homogeneous "61-72".
-- **I. Monster kill rewards (major)** — `ORIGINAL` (launcher tails img
+- **H. Monster kill rewards (major)** — `ORIGINAL` (launcher tails img
   0x13839..0x14016): PAY coins `Random(N)`; MROWKA-only drop = **PACZEK**
   `[0x1A0]` when `R(10)<7` && `[0x1A0]!=-10`, then `[0x1A0]=0xFFF6` +
   PRZED[0x182]+1, text "WYCIAGASZ PACZEK Z CIALA MROWKI"; NO heart on
@@ -763,7 +748,10 @@ the original.
 - Confirmed 1:1 (no change): arena N/S/E/W edge table & MINIARENA redistributed
   rooms 33-57; QuestMaster prices/counters/rewards; death penalty formula;
   TRENUJ costs 3/2/3 with gates >2/>1/>2; monster stat tiers; food/mana
-  percentages; POROWNANIE formula components (Sila+Zre-tier+PAR/KOP bonuses).
+  percentages; POROWNANIE formula components (Sila+Zre-tier+PAR/KOP bonuses);
+  all six CWICZ commands key off MadroscCur [0x18C] with imaged
+  gates/formulas/caps (img 0x27D5..0x2B73), each costing 1 PRAKTYK [0x194];
+  the ZDOLNOSCI poster gates on Sila identically in the original and the port.
 
 ## Open items / conflicts to resolve
 
