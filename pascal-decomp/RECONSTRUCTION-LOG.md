@@ -15,17 +15,17 @@ entry `0000:B0CF`, 5295 MZ relocs / 239 in-image cells), `MONSTRA.TPU`,
 | `SWIAT.PAS` | `POKOJ0..POKOJ100, POKOJE` + room vars; 13 proc stubs |
 | `PRZEDM.PAS` | fullest — 167 globals, 35 entries: `BRANIE, UZYWANIE, TARCZA, WALKA, MINIARENA, KTO, MODE, SLABO..BARUDNO, PRZEDM/BOMBKI text` ; Integer/Text/string typing resolved |
 | `BOMBKI.PAS` | main skeleton with `uses crt,swiat,przedm,monstra,dos,system` |
-| `RECONSTRUCTION-LOG.md` | this log + save-format spec |
-| `disasm\*.asm` | code-body disassembly reports (see §3) |
+| `..\RECONSTRUCTION-LOG.md` | this log + save-format spec |
+| `RECONSTRUCTED\disasm\*.asm` | code-body disassembly reports (see §3) |
 
-Interfaces are **verified byte-accurate** against `tpu_reports\*.interface.pas`
+Interfaces are **verified byte-accurate** against `RE\tpu_reports\*.interface.pas`
 (0 leftover foreign `System.ofsXXXX` references; all far pointers resolved to
 `System`/`CRT`/unit-local, plus `string`=System.ofs00BA seed).
 
 Port status (2026-09-26): the portable port (`c-port/`) was cross-checked
 against this reconstruction and now develops separately; it is NOT a reference
 for the PAS deliverable, which is grounded in the EXE/TPU evidence only
-(`disasm\*.asm`, `INTEGRATED-FIELD-MAP.md`, per-proc reconstructions).
+(`RECONSTRUCTED\disasm\*.asm`, `INTEGRATED-FIELD-MAP.md`, per-proc reconstructions).
 
 ## 2. Save format (PLIKI.TPU = text, CRLF)
 Plain-text save, cp437-safe, CRLF line endings — *not* a TPU. First bytes of
@@ -196,7 +196,7 @@ Also confirmed: Money vs 0x21A:0x21C longint pool (BAZAR buy gates) still open;
 0x257 = PIGULKA (saved byte, drop-count shortint); the 0x74 "POTRAWKI chance"
 name is a separate CWICZ field, not a count - ambiguity resolved. Full merged
 record incl. byte-flag cluster 0x255..0x262 and TPlayerMisc (0x664=EnergiaMax,
-0x668+ monster trackers): RECONSTRUCTED\INTEGRATED-FIELD-MAP.md. WSTEP-
+0x668+ monster trackers): INTEGRATED-FIELD-MAP.md. WSTEP-
 reconstructed.pas's "proven MONSTRA band" header is RETRACTED (see (8)).
 
 ## 2026-09-24 (8): KUNSZT = 0x1D4; death penalty decoded (level-based)

@@ -7,7 +7,7 @@ concrete checks and procedures, not a restatement of the rules.
 ## Start of task
 
 Read, in order: `CONTRIBUTING.md`, then the areas the task touches
-(`RECONSTRUCTED/RECONSTRUCTION-LOG.md`, `INTEGRATED-FIELD-MAP.md`,
+(`RECONSTRUCTION-LOG.md`, `INTEGRATED-FIELD-MAP.md`,
 `C-PORT-DISCREPANCIES.md`). Re-read any of these that change mid-task before
 acting on the new state.
 
