@@ -2377,7 +2377,7 @@ begin
   end;
 end;
 
-  (* Remaining bodies are still to be reconstructed from the retained TPU
+  (* All interface procedure bodies reconstructed from the retained TPU
      listings and BOMBKI.EXE disassembly. *)
 begin
   { unit-initialization: runs once at program start }
