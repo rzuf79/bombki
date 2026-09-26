@@ -68,17 +68,31 @@ static void test_take_drop_and_equipment(void)
 
     clear_capture(&capture);
     execute(&state, &capture, "ODRZUC STARY");
-    assert(capture.text[0] == '\0');
+    assert(strcmp(capture.text, "NAJPIERW ODLOZ TO CO MASZ W LAPIE\n") == 0);
     assert(state.turn == 2);
 
+    state.item_quantities[ITEM_OLD_SWORD] = 3;
+    clear_capture(&capture);
+    execute(&state, &capture, "ODRZUC STARY");
+    assert(strcmp(capture.text,
+        "ODRZUCASZ JEDEN STARY ZARDZEWIALY MIECZ\n") == 0);
+    assert(state.item_quantities[ITEM_OLD_SWORD] == 2);
+    assert(state.world_object_rooms[WORLD_OBJECT_OLD_SWORD] == state.room_id);
+    assert(state.equipped_weapon == ITEM_OLD_SWORD);
+    assert(state.strength == 11);
+    assert(state.turn == 3);
+
+    state.world_object_rooms[WORLD_OBJECT_OLD_SWORD] = BOMBKI_ROOM_NOWHERE;
+    clear_capture(&capture);
     execute(&state, &capture, "ODLOZ STARY");
     assert(strcmp(capture.text,
         "CHOWASZ STARY ZARDZEWIALY MIECZ I NIE UZYWASZ GO JAKO BRONI\n")
         == 0);
     assert(state.equipped_weapon == BOMBKI_NO_ITEM);
     assert(state.strength == 10);
-    assert(state.turn == 3);
+    assert(state.turn == 4);
 
+    state.item_quantities[ITEM_OLD_SWORD] = 1;
     clear_capture(&capture);
     execute(&state, &capture, "ODRZUC STARY");
     assert(strcmp(capture.text,
@@ -86,7 +100,7 @@ static void test_take_drop_and_equipment(void)
         == 0);
     assert(state.item_quantities[ITEM_OLD_SWORD] == 0);
     assert(state.world_object_rooms[WORLD_OBJECT_OLD_SWORD] == state.room_id);
-    assert(state.turn == 4);
+    assert(state.turn == 5);
 
     base_energy = state.maximum_energy;
     state.world_object_rooms[WORLD_OBJECT_SCHOOL_DIPLOMA] = state.room_id;
@@ -121,6 +135,7 @@ static void test_take_drop_and_equipment(void)
         "ODRZUCASZ ZAKRWAWIONE SERCE \n"
         "JAK SMIESZ WYRZUCAC JEDZENIE!!! WSTYD MI ZA CIEBIE !!! NIE POZWOLE !!!\n")
         == 0);
+    assert(state.item_quantities[ITEM_BLOODY_HEART] == 0);
     assert(state.world_object_rooms[WORLD_OBJECT_BLOODY_HEART] == state.room_id);
 
     clear_capture(&capture);

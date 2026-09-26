@@ -10,7 +10,14 @@ typedef struct {
 
 void terminal_initialize(Terminal *terminal, bool force_plain);
 void terminal_write(void *context, const char *text);
-void terminal_write_banner(const Terminal *terminal);
+void terminal_write_banner(const Terminal *terminal, bool save_available);
 bool terminal_read_line(const Terminal *terminal, char *buffer, size_t capacity);
+bool terminal_read_game_line(
+    const Terminal *terminal,
+    int energy,
+    int maximum_energy,
+    char *buffer,
+    size_t capacity
+);
 
 #endif

@@ -32,6 +32,10 @@ documented intentional difference.
 - `PAMIETAJ` saves and `WLACZ POSTAC` loads directly; the portable game has no
   subconscious (`MODE`) gate.
 
+As a user-approved startup extension, the portable opening checks for
+`bombki.sav`: when one exists it offers `WLACZ POSTAC` before character
+creation, and an interactive game prompt displays current and maximum HP.
+
 The DOS dispatcher also retains the direction abbreviations `PN`, `PD`, `W`,
 `Z`, `G`, and `D`, plus `E` for `EXIT` and `M` for `MODE`. The portable parser
 accepts the non-conflicting Polish direction abbreviations. At the user's request,
@@ -194,9 +198,10 @@ that original listing. Five items use a world location when not carried: the
 old sword, small shield, bloody heart, school diploma, and pipe. The portable
 state represents every carried item with an ordinary nonnegative quantity
 instead of preserving the original program's negative-multiple-of-ten storage
-convention. `JA` converts those quantities back to the original negative,
-right-aligned display values; its other text and ordering also follow the
-retained executable, including the swapped strength/wisdom labels.
+convention. Singleton inventory lines retain the original layout. As a
+user-approved countable-item extension, `JA` shows a stack's positive quantity
+in round parentheses after its item name; its other text and ordering follow
+the retained executable, including the swapped strength/wisdom labels.
 
 Carrying capacity is recomputed from current dexterity:
 
@@ -222,8 +227,10 @@ item is absent or cannot be equipped. The five location-valued items can be
 taken only from their current room and are dropped into the player's current
 room. Taking the diploma raises maximum energy by five until it is dropped;
 taking the pipe raises current wisdom by one when it is below its maximum, and
-dropping the pipe removes one wisdom. An equipped sword or shield must be put
-away before it can be dropped.
+dropping the pipe removes one wisdom. As a user-approved extension, rejected
+drop and sale attempts state why they fail. An equipped singleton sword or
+shield must be put away before it can be dropped, but a stacked spare can be
+dropped without unequipping the retained copy.
 
 The recovered consumable effects are five energy for the bloody heart; 8, 12,
 16, 20, 26, and 34 energy for the doughnut, cake, dry ration, roll, bread, and
@@ -241,13 +248,13 @@ refusal. Dropping the bloody heart first places it in the room and then also
 prints that refusal. `UZYJ KASETA` prints the cassette description without an
 ownership check; this original quirk is retained.
 
-The four ordinary stores retain their recovered `LISTA` output and silent
-failure behavior. Purchases are available only in the store advertising the
-item. The bakery sells its six foods; the armory sells the old sword and small
-shield; the general store sells the pipe, clothes, cassette, and spiked suit;
-and the magic store sells the small mana bottle, lucky leaf, transport pill,
-and comparison scroll. Only items with recovered resale commands can be sold.
-Equipped gear cannot be sold in the portable state.
+The four ordinary stores retain their recovered `LISTA` output. Purchases are
+available only in the store advertising the item. The bakery sells its six
+foods; the armory sells the old sword and small shield; the general store sells
+the pipe, clothes, cassette, and spiked suit; and the magic store sells the
+small mana bottle, lucky leaf, transport pill, and comparison scroll. Only
+items with recovered resale commands can be sold. An equipped singleton cannot
+be sold, but a stacked spare can be sold without unequipping the retained copy.
 
 Two executable price oddities are preserved. A small mana bottle is accepted
 when the player has 15 coins although the displayed price and deduction are 20.

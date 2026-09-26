@@ -28,7 +28,7 @@ void terminal_write(void *context, const char *text)
     fputs(text, stdout);
 }
 
-void terminal_write_banner(const Terminal *terminal)
+void terminal_write_banner(const Terminal *terminal, bool save_available)
 {
     if (terminal != NULL && terminal->use_color) {
         fputs("\033[1;33m", stdout);
@@ -45,16 +45,25 @@ void terminal_write_banner(const Terminal *terminal)
         "|  \\______________/       |\n"
         "|   \\____________/        |\n"
         "\\_________________________/\n"
-        "VERSJA CETA 0.86 23.05.99 - LAST MODYFIKACIONEN\n"
-        "NACISNIJ DOWOLNY KLAWISZ ABY ROZPOCZAC GRE\n",
+        "VERSJA CETA 0.86 23.05.99 - LAST MODYFIKACIONEN\n",
         stdout
     );
+    fputs(save_available
+        ? "NAPISZ 'WLACZ POSTAC' ABY WCZYTAC GRE ALBO COKOLWIEK INNEGO ABY ROZPOCZAC NOWA\n"
+        : "NACISNIJ DOWOLNY KLAWISZ ABY ROZPOCZAC GRE\n",
+        stdout);
     if (terminal != NULL && terminal->use_color) {
         fputs("\033[0m", stdout);
     }
 }
 
-bool terminal_read_line(const Terminal *terminal, char *buffer, size_t capacity)
+static bool terminal_read_line_with_status(
+    const Terminal *terminal,
+    int energy,
+    int maximum_energy,
+    char *buffer,
+    size_t capacity
+)
 {
     bool interactive;
 
@@ -65,7 +74,13 @@ bool terminal_read_line(const Terminal *terminal, char *buffer, size_t capacity)
     interactive = is_terminal(stdin);
     if (interactive) {
         if (terminal != NULL && terminal->use_color) {
-            fputs("\033[1;36m> \033[0m", stdout);
+            if (energy >= 0 && maximum_energy >= 0) {
+                fprintf(stdout, "\033[1;36m%d/%dhp > \033[0m", energy, maximum_energy);
+            } else {
+                fputs("\033[1;36m> \033[0m", stdout);
+            }
+        } else if (energy >= 0 && maximum_energy >= 0) {
+            fprintf(stdout, "(%d/%d HP) > ", energy, maximum_energy);
         } else {
             fputs("> ", stdout);
         }
@@ -79,4 +94,26 @@ bool terminal_read_line(const Terminal *terminal, char *buffer, size_t capacity)
         fputs("\n", stdout);
     }
     return true;
+}
+
+bool terminal_read_line(const Terminal *terminal, char *buffer, size_t capacity)
+{
+    return terminal_read_line_with_status(terminal, -1, -1, buffer, capacity);
+}
+
+bool terminal_read_game_line(
+    const Terminal *terminal,
+    int energy,
+    int maximum_energy,
+    char *buffer,
+    size_t capacity
+)
+{
+    return terminal_read_line_with_status(
+        terminal,
+        energy,
+        maximum_energy,
+        buffer,
+        capacity
+    );
 }

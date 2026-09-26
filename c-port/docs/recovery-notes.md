@@ -63,7 +63,7 @@ repeating broad inspection of the original binaries or the project docs.
 
 ## Current handoff
 
-Milestones 1 through 7 are complete. Legacy-save import, multi-OS verification,
+Milestones 1 through 9 are complete. Legacy-save import, multi-OS verification,
 and a seed flag are not part of the remaining game-reconstruction work. Do not
 invent player-facing text or mechanics for unrecovered commands.
 
@@ -78,11 +78,13 @@ invent player-facing text or mechanics for unrecovered commands.
   is ignored when loading older saves; user-approved school posters now explain
   the direct, implemented commands instead of the removed state and dormant
   abilities.
-- `JA` now follows the original inventory/equipment/level/stat/quest sequence
-  from executable file offsets `0x05ab9`–`0x066e5`. It displays stored item
-  quantities as negative tens, keeps the original strength/wisdom label swap,
-  and derives `S.Z` and `FUKSROLL` from equipment. Carrying capacity uses
-  dexterity, as the executable's `JA` calculation at `0x05a26` shows.
+- `JA` follows the original inventory/equipment/level/stat/quest sequence
+  from executable file offsets `0x05ab9`–`0x066e5`. Singleton items retain
+  the original layout, while the user-approved countable-item extension shows
+  a stack's positive quantity in round parentheses. It keeps the original
+  strength/wisdom label swap and derives `S.Z` and `FUKSROLL` from equipment.
+  Carrying capacity uses dexterity, as the executable's `JA` calculation at
+  `0x05a26` shows.
 - Milestone 5 enemy statistics now have one data source in `src/enemies.c`.
   It contains the eight recovered `PRZEDM.TPU` ranges, the fixed `WALKAPIES`
   values, all five direct cage assignments, and a profile for every current
@@ -171,6 +173,12 @@ invent player-facing text or mechanics for unrecovered commands.
   A fresh interactive run verified the opening-to-cage route, and `make check`
   plus `make evidence-check` passed after the quest, death/recovery, save/load,
   and river tests.
+- Milestone 9 is a user-approved quality-of-life batch: `ODRZUC` and
+  `SPRZEDAJ` consume one spare from a stack even if another copy is equipped,
+  while rejected drops and sales now say why. `ZDOLNOSCI` taunts a player with
+  no available skills. At startup, an existing native save offers `WLACZ
+  POSTAC` before character creation; interactive game prompts show current
+  and maximum HP.
 
 ## Useful recovered anchors
 

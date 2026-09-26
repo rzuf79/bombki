@@ -67,6 +67,14 @@ static void test_status_sheet(void)
         "MASZ 100/100 MANY\n"
         "MASZ 50/50 ENERGII\n") == 0);
 
+    command = parser_parse("ZDOLNOSCI");
+    clear_capture(&capture);
+    (void)game_execute(&state, &command, output);
+    assert(strcmp(capture.text,
+        "NIE MASZ ZADNYCH ZDOLNOSCI , ALE POTRAFISZ JESZCZE CHODZIC\n") == 0);
+
+    command = parser_parse("JA");
+
     state.item_quantities[ITEM_OLD_SWORD] = 1;
     state.item_quantities[ITEM_SMALL_SHIELD] = 1;
     state.item_quantities[ITEM_BLOODY_HEART] = 3;

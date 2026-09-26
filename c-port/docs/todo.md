@@ -272,6 +272,21 @@ the full suite covers the quest paths, recovery, native save/load, and river.
 - [x] Replace player-facing instructions for removed command states and dormant
       abilities with the mechanics implemented by the portable game.
 
+## Milestone 9 - misc crap (complete)
+- [x] odrzuc command doesn't seem to work. i have 3 stary swords, wanted to get
+      rid of 1 of em and it didn't work
+- [x] sprzedaj also didn't work in that case. should give feedback why something
+      can't be dropped or sold
+- [x] zdolnosci command should print out something snarky if we don't have any
+      skills
+- [x] one the opening screen, one that says "NACISNIJ DOWOLNY KLAWISZ ABY ROZPOCZAC
+      GRE" detect if there is a save file available. If so, it should say "NAPISZ
+      'WLACZ POSTAC' ABY WCZYTAC GRE ALBO COKOLWIEK INNEGO ABY ROZPOCZAC NOWA".
+      Then handle loading a saved game from that screen. If there's no saved game, no
+      such message should appear and the game should just show race selection
+- [x] display player's hape on the prompt (>), like in classic MUD games
+
+
 The central and underground posters no longer describe `MODE`/`UNMODE`, the
 subconscious state, or abilities with no handler. `POMOC` now lists the usable
 command set in the game's tone. This is a user-approved exception to the normal

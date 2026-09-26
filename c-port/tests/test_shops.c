@@ -105,8 +105,20 @@ static void test_armory(void)
     state.equipped_shield = ITEM_SMALL_SHIELD;
     clear_capture(&capture);
     execute(&state, &capture, "SPRZEDAJ MALA");
-    assert(capture.text[0] == '\0');
+    assert(strcmp(capture.text,
+        "NAJPIERW ODLOZ PRZEDMIOT KTORY CHCESZ SPRZEDAC\n") == 0);
     assert(state.item_quantities[ITEM_SMALL_SHIELD] == 1);
+
+    state.item_quantities[ITEM_OLD_SWORD] = 3;
+    state.equipped_weapon = ITEM_OLD_SWORD;
+    clear_capture(&capture);
+    execute(&state, &capture, "SPRZEDAJ STARY");
+    assert(strcmp(capture.text,
+        "SPRZEDAWCA MOWI CI : WYPCHAJ SIE Z TYM MIECZEM\n"
+        "ALBO DOBRA KUPIE GO OD CIEBIE ZA 30 MONET\n") == 0);
+    assert(state.item_quantities[ITEM_OLD_SWORD] == 2);
+    assert(state.equipped_weapon == ITEM_OLD_SWORD);
+    assert(state.coins == 60);
 }
 
 static void test_general_store(void)
@@ -191,7 +203,7 @@ static void test_magic_store(void)
     assert(state.coins == 18);
 }
 
-static void test_wrong_room_is_silent(void)
+static void test_wrong_room_feedback(void)
 {
     GameState state;
     Capture capture = {{0}, 0};
@@ -201,7 +213,7 @@ static void test_wrong_room_is_silent(void)
     execute(&state, &capture, "KUP PACZEK");
     execute(&state, &capture, "SPRZEDAJ STARY");
     execute(&state, &capture, "LISTA");
-    assert(capture.text[0] == '\0');
+    assert(strcmp(capture.text, "TU TEGO NIE KUPUJA\n") == 0);
     assert(state.turn == 0);
 }
 
@@ -464,7 +476,8 @@ static void test_quest_master_paths(void)
     state.quest_progress = 0;
     clear_capture(&capture);
     execute(&state, &capture, "SPRZEDAJ QUEST");
-    assert(capture.text[0] == '\0');
+    assert(strcmp(capture.text,
+        "QUEST-MASTER NIE CHCE JESZCZE TWOJEGO QUESTA\n") == 0);
     assert(state.quest_type == 2);
     state.item_quantities[ITEM_SCHOOL_DIPLOMA] = 1;
     clear_capture(&capture);
@@ -488,7 +501,8 @@ static void test_quest_master_paths(void)
     state.practices = 0;
     clear_capture(&capture);
     execute(&state, &capture, "SPRZEDAJ QUEST");
-    assert(capture.text[0] == '\0');
+    assert(strcmp(capture.text,
+        "QUEST-MASTER NIE CHCE JESZCZE TWOJEGO QUESTA\n") == 0);
     assert(state.quest_type == 3);
     state.practices = 2;
     state.experience = -1000;
@@ -516,7 +530,7 @@ int main(void)
     test_armory();
     test_general_store();
     test_magic_store();
-    test_wrong_room_is_silent();
+    test_wrong_room_feedback();
     test_duncan_quest_and_black_market();
     test_old_elf_fetch_quest();
     test_talk_fallbacks();

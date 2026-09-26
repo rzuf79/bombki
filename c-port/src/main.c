@@ -27,6 +27,33 @@ static bool plain_output_requested(int argc, char **argv)
     return false;
 }
 
+static bool save_file_exists(void)
+{
+    FILE *file = fopen(SAVE_PATH, "r");
+
+    if (file == NULL) {
+        return false;
+    }
+    (void)fclose(file);
+    return true;
+}
+
+static bool load_saved_game(
+    Terminal *terminal,
+    GameState *state,
+    GameOutput output,
+    char *error
+)
+{
+    if (!persistence_load(SAVE_PATH, state, error, ERROR_CAPACITY)) {
+        fprintf(stderr, "Nie mozna wczytac gry: %s\n", error);
+        return false;
+    }
+    terminal_write(terminal, "POSTAC WLACZONA.\n");
+    game_describe_current_room(state, output);
+    return true;
+}
+
 static bool configure_player(Terminal *terminal, GameState *state, char *input)
 {
     Race race;
@@ -93,22 +120,30 @@ int main(int argc, char **argv)
     char input[INPUT_CAPACITY];
     char error[ERROR_CAPACITY];
     bool running = true;
+    bool loaded = false;
 
     terminal_initialize(&terminal, plain_output_requested(argc, argv));
     output.write = terminal_write;
     output.context = &terminal;
 
-    terminal_write_banner(&terminal);
+    game_initialize(&state);
+    terminal_write_banner(&terminal, save_file_exists());
     if (!terminal_read_line(&terminal, input, sizeof(input))) {
         return 0;
     }
-    game_initialize(&state);
-    if (!configure_player(&terminal, &state, input)) {
-        return 0;
+    if (save_file_exists() && parser_parse(input).verb == COMMAND_LOAD) {
+        loaded = load_saved_game(&terminal, &state, output, error);
     }
-    game_describe_current_room(&state, output);
+    if (!loaded) {
+        game_initialize(&state);
+        if (!configure_player(&terminal, &state, input)) {
+            return 0;
+        }
+        game_describe_current_room(&state, output);
+    }
 
-    while (running && terminal_read_line(&terminal, input, sizeof(input))) {
+    while (running && terminal_read_game_line(&terminal, state.energy,
+            state.maximum_energy, input, sizeof(input))) {
         Command command = parser_parse(input);
         GameAction action = game_execute(&state, &command, output);
 
@@ -121,17 +156,13 @@ int main(int argc, char **argv)
             }
             break;
         case GAME_ACTION_LOAD:
-            if (persistence_load(SAVE_PATH, &state, error, sizeof(error))) {
-                terminal_write(&terminal, "POSTAC WLACZONA.\n");
-                game_describe_current_room(&state, output);
-            } else {
-                fprintf(stderr, "Nie mozna wczytac gry: %s\n", error);
-            }
+            (void)load_saved_game(&terminal, &state, output, error);
             break;
         case GAME_ACTION_FLEE_THRESHOLD: {
             int threshold;
 
-            if (!terminal_read_line(&terminal, input, sizeof(input))) {
+            if (!terminal_read_game_line(&terminal, state.energy,
+                    state.maximum_energy, input, sizeof(input))) {
                 running = false;
             } else if (parse_integer_line(input, &threshold)) {
                 game_set_flee_energy_threshold(&state, threshold);
@@ -142,7 +173,8 @@ int main(int argc, char **argv)
             int energy_threshold;
             int mana_threshold;
 
-            if (!terminal_read_line(&terminal, input, sizeof(input))) {
+            if (!terminal_read_game_line(&terminal, state.energy,
+                    state.maximum_energy, input, sizeof(input))) {
                 running = false;
                 break;
             }
@@ -153,7 +185,8 @@ int main(int argc, char **argv)
                 &terminal,
                 "2)DO JAKIECH ILOSCI MANA CHCESZ KOPAC\n"
             );
-            if (!terminal_read_line(&terminal, input, sizeof(input))) {
+            if (!terminal_read_game_line(&terminal, state.energy,
+                    state.maximum_energy, input, sizeof(input))) {
                 running = false;
             } else if (parse_integer_line(input, &mana_threshold)) {
                 game_set_kick_thresholds(
@@ -166,7 +199,8 @@ int main(int argc, char **argv)
         }
         case GAME_ACTION_COMPARISON_TARGET:
         case GAME_ACTION_COMPARISON_SCROLL_TARGET:
-            if (!terminal_read_line(&terminal, input, sizeof(input))) {
+            if (!terminal_read_game_line(&terminal, state.energy,
+                    state.maximum_energy, input, sizeof(input))) {
                 running = false;
             } else {
                 game_resolve_comparison_target(
@@ -178,7 +212,8 @@ int main(int argc, char **argv)
             }
             break;
         case GAME_ACTION_CAVE_RESPONSE:
-            if (!terminal_read_line(&terminal, input, sizeof(input))) {
+            if (!terminal_read_game_line(&terminal, state.energy,
+                    state.maximum_energy, input, sizeof(input))) {
                 running = false;
             } else {
                 game_resolve_cave_response(&state, input, output);

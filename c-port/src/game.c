@@ -1083,34 +1083,65 @@ static ItemActionResult drop_item(
         "ODRZUCASZ DYPLOM MUD SZKOLY , I PRZESTAJESZ CZUC PRZEPLYWAJACA PRZEZ CIEBIE MOC\n",
         "WYRZUCASZ FAJKE \n"
     };
+    static const char *const stack_messages[WORLD_OBJECT_COUNT] = {
+        "ODRZUCASZ JEDEN STARY ZARDZEWIALY MIECZ\n",
+        "ODRZUCASZ JEDNA MALA ZWYKLA TARCZE\n",
+        "ODRZUCASZ JEDNO ZAKRWAWIONE SERCE\n",
+        "ODRZUCASZ JEDEN DYPLOM MUD SZKOLY\n",
+        "WYRZUCASZ JEDNA FAJKE\n"
+    };
     const ItemDefinition *item = item_find(argument);
-    ItemActionResult result = ITEM_ACTION_FAILED;
+    bool protected_food;
 
     if (item == NULL) {
+        emit(output, "NIE MASZ CZEGO ODRZUCIC\n");
         return ITEM_ACTION_FAILED;
     }
-    if (item->storage == ITEM_STORAGE_WORLD_LOCATION
-        && state->item_quantities[item->id] > 0
-        && !(item->id == ITEM_OLD_SWORD
-            && state->equipped_weapon == ITEM_OLD_SWORD)
-        && !(item->id == ITEM_SMALL_SHIELD
-            && state->equipped_shield == ITEM_SMALL_SHIELD)) {
-        emit(output, messages[item->id]);
-        state->item_quantities[item->id] = 0;
-        state->world_object_rooms[item->id] = state->room_id;
-        if (item->id == ITEM_SCHOOL_DIPLOMA) {
-            state->maximum_energy -= 5;
-        } else if (item->id == ITEM_PIPE) {
-            --state->wisdom;
-        }
-        result = ITEM_ACTION_SUCCEEDED;
+    protected_food = is_protected_food(item->id);
+    if (protected_food && item->id != ITEM_BLOODY_HEART) {
+        emit(output,
+            "JAK SMIESZ WYRZUCAC JEDZENIE!!! WSTYD MI ZA CIEBIE !!! NIE POZWOLE !!!\n"
+        );
+        return ITEM_ACTION_FAILED;
     }
-    if (is_protected_food(item->id)) {
+    if (item->storage != ITEM_STORAGE_WORLD_LOCATION) {
+        emit(output, "NIE MOZESZ ODRZUCIC TEGO PRZEDMIOTU\n");
+        return ITEM_ACTION_FAILED;
+    }
+    if (state->item_quantities[item->id] == 0) {
+        emit(output, "NIE MASZ TEGO PRZEDMIOTU\n");
+        return ITEM_ACTION_FAILED;
+    }
+    if (state->world_object_rooms[item->id] != BOMBKI_ROOM_NOWHERE) {
+        emit(output, "JEDEN TAKI PRZEDMIOT LEZY JUZ GDZIES NA ZIEMI\n");
+        return ITEM_ACTION_FAILED;
+    }
+    if ((item->id == ITEM_OLD_SWORD
+            && state->equipped_weapon == ITEM_OLD_SWORD)
+        || (item->id == ITEM_SMALL_SHIELD
+            && state->equipped_shield == ITEM_SMALL_SHIELD)) {
+        if (state->item_quantities[item->id] == 1) {
+            emit(output, "NAJPIERW ODLOZ TO CO MASZ W LAPIE\n");
+            return ITEM_ACTION_FAILED;
+        }
+    }
+
+    emit(output, state->item_quantities[item->id] > 1
+        ? stack_messages[item->id]
+        : messages[item->id]);
+    --state->item_quantities[item->id];
+    state->world_object_rooms[item->id] = state->room_id;
+    if (item->id == ITEM_SCHOOL_DIPLOMA) {
+        state->maximum_energy -= 5;
+    } else if (item->id == ITEM_PIPE) {
+        --state->wisdom;
+    }
+    if (protected_food) {
         emit(output,
             "JAK SMIESZ WYRZUCAC JEDZENIE!!! WSTYD MI ZA CIEBIE !!! NIE POZWOLE !!!\n"
         );
     }
-    return result;
+    return ITEM_ACTION_SUCCEEDED;
 }
 
 static void restore_energy(GameState *state, int amount)
@@ -2755,26 +2786,39 @@ static bool resolve_return(GameState *state, GameOutput output)
 
 static void describe_abilities(const GameState *state, GameOutput output)
 {
+    bool has_ability = false;
+
     if (state->strength > 10 && state->wisdom > 11) {
         emit_formatted(output, "KOPANIE       - %d%%\n", state->kick_skill);
+        has_ability = true;
     }
     if (state->strength > 10 && state->dexterity > 10) {
         emit_formatted(output, "UCIEKANIE     - %d%%\n", state->flee_skill);
+        has_ability = true;
     }
     if (state->strength > 15 && state->dexterity > 11) {
         emit_formatted(output, "PAROWANIE     - %d%%\n", state->parry_skill);
+        has_ability = true;
     }
     if (state->strength > 11) {
         emit_formatted(output,
             "POROWNYWANIE  - %d%%\n",
             state->comparison_skill
         );
+        has_ability = true;
     }
     if (state->strength > 18) {
         emit_formatted(output, "POTRAWKI      - %d%%\n", state->cooking_skill);
+        has_ability = true;
     }
     if (state->strength > 19) {
         emit_formatted(output, "POWROT        - %d%%\n", state->return_skill);
+        has_ability = true;
+    }
+    if (!has_ability) {
+        emit(output,
+            "NIE MASZ ZADNYCH ZDOLNOSCI , ALE POTRAFISZ JESZCZE CHODZIC\n"
+        );
     }
 }
 
@@ -3441,17 +3485,15 @@ static ItemActionResult sell_shop_item(
     const ItemDefinition *definition = item_find(argument);
     const ShopOffer *offer;
 
-    if (state->room_id == ROOM_JUNCTION
-        && strcmp(argument, "QUEST") == 0
-        && state->quest_progress < 1) {
+    if (state->room_id == ROOM_JUNCTION && strcmp(argument, "QUEST") == 0) {
         int reward = 0;
 
-        if (state->quest_type == 1) {
+        if (state->quest_progress < 1 && state->quest_type == 1) {
             reward = 100;
-        } else if (state->quest_type == 2
+        } else if (state->quest_progress < 1 && state->quest_type == 2
             && state->item_quantities[ITEM_SCHOOL_DIPLOMA] > 0) {
             reward = 250;
-        } else if (state->quest_type == 3
+        } else if (state->quest_progress < 1 && state->quest_type == 3
             && state->item_quantities[ITEM_PIPE] > 0
             && state->practices > 0) {
             reward = 425;
@@ -3484,17 +3526,28 @@ static ItemActionResult sell_shop_item(
             state->quest_passage_open = true;
             return ITEM_ACTION_SUCCEEDED;
         }
+        emit(output, "QUEST-MASTER NIE CHCE JESZCZE TWOJEGO QUESTA\n");
+        return ITEM_ACTION_FAILED;
     }
 
     if (definition == NULL) {
+        emit(output, "NIE MASZ CZEGO SPRZEDAC\n");
         return ITEM_ACTION_FAILED;
     }
     offer = find_shop_offer(state->room_id, definition->id);
-    if (offer == NULL || offer->resale_text == NULL
-        || state->item_quantities[offer->item_id] == 0
-        || state->equipped_weapon == (int)offer->item_id
-        || state->equipped_shield == (int)offer->item_id
-        || state->equipped_clothing == (int)offer->item_id) {
+    if (offer == NULL || offer->resale_text == NULL) {
+        emit(output, "TU TEGO NIE KUPUJA\n");
+        return ITEM_ACTION_FAILED;
+    }
+    if (state->item_quantities[offer->item_id] == 0) {
+        emit(output, "NIE MASZ CZEGO SPRZEDAC\n");
+        return ITEM_ACTION_FAILED;
+    }
+    if (((state->equipped_weapon == (int)offer->item_id)
+            || (state->equipped_shield == (int)offer->item_id)
+            || (state->equipped_clothing == (int)offer->item_id))
+        && state->item_quantities[offer->item_id] == 1) {
+        emit(output, "NAJPIERW ODLOZ PRZEDMIOT KTORY CHCESZ SPRZEDAC\n");
         return ITEM_ACTION_FAILED;
     }
 
