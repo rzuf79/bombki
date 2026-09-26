@@ -32,6 +32,7 @@ different inputs/values; `minor` = cosmetic/faithfulness only.
 | M | Stage-fight result handling and Liroy bonus | PORT-DEVIATION | major |
 | N | Non-stage kill callers roll unique drops unconditionally | PORT-DEVIATION | moderate |
 | O | FIGHTBLUSZCZ: market gate + plant kill clears | PORT-DEVIATION | moderate |
+| P | POROWNANIE basic/street advice band off-by-one (score==22) | PORT-DEVIATION | minor |
 
 ---
 
@@ -335,6 +336,36 @@ KO-only resolver:
 
 ---
 
+## P. POROWNANIE basic/street advice band off-by-one (minor)
+
+### ORIGINAL
+
+`POROWNANIE` (PRZEDM.PAS:385-472, TPU 0x0816..0x12E9) prints a three-band
+verdict for the street targets (TAKSOWKARZ / SPRZEDAWCA / GITARZYSTA /
+PERKUSISTA / ORGANISTA / ZEBRAK / PIJAK / ZAMIATACZ / SZCZAW / STOKROTKA /
+KONICZYNKA / MLECZ / DMUCHAWIEC):
+
+- `'NIE'` when `OGOL < 21`
+- `'RACZEJ NIE , CHOC MOZNA ZARYZYKOWAC(NIE POLECAM)'` when
+  `22 < OGOL < 28` (band 23..27; OGOL 21 and 22 print nothing)
+- `'TAK'` when `OGOL > 27`
+
+The score itself is 1:1 (register's confirmed bullet): `OGOL := POZIOM + SIL`
+plus `ZRE` tiers (8/9→+4 ... 20/21→+10, exactly `ZRE div 2` for 8..21),
+`PAR > 75/50 → +1/+1`, `KOP > 10/70 → +2/+2`.
+
+### PORT (game.c 3072-3083)
+
+Same strings and first/last thresholds, but the middle band is
+`score > 21 && score < 28` — off by one: score 22 prints 'RACZEJ NIE...' in
+the port where the original printed nothing. All other advice bands (small,
+animals, fighters, club, plants, LIROY incl. Polish diacritics, POKRZYWA,
+dogs) and the BAKTERIA +5 MANA / learn gate (`FUKS < 3 and POR < 100` →
+`'***************** UCZYSZ SIE ZDOLNOSCI POROWNYWANIE *****************'`,
+`POR + 1`, `KUNSZT + 5`) are 1:1.
+
+---
+
 ## Confirmed 1:1 (checked, no deviation)
 
 - Arena N/S/E/W edge table (cells 33-57, entrance 17/32) + "EXIT" texts.
@@ -346,7 +377,8 @@ KO-only resolver:
 - Food / mana percentages (PACZEK +8 ... WEKA +34, beer +10E/+10M,
   small mana bottle +30, capped at max).
 - POROWNANIE oracle formula components (Sila + Zrecznosc-tier + PAR/KOP
-  bonuses).
+  bonuses); advice-branch thresholds 1:1 except the basic/street middle band —
+  see entry P.
 - Flee (ZWIEJ): three-step mana economy (attempt `MANA −= Random(2)+2`, gate
   `MANA > 14`, commit `MANA −= 15`) and success exactly `Random(100) <=
   Uciekanie` with KUNSZT −= 20 (img 0x17F55..0x1800B).
@@ -378,4 +410,7 @@ KO-only resolver:
 | stage fights | PRZEDM.FIGHTSCENA / img 0x1AF97..0x1B094 | game.c 1654-1660, 1934-1957, 2505-2508 |
 | Duncan market/quest | PRZEDM.FIGHTBLUSZCZ / TPU 0x0522..0x0A2F (img ≈ 0x1B5B7..0x1BAC3) | game.c 1941, 1958-1959, 3286-3308, 3327-3360, 3405-3417 |
 | concert crowd spawn | Room @ img 0x12E54..0x12EC0 (`Random(7)+0x3C`, re-roll ≤0x3C → 61-66) | game.c 51-60, 265-277 |
+| comparison oracle | PRZEDM.POROWNANIE / TPU 0x0816..0x12E9 (source 385-472) | game.c 2933-2959 (comparison_score), 2961-3149 (advice), 3151-3237 (resolve/begin) |
+| street/dog flavour | PRZEDM.ULSKLEPIKOWA / TPU 0x0070 (source 475-487) | world.c 1227-1246 (actor descriptions) |
+| training | PRZEDM.TRAIN / TPU 0x0010 (source 166-189) | game.c 2835-2875 (train_attribute) |
 | armour and shield mitigation | PRZEDM.UZYWANIE 0x0e3d..0x0eaf and 0x0f26..0x0f42; PRZEDM.TARCZA 0x0030..0x0054; PRZEDM.WALKA 0x112a | game.c 2305-2320, 2507-2508, 3739-3757 |

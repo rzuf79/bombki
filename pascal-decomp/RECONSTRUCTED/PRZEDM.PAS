@@ -625,6 +625,192 @@ begin
   end;
 end;
 
+procedure ULSKLEPIKOWA;
+begin
+  if MONSTRA.JAMNIK = MIECHO then
+    WriteLn('DLUGI JAMNIK GRYZIE CI PODESZWY');
+  if MONSTRA.OWCZAREK = MIECHO then
+    WriteLn('PUCHATY OWCZAREK WYLEGUJE SIE W SLONCU');
+  if MONSTRA.PIESEK = MIECHO then
+    WriteLn('PIESEK SZUKA DRZEWKA ABY ULZYC SOBIE');
+  if MONSTRA.SPANIEL = MIECHO then
+    WriteLn('SPANIEL SLINI SIE AZ MILO');
+  if MONSTRA.PUDEL = MIECHO then
+    WriteLn('PUDEL JE KITIKET WIEC CHYBA MU NIE PRZERWIESZ.....?');
+  if MONSTRA.TAKSOWKARZ = MIECHO then
+    WriteLn('TAKSOWKARZ WTARGNA TU ZE SWOJA BRYKA , I CZEKA NA KLIENTOW');
+  if MONSTRA.SPRZEDAWCA = MIECHO then
+    WriteLn('SPRZEDAWCA PRECELKOW WLASNIE SPRZEDAL OSTATNIEGO , CZYM DOPROWADZA DO SZALENSTWA LATAJACE WOKOLO NIEGO KRUKI');
+  if MONSTRA.ZAMIATACZ = MIECHO then
+    WriteLn('ZAMIATACZ ULIC SPRAWIA ZE JEST TU CZYSTO JAK W CHLEWIE');
+  if MONSTRA.PIJAK = MIECHO then
+    WriteLn('PIJAK TU STOI(DOBRE SOBIE) I SMIERDZI MU Z GEBY');
+  if MONSTRA.ZEBRAK = MIECHO then
+    WriteLn('ZEBRAK UDOWADNIA PRZECHODNIOM ZE ON NAPRAWDE JEST CHORY NA AIDS');
+end;
+
+procedure POROWNANIE;
+begin
+  if MANA > 9 then begin
+    FUKS := Random(100);
+    WriteLn('KOGO CHCESZ ZE SOBA POROWNAC?');
+    ReadLn(wpisz);
+    MONSTRA.OGOL := POZIOM + SIL;
+    if (ZRE = 8) or (ZRE = 9) then
+      MONSTRA.OGOL := MONSTRA.OGOL + 4;
+    if (ZRE = 10) or (ZRE = 11) then
+      MONSTRA.OGOL := MONSTRA.OGOL + 5;
+    if (ZRE = 12) or (ZRE = 13) then
+      MONSTRA.OGOL := MONSTRA.OGOL + 6;
+    if (ZRE = 14) or (ZRE = 15) then
+      MONSTRA.OGOL := MONSTRA.OGOL + 7;
+    if (ZRE = 16) or (ZRE = 17) then
+      MONSTRA.OGOL := MONSTRA.OGOL + 8;
+    if (ZRE = 18) or (ZRE = 19) then
+      MONSTRA.OGOL := MONSTRA.OGOL + 9;
+    if (ZRE = 20) or (ZRE = 21) then
+      MONSTRA.OGOL := MONSTRA.OGOL + 10;
+    if PAR > 75 then
+      MONSTRA.OGOL := MONSTRA.OGOL + 1;
+    if PAR > 50 then
+      MONSTRA.OGOL := MONSTRA.OGOL + 1;
+    if KOP > 10 then
+      MONSTRA.OGOL := MONSTRA.OGOL + 2;
+    if KOP > 70 then
+      MONSTRA.OGOL := MONSTRA.OGOL + 2;
+    if (wpisz = 'DZIK') or (wpisz = 'SZCZUR') or (wpisz = 'LIS') or
+       (wpisz = 'KUROPATWA') or (wpisz = 'ZAJAC') or (wpisz = 'WILCZUR') or
+       (wpisz = 'ORZEL') or (wpisz = 'SARNA') or (wpisz = 'DZIECKO') or
+       (wpisz = 'DZIADEK') then begin
+      if MONSTRA.OGOL < 16 then
+        WriteLn('NICZEGO NIE MOGE ZAGWARANTOWAC ..... MACIE PODOBNE PARAMETRY');
+      if (SIL > 15) and (SIL < 19) then
+        WriteLn('PRZECIWNIK GODNY TWEJ DUMY , RACZEJ NIE POGRASZ');
+      if SIL > 18 then
+        WriteLn('WSTYD MI ZA CIEBIE ... JESZCZE TU JESTES ! NA CO CZEKASZ ? KILLUJ');
+    end;
+    if (wpisz = 'SLON') or (wpisz = 'LEW') or (wpisz = 'ZYRAFA') or
+       (wpisz = 'WIELBLAD') or (wpisz = 'STRUS') or (wpisz = 'BOA') or
+       (wpisz = 'WILK') or (wpisz = 'BIZON') or (wpisz = 'PANTERA') or
+       (wpisz = 'WARIAT') or (wpisz = 'SLUCHACZ') or (wpisz = 'FAN') or
+       (wpisz = 'CZLOWIEK') or (wpisz = 'REPORTER') then begin
+      if MONSTRA.OGOL < 16 then
+        WriteLn('TAK  TAK MAMA KUPI BERECIK GLOWKA W PORZADKU ? ');
+      if (SIL > 15) and (SIL < 21) then
+        WriteLn(' NA TWOIM MIEJSCU BYM SIE NIE ZAPUSZCZAL ');
+      if (SIL > 20) and (SIL < 23) then
+        WriteLn(' RYZYK FIZYK - TAK NA 50% - WALKA NA SMIERC I ZYCIE');
+      if SIL > 22 then
+        WriteLn('SPOX KILLUJ BEZ UPRZEDZEN');
+    end;
+    if (wpisz = 'GLADIATOR') or (wpisz = 'WOJOWNIK') or (wpisz = 'TRENER') or
+       (wpisz = 'POLICJANT') or (wpisz = 'GORYL') or (wpisz = 'OCHRONIARZ') then begin
+      if MONSTRA.OGOL < 15 then
+        WriteLn('HA HA NIE NA SERJO . DAJ SE W ZYLE OKI? TO DOWCIP? HA HA HA');
+      if (MONSTRA.OGOL > 14) and (MONSTRA.OGOL < 18) then
+        WriteLn('POMARZ SOBIE WARIACIE . MOZE CI SIE PRZYSNI');
+      if (MONSTRA.OGOL > 17) and (MONSTRA.OGOL < 23) then
+        WriteLn('POWIEM  BEZ OGRODEK-TO GLUPI POMYSL');
+      if (MONSTRA.OGOL > 22) and (MONSTRA.OGOL < 26) then
+        WriteLn('TO DOSC RYZYKOWNE ZE TAK POWIEM');
+      if MONSTRA.OGOL > 25 then
+        WriteLn('TO BEDZIE TAK PROSTE JAK ZABICIE DZIECKA TOPOREM !!!');
+    end;
+    if (wpisz = 'MINI-BARMAN') or (wpisz = 'GRUBAS') or (wpisz = 'D.J') then begin
+      if MONSTRA.OGOL < 24 then
+        WriteLn('SMIERC PODZIEKUJE CI ZA TWOJ DAR (ALE ZGAPIAM)');
+      if (MONSTRA.OGOL > 23) and (MONSTRA.OGOL < 26) then
+        WriteLn('NIE UDAWAJ BISTY-BOYS PRZEGRASZ NA 99%');
+      if (MONSTRA.OGOL > 25) and (MONSTRA.OGOL < 29) then
+        WriteLn('PERFEKCYJNY MECZ NA SMIERC I ZYCIE !!!');
+      if MONSTRA.OGOL > 28 then
+        WriteLn('JESTES ZNACZNIE SILNIEJSZY !!!(ALE GLUPSZY)');
+      if MONSTRA.OGOL > 34 then
+        WriteLn('UWAZAJ DOSTANIESZ MALO KUNSZTU !!!');
+    end;
+    if (wpisz = 'TAKSOWKARZ') or (wpisz = 'SPRZEDAWCA') or (wpisz = 'GITARZYSTA') or
+       (wpisz = 'PERKUSISTA') or (wpisz = 'ORGANISTA') or (wpisz = 'ZEBRAK') or
+       (wpisz = 'PIJAK') or (wpisz = 'ZAMIATACZ') or (wpisz = 'SZCZAW') or
+       (wpisz = 'STOKROTKA') or (wpisz = 'KONICZYNKA') or (wpisz = 'MLECZ') or
+       (wpisz = 'DMUCHAWIEC') then begin
+      if MONSTRA.OGOL < 21 then
+        WriteLn('NIE');
+      if (MONSTRA.OGOL > 22) and (MONSTRA.OGOL < 28) then
+        WriteLn('RACZEJ NIE , CHOC MOZNA ZARYZYKOWAC(NIE POLECAM)');
+      if MONSTRA.OGOL > 27 then
+        WriteLn('TAK');
+    end;
+    if (wpisz = 'PEDAL') or (wpisz = 'PARA') or (wpisz = 'MACIEK') or
+       (wpisz = 'ROZA') or (wpisz = 'MALINA') or (wpisz = 'TRAWA') or
+       (wpisz = 'AGREST') or (wpisz = 'JEZYNA') then begin
+      if MONSTRA.OGOL < 20 then
+        WriteLn('WIERZ MI ALE TO NAPRAWDE WIERZ MI ZE NIE MASZ SZANS');
+      if (MONSTRA.OGOL > 19) and (MONSTRA.OGOL < 26) then
+        WriteLn('RACZEJ NIE WYGRASZ WIEC LEPIEJ NIE ATAKUJ');
+      if (MONSTRA.OGOL > 25) and (MONSTRA.OGOL < 30) then
+        WriteLn('JESTESCIE SOBIE ROWNI (NAPRAWDE !!!) - WIEC 50% SZANS');
+      if MONSTRA.OGOL > 29 then
+        WriteLn('JESTES SILNIEJSZY STAD WNIOSEK ZE SOBIE PORADZISZ');
+      if MONSTRA.OGOL > 35 then
+        WriteLn('P.S - JESTES DUZO DUZO SILNIEJSZY ZABIJ BEZ OGRODEK!!!');
+    end;
+    if wpisz = 'LIROY' then begin
+      if MONSTRA.OGOL < 28 then
+        WriteLn('HAHAHAHAHAHAHAHAHAHHAHOHOHOHHOHOHOHOHOHOHOHOAHAHAHAHAHAHAH');
+      if (MONSTRA.OGOL > 27) and (MONSTRA.OGOL < 33) then
+        WriteLn('HIHIHIHIHIHIHIHHEHEHEHE :))))))');
+      if (MONSTRA.OGOL > 32) and (MONSTRA.OGOL < 44) then
+        WriteLn('SPROOBÓJ A MOŻE WYGRAC SIE UDA......');
+      if (MONSTRA.OGOL > 43) and (MONSTRA.OGOL < 48) then
+        WriteLn('NIE PRZEJMUJ SIE JEGO MORDĄ JESTES SILNIEJSZY I BASTA');
+      if MONSTRA.OGOL > 47 then
+        WriteLn('UWAZAJ ... NA CHLAPIACE MOZGI FLAKI PRZECIWNIKA');
+    end;
+    if wpisz = 'POKRZYWA' then begin
+      if MONSTRA.OGOL < 40 then
+        WriteLn('NIE MASZ NAJMNIEJSZYCH SZANS');
+      if MONSTRA.OGOL > 39 then
+        WriteLn('JEST PEWNE PRAWDOPODOBIENSTWO WYGRANIA TEGO STARCIA');
+    end;
+    if (wpisz = 'SPANIEL') or (wpisz = 'OWCZAREK') or (wpisz = 'PIESEK') or
+       (wpisz = 'JAMNIK') or (wpisz = 'PUDEL') then
+      WriteLn('JASNE ZE MOZESZ GO ZABIC ZABIJ !!! ZABIJ . TEN PARSZYWY PIES NIE MA RACJI BYTU');
+    if (FUKS < 3) and (POR < 100) then begin
+      WriteLn('***************** UCZYSZ SIE ZDOLNOSCI POROWNYWANIE *****************');
+      POR := POR + 1;
+      KUNSZT := KUNSZT + 5;
+    end;
+    if wpisz = 'BAKTERIA' then begin
+      WriteLn('BAKTERIA MA MAGIC RESISTANCE');
+      MANA := MANA + 5;
+    end;
+  end;
+end;
+
+procedure TRAIN;
+begin
+  if wpisz = 'TRENUJ' then
+    WriteLn('CO CHCESZ TRENOWAC?');
+  if wpisz = 'TRENUJ SILA' then
+    if (PRA > 2) and (SIL < MAXSIL) then begin
+      SIL := SIL + 1;
+      PRA := PRA - 3;
+      WriteLn('TRENUJESZ SILE I MASZ ', SIL, ' SILY I ZOSTALO CI ', PRA, ' PRAKTYK');
+    end;
+  if wpisz = 'TRENUJ ZRECZNOSC' then
+    if (PRA > 1) and (ZRE < MAXZRE) then begin
+      ZRE := ZRE + 1;
+      PRA := PRA - 2;
+      WriteLn('TRENUJESZ ZRECZNOSC I MASZ ', ZRE, ' ZRECZNOSCI I ZOSTALO CI ', PRA, ' PRAKTYK');
+    end;
+  if wpisz = 'TRENUJ MADROSC' then
+    if (PRA > 2) and (MAD < MAXMAD) then begin
+      MAD := MAD + 1;
+      PRA := PRA - 3;
+      WriteLn('TRENUJESZ MADROSC I MASZ ', MAD, ' MADROSCI I ZOSTALO CI ', PRA, ' PRAKTYK');
+    end;
+end;
+
   (* Remaining bodies are still to be reconstructed from the retained TPU
      listings and BOMBKI.EXE disassembly. *)
 begin
