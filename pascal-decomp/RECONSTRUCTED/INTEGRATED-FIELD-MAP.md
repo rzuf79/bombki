@@ -518,9 +518,10 @@ grid 33..57). Commands (ds:0x564 strcmp):
   arena directions; others print the matching subset ("MOZESZ WYJSC NA:",
   "MOZESZ ISC NA:", or "DOSTEPNE WYJSCIE:" for 0x38/0x39).
 
-  **VERIFIED 1:1 against c-port world.c ARENA_ROOM table** (rooms 33-57 =
-  contexts 0x21..0x39, entrance 32 = 0x20): every N/S/E/W edge and every
-  EXIT%text variant matches. The ZOO placard hangs at the entrance: "NIE
+  **VERIFIED** (rooms 33-57 = contexts 0x21..0x39, entrance 32 = 0x20): every
+  N/S/E/W edge and every EXIT text variant is as tabled above (the c-port's
+  ARENA_ROOM table agrees — `C-PORT-DISCREPANCIES.md` confirmed-1:1 list).
+  The ZOO placard hangs at the entrance: "NIE
   ATAKUJ LUDZI I ZWIERZAT Z ZOO CHYBA ZE MASZ 3 LEVEL (LUB WYZEJ :P))" - the
   beasts below are the zoo pens (gardener's "school" zoo behind the school).
   The "GardenSpot" framing is therefore doubly wrong: these are zoo-beast
@@ -545,8 +546,9 @@ grid 33..57). Commands (ds:0x564 strcmp):
    school/CWICZ practice counter (lesson costs 1). FORSA [0x21A:0x21C] = the
    coins/monety longint: combat loot "WYCIAGASZ N MONET", DAWAJ KASE, BAZAR
    buy gates (>= 8/12/15/19), shop prices 1999/4800. The game has two saved
-   quantities (port persists `coins` AND `practices`); "Money" in
-   PlayerState.pas mislabels 0x194.
+   quantities — FORSA [0x21A:0x21C] and PRAKTYK [0x194]; "Money" in
+   PlayerState.pas mislabels 0x194. (The port's two-field save schema:
+   `C-PORT-DISCREPANCIES.md` entry 1.)
 5. CharacterLevel = 0x25C, saved as level+0x17 (file shows 24 ⇒ level 1);
    level-up routine is 0x8990-0x8ba0 (see help-you-need PlayerState.pas).
 6. **KUNSZT = 0x1D4** (f8=99). Death penalty (BAZAR proc img 0x36F5,
@@ -606,11 +608,12 @@ were a miscalculated paragraph; img offsets are authoritative (0E42*16+9A57 =
 
 ## Ground truth (retained TPU units + portable-port recovery, 2026-09-24)
 
-Corroborated against more-help-you-need/bombki/c-port/ + help-you-need/:
-docs/compatibility.md (recovered-facts register), evidence/recovered/PRZEDM.*.md
-(symbol-aware per-proc listings from MONSTRA/PRZEDM/SWIAT.TPU),
-evidence/generated/inventories.md (full TPU symbol hash), c-port
-src/{persistence,enemies,items,world,game}.c, docs/{todo,recovery-notes}.md.
+Corroborated against the retained TPU units and the recovery dossiers in
+help-you-need/: docs/compatibility.md (recovered-facts register),
+evidence/recovered/PRZEDM.*.md (symbol-aware per-proc listings from
+MONSTRA/PRZEDM/SWIAT.TPU), evidence/generated/inventories.md (full TPU symbol
+hash), and docs/{todo,recovery-notes}.md. Port comparisons are tracked in
+C-PORT-DISCREPANCIES.md.
 
 ### TPU Pascal symbols -> EXE offsets (confirmed bindings)
 
@@ -677,9 +680,11 @@ src/{persistence,enemies,items,world,game}.c, docs/{todo,recovery-notes}.md.
 - Room graph (GDZIE): 0-3 start/sub/school/training; 4-17 school (5 = six-way
   MUD SZKOLA (2); 11 = cage hall with six cages; monster rooms 12-16); 20 city
   centre (respawn); 21-22 ULSKLEPIKOWA; 30-31 ULICA DLUGA (31 -> 60); 32 arena
-  entrance; 33-57 arena grid; 60 DOLINA ROZRYWEK; 61-72 concert/stage; 77-82
-  BLUSZCZ; 83 forest; 100-103 road (100 west gated by quest/pass; 101 north
-  unhandled -> 104; 103 blocked river).
+  entrance; 33-57 arena grid; 60 DOLINA ROZRYWEK; 61-66 crowd, 67 piwiarnia,
+  68 estrada, 69-72 scena, LIROY ~73 (concert district); 77-82 BLUSZCZ; 83
+  PIERDUT/BLUSZCZ tree room (side-west); 84 PODEJRZANE KRZAKI route to the
+  domek/grota; 100-103 road (100 west gated by quest/pass; 101 north unhandled
+  -> 104; 103 blocked river).
 - Parser vocab (whole-word literals): POLNOC/POLODNIE/WSCHOD/ZACHOD/GORA/DOL,
   EXIT, PATRZ, MODE (+UNMODE/UM), JA, KTO, BIERZ, ODRZUC, UZYJ, ZABIJ,
   ROZMAWIAJ, KUP, SPRZEDAJ, CWICZ, TRENUJ, PAMIETAJ, WLACZ POSTAC, POROWNAJ,
@@ -692,79 +697,65 @@ src/{persistence,enemies,items,world,game}.c, docs/{todo,recovery-notes}.md.
   13/20,150; CZAROMIL 6/9,7/11,16/25,250. Start ENERGIA 50, PRA 10, POZIOM 1.
 - Save (PLIKI.TPU): flat sequential text dump, one value per line via plain
   ReadLn in record order (player record + world trackers); PAMIETAJ/WLACZ
-  POSTAC gated to MODE mode. Portable native format v16; imports v1-15.
+  POSTAC gated to MODE mode. (Original-only format; the port's `v16`
+  `key=value` schema is `C-PORT-DISCREPANCIES.md` entry 1.)
 
-### c-port discrepancy register (2026-09-24 audit, machine-verified)
+### Verified original behaviour (2026-09-24 audit, machine-verified)
 
-Every entry opposed the c-port evidence against the original disasm. Verdicts:
-`ORIGINAL` = original game truth; `PORT-DEVIATION` = the port behaves
-differently from the disasm; `DOSSIER-ERROR` = a recovered dossier misstates
-the original.
+Original-side facts machine-verified against the TP7 reconstructions and the
+annotated disassembly. Port-side behaviour and deviations are tracked in
+`C-PORT-DISCREPANCIES.md`.
 
-- **A. Flee (ZWIEJ)** — `ORIGINAL`: attempt drains Mana-(Random(2)+2); gates
-  Uciekanie>0 && Energy<[0x1D0] && ManaCur>14; Mana-=15; success iff
-  Random(100)<=Uciekanie -> FleeFlag=1 + KUNSZT-=20. `PORT-DEVIATION`:
-  game.c `try_flee` gates on `flee_skill>0 && energy<flee_energy_threshold`,
-  resolves success by dex-score (chance-15 vs Random(100)), costs only 20
-  KUNSZT (no mana). (Doc's old "costs 15 Mana" was incomplete, not wrong.)
-- **B. Max-stat offsets** — `ORIGINAL` (char-select init 0x1748..0x18B9):
-  0x196=MadroscMax, 0x198=SilaMax, 0x19A=ZrecznoscMax. `DOSSIER-ERROR`: the
-  LEVELING extraction swapped them (claimed MAXSIL=[0x196], MAXZRE=[0x19A],
-  MAXMAD=[0x198]). Field table above is correct.
-- **C. Save file format** — `ORIGINAL`: unlabelled flat sequence, one value per
-  line (WCZYTANIE reconstruction). `PORT-DEVIATION`: persistence.c writes
-  stable `key=value` lines (coins=, practices=...) — not byte-compatible with
-  original save files. "Native v16 / imports v1-15" refers to the port schema.
-- **D. Forsa (f18 net-worth encoding; folded into C)** — the save file holds
-  `coins × Madrosc` (written via @LMul, echoed on the save screen) and
-  `wczytaj()` re-derives the wallet with the matching @LDiv; the pair is a
-  reversible field transform, **not** an economy scaling — costs/payables read
-  only the runtime wallet. The port persists runtime `coins` directly
-  (save-format item C).
-- **E. Quest turn-in side effects** — `ORIGINAL`: type1 KUNSZT+100 + pass +
-  PRZED[0x182]+1; type2 KUNSZT+250 + pass + consume Dyplom + EnergyMax-5;
-  type3 KUNSZT+425 + pass + consume Fajka + PRAKTYK-1 + PRZED-1 +
-  Madrosc-1 ("removes the pipe's carried +1 wisdom"). `PORT-DEVIATION`: keeps
-  KUNSZT/pass/consumes (and mirrors the Madrosc-1 via `apply_carried_item_effect
-  (PIPE,-1)`) but omits the PRZED[0x182] +-1 bumps.
-- **F. Arena level placard** — arena grids advertise "3 LEVEL" prose; no actual
-  level gate on arena ops in either the original or the port (flavor-only).
-- **G. Townhall/room-number nits (low priority)** — 83 is a BLUSZCZ/PIERDUT
-  tree room, 84 the overgrown-krzaki route to the domek/grota (doc said plain
-  "forest"); the concert district is 67 piwiarnia / 68 estrada / 69-72 scena /
-  LIROY ~73 rather than a homogeneous "61-72".
-- **H. Monster kill rewards (major)** — `ORIGINAL` (launcher tails img
-  0x13839..0x14016): PAY coins `Random(N)`; MROWKA-only drop = **PACZEK**
-  `[0x1A0]` when `R(10)<7` && `[0x1A0]!=-10`, then `[0x1A0]=0xFFF6` +
-  PRZED[0x182]+1, text "WYCIAGASZ PACZEK Z CIALA MROWKI"; NO heart on
-  Mrowka. Every other launcher rolls a one-time **SERCE** `[0x186]` (only if
-  `[0x186]==0`) at `R(20)<K` (MNIEJSLABO 25% @0x139E3, SREDNIO 35% @0x13B05,
-  etc), `[0x186]=0xFFF6` + PRZED+1. Foods/heart are sentinel slots
-  (-10=carrying; eat PACZEK does `[0x1A0]+=0xA`, PRZED-1 @0x19095).
-  `PORT-DEVIATION`: enemies.c SLABO carries `bloody_heart={7,10}` (70%) so the
-  Mrowka gives a heart instead of a PACZEK; no ZABIJ MROWKA paczek drop at all;
-  PRZED bumps omitted; port stores PACZEK as stackable quantity.
-  Details: `C-PORT-DISCREPANCIES.md` entry 4.
-- Confirmed 1:1 (no change): arena N/S/E/W edge table & MINIARENA redistributed
+- **Flee (ZWIEJ)** — attempt drains Mana-(Random(2)+2); gates Uciekanie>0 &&
+  Energy<[0x1D0] && ManaCur>14; Mana-=15; success iff Random(100)<=Uciekanie
+  -> FleeFlag=1 + KUNSZT-=20. (Confirmed-1:1 list, `C-PORT-DISCREPANCIES.md`.)
+- **Max-stat offsets** (char-select init 0x1748..0x18B9):
+  0x196=MadroscMax, 0x198=SilaMax, 0x19A=ZrecznoscMax (field table above).
+- **Save file format** — unlabelled flat sequence, one value per line
+  (WCZYTANIE reconstruction). (→ `C-PORT-DISCREPANCIES.md` entry 1.)
+- **Forsa (f18 net-worth encoding)** — the save file holds `coins × Madrosc`
+  (written via @LMul, echoed on the save screen) and `wczytaj()` re-derives
+  the wallet with the matching @LDiv; the pair is a reversible field
+  transform, **not** an economy scaling — costs/payables read only the runtime
+  wallet. (→ `C-PORT-DISCREPANCIES.md` entry 1.)
+- **Quest turn-in side effects** — type1 KUNSZT+100 + pass + PRZED[0x182]+1;
+  type2 KUNSZT+250 + pass + consume Dyplom + EnergyMax-5; type3 KUNSZT+425 +
+  pass + consume Fajka + PRAKTYK-1 + PRZED-1 + Madrosc-1 ("removes the pipe's
+  carried +1 wisdom"). (→ `C-PORT-DISCREPANCIES.md` entry 2.)
+- **Arena level placard** — arena grids advertise "3 LEVEL" prose; there is no
+  actual level gate on arena operations (flavour-only).
+- **Room numbers** — 83 = PIERDUT/BLUSZCZ tree room (side-west), 84 the
+  PODEJRZANE KRZAKI route to the domek/grota; the concert district is 61-66
+  crowd / 67 piwiarnia / 68 estrada / 69-72 scena / LIROY ~73 rather than one
+  homogeneous block.
+- **Monster kill rewards** (launcher tails img 0x13839..0x14016): PAY coins
+  `Random(N)`; the MROWKA-only drop is **PACZEK** `[0x1A0]` when `R(10)<7` &&
+  `[0x1A0]!=-10`, then `[0x1A0]=0xFFF6` + PRZED[0x182]+1, text "WYCIAGASZ
+  PACZEK Z CIALA MROWKI"; no heart on Mrowka. Every other launcher rolls a
+  one-time **SERCE** `[0x186]` (only if `[0x186]==0`) at `R(20)<K`
+  (MNIEJSLABO 25% @0x139E3, SREDNIO 35% @0x13B05, etc), `[0x186]=0xFFF6` +
+  PRZED+1. Foods/heart are sentinel slots (-10=carrying; eat PACZEK does
+  `[0x1A0]+=0xA`, PRZED-1 @0x19095). (→ `C-PORT-DISCREPANCIES.md` entries 3, 9.)
+- Further verified facts: arena N/S/E/W edge table & MINIARENA redistributed
   rooms 33-57; QuestMaster prices/counters/rewards; death penalty formula;
   TRENUJ costs 3/2/3 with gates >2/>1/>2; monster stat tiers; food/mana
   percentages; POROWNANIE formula components (Sila+Zre-tier+PAR/KOP bonuses);
   all six CWICZ commands key off MadroscCur [0x18C] with imaged
   gates/formulas/caps (img 0x27D5..0x2B73), each costing 1 PRAKTYK [0x194];
-  the ZDOLNOSCI poster gates on Sila identically in the original and the port.
+  the ZDOLNOSCI poster gates on Sila.
 
 ## Open items / conflicts to resolve
 
 - RESOLVED: 0x257 = PIGULKA (saved f64 byte; TPU `PIGULKA: Shortint`; pills are
   gained by drop via `-=10` and used as the time-travel pill). 0x74 = the
   separate "Potrawki" CWICZ-skill chance field, NOT a pill count.
-- 0x21A longint vs 0x194 word Money: **RESOLVED — not two cash pools.** Disasm +
-  port evidence: FORSA/[0x21A:0x21C] = coins (monety: loot "WYCIAGASZ N MONET",
+- 0x21A longint vs 0x194 word Money: **RESOLVED — not two cash pools.** Disasm
+  evidence: FORSA/[0x21A:0x21C] = coins (monety: loot "WYCIAGASZ N MONET",
   DAWAJ KASE, BAZAR/staruch buy gates, shop prices 1999/4800); 0x194 = the
   saved **PRAKTYK counter** (practice money): CWICZ KOPANIE/UCIEKANIE print
   "...MASZ <0x194> PRAKTYK" and debit 1; at school "ZAWSZE... ZYSKALES
-  <0x194> PRAKTYK" awards 3-6 by Madrosc tier. The c-port keeps BOTH fields
-  (`coins` and `practices`) in its save. PlayerState.pas "Money" mislabels it.
+  <0x194> PRAKTYK" awards 3-6 by Madrosc tier. PlayerState.pas "Money"
+  mislabels it. (→ `C-PORT-DISCREPANCIES.md` entry 1.)
 - Skill gates [0x1CA]/[0x1CC]/[0x1D0] (KOPM/KOPHP/ZWIEV-gate): saved fields
   (f56/f57/f59); configured by the CWICZ training posts / a threshold prompt
   (compat: "ZWIEJ retains its original threshold prompt and configures the
@@ -784,9 +775,7 @@ the original.
   0x2E0F..0x2E22) computes and displays **Forsa × Madrosc** (`lcall
   0x1C71:0x7BD` = @LMul from the same operands) — the inverse of this @LDiv.
   Reversible field transform, not a scaling; costs/payables use the runtime
-  wallet only. The c-port persists the runtime `coins` directly (save-format
-  deviation D; PlayerState.pas has no mirror either). RESOLVED — folded into
-  discrepancy D.
+  wallet only. RESOLVED. (→ `C-PORT-DISCREPANCIES.md` entry 1.)
 - Monster HP stats (JAMNIK/OWCZAREK/SPANIEL...) are NOT in the saved record;
   the earlier "MONSTRA band 0x1AC..0x1D4" reading in WSTEP-reconstructed.pas
   must be retracted - those offsets are player stats/skills.
