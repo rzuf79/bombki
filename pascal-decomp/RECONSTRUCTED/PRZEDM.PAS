@@ -516,6 +516,115 @@ begin
   end;
 end;
 
+procedure FIGHTBLUSZCZ;
+begin
+  if (wpisz = 'ZABIJ DUNCAN') and (DUNCAN = MIECHO) then begin
+    EASY;
+    if WROGEN < 1 then
+      DUNCAN := 0;
+  end;
+  if (wpisz = 'SECRET LISTA') and (DUNCAN = MIECHO) then begin
+    WriteLn('OTO CO AKTUALNIE MAM DO ZAOFEROWANIA : PAMIETAJ U MNIE TYLKO KUPUJEMY');
+    WriteLn('MARCHEWKA Z SADU DUNCANA   : 7000');
+    WriteLn('PRZEPUSTKA QUEST-MASTERA   :  400');
+    WriteLn('PLECAK                     : 4800');
+  end;
+  if wpisz = 'KUP DOKUMENT' then begin
+    if FORSA > 399 then begin
+      WriteLn('OTO PODROBIONA PRZEPUSTKA HE , HE NAWET QUEST-MASTER SIE NIE POKAPUJE');
+      PRZEPUSTKA := PRZEPUSTKA - 10;
+      FORSA := FORSA - 400;
+      PRZED := PRZED + 1;
+    end;
+  end;
+  if (wpisz = 'KUP PLECAK') and (DUNCAN = MIECHO) then begin
+    if FORSA > 4799 then begin
+      WriteLn('HE HE HE MILO SIE Z TOBA ROBI INTERESY');
+      FORSA := FORSA - 4800;
+      PLECAK := PLECAK - 10;
+      PRZED := PRZED + 1;
+    end;
+  end;
+  if (wpisz = 'ROZMAWIAJ DUNCAN') and (DUNCAN = MIECHO) then begin
+    if DUNQ = 0 then begin
+      WriteLn('UCH A COZ TO ZA STRASZNA ROSLINA - PRZELAKL SIE DUNCAN WIDZAC CIEBIE');
+      WriteLn('AAA TO JAKIS WAL A NIE ROSLINA , MOWI PO CHWILI,JAK CI SIE NUDZI TO ');
+      WriteLn('MOZESZ POMOC MI WYRYWAC CHWASTY , SZCZEGOLNIA ZABOJCZA DLA MOICH MARCHEWECZEK');
+      WriteLn('JEST TA WREDNA POKRZYWA , SZKODA ZE TAK JAK INNE POTWORY SIE ODREGENEROWUJE');
+      WriteLn('ALE JAK JA ZABIJESZ , POWIEDZMY ... 4 RAZY TO MOZE DA SOBIE SPOKOJ');
+      WriteLn('CO CI DAM W ZAMIAN ? TROCHE KUNSZTU , A MOJ STARY PRACUJE NA CZARNYM RYNKU');
+      DUNQ := 75;
+    end;
+    if DUNQ <> 0 then
+      WriteLn('TO CO ZABIJESZ TE ROSLINY CZY BEDZIEMY TU STAC JAK OSTATNIE LOSIE?');
+    if DUNQ = -125 then begin
+      WriteLn('DZIEKI DZIEKI , TO BYLA DOBRA ROBOTA , OD TERAZ MOZESZ PISAC PRZY MNIE :');
+      WriteLn('SECRET LISTA , TO MOZE AKURAT BEDE COS MIAL NA ZBYCIU , ADIOS');
+      DUNQ := 0;
+      KUNSZT := KUNSZT + 125;
+      WriteLn('--------- ZDOBYLES 125 KUNSZTU ------------------------');
+    end;
+  end;
+  if (wpisz = 'ZABIJ SZCZAW') and (SZCZAW = MIECHO) then begin
+    VEASY;
+    SZCZAW := 0;
+  end;
+  if (wpisz = 'ZABIJ STOKROTKA') and (STOKROTKA = MIECHO) then begin
+    VEASY;
+    if ENERGIA > 0 then
+      STOKROTKA := 0;
+  end;
+  if (wpisz = 'ZABIJ KONICZYNKA') and (KONICZYNKA = MIECHO) then begin
+    VEASY;
+    KONICZYNKA := 0;
+  end;
+  if (wpisz = 'ZABIJ MLECZ') and (MLECZ = MIECHO) then begin
+    VEASY;
+    MLECZ := 0;
+  end;
+  if (wpisz = 'ZABIJ DMUCHAWIEC') and (DMUCHAWIEC = MIECHO) then begin
+    VEASY;
+    DMUCHAWIEC := 0;
+  end;
+  if (wpisz = 'ZABIJ ROZA') and (ROZA = MIECHO) then begin
+    EASY;
+    if ENERGIA > 0 then
+      ROZA := 0;
+  end;
+  if (wpisz = 'ZABIJ OSET') and (OSET = MIECHO) then begin
+    EASY;
+    if ENERGIA > 0 then
+      OSET := 0;
+  end;
+  if (wpisz = 'ZABIJ MALINA') and (MALINA = MIECHO) then begin
+    EASY;
+    if ENERGIA > 0 then
+      MALINA := 0;
+  end;
+  if (wpisz = 'ZABIJ AGREST') and (AGREST = MIECHO) then begin
+    EASY;
+    if ENERGIA > 0 then
+      AGREST := 0;
+  end;
+  if (wpisz = 'ZABIJ JEZYNA') and (JEZYNA = MIECHO) then begin
+    EASY;
+    if ENERGIA > 0 then
+      JEZYNA := 0;
+  end;
+  if (wpisz = 'ZABIJ TRAWA') and (TRAWA = MIECHO) then begin
+    WriteLn('HA HA HA WOLAJA SETKI LISCI TRAWY - TO BEDZIE WALKA');
+    TRUDNO;
+    if ENERGIA > 0 then
+      TRUDNO;
+    if ENERGIA > 0 then
+      TRUDNO;
+    if ENERGIA > 0 then
+      TRUDNO;
+    if (ENERGIA > 0) and (PASZOL = 0) then
+      WriteLn('UFF STRUDZONY POSTANAWIASZ ODPOCZAC TYLU PRZECIWNIKOW DAWNO NIE WIDZIALES');
+  end;
+end;
+
   (* Remaining bodies are still to be reconstructed from the retained TPU
      listings and BOMBKI.EXE disassembly. *)
 begin
