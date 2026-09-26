@@ -37,6 +37,7 @@ different inputs/values; `minor` = cosmetic/faithfulness only.
 | R | PIERDOLY colour commands (ZMIEN KOLOR / ZMIEN TLO) not ported | PORT-DEVIATION | minor |
 | S | Small-shield block (TARCZA): mutable PRO/ILOSC vs fixed 10%/1pt | PORT-DEVIATION | moderate |
 | T | Monster regeneration (POTWORY): numeric state model + re-roll guards vs room-placement spawns | PORT-DEVIATION (deliberate) | moderate |
+| U | Item use (UZYWANIE): stat side-effects (PRO/CIALO/ILOSC/FUKSROLL) folded into equipped_clothing; pill's POTWORY re-roll missing | PORT-DEVIATION | minor |
 
 ---
 
@@ -493,6 +494,59 @@ room list.
 
 ---
 
+## U. Item-use stat effects and pill re-roll (UZYWANIE) (minor)
+
+### ORIGINAL (`PRZEDM.UZYWANIE`, PRZEDM.PAS:965-1108, TPU 0x00D8, bytes
+0x07C6-0x10E7)
+
+The use-item dispatcher on `wpisz`:
+
+- `UZYJ FAJKA` (pipe, `FAJKA = -10`): message only — the pipe is not consumed.
+- `UZYJ SERCE` (`SERCE = -10`): `SERCE := 0`, message, `ENERGIA + 5` capped to
+  `MONSTRA.MAXE`, `PRZED - 1`.
+- `UZYJ DYPLOM` (`DYPLOM = -10`): prints the 10-line diploma box (it has three
+  consecutive blank rows between the title and `>BRAWO!`).
+- food `PACZEK`/`CIASTKO`/`SUCHA`/`BULKA`/`CHLEB`/`WEKA` (gate `X <= -10`):
+  `PRZED - 1`, `X := X + 10`, message, energy `+8/+12/+16/+20/+26/+34` capped
+  to MAXE. `MBUTELKA`: `MANA + 30` capped to MAXMANA. `BIGOS`: +20%.
+- `ZNISZCZ PRZEPUSTKA` (`PRZEPUSTKA < -1`, Longint): message, `PRZEPUSTKA + 10`,
+  `PRZED + 1`. `PATRZ PRZEPUSTKA`: 7-line pass box (diacritic `questów`).
+- `UZYJ KASETA`: info message, no gate. `UZYJ LISTEK`: info message (`X <= -10`).
+- `UZYJ KOMPLET` (`KOMPLET <= -10 and JAKIEUB = ''`): `PRO + 7`, `CIALO := 1`,
+  `JAKIEUB := 'SYF'`; `ODLORZ KOMPLET` (`JAKIEUB = 'SYF'`) reverses.
+- `UZYJ GARNITUR` (same gate): `CIALO := 1`, `ILOSC + 1`, `PRO + 10`,
+  `FUKSROLL + 15`, `JAKIEUB := 'GARNITUR'`; `ODLORZ GARNITUR` reverses.
+- `UZYJ PIGULKA` (`PIGULKA <= -10`): message, `PIGULKA + 10`, then a full
+  `POTWORY` re-roll (time travel = new monster layout), then `MAD` tiers:
+  `< 10` → `MAXE - 1`, `ENERGIA := 1`, `KUNSZT - 50`; `> 9 and < 16` →
+  `ENERGIA - 40` clamped to `>= 1`, `KUNSZT - 30`; `> 15` → no penalty.
+
+### PORT (`use_item` game.c ~1140-1336, `unequip_item` 1364-1412,
+`destroy_item` 1414-1431)
+
+All messages, the food/heart/bottle effect table, and the pipe (kept on use)
+are 1:1 (`restore_energy`/`restore_mana` cap exactly like MAXE/MAXMANA). The
+`MAD < 10` penalty matches the port's `wisdom < 10` branch exactly
+(`maximum_energy - 1`, `energy = 1`, `experience - 50`). Differences:
+
+- The transport pill consumes and prints but never calls
+  `game_regenerate_encounters` (that runs on init and on death only) — the
+  original's `POTWORY` re-roll after going to the past is missing.
+- Wearing SYF/GARNITUR sets the port's `state->equipped_clothing` and relies on
+  the item definitions' armour values; the original's mutable
+  `PRO`/`CIALO`/`ILOSC`/`FUKSROLL` stats (including `FUKSROLL + 15` for the
+  spiked suit) have no analog — same family of deviation as the small-shield
+  block (entry S).
+- `ZNISZCZ PRZEPUSTKA`: the original bumps `PRZED + 1` (its carried-count
+  model); the port decrements the pass quantity and recomputes
+  `quest_passage_open`. `PATRZ PRZEPUSTKA` is not part of the port's use
+  dispatcher (the pass's use action returns failed; viewing is handled
+  elsewhere).
+- The port adds `ITEM_BEER` (an extra consumable not present in the original
+  UZYWANIE branch list).
+
+---
+
 ## Confirmed 1:1 (checked, no deviation)
 
 - Arena N/S/E/W edge table (cells 33-57, entrance 17/32) + "EXIT" texts.
@@ -518,6 +572,12 @@ room list.
   pickup gate. The port's countable-quantity storage (entry F) replaces
   `PRZED` bookkeeping and the sentinel values, and it additionally refuses to
   drop an equipped OLD SWORD / SMALL SHIELD.
+- UZYWANIE use-item dispatcher: every message is verbatim (incl. the trailing
+  space after `SPRAWIL ZE `, the `SMIEC . S.Z -8 MAXE +5 ZRE +1 `/`LISTEK JEST
+  TYPU SMIEC MAX PRZEDMIOTOW + 3 ` lines and the `questów` diacritic); the
+  food/heart/bottle effect table (energy/mana bumps with MAXE/MAXMANA caps) and
+  the three MAD skill tiers on the transport pill match `use_item`/`destroy_item`
+  (game.c 1140-1431) exactly.
 - TRENUJ costs 3/2/3 PRAKTYK with gates >2/>1/>2.
 - Monster stat tiers and loot rolls in the fight launchers.
 - Food / mana percentages (PACZEK +8 ... WEKA +34, beer +10E/+10M,
@@ -567,4 +627,5 @@ room list.
 | crowd list | PRZEDM.KTO / TPU 0x0523..0x093B (source 569-598) | world.c 1160-1230 (actor descriptions) |
 | take/drop 5 items | PRZEDM.BRANIE / TPU 0x023F..0x0508 (source 908-963) | game.c 1036-1114 (take_item/drop_item) |
 | monster regeneration | PRZEDM.POTWORY / TPU 0x0000..0x05D8 (source 70-164) | game.c 227-294 (game_regenerate_encounters) |
+| use-item dispatcher | PRZEDM.UZYWANIE / TPU 0x00D8 (source 965-1108) | game.c 1140-1431 (use_item/unequip_item/destroy_item) |
 | armour and shield mitigation | PRZEDM.UZYWANIE 0x0e3d..0x0eaf and 0x0f26..0x0f42; PRZEDM.TARCZA 0x0030..0x0054; PRZEDM.WALKA 0x112a | game.c 2305-2320, 2507-2508, 3739-3757 |

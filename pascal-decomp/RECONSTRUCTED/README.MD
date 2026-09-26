@@ -726,3 +726,28 @@ Full machine-verified register added to INTEGRATED-FIELD-MAP.md
   rooms/booleans (DRZWI ↔ living door, STARUCH ↔ elf house); KTO and BLUSZCZ
   are the same relocated-description pattern.
 
+## 2026-09-26 (29): PRZEDM UZYWANIE reconstructed
+
+- Added the `UZYWANIE` body at the marker (source 965-1108, TPU 0x00D8): the
+  use-item dispatcher on `wpisz`. `UZYJ FAJKA` (kept, not consumed), `UZYJ
+  SERCE` (`SERCE := 0`, energy +5 capped, `PRZED - 1`), `UZYJ DYPLOM` (10-line
+  box with three blank rows), food PACZEK/CIASTKO/SUCHA/BULKA/CHLEB/WEKA
+  (`PRZED - 1`, +10 to the -10 quantity sentinel, energy +8/12/16/20/26/34
+  capped to MAXE), MBUTELKA (mana +30 capped to MAXMANA), BIGOS (+20%),
+  ZNISZCZ/PATRZ PRZEPUSTKA (Longint gate `< -1`; the 7-line pass box keeps the
+  `questów` diacritic; ZNISZCZ bumps `PRZED + 1`), KASETA and LISTEK info
+  lines (verbatim, incl. trailing spaces), KOMPLET "SYF" (`PRO + 7`,
+  `CIALO := 1`, `JAKIEUB := 'SYF'`; ODLORZ reverses), GARNITUR (`CIALO := 1`,
+  `ILOSC + 1`, `PRO + 10`, `FUKSROLL + 15`; ODLORZ reverses), PIGULKA (consume,
+  full `POTWORY` re-roll, then MAD tiers `<10` → MAXE−1/ENERGIA:=1/KUNSZT−50,
+  `10..15` → ENERGIA−40 clamp≥1/KUNSZT−30, `>15` → none).
+- Cross-checked against `use_item`/`unequip_item`/`destroy_item` (game.c
+  1140-1431): all messages and the food/heart/bottle effect table are verbatim
+  and 1:1 (`restore_energy`/`restore_mana` cap like MAXE/MAXMANA; pipe kept).
+- Registered (entry U): the transport pill omits the original's `POTWORY`
+  re-roll (the port only regenerates encounters on init/death); SYF/GARNITUR
+  side-stats fold into `equipped_clothing` + item definitions (PRO/CIALO/
+  ILOSC/FUKSROLL have no analog — same family as entry S); ZNISZCZ PRZEPUSTKA
+  uses the quantity model (consume + `quest_passage_open`) instead of
+  `PRZED + 1`; the port adds ITEM_BEER. MAD-penalty tiers match 1:1.
+
