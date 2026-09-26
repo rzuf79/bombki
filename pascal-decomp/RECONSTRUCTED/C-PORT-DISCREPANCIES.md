@@ -31,6 +31,7 @@ different inputs/values; `minor` = cosmetic/faithfulness only.
 | L | WALKAPIES rewards after fleeing | PORT-DEVIATION | moderate |
 | M | Stage-fight result handling and Liroy bonus | PORT-DEVIATION | major |
 | N | Non-stage kill callers roll unique drops unconditionally | PORT-DEVIATION | moderate |
+| O | Armour and shield combat mitigation | PORT-DEVIATION | major |
 
 ---
 
@@ -278,6 +279,39 @@ Reachability of the omitted `MIECHO <> 10000` guard is shared with entry I.
 
 ---
 
+## O. Armour and shield combat mitigation (major)
+
+### ORIGINAL (`PRZEDM.UZYWANIE`, `PRZEDM.TARCZA`, `PRZEDM.WALKA`)
+
+The original keeps combat-defense state rather than merely displaying armour
+values. Wearing `KOMPLET UBRAN FIRMY "SYF"` adds 7 to `PRO`; removing it
+subtracts 7. Wearing `GARNITUR Z KOLCAMI` increments `ILOSC`, adds 10 to
+`PRO`, and adds 15 to `FUKSROLL`; removing it reverses all three changes.
+
+Every ordinary enemy hit in `WALKA` calls the common `TARCZA` routine before
+automatic parrying. It rolls `Random(100)` and, when the result is at most
+`PRO`, subtracts `ILOSC` from the incoming damage, clamping the result at zero.
+`FUKSROLL` is also read by the player's attack roll. Thus the clothing fields
+are live combat state, and the shield/armour defense is one combined mechanism,
+not separate cosmetic totals.
+
+### PORT (`src/game.c`)
+
+`describe_status` builds a local `protection` value for `JA` only: small shield
++25, SYF +7, and spiked suit +20/+15 displayed luck. That local value is
+discarded after printing. Neither clothing item participates in an incoming-hit
+calculation, and the spiked suit's +10 `PRO`, +1 `ILOSC`, and +15 `FUKSROLL`
+effects are absent from combat.
+
+The port instead has `apply_small_shield`: when the small shield is equipped,
+it independently rolls 0 through 99, succeeds on 0 through 10, and removes one
+point of damage. It neither incorporates the equipped clothing nor uses the
+original `PRO`/`ILOSC` state. This means SYF has no combat benefit at all in the
+port, the spiked suit has no combat defense or attack-luck benefit, and any
+shield-and-armour interaction differs from the original.
+
+---
+
 ## Confirmed 1:1 (checked, no deviation)
 
 - Arena N/S/E/W edge table (cells 33-57, entrance 17/32) + "EXIT" texts.
@@ -320,3 +354,4 @@ Reachability of the omitted `MIECHO <> 10000` guard is shared with entry I.
 | dog rewards | PRZEDM.WALKAPIES / img 0x12A16..0x12AC9 | enemies.c 31-32; game.c 1794-1802 (dog anchors), 1941-1957; try_flee 2145-2166 |
 | stage fights | PRZEDM.FIGHTSCENA / img 0x1AF97..0x1B094 | game.c 1654-1660, 1934-1957, 2505-2508 |
 | concert crowd spawn | Room @ img 0x12E54..0x12EC0 (`Random(7)+0x3C`, re-roll ≤0x3C → 61-66) | game.c 51-60, 265-277 |
+| armour and shield mitigation | PRZEDM.UZYWANIE 0x0e3d..0x0eaf and 0x0f26..0x0f42; PRZEDM.TARCZA 0x0030..0x0054; PRZEDM.WALKA 0x112a | game.c 2305-2320, 2507-2508, 3739-3757 |
