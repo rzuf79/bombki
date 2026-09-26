@@ -7,7 +7,7 @@ Reads the resolved per-unit interface dumps and emits:
   RECONSTRUCTED\\SWIAT.PAS
   RECONSTRUKCJA: PRZEDM.PAS
   RECONSTRUCTED\\BOMBKI.PAS    (main skeleton)
-  RECONSTRUCTED\\README.MD     (method notes + save-file format)
+  RECONSTRUCTED\\RECONSTRUCTION-LOG.md     (method notes + save-file format)
 """
 import os, re, struct, sys
 
@@ -95,9 +95,9 @@ def main():
     with open(os.path.join(OUT, 'BOMBKI.PAS'), 'w', encoding='cp437') as f:
         f.write(build_main())
     print('wrote %s' % os.path.join(OUT, 'BOMBKI.PAS'))
-    with open(os.path.join(OUT, 'README.MD'), 'w', encoding='cp437') as f:
+    with open(os.path.join(OUT, 'RECONSTRUCTION-LOG.md'), 'w', encoding='cp437') as f:
         f.write(save_format_doc() + '\n')
-    print('wrote %s' % os.path.join(OUT, 'README.MD'))
+    print('wrote %s' % os.path.join(OUT, 'RECONSTRUCTION-LOG.md'))
 
 if __name__ == '__main__':
     main()

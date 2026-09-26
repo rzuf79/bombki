@@ -15,7 +15,7 @@ entry `0000:B0CF`, 5295 MZ relocs / 239 in-image cells), `MONSTRA.TPU`,
 | `SWIAT.PAS` | `POKOJ0..POKOJ100, POKOJE` + room vars; 13 proc stubs |
 | `PRZEDM.PAS` | fullest — 167 globals, 35 entries: `BRANIE, UZYWANIE, TARCZA, WALKA, MINIARENA, KTO, MODE, SLABO..BARUDNO, PRZEDM/BOMBKI text` ; Integer/Text/string typing resolved |
 | `BOMBKI.PAS` | main skeleton with `uses crt,swiat,przedm,monstra,dos,system` |
-| `README.MD` | this log + save-format spec |
+| `RECONSTRUCTION-LOG.md` | this log + save-format spec |
 | `disasm\*.asm` | code-body disassembly reports (see §3) |
 
 Interfaces are **verified byte-accurate** against `tpu_reports\*.interface.pas`
@@ -31,7 +31,7 @@ for the PAS deliverable, which is grounded in the EXE/TPU evidence only
 Plain-text save, cp437-safe, CRLF line endings — *not* a TPU. First bytes of
 the real save: `1000\r\n24\r\n-100\r\n0\r\n-10\r\n-100\r\n0\r\n99\r\n380...
 10000\r\n21JA\r\n-15...`. Integer stats are stored one-per-line; narrative
-text afterwards; `plik: Text` write with `WriteLn`. Doc: `README.MD` §"Save".
+text afterwards; `plik: Text` write with `WriteLn`. Doc: `RECONSTRUCTION-LOG.md` §"Save".
 
 ## 3. DISASM phase — result (verified, with evidence)
 

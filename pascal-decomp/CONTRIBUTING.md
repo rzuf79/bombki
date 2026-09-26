@@ -15,13 +15,13 @@ reference. `../og/` is read-only.
   live exclusively in `C-PORT-DISCREPANCIES.md` (entries 1..19 + "Confirmed
   1:1"). Register letters (A..H) and entry numbers (1..19) are separate
   numbering systems.
-- `README.MD` dated highlights are history — keep them.
+- `RECONSTRUCTION-LOG.md` dated highlights are history — keep them.
 
 ## Evidence
 
 - Claims cite `img 0x…` or a C-PORT entry number; undecided facts stay as
   explicit OPEN items; RESOLVED means machine-verified.
-- `BODY TODO` stubs are the scoped cut (see `README.MD` §3), not debt.
+- `BODY TODO` stubs are the scoped cut (see `RECONSTRUCTION-LOG.md` §3), not debt.
 
 ## Commits
 
