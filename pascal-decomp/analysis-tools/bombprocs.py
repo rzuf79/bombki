@@ -2,7 +2,7 @@ import os, struct, re
 from collections import Counter, defaultdict
 X=os.path.dirname(os.path.abspath(__file__))
 EXE=r"E:\Develop\Reverse\bombki\BOMBKI.EXE"
-OUT=os.path.join(X,"..","RECONSTRUCTED","disasm","procs")
+OUT=os.path.join(X,"..","analysis-results","disasm","procs")
 def u16(b,o): return struct.unpack_from("<H",b,o)[0]
 d=open(EXE,"rb").read()
 (mag,pp,cnt,rels,hdr,m1,m2,ss,sp,ip,tab,ovl)=struct.unpack_from("<12H",d,0)

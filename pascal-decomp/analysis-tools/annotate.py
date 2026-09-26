@@ -4,7 +4,7 @@ from capstone import Cs, CS_ARCH_X86, CS_MODE_16
 
 ROOT = Path(__file__).resolve().parents[2]
 IMAGE = ROOT / "og" / "BOMBKI.EXE"
-OUT = ROOT / "pascal-decomp" / "RECONSTRUCTED" / "disasm" / "annotated-BOMBKI.asm"
+OUT = ROOT / "pascal-decomp" / "analysis-results" / "disasm" / "annotated-BOMBKI.asm"
 
 d=open(IMAGE,"rb").read()
 (hdr,)=struct.unpack_from("<H",d,8)

@@ -8,7 +8,7 @@ entry `0000:B0CF`, 5295 MZ relocs / 239 in-image cells), `MONSTRA.TPU`,
 
 ---
 
-## 1. Deliverable — `RECONSTRUCTED\`
+## 1. Deliverable — `reconstructed\`
 | file | content |
 |---|---|
 | `MONSTRA.PAS` | unit interface skeleton — 21 Integer globals (`MAXE`…`SILNY`+`WSTEP`), `procedure WSTEP`; body stubs by TPU entry codes |
