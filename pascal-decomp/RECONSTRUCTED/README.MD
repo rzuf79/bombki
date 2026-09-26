@@ -664,3 +664,34 @@ Full machine-verified register added to INTEGRATED-FIELD-MAP.md
   original printed nothing. The oracle formula itself is 1:1 (the port's
   `ZRE div 2` reproduces all seven tier bumps).
 
+## 2026-09-26 (27): PRZEDM save/TARCZA/PIERDOLY/KOMENDY/BLUSZCZ + SMIERC reconstructed
+
+- Added five interface-proc bodies (after `TRAIN`) plus the implementation-local
+  `SMIERC` right after `implementation` (mirrors its early original placement,
+  source 192-208 — it is a near `ret` helper that `WALKA`-family bodies call):
+  - `save` (source 1573-1574, TPU 0x0108): empty stub — pure prologue/epilogue;
+    the real persistence lives in the main program (see the save anchor).
+  - `TARCZA` (source 601-608, TPU 0x0022..0x0090): `FUKS := Random(100)`; block
+    when `FUKS <= PRO`; `WPYSK := WPYSK - ILOSC` clamped at 0; verbatim
+    `'OSLONILES SIE ! TRACISZ ', WPYSK, ' ENERGII'`.
+  - `PIERDOLY` (source 1111-1122, TPU 0x003B..0x00E1): `ZMIEN KOLOR`/`ZMIEN TLO`
+    prompts + `TextColor`/`TextBackground` on `FUKS`.
+  - `KOMENDY` (source 1560-1570, TPU 0x0043..0x016F): abbreviation expander
+    `PN/PD/W/Z/G/D/E/M` → `POLNOC/POLODNIE/WSCHOD/ZACHOD/GORA/DOL/EXIT/MODE`.
+  - `BLUSZCZ` (source 210-223, TPU 0x02E3..0x04AC): 12 × `if X = MIECHO then
+    WriteLn(...)` plant/Duncan flavour lines.
+  - `SMIERC` (source 192-208, TPU 0x0141..0x0277): six verbatim death lines,
+    quest progress 50/200 (`QUEST`=1/>1), `ENERGIA := MONSTRA.MAXE`,
+    `KUNSZT -= 250 - Random(50) + 5*POZIOM`, `MIECHO := 20`, `POTWORY`,
+    `wpisz := 'PAMIETAJ'`, `save`, `ReadLn`.
+- Registered (entries Q, R, S): port `parse_direction` (parser.c 42-68) maps
+  `W`→west and `E`→east, but the original `W` = *wschód* (east) and
+  `E` = the EXIT exits-list command; `M`/`MODE` is unknown in the port and
+  N/S/U plus `POLUDNIE` were added (untested single letters). PIERDOLY colour
+  commands have no port equivalent. Small-shield block is fixed 10%/1pt in
+  `apply_small_shield` (game.c 2274-2290) vs the original's mutable `PRO`/
+  `ILOSC` (armour suit adds +10/+1, PRZEDM.UZYWANIE img 0x0F2C..0x0F39).
+- Confirmed 1:1: SMIERC ↔ `resolve_player_death` (game.c 2377-2409) and the
+  BLUSZCZ plant lines ↔ world.c actor descriptions (1275-1298, incl. trailing
+  spaces on STOKROTKA/JEZYNA).
+
