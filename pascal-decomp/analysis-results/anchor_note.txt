@@ -1,8 +1,0 @@
-; bombki-anchor.py  --  anchor-guided game-body recovery (clean, self-contained)
-;   - every EXE reloc cell whose 4-byte stored far target lands in game
-;     paragraph 0E42 (SWIAT/MONSTRA body) or 05DD (PRZEDM body) is a
-;     LOADER-FIXED far pointer => the target is exactly one proc entry.
-;   - we therefore only need the loader's *absolute* cell values (in-image
-;     already fixed) and do recursive descent from each such cell.
-;   - boundaries: stop at first retf/iret found by the linear descent.
-(no code was generated in this probe)
