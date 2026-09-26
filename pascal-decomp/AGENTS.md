@@ -4,6 +4,11 @@
 comply. This file is the operational layer for non-human contributors: the
 concrete checks and procedures, not a restatement of the rules.
 
+## Language
+
+Always use English for communication. Tolerate input in other languages, but
+respond and contribute entirely in English.
+
 ## Start of task
 
 Read, in order: `CONTRIBUTING.md`, then the areas the task touches
@@ -14,6 +19,13 @@ acting on the new state.
 Research layout: tooling scripts live under `analysis-tools\`; machine
 evidence (disasm listings, TPU/EXE reports, raw dumps) under
 `analysis-results\`.
+
+## Installing software
+
+- Always ask the human for approval before installing software on the
+  machine (e.g. winget/apt/choco installs).
+- Prefer portable / temp-only solutions (download-and-extract into a temp
+  dir, then run from there) over system installs whenever possible.
 
 ## Branch workflow
 
