@@ -616,3 +616,26 @@ Full machine-verified register added to INTEGRATED-FIELD-MAP.md
   (game.c 51-60) can place it in 67/`ROOM_BEER_HALL` — numbered register only,
   not a deviation row.
 
+## 2026-09-26 (25): PRZEDM FIGHTBLUSZCZ reconstructed (Duncan market/quest)
+
+- Added the source-equivalent `FIGHTBLUSZCZ` body (PRZEDM.PAS, after
+  `FIGHTSCENA`; anchors 1463-1558, TPU 0x0522..0x0A2F): `ZABIJ DUNCAN` →
+  EASY + clear when `WROGEN < 1`; `SECRET LISTA` (Duncan present) prints the
+  price list; `KUP DOKUMENT` (`FORSA > 399`, **no** Duncan test) applies the
+  −10 owned-sentinel to the pass, `FORSA −= 400`, `PRZED += 1`; `KUP PLECAK`
+  (Duncan present, `FORSA > 4799`) −10 sentinel, `FORSA −= 4800`,
+  `PRZED += 1`; `ROZMAWIAJ DUNCAN` offer/reminder/completion (`DUNQ = 0` →
+  offer + `DUNQ := 75`; completion at `DUNQ = -125` (Shortint; byte 0x83) →
+  `DUNQ := 0`, `KUNSZT += 125`); garden kills VEASY/EASY with the `ENERGIA >
+  0` clear semantics; `ZABIJ TRAWA` = up to 4× `TRUDNO` while `ENERGIA > 0`,
+  then the UFF rest line gated on `(ENERGIA > 0) and (PASZOL = 0)`.
+- Registered (entry O): the port gates SECRET LISTA/KUP DOKUMENT/KUP PLECAK
+  behind `duncan_black_market_unlocked` (quest completion), whereas the
+  original only needed FORSA (KUP DOKUMENT, no Duncan test) or Duncan present
+  (SECRET LISTA, KUP PLECAK); plants clear only on KO in the port, while the
+  original cleared SZCZAW/KONICZYNKA/MLECZ/DMUCHAWIEC unconditionally after
+  `VEASY` (the other five gated on `ENERGIA > 0`, TRAWA never cleared); TRAWA
+  is a single TRUDNO fight in the port instead of the repeat-while-alive loop
+  (enemies.c 116). The DUNQ quest itself is 1:1 (offer at 75, completion at
+  `duncan_quest == 131`, −50 per pokrzywa kill via game.c 1958-1959).
+

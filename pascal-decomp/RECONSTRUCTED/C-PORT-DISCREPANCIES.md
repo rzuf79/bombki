@@ -31,7 +31,7 @@ different inputs/values; `minor` = cosmetic/faithfulness only.
 | L | WALKAPIES rewards after fleeing | PORT-DEVIATION | moderate |
 | M | Stage-fight result handling and Liroy bonus | PORT-DEVIATION | major |
 | N | Non-stage kill callers roll unique drops unconditionally | PORT-DEVIATION | moderate |
-| O | Armour and shield combat mitigation | PORT-DEVIATION | major |
+| O | FIGHTBLUSZCZ: market gate + plant kill clears | PORT-DEVIATION | moderate |
 
 ---
 
@@ -279,36 +279,59 @@ Reachability of the omitted `MIECHO <> 10000` guard is shared with entry I.
 
 ---
 
-## O. Armour and shield combat mitigation (major)
+## O. FIGHTBLUSZCZ: market gate + plant kill clears (moderate)
 
-### ORIGINAL (`PRZEDM.UZYWANIE`, `PRZEDM.TARCZA`, `PRZEDM.WALKA`)
+### ORIGINAL
 
-The original keeps combat-defense state rather than merely displaying armour
-values. Wearing `KOMPLET UBRAN FIRMY "SYF"` adds 7 to `PRO`; removing it
-subtracts 7. Wearing `GARNITUR Z KOLCAMI` increments `ILOSC`, adds 10 to
-`PRO`, and adds 15 to `FUKSROLL`; removing it reverses all three changes.
+`FIGHTBLUSZCZ` (PRZEDM.PAS:1463-1558, TPU 0x0522..0x0A2F) handles Duncan's
+roadside stand and the garden. Black market:
 
-Every ordinary enemy hit in `WALKA` calls the common `TARCZA` routine before
-automatic parrying. It rolls `Random(100)` and, when the result is at most
-`PRO`, subtracts `ILOSC` from the incoming damage, clamping the result at zero.
-`FUKSROLL` is also read by the player's attack roll. Thus the clothing fields
-are live combat state, and the shield/armour defense is one combined mechanism,
-not separate cosmetic totals.
+- `SECRET LISTA` lists the menu whenever `DUNCAN = MIECHO` (Duncan present) —
+  the price list is visible even before the pokrzywa quest is finished.
+- `KUP DOKUMENT` has **no** Duncan-location test at all: the only gate is
+  `FORSA > 399` (Longint compare). It applies the owned-sentinel
+  `PRZEPUSTKA := PRZEPUSTKA - 10`, `FORSA := FORSA - 400`, `PRZED + 1`.
+- `KUP PLECAK` requires Duncan present **and** `FORSA > 4799`
+  (0x12bf); `PLECAK := PLECAK - 10` (byte), `FORSA := FORSA - 4800`,
+  `PRZED + 1`.
+- `ROZMAWIAJ DUNCAN` (Duncan present): offer when `DUNQ = 0` (six lines then
+  `DUNQ := 75`), reminder when `DUNQ <> 0`, completion when `DUNQ = -125`
+  (comparison byte 0x83 — DUNQ is Shortint): two more lines, `DUNQ := 0`,
+  `KUNSZT := KUNSZT + 125`.
 
-### PORT (`src/game.c`)
+Garden kills are resolved in-procedure with the difficulty procs, not a shared
+KO-only resolver:
 
-`describe_status` builds a local `protection` value for `JA` only: small shield
-+25, SYF +7, and spiked suit +20/+15 displayed luck. That local value is
-discarded after printing. Neither clothing item participates in an incoming-hit
-calculation, and the spiked suit's +10 `PRO`, +1 `ILOSC`, and +15 `FUKSROLL`
-effects are absent from combat.
+- SZCZAW / KONICZYNKA / MLECZ / DMUCHAWIEC → `VEASY`, cleared
+  **unconditionally** (even if the fight was lost — cleared regardless of
+  `ENERGIA`).
+- STOKROTKA → `VEASY`, cleared only `if ENERGIA > 0`.
+- ROZA / OSET / MALINA / AGREST / JEZYNA → `EASY`, cleared only
+  `if ENERGIA > 0`.
+- TRAWA → one `WriteLn`, then `TRUDNO` up to **four times** while
+  `ENERGIA > 0` (each round gated on `ENERGIA > 0`), then
+  `if (ENERGIA > 0) and (PASZOL = 0)` → the UFF rest line. TRAWA is never
+  cleared (endless lawn).
 
-The port instead has `apply_small_shield`: when the small shield is equipped,
-it independently rolls 0 through 99, succeeds on 0 through 10, and removes one
-point of damage. It neither incorporates the equipped clothing nor uses the
-original `PRO`/`ILOSC` state. This means SYF has no combat benefit at all in the
-port, the spiked suit has no combat defense or attack-luck benefit, and any
-shield-and-armour interaction differs from the original.
+### PORT (game.c 1941, 3286-3308, 3327-3360, 3405-3417; enemies.c 106-116)
+
+- The market menu and both purchase branches are all gated behind
+  `duncan_black_market_unlocked`, which is set only on quest completion in
+  `talk_to_duncan`. The original allowed listing and buying before the quest
+  was done (SECRET LISTA needed only Duncan present; KUP DOKUMENT needed only
+  FORSA), so the market is unavailable in the port until the 4-pokrzywa quest
+  is finished.
+- The DUNQ quest itself is otherwise 1:1: offer/DUNQ=75, reminder, completion
+  at `duncan_quest == 131` (== -125 signed), +125 exp, DUNQ=0; the −50
+  decrement per pokrzywa kill is game.c 1958-1959. Pass ownership is adapted
+  to an item quantity + `quest_passage` flag (entry F family).
+- Plants are cleared only by the KO resolver (`active_opponent_energy == 0`,
+  game.c 1941). The unconditional clears of SZCZAW/KONICZYNKA/MLECZ/
+  DMUCHAWIEC and the `ENERGIA > 0` semantics of the remaining five are lost —
+  the port clears a plant exactly when the fight is won.
+- TRAWA is a single `ENEMY_PROFILE_TRUDNO` fight (enemies.c 116): no
+  repeat-while-alive loop, no UFF rest line, and it is cleared on KO whereas
+  the original never clears it.
 
 ---
 
@@ -353,5 +376,6 @@ shield-and-armour interaction differs from the original.
 | difficulty rewards | PRZEDM.SLABO..BTRUDNO / img 0x13839..0x140FF | enemies.c 9-25; game.c 1760-1792, 1909-1940 |
 | dog rewards | PRZEDM.WALKAPIES / img 0x12A16..0x12AC9 | enemies.c 31-32; game.c 1794-1802 (dog anchors), 1941-1957; try_flee 2145-2166 |
 | stage fights | PRZEDM.FIGHTSCENA / img 0x1AF97..0x1B094 | game.c 1654-1660, 1934-1957, 2505-2508 |
+| Duncan market/quest | PRZEDM.FIGHTBLUSZCZ / TPU 0x0522..0x0A2F (img ≈ 0x1B5B7..0x1BAC3) | game.c 1941, 1958-1959, 3286-3308, 3327-3360, 3405-3417 |
 | concert crowd spawn | Room @ img 0x12E54..0x12EC0 (`Random(7)+0x3C`, re-roll ≤0x3C → 61-66) | game.c 51-60, 265-277 |
 | armour and shield mitigation | PRZEDM.UZYWANIE 0x0e3d..0x0eaf and 0x0f26..0x0f42; PRZEDM.TARCZA 0x0030..0x0054; PRZEDM.WALKA 0x112a | game.c 2305-2320, 2507-2508, 3739-3757 |
