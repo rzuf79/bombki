@@ -695,3 +695,34 @@ Full machine-verified register added to INTEGRATED-FIELD-MAP.md
   BLUSZCZ plant lines ↔ world.c actor descriptions (1275-1298, incl. trailing
   spaces on STOKROTKA/JEZYNA).
 
+## 2026-09-26 (28): PRZEDM POTWORY/KTO/BRANIE reconstructed
+
+- Added three more interface-proc bodies at the marker (after `TRAIN`):
+  - `POTWORY` (source 70-164, TPU 0x0000..0x05D8): monster-state regeneration.
+    Tiered `Random` draws with `repeat-until` anti-clumping guards: arena
+    bugs/animals, forest animals, big animals and gladiators `Random(38)+20`
+    all `> 32`; dogs and street townies `Random(7)+20` (`> 19`); concert crowd
+    and police (byte vars) `Random(7|8|9)+60` (`> 60`); band `Random(3)+70`;
+    fixed townsfolk `MINIBARMAN 67`, `GRUBAS 67`, `DJ 69`, `PEDAL/PARA/MACIEK
+    76`, `DRZWI 1`, `STARUCH 1`; plants `Random(8)+77` retried until the eight
+    main plants `< 84` (AGREST/JEZYNA/TRAWA/DUNCAN unguarded). No strings.
+  - `KTO` (source 569-598, TPU 0x0523..0x093B): 28 × `if X = MIECHO then
+    WriteLn(...)` arena-crowd lines — all verbatim in world.c's actor-
+    description table (1160-1230, incl. `"POMYLONE MISIE"` and the BOA/
+    WOJOWNIK trailing spaces); same relocation as BLUSZCZ.
+  - `BRANIE` (source 908-963, TPU 0x023F..0x0508): `BIERZ/ODRZUC` for the five
+    sentinel items. Pickup gate `X = MIECHO2`, drop gate `X = -10`; `PRZED +1/-1`;
+    DYPLOM/FAJKA side-effects `MAXE +5/-5`, `MAD +1` (gated `< MAXMAD`)/`-1`.
+    All 10 messages and side-effects match `take_item`/`drop_item` (game.c
+    1036-1114); the countable-quantity storage, missing `PRZED` counter and the
+    equipped-weapon/shield drop guard are entry F territory.
+- Registered (entry T): `game_regenerate_encounters` (game.c 227-294) re-spawns
+  the same actor groups but as room placements (arena crowd →
+  `ROOM_ARENA_33 + random(25)`, streets/concert/plant pools, fixed
+  STARUCH/LIVING_DOOR rooms + `old_elf_present`/`living_door_alive`); the
+  original's numeric state model with retry-until floors has no port analog —
+  deliberate architectural difference (moderate).
+- Confirmed 1:1: POTWORY's fixed townsfolk map onto the port's fixed
+  rooms/booleans (DRZWI ↔ living door, STARUCH ↔ elf house); KTO and BLUSZCZ
+  are the same relocated-description pattern.
+

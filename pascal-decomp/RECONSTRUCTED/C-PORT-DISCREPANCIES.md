@@ -36,6 +36,7 @@ different inputs/values; `minor` = cosmetic/faithfulness only.
 | Q | Command abbreviations (KOMENDY): 'W'→west, 'E'→east, 'M'/'E'→MODE/EXIT lost, N/S/U added | PORT-DEVIATION | moderate |
 | R | PIERDOLY colour commands (ZMIEN KOLOR / ZMIEN TLO) not ported | PORT-DEVIATION | minor |
 | S | Small-shield block (TARCZA): mutable PRO/ILOSC vs fixed 10%/1pt | PORT-DEVIATION | moderate |
+| T | Monster regeneration (POTWORY): numeric state model + re-roll guards vs room-placement spawns | PORT-DEVIATION (deliberate) | moderate |
 
 ---
 
@@ -451,6 +452,47 @@ modelled.
 
 ---
 
+## T. Monster regeneration model (POTWORY) (moderate)
+
+### ORIGINAL (`PRZEDM.POTWORY`, PRZEDM.PAS:70-164, TPU 0x0000..0x05D8)
+
+Assigns a numeric *state* value to every arena/world monster and re-rolls them
+in tiers behind retry-until guards (`repeat ... until`):
+
+- arena bugs/animals `BAKTERIA`..`KUROPATWA`, forest animals `SARNA`..`MUCHA`,
+  big animals `SLON`..`PANTERA`, gladiators `GLADIATOR`..`TRENER`:
+  `Random(38) + 20`, retried until every member is `> 32` (so 33..57);
+- dogs `MONSTRA.JAMNIK`..`PUDEL` and street townies `MONSTRA.TAKSOWKARZ`..
+  `ZEBRAK`: `Random(7) + 20` (20..26), guard `> 19`;
+- concert crowd `DZIECKO`..`CZLOWIEK` (byte): `Random(7|8) + 60`, guard `> 60`;
+  police `POLICJANT`..`REPORTER` (byte): `Random(7|8|9) + 60`, guard `> 60`
+  (61..67);
+- band `GITARZYSTA`..`LIROY`: `Random(3) + 70` (70..73), no guard;
+- fixed townsfolk: `MONSTRA.MINIBARMAN := 67`, `GRUBAS := 67`, `DJ := 69`,
+  `PEDAL`/`PARA`/`MACIEK := 76`, `DRZWI := 1`, `STARUCH := 1`;
+- plants `SZCZAW`..`TRAWA` + `DUNCAN`: `Random(8) + 77` (77..84), retried until
+  the eight main plants are `< 84` (`AGREST`/`JEZYNA`/`TRAWA`/`DUNCAN` are not
+  in the guard).
+
+The retry guards exist to keep each tier's spread above a floor so monsters are
+uniformly "alive" after regeneration.
+
+### PORT (`game_regenerate_encounters`, game.c 227-294)
+
+The same actor groups are re-spawned on regeneration, but as room placements
+instead of numeric states: the arena crowd `KORNIK`..`TRENER` goes to
+`ROOM_ARENA_33 + random(25)`; dogs and townies to `street_spawn_rooms`; concert
+crowd and police to `concert_spawn_rooms`; plants to `plant_spawn_rooms`. The
+fixed townsfolk map to fixed rooms/booleans: `STARUCH` → `ROOM_ELF_HOUSE` with
+`old_elf_present`, the living door (`DRZWI`) → `ROOM_LIVING_DOOR` with
+`living_door_alive`. The numeric state-value model and its anti-clumping
+re-roll guards have no port analog. Deliberate architectural difference
+(room+actor model); gameplay effect: the original draws the whole crowd from
+one flat pool in a single region, the port scatters each group over its own
+room list.
+
+---
+
 ## Confirmed 1:1 (checked, no deviation)
 
 - Arena N/S/E/W edge table (cells 33-57, entrance 17/32) + "EXIT" texts.
@@ -467,6 +509,15 @@ modelled.
 - BLUSZCZ plant flavour: all 12 plant/Duncan lines verbatim (incl. trailing
   spaces in the STOKROTKA and JEZYNA texts), relocated to the actor-description
   LOOK table (world.c 1275-1298) exactly like ULSKLEPIKOWA.
+- KTO arena-crowd list: all 28 crowd lines verbatim (incl. `"POMYLONE MISIE"`
+  inner quotes and the trailing spaces on BOA/WOJOWNIK) in the actor-description
+  table (world.c 1160-1230) — same relocation as BLUSZCZ.
+- BRANIE take/drop handler: all 10 messages and side-effects match
+  `take_item`/`drop_item` (game.c 1036-1114) 1:1 — DYPLOM `MAXE ±5`, FAJKA
+  `MAD +1` (gated `< MAXMAD`) / `-1`, `-10` carried sentinel vs `MIECHO2`
+  pickup gate. The port's countable-quantity storage (entry F) replaces
+  `PRZED` bookkeeping and the sentinel values, and it additionally refuses to
+  drop an equipped OLD SWORD / SMALL SHIELD.
 - TRENUJ costs 3/2/3 PRAKTYK with gates >2/>1/>2.
 - Monster stat tiers and loot rolls in the fight launchers.
 - Food / mana percentages (PACZEK +8 ... WEKA +34, beer +10E/+10M,
@@ -513,4 +564,7 @@ modelled.
 | death sequence | PRZEDM.SMIERC / TPU 0x0141..0x0277 (source 192-208) | game.c 2377-2409 (resolve_player_death) |
 | plant flavour | PRZEDM.BLUSZCZ / TPU 0x02E3..0x04AC (source 210-223) | world.c 1275-1298 (actor descriptions) |
 | colour commands | PRZEDM.PIERDOLY / TPU 0x003B..0x00E1 (source 1111-1122) | none (not ported) |
+| crowd list | PRZEDM.KTO / TPU 0x0523..0x093B (source 569-598) | world.c 1160-1230 (actor descriptions) |
+| take/drop 5 items | PRZEDM.BRANIE / TPU 0x023F..0x0508 (source 908-963) | game.c 1036-1114 (take_item/drop_item) |
+| monster regeneration | PRZEDM.POTWORY / TPU 0x0000..0x05D8 (source 70-164) | game.c 227-294 (game_regenerate_encounters) |
 | armour and shield mitigation | PRZEDM.UZYWANIE 0x0e3d..0x0eaf and 0x0f26..0x0f42; PRZEDM.TARCZA 0x0030..0x0054; PRZEDM.WALKA 0x112a | game.c 2305-2320, 2507-2508, 3739-3757 |

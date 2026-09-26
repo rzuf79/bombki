@@ -909,6 +909,229 @@ begin
     WriteLn('ROLNIK DUNCAN PROBOJE ZAPANOWAC NAD TYM ZYWIOLEM I UPRAWIAC SWOJE MARCHEWKI');
 end;
 
+procedure POTWORY;
+begin
+  repeat
+    BAKTERIA := Random(38) + 20;
+    SLIMAK := Random(38) + 20;
+    ZUK := Random(38) + 20;
+    KARALUCH := Random(38) + 20;
+    MROWKA := Random(38) + 20;
+    PAJAK := Random(38) + 20;
+    DZIK := Random(38) + 20;
+    LIS := Random(38) + 20;
+    SZCZUR := Random(38) + 20;
+    KUROPATWA := Random(38) + 20;
+  until (BAKTERIA > 32) and (SLIMAK > 32) and (ZUK > 32) and (KARALUCH > 32)
+    and (MROWKA > 32) and (PAJAK > 32) and (DZIK > 32) and (LIS > 32)
+    and (SZCZUR > 32) and (KUROPATWA > 32);
+  repeat
+    SARNA := Random(38) + 20;
+    ORZEL := Random(38) + 20;
+    ZAJAC := Random(38) + 20;
+    WILCZUR := Random(38) + 20;
+    KORNIK := Random(38) + 20;
+    MUCHA := Random(38) + 20;
+  until (SARNA > 32) and (ORZEL > 32) and (ZAJAC > 32) and (WILCZUR > 32)
+    and (KORNIK > 32) and (MUCHA > 32);
+  repeat
+    SLON := Random(38) + 20;
+    LEW := Random(38) + 20;
+    ZYRAFA := Random(38) + 20;
+    WIELBLAD := Random(38) + 20;
+    STRUS := Random(38) + 20;
+    BOA := Random(38) + 20;
+    WILK := Random(38) + 20;
+    BIZON := Random(38) + 20;
+    PANTERA := Random(38) + 20;
+  until (SLON > 32) and (LEW > 32) and (ZYRAFA > 32) and (WIELBLAD > 32)
+    and (STRUS > 32) and (BOA > 32) and (WILK > 32) and (BIZON > 32)
+    and (PANTERA > 32);
+  repeat
+    GLADIATOR := Random(38) + 20;
+    WOJOWNIK := Random(38) + 20;
+    TRENER := Random(38) + 20;
+  until (GLADIATOR > 32) and (WOJOWNIK > 32) and (TRENER > 32);
+  repeat
+    MONSTRA.JAMNIK := Random(7) + 20;
+    MONSTRA.OWCZAREK := Random(7) + 20;
+    MONSTRA.PIESEK := Random(7) + 20;
+    MONSTRA.SPANIEL := Random(7) + 20;
+    MONSTRA.PUDEL := Random(7) + 20;
+  until (MONSTRA.JAMNIK > 19) and (MONSTRA.OWCZAREK > 19) and (MONSTRA.PIESEK > 19)
+    and (MONSTRA.SPANIEL > 19) and (MONSTRA.PUDEL > 19);
+  repeat
+    MONSTRA.TAKSOWKARZ := Random(7) + 20;
+    MONSTRA.SPRZEDAWCA := Random(7) + 20;
+    MONSTRA.ZAMIATACZ := Random(7) + 20;
+    MONSTRA.PIJAK := Random(7) + 20;
+    MONSTRA.ZEBRAK := Random(7) + 20;
+  until (MONSTRA.TAKSOWKARZ > 19) and (MONSTRA.SPRZEDAWCA > 19)
+    and (MONSTRA.ZAMIATACZ > 19) and (MONSTRA.PIJAK > 19) and (MONSTRA.ZEBRAK > 19);
+  repeat
+    DZIECKO := Random(7) + 60;
+    WARIAT := Random(8) + 60;
+    SLUCHACZ := Random(8) + 60;
+    FAN := Random(8) + 60;
+    CZLOWIEK := Random(8) + 60;
+  until (DZIECKO > 60) and (WARIAT > 60) and (SLUCHACZ > 60) and (FAN > 60)
+    and (CZLOWIEK > 60);
+  repeat
+    POLICJANT := Random(9) + 60;
+    OCHRONIARZ := Random(9) + 60;
+    GORYL := Random(9) + 60;
+    DZIADEK := Random(8) + 60;
+    REPORTER := Random(7) + 60;
+  until (POLICJANT > 60) and (OCHRONIARZ > 60) and (GORYL > 60) and (DZIADEK > 60)
+    and (REPORTER > 60);
+  GITARZYSTA := Random(3) + 70;
+  PERKUSISTA := Random(3) + 70;
+  ORGANISTA := Random(3) + 70;
+  LIROY := Random(3) + 70;
+  MONSTRA.MINIBARMAN := 67;
+  MONSTRA.GRUBAS := 67;
+  MONSTRA.DJ := 69;
+  MONSTRA.PEDAL := 76;
+  MONSTRA.PARA := 76;
+  MONSTRA.MACIEK := 76;
+  MONSTRA.DRZWI := 1;
+  MONSTRA.STARUCH := 1;
+  repeat
+    SZCZAW := Random(8) + 77;
+    KONICZYNKA := Random(8) + 77;
+    STOKROTKA := Random(8) + 77;
+    MLECZ := Random(8) + 77;
+    DMUCHAWIEC := Random(8) + 77;
+    ROZA := Random(8) + 77;
+    OSET := Random(8) + 77;
+    MALINA := Random(8) + 77;
+    AGREST := Random(8) + 77;
+    JEZYNA := Random(8) + 77;
+    TRAWA := Random(8) + 77;
+    DUNCAN := Random(8) + 77;
+  until (SZCZAW < 84) and (STOKROTKA < 84) and (KONICZYNKA < 84) and (MLECZ < 84)
+    and (DMUCHAWIEC < 84) and (ROZA < 84) and (OSET < 84) and (MALINA < 84);
+end;
+
+procedure KTO;
+begin
+  if KORNIK = MIECHO then
+    WriteLn('KORNIK SZUKA JAKIEGOS DRZEWA ABY COS PRZEKASIC');
+  if MUCHA = MIECHO then
+    WriteLn('MUCHA BZYKA SOBIE TO TU TO TAM');
+  if BAKTERIA = MIECHO then
+    WriteLn('BAKTERIA KTORA ZOBACZYLES POD MIKROSKOPEM STARA USUNAC CI SIE Z DROGI');
+  if SLIMAK = MIECHO then
+    WriteLn('SLIMAK KTORY ZOSTAWIA SLUZ POWOLI SUNIE PO PODLODZE');
+  if ZUK = MIECHO then
+    WriteLn('ZUK KTORY WIDZI CO SIE SWIECI ZWIEWA STAD');
+  if KARALUCH = MIECHO then
+    WriteLn('OHYDNY KARALUCH MA OCHOTE CIE OBRZYDZIC');
+  if MROWKA = MIECHO then
+    WriteLn('MROWKA NIESIE TLUSTY PACZEK I SIE CIESZY');
+  if PAJAK = MIECHO then
+    WriteLn('PAJAK ZROBIL SIEC NA SCIANIE ARENY');
+  if DZIK = MIECHO then
+    WriteLn('TLUSTY DZICZEK BIEGNIE SOBIE TEDY');
+  if SZCZUR = MIECHO then
+    WriteLn('JEST TUTAJ SZCZUR,TAK WIELKI ZE WIEKSZEGO NIE WIDZIALES');
+  if LIS = MIECHO then
+    WriteLn('CHYTRY LIS SZUKA SPOSOBU BY CIE ZABIC');
+  if KUROPATWA = MIECHO then
+    WriteLn('KUROPATWA PO PROSTU JEST TU');
+  if ZAJAC = MIECHO then
+    WriteLn('ZAJAC KICA SOBIE SPIEWAJAC "POMYLONE MISIE"');
+  if WILCZUR = MIECHO then
+    WriteLn('CZARNY WILCZUR PO KRZYWEJ SIE TOCZY (MU PIANA Z UST)');
+  if ORZEL = MIECHO then
+    WriteLn('ORZEL SZYBUJE W POWIETRZYU W POSZUKIWANIU OFIARY');
+  if SARNA = MIECHO then
+    WriteLn('SARNA SKASZE SOBIE NIE ZDAJAC SOBIE SPRAWY ZE ZARAZ ZGINIE');
+  if SLON = MIECHO then
+    WriteLn('OGROMNIASTY SLON ZGNIATA WSZYSTKO CO NAPOTKA');
+  if LEW = MIECHO then
+    WriteLn('LEW - KROL ZWIERZAT WLASNIE ZABIJA NIEWINNE DZIECKO ROZWALAJAC JEGO MOZG');
+  if ZYRAFA = MIECHO then
+    WriteLn('ZYRAFA KTORA TU STOI NIE SZUKA ZACZEPKI');
+  if WIELBLAD = MIECHO then
+    WriteLn('WIELBLAD KORZYSTA Z GARBOW UZYWAJAC ICH JAKO SMIERTELNEJ BRONI');
+  if STRUS = MIECHO then
+    WriteLn('STRUS NIE CHOWA GLOWY W PIASEK BO JEST NA BETONIE');
+  if BOA = MIECHO then
+    WriteLn('BOA DUSICIEL WLASNIE ZJADL KROWE ');
+  if WILK = MIECHO then
+    WriteLn('WILK CHORY NA WSCIEKLIZNE PANOSZY SIE W OKOLICY');
+  if BIZON = MIECHO then
+    WriteLn('NIEWINNY BIZON MORDUJE WLASNIE PUBLICZNOSC');
+  if PANTERA = MIECHO then
+    WriteLn('ZWINNA PANTERA NUDZI SIE POLYKAJAC RESZTKI LUDZKIEGO MIESA');
+  if GLADIATOR = MIECHO then
+    WriteLn('GLADIATOR ZDOBYWA TUTAJ KUNSZT');
+  if WOJOWNIK = MIECHO then
+    WriteLn('WOJOWNIK GREEN PEACE MORDUJE TUTAJ BEZBRONNE LWIATKA :( ');
+  if TRENER = MIECHO then
+    WriteLn('TRENER CYRKU LAPIE ZWIERZETA NA SWOJE PRZEDSTAWIENIE');
+end;
+
+procedure BRANIE;
+begin
+  if (wpisz = 'BIERZ STARY') and (MMIECZ = MIECHO2) then begin
+    WriteLn('PODNOSISZ STARY ZARDZEWIALY MIECZ I MASZ JAROWE ZE GO POSIADASZ');
+    MMIECZ := -10;
+    PRZED := PRZED + 1;
+  end;
+  if (wpisz = 'BIERZ MALA') and (MTARCZA = MIECHO2) then begin
+    WriteLn('PODNOSISZ MALA TARCZA (JEST OKRAGLA)');
+    MTARCZA := -10;
+    PRZED := PRZED + 1;
+  end;
+  if (wpisz = 'BIERZ SERCE') and (SERCE = MIECHO2) then begin
+    WriteLn('PODNOSISZ ZAKRWAWIONE SERCE (BLEEEE)');
+    SERCE := -10;
+    PRZED := PRZED + 1;
+  end;
+  if (wpisz = 'BIERZ DYPLOM') and (DYPLOM = MIECHO2) then begin
+    WriteLn('PODNOSISZ DYPLOM MUD SZKOLY , I CZUJESZ PRZEPLYWAJACA PRZEZ CIEBIE MOC');
+    DYPLOM := -10;
+    MONSTRA.MAXE := MONSTRA.MAXE + 5;
+    PRZED := PRZED + 1;
+  end;
+  if (wpisz = 'BIERZ FAJKA') and (FAJKA = MIECHO2) then begin
+    WriteLn('PODNOSISZ FAJKE ');
+    FAJKA := -10;
+    PRZED := PRZED + 1;
+    if MAD < MAXMAD then
+      MAD := MAD + 1;
+  end;
+  if (wpisz = 'ODRZUC STARY') and (MMIECZ = -10) then begin
+    WriteLn('ODRZUCASZ STARY ZARDZEWIALY MIECZ I MASZ JAROWE ZE GO NIE POSIADASZ');
+    MMIECZ := MIECHO2;
+    PRZED := PRZED - 1;
+  end;
+  if (wpisz = 'ODRZUC FAJKA') and (FAJKA = -10) then begin
+    WriteLn('WYRZUCASZ FAJKE ');
+    FAJKA := MIECHO2;
+    PRZED := PRZED - 1;
+    MAD := MAD - 1;
+  end;
+  if (wpisz = 'ODRZUC MALA') and (MTARCZA = -10) then begin
+    WriteLn('ODRZUCASZ MALA ZWYKLA TARCZE ');
+    MTARCZA := MIECHO2;
+    PRZED := PRZED - 1;
+  end;
+  if (wpisz = 'ODRZUC SERCE') and (SERCE = -10) then begin
+    WriteLn('ODRZUCASZ ZAKRWAWIONE SERCE ');
+    SERCE := MIECHO2;
+    PRZED := PRZED - 1;
+  end;
+  if (wpisz = 'ODRZUC DYPLOM') and (DYPLOM = -10) then begin
+    WriteLn('ODRZUCASZ DYPLOM MUD SZKOLY , I PRZESTAJESZ CZUC PRZEPLYWAJACA PRZEZ CIEBIE MOC');
+    DYPLOM := MIECHO2;
+    MONSTRA.MAXE := MONSTRA.MAXE - 5;
+    PRZED := PRZED - 1;
+  end;
+end;
+
   (* Remaining bodies are still to be reconstructed from the retained TPU
      listings and BOMBKI.EXE disassembly. *)
 begin
