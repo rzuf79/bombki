@@ -499,8 +499,9 @@ The 0x129D paragraph contains a whole second game layer beyond Walka:
 ## 2026-09-24 (18): c-port vs disasm discrepancy audit
 
 Cross-checked the recovered c-port dossiers against the original disasm.
-Full machine-verified register added to INTEGRATED-FIELD-MAP.md
-"c-port discrepancy register". Highlights:
+Full machine-verified register now lives in C-PORT-DISCREPANCIES.md (it was
+added as the "c-port discrepancy register" inside INTEGRATED-FIELD-MAP.md and
+moved out when that file was made discrepancy-free). Highlights:
 - **Flee**: original = Mana drain Random(2)+2, gates, Mana-15, then success iff
   Random(100)<=Uciekanie -> FleeFlag=1 **+ 20 KUNSZT** (string @img 0x17FCD).
   Port uses dex-score chance and no mana cost.
