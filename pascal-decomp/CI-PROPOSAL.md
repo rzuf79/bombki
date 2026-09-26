@@ -1,8 +1,9 @@
 # CI proposal: compiling the BOMBKI reconstruction
 
-Status: **proposed** -- implemented on branch `ci/pas-build` (this doc, the
-workflow and the sweep tooling), awaiting review on GitHub. Nothing touches
-`main`.
+Status: **proposed** -- implemented on branches `ci/pas-build` (workflow +
+sweep tooling) and `recon/przedm-compilable` (this doc, manifest flips:
+`MONSTRA.PAS` / `PRZEDM.PAS` now compile). Awaiting review on GitHub; nothing
+touches `main`.
 
 ## Why it can't just "compile" yet
 
@@ -10,9 +11,10 @@ The reconstructed `reconstructed/*.pas` are still theoretical:
 
 | file | state |
 | --- | --- |
-| `MONSTRA.PAS`, `SWIAT.PAS` | interface skeletons; interface procs have **no implementation** (`BODY TODO`) |
-| `PRZEDM.PAS` | fullest unit, but `uses monstra` and keeps BODY TODO stubs |
-| `BOMBKI.PAS` | main skeleton, `uses crt, swiat, przedm, monstra, dos, System` -- needs all units |
+| `MONSTRA.PAS` | interface intact; `WSTEP` has a compile-satisfying empty body (reconstruction stays BODY TODO, log §5(9)) -- **compiles** |
+| `SWIAT.PAS` | unit skeleton; 13 interface procs with no implementation (`BODY TODO`) -- not yet compilable |
+| `PRZEDM.PAS` | all 33 interface procs reconstructed (log §5(19)-(31)); blocked only by `uses monstra` -- **compiles** |
+| `BOMBKI.PAS` | main skeleton, `uses crt, swiat, przedm, monstra, dos, System` -- needs all units (`SWIAT` pending) |
 | `WALKA/WSTEP/WCZYTANIE-*`, `BAZAR-death.pas` | **fragments** (bodies with no `unit`/`program` wrapper) |
 | `BOMBKI-body.pas` | EXE disassembly listing, not compilable source |
 
@@ -45,7 +47,8 @@ reviewers can see the exact gap that remains.
 ## Acceptance / end state
 
 ```
-MONSTRA PASS, SWIAT PASS, PRZEDM PASS
+MONSTRA PASS, PRZEDM PASS            <- current (2026-09-26)
+SWIAT PASS                           <- next step (13 stub bodies)
   -> BOMBKI.PAS PASS (links)
   -> run-app job: DOSBox smoke-run of the 16-bit binary
   -> test job: DGROUP-harness unit tests (combat math, save/load round-trips)

@@ -31,6 +31,13 @@ implementation
   (* BODY TODO: reconstruct from BOMBKI.EXE code disassembly.
      Linked code blocks & entries are documented in
      analysis-results\tpu_reports\MONSTRA.*.txt and analysis-results\exe_reports\exe.*.txt *)
+
+procedure WSTEP;
+begin
+  { compile-satisfying empty body; reconstruction remains BODY TODO
+    (RECONSTRUCTION-LOG.md 5(9) / WSTEP-reconstructed.pas). }
+end;
+
 begin
   { unit-initialization: runs once at program start }
 end.

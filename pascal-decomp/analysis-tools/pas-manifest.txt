@@ -5,10 +5,10 @@
 #   scaffold  -> tracked for completeness, never compiled (fragments/listing)
 # Flip FAIL -> PASS as BODY TODO bodies land; the conformance job fails if a
 # target's observed status drifts from what is recorded here.
-pascal-decomp/reconstructed/BOMBKI.PAS | FAIL | main skeleton: uses SWIAT/PRZEDM/MONSTRA (all BODY TODO)
-pascal-decomp/reconstructed/MONSTRA.PAS | FAIL | unit skeleton: interface procs not implemented (BODY TODO)
-pascal-decomp/reconstructed/SWIAT.PAS   | FAIL | unit skeleton: interface procs not implemented (BODY TODO)
-pascal-decomp/reconstructed/PRZEDM.PAS  | FAIL | fullest unit, but uses MONSTRA skeleton + BODY TODO stubs
+pascal-decomp/reconstructed/BOMBKI.PAS | FAIL | main skeleton: uses SWIAT/PRZEDM/MONSTRA (blocked by SWIAT)
+pascal-decomp/reconstructed/MONSTRA.PAS | PASS | interface intact; WSTEP compile-stub body, reconstruction BODY TODO (log 5(9))
+pascal-decomp/reconstructed/SWIAT.PAS   | FAIL | unit skeleton: 13 interface procs not implemented (BODY TODO)
+pascal-decomp/reconstructed/PRZEDM.PAS  | PASS | all 33 interface procs reconstructed (log 5(19..31))
 pascal-decomp/reconstructed/BOMBKI-body.pas | scaffold | EXE disassembly listing, not compilable source
 pascal-decomp/reconstructed/WALKA-CombatEngine-reconstructed.pas | scaffold | combat-engine fragment; needs unit wrapper
 pascal-decomp/reconstructed/WSTEP-reconstructed.pas              | scaffold | WSTEP fragment; needs unit wrapper
