@@ -33,6 +33,9 @@ different inputs/values; `minor` = cosmetic/faithfulness only.
 | N | Non-stage kill callers roll unique drops unconditionally | PORT-DEVIATION | moderate |
 | O | FIGHTBLUSZCZ: market gate + plant kill clears | PORT-DEVIATION | moderate |
 | P | POROWNANIE basic/street advice band off-by-one (score==22) | PORT-DEVIATION | minor |
+| Q | Command abbreviations (KOMENDY): 'W'→west, 'E'→east, 'M'/'E'→MODE/EXIT lost, N/S/U added | PORT-DEVIATION | moderate |
+| R | PIERDOLY colour commands (ZMIEN KOLOR / ZMIEN TLO) not ported | PORT-DEVIATION | minor |
+| S | Small-shield block (TARCZA): mutable PRO/ILOSC vs fixed 10%/1pt | PORT-DEVIATION | moderate |
 
 ---
 
@@ -366,12 +369,104 @@ dogs) and the BAKTERIA +5 MANA / learn gate (`FUKS < 3 and POR < 100` →
 
 ---
 
+## Q. Command abbreviations (KOMENDY) (moderate)
+
+### ORIGINAL (`PRZEDM.KOMENDY`, PRZEDM.PAS:1560-1570, TPU 0x0043..0x016F)
+
+`KOMENDY` runs before dispatch and expands abbreviation commands:
+
+`PN`→`POLNOC`, `PD`→`POLODNIE`, `W`→`WSCHOD`, `Z`→`ZACHOD`, `G`→`GORA`,
+`D`→`DOL`, `E`→`EXIT`, `M`→`MODE`.
+
+The letters are Polish, not English compass points: `W` is the natural
+abbreviation of *wschód* (east) and `Z` of *zachód* (west). `E` expands to the
+`EXIT` command (the "show available exits" list, not quitting) and `M` to
+`MODE` (display mode). There are no `N`/`S`/`U` abbreviations and no
+`POLUDNIE` spelling.
+
+### PORT (parser.c `parse_direction` 42-68)
+
+`PN`/`PD`/`G`/`D` match, and the full words `POLODNIE` (and additionally
+`POLUDNIE`) are recognised. Deviations:
+
+- `W` is mapped to `DIRECTION_WEST` (ZACHOD), while the original `W` means
+  east (`WSCHOD`).
+- `E` is mapped to `DIRECTION_EAST`, while the original `E` expands to the
+  `EXIT` (exits-list) command.
+- `N`, `S`, `U` are accepted as extra aliases the original does not have.
+- `M`/`MODE` is `COMMAND_UNKNOWN` (test_parser.c:81 asserts `"MODE"` →
+  unknown); the `M` abbreviation has no port equivalent.
+- `EXIT` itself is the exits-list command in both games (parser.c:156,
+  COMMAND_EXITS), so only the `E` abbreviation's target differs.
+
+No test asserts the single-letter directions, so the `W`/`E` remap is
+untested and looks like an incidental English-porting artifact rather than a
+deliberate design choice.
+
+---
+
+## R. PIERDOLY colour commands not ported (minor)
+
+### ORIGINAL (`PRZEDM.PIERDOLY`, PRZEDM.PAS:1111-1122, TPU 0x003B..0x00E1)
+
+Two cosmetic commands on `wpisz`, no validation:
+
+- `ZMIEN KOLOR` → prints `PODAJ LICZBE KOLORU`, `ReadLn(FUKS)`,
+  `TextColor(FUKS)` (Crt, low byte only).
+- `ZMIEN TLO` → prints `PODAJ LICZBE TLA`, `ReadLn(FUKS)`,
+  `TextBackground(FUKS)` (Crt.entry_0x0070).
+
+CRT clamps the accepted values to the 16 foreground / 8 background palette.
+
+### PORT
+
+No equivalent. The port has no terminal-colour framework; both commands fall
+through to the unrecognised-command path. Cosmetic only.
+
+---
+
+## S. Small-shield block (TARCZA) (moderate)
+
+### ORIGINAL (`PRZEDM.TARCZA`, PRZEDM.PAS:601-608, TPU 0x0022..0x0090)
+
+Block event rolled inside the fight flow:
+
+- `FUKS := Random(100)`; the block succeeds when `FUKS <= PRO`;
+- `WPYSK := WPYSK - ILOSC` (sword-hit component reduced by the shield's
+  absorb), clamped at 0;
+- prints `'OSLONILES SIE ! TRACISZ ', WPYSK, ' ENERGII'`.
+
+`PRO` and `ILOSC` are mutable, accumulating combat stats — e.g. the armour
+suit (GARNITUR, PRZEDM.UZYWANIE img 0x0F2C..0x0F39) raises `ILOSC +1`,
+`PRO +10`, `FUKSROLL +15` — so the block chance and absorption grow with
+equipment rather than being fixed.
+
+### PORT (`apply_small_shield`, game.c 2274-2290)
+
+Same verbatim message with the reduced damage, but the block chance is the
+constant `random_below(state, 100) > 10` (10%) and the reduction is always one
+point (`--damage`), gated only on `equipped_shield == ITEM_SMALL_SHIELD`. The
+accumulating `PRO`/`ILOSC` mechanic (shared with the armour suit) is not
+modelled.
+
+---
+
 ## Confirmed 1:1 (checked, no deviation)
 
 - Arena N/S/E/W edge table (cells 33-57, entrance 17/32) + "EXIT" texts.
 - Quest-master prices/counters and type rewards (200/100/50; counts
   75/200/200; rewards 100/250/425).
 - Death penalty: `KUNSZT −= 250 − Random(50) + 5·Level` (img 0x37DC..0x3811).
+- Death sequence (PRZEDM.SMIERC, PRZEDM.PAS:192-208, TPU 0x0141..0x0277):
+  six verbatim lines, `ENERGIA := MAXE`, `KUNSZT −= 250 − Random(50) +
+  5·POZIOM`, quest progress 50/200 on type 1/>1, `POTWORY` regeneration and
+  city respawn — matches `resolve_player_death` (game.c 2377-2409) 1:1 (the
+  port's experience arithmetic is the same expression in 64-bit). The original
+  also does `MIECHO := 20`, sets `wpisz := 'PAMIETAJ'`, saves, and pauses on
+  `ReadLn` — flow details the port folds into its own death/save handling.
+- BLUSZCZ plant flavour: all 12 plant/Duncan lines verbatim (incl. trailing
+  spaces in the STOKROTKA and JEZYNA texts), relocated to the actor-description
+  LOOK table (world.c 1275-1298) exactly like ULSKLEPIKOWA.
 - TRENUJ costs 3/2/3 PRAKTYK with gates >2/>1/>2.
 - Monster stat tiers and loot rolls in the fight launchers.
 - Food / mana percentages (PACZEK +8 ... WEKA +34, beer +10E/+10M,
@@ -413,4 +508,9 @@ dogs) and the BAKTERIA +5 MANA / learn gate (`FUKS < 3 and POR < 100` →
 | comparison oracle | PRZEDM.POROWNANIE / TPU 0x0816..0x12E9 (source 385-472) | game.c 2933-2959 (comparison_score), 2961-3149 (advice), 3151-3237 (resolve/begin) |
 | street/dog flavour | PRZEDM.ULSKLEPIKOWA / TPU 0x0070 (source 475-487) | world.c 1227-1246 (actor descriptions) |
 | training | PRZEDM.TRAIN / TPU 0x0010 (source 166-189) | game.c 2835-2875 (train_attribute) |
+| cmd abbreviations | PRZEDM.KOMENDY / TPU 0x0043..0x016F (source 1560-1570) | parser.c 42-68 (parse_direction) |
+| small-shield block | PRZEDM.TARCZA / TPU 0x0022..0x0090 (source 601-608) | game.c 2274-2290 (apply_small_shield) |
+| death sequence | PRZEDM.SMIERC / TPU 0x0141..0x0277 (source 192-208) | game.c 2377-2409 (resolve_player_death) |
+| plant flavour | PRZEDM.BLUSZCZ / TPU 0x02E3..0x04AC (source 210-223) | world.c 1275-1298 (actor descriptions) |
+| colour commands | PRZEDM.PIERDOLY / TPU 0x003B..0x00E1 (source 1111-1122) | none (not ported) |
 | armour and shield mitigation | PRZEDM.UZYWANIE 0x0e3d..0x0eaf and 0x0f26..0x0f42; PRZEDM.TARCZA 0x0030..0x0054; PRZEDM.WALKA 0x112a | game.c 2305-2320, 2507-2508, 3739-3757 |

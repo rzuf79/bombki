@@ -201,6 +201,27 @@ uses  dos, monstra, crt, System;
   { Proc $0108 Entry 264:0000 }
 implementation
 
+procedure SMIERC;
+begin
+  WriteLn('AJAJAJAJ TWOJA GLOWA NAWALA JAK TESCIOWA!!!');
+  WriteLn('NIC NA TO NIE PORADZE , TRZEBA BYLO SIE STARAC');
+  WriteLn('NAGLE REFLEKSJA - DO JASNEJ CENZURY JAK SIE WALCZYLO TYM MIECZEM?');
+  WriteLn('NIESTETY WRAZ ZE SMIERCIA TRACISZ KUNSZT ADEKWATNIE DO TWOJEGO LEVELKA');
+  WriteLn('POJAWISZ SIE W CENTRUM MIASTA ..... POWODZENIA');
+  WriteLn('P.S : AHA POTWORY SIE ODREGENEROWALY');
+  if QUEST = 1 then
+    QUESTWYK := 50;
+  if QUEST > 1 then
+    QUESTWYK := 200;
+  ENERGIA := MONSTRA.MAXE;
+  KUNSZT := KUNSZT - 250 + Random(50) - 5 * POZIOM;
+  MIECHO := 20;
+  POTWORY;
+  wpisz := 'PAMIETAJ';
+  save;
+  ReadLn;
+end;
+
 procedure WALKAPIES;
 begin
   WROGEN := 10;
@@ -809,6 +830,83 @@ begin
       PRA := PRA - 3;
       WriteLn('TRENUJESZ MADROSC I MASZ ', MAD, ' MADROSCI I ZOSTALO CI ', PRA, ' PRAKTYK');
     end;
+end;
+
+procedure save;
+begin
+end;
+
+procedure TARCZA;
+begin
+  FUKS := Random(100);
+  if FUKS <= PRO then begin
+    WPYSK := WPYSK - ILOSC;
+    if WPYSK < 0 then
+      WPYSK := 0;
+    WriteLn('OSLONILES SIE ! TRACISZ ', WPYSK, ' ENERGII');
+  end;
+end;
+
+procedure PIERDOLY;
+begin
+  if wpisz = 'ZMIEN KOLOR' then begin
+    WriteLn('PODAJ LICZBE KOLORU');
+    ReadLn(FUKS);
+    TextColor(FUKS);
+  end;
+  if wpisz = 'ZMIEN TLO' then begin
+    WriteLn('PODAJ LICZBE TLA');
+    ReadLn(FUKS);
+    TextBackground(FUKS);
+  end;
+end;
+
+procedure KOMENDY;
+begin
+  if wpisz = 'PN' then
+    wpisz := 'POLNOC';
+  if wpisz = 'PD' then
+    wpisz := 'POLODNIE';
+  if wpisz = 'W' then
+    wpisz := 'WSCHOD';
+  if wpisz = 'Z' then
+    wpisz := 'ZACHOD';
+  if wpisz = 'G' then
+    wpisz := 'GORA';
+  if wpisz = 'D' then
+    wpisz := 'DOL';
+  if wpisz = 'E' then
+    wpisz := 'EXIT';
+  if wpisz = 'M' then
+    wpisz := 'MODE';
+end;
+
+procedure BLUSZCZ;
+begin
+  if SZCZAW = MIECHO then
+    WriteLn('PONURY SZCZAW PLANUJE ZEMSCIC SIE NA SWOJEJ TESCIOWEJ-LISCIU KLONOWYM');
+  if STOKROTKA = MIECHO then
+    WriteLn('STOKROTKA TUTAJ ROSNIE POLNA ( A NAD NIA SZUMI GEJ) ');
+  if KONICZYNKA = MIECHO then
+    WriteLn('KONICZYNKA KTORA TUTAJ JEST NIE PRZENIESIE CI SZCZESCIA');
+  if MLECZ = MIECHO then
+    WriteLn('MLECZ WLASNIE DOWIODL ZE EINSTEIN SIE MYLIL');
+  if DMUCHAWIEC = MIECHO then
+    WriteLn('DMUCHAWIEC WLASNIE DOJRZAL DO TEGO ABY GO ZDMUCHNAC');
+  if ROZA = MIECHO then
+    WriteLn('PRZEROSNIETA ROZA POKAZUJE KOLCE NA ZNAK IZ NIE WARTO JEJ ATAKOWAC');
+  if OSET = MIECHO then
+    WriteLn('KIEDYS MYSLALES ZE OSET TO LATWY DO WYRWANIA CHWAST ... MYLILES SIE');
+  if JEZYNA = MIECHO then
+    WriteLn('TA JEZYNA W CIEMNOSCIACH WYGLADA JAK JAKIS NIEBYWALY SMOK ... ');
+  if AGREST = MIECHO then
+    WriteLn('AGREST JEST TU , CHCESZ SPROBOWAC JAK SMAKUJE ?');
+  if MALINA = MIECHO then
+    WriteLn('MALINA JAK DZIEWCZYNA , CHOC DZIEWCZYNY NIE SA CHYBA AZ TAKIMI MUTANTAMI');
+  if TRAWA = MIECHO then
+    WriteLn('TRAWA NIE WYDAJE SIE TRUDNYM PRZECIWNIKIEM , LECZ NIE DAJ SIE ZWIESC');
+  if DUNCAN = MIECHO then
+    WriteLn('ROLNIK DUNCAN PROBOJE ZAPANOWAC NAD TYM ZYWIOLEM I UPRAWIAC SWOJE MARCHEWKI');
 end;
 
   (* Remaining bodies are still to be reconstructed from the retained TPU
