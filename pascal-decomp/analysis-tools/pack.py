@@ -15,7 +15,7 @@ import os, re, struct, sys
 RELDIR = os.path.dirname(os.path.abspath(__file__))
 REPORTS = os.path.join(RELDIR, '..', 'analysis-results', 'tpu_reports')
 OUT = os.path.join(RELDIR, '..', 'reconstructed')
-EXE = r'E:\Develop\Reverse\bombki\BOMBKI.EXE'
+EXE = os.path.join(RELDIR, '..', 'analysis-results', 'exe_reports', 'exe.image.bin')
 
 def u16(b, o): return struct.unpack_from('<H', b, o)[0]
 
