@@ -501,13 +501,6 @@ The 0x129D paragraph contains a whole second game layer beyond Walka:
 Cross-checked the recovered c-port dossiers against the original disasm.
 Full machine-verified register added to INTEGRATED-FIELD-MAP.md
 "c-port discrepancy register". Highlights:
-- **CWICZ formulas (major)**: original keys ALL six CWICZ skills off MadroscCur
-  (KOPANIE +MAD gates>10&&SIL>11, no cap; UCIEKANIE +MAD+ZRE-5 gates>10/10 cap 85;
-  POWROT +2*MAD-3 gate>17 cap 90; PAROWANIE +MAD+ZRE-14 gates>15/11 cap 90;
-  POROWNYWANIE +3MAD-9 gate>11 cap 90; POTRAWKI +MAD+1 gate>18 cap 90).
-  Port has all six handlers (game.c 3925-3942) but substitutes **strength** for
-  wisdom in gates+formulas (KOPAC gates dex>11 where original gated SIL>11).
-  Full table: `RECONSTRUCTED\C-PORT-DISCREPANCIES.md` entry A.
 - **Flee**: original = Mana drain Random(2)+2, gates, Mana-15, then success iff
   Random(100)<=Uciekanie -> FleeFlag=1 **+ 20 KUNSZT** (string @img 0x17FCD).
   Port uses dex-score chance and no mana cost.
