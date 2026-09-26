@@ -554,7 +554,7 @@ Full machine-verified register added to INTEGRATED-FIELD-MAP.md
   Kaseta/Listek/Scroll. That guard is *reachable* on a simultaneous knockout:
   the port resolves loot (game.c 1941-1944) before the player-death check
   (game.c 2505-2508), so the drops can fire on the death turn where the original
-  sets context 10000 and suppresses them (register entries I and N).
+  sets context 10000 and suppresses them (register entries 4 and 9).
 
 ## 2026-09-25 (21): PRZEDM difficulty procedures reconstructed
 
@@ -566,9 +566,9 @@ Full machine-verified register added to INTEGRATED-FIELD-MAP.md
   MROWKA-only Paczek path, and the original nested Serce checks and RNG order.
 - `enemies.c` agrees with every stat, coin, and drop range. The countable-item
   port deliberately differs in Paczek/Serce ownership and RNG consumption
-  (register entry F). It also grants ordinary VEASY/EASY/NEASY rewards without
-  the original `ENERGIA > 0` condition (entry J) and saturates coin addition
-  rather than using the original signed Longint arithmetic (entry K).
+  (register entry 3). It also grants ordinary VEASY/EASY/NEASY rewards without
+  the original `ENERGIA > 0` condition (entry 5) and saturates coin addition
+  rather than using the original signed Longint arithmetic (entry 6).
 - Stale disassembly annotations were corrected: VEASY/EASY/NEASY damage rolls
   use `Random(2)`, and 0x13B87 is inside `TRUDNO`, not a second procedure.
 
@@ -582,7 +582,7 @@ Full machine-verified register added to INTEGRATED-FIELD-MAP.md
 - The C port matches the stats, ranges, strings, and room placement on victory.
   On a flee it skips the original's still-run coin reward and heart drop, does
   not clear the dog's room anchor, and omits the SPANIEL/PUDEL speech that the
-  original shows after a successful flee (register entry L).
+  original shows after a successful flee (register entry 7).
 
 ## 2026-09-25 (23): PRZEDM FIGHTSCENA reconstructed
 
@@ -598,7 +598,7 @@ Full machine-verified register added to INTEGRATED-FIELD-MAP.md
   death handler (game.c 2505-2508), a simultaneous knockout can grant the bonus
   or clear musicians on the death turn where the original's context 10000 would
   suppress them — the "clean victory" phrasing previously used was misleading
-  (discrepancy entry M).
+  (discrepancy entry 8).
 
 ## 2026-09-26 (24): non-stage kill callers + KO-turn loot ordering audited
 
@@ -606,10 +606,10 @@ Full machine-verified register added to INTEGRATED-FIELD-MAP.md
   fight→drop shape as WALKAPIES/FIGHTSCENA: `TAKSOWKARZ`/`SPRZEDAWCA` →
   `VEASY`+`GARNITURZYSK`, `PEDAL`/`MACIEK` → `PIGULKAZYSK`, `D.J` (arena 'E')
   → cassette. The port only grants these via the zero-energy victory resolver
-  (register entry N).
+  (register entry 9).
 - Re-derivation confirms the original's `MIECHO <> 10000` guard is **reachable**
   in the port: loot runs before the death handler on a same-turn KO, so the
-  context-10000 suppression the original applies can be bypassed (entries I/N,
+  context-10000 suppression the original applies can be bypassed (entries 4/9,
   game.c 1941-1944 vs 2505-2508).
 - Crowd spawn-set clarification: DZIECKO seeds rooms 61-66
   (`Random(7)+0x3C`, re-roll ≤ `0x3C`); the port's `concert_spawn_rooms[]`
@@ -629,7 +629,7 @@ Full machine-verified register added to INTEGRATED-FIELD-MAP.md
   `DUNQ := 0`, `KUNSZT += 125`); garden kills VEASY/EASY with the `ENERGIA >
   0` clear semantics; `ZABIJ TRAWA` = up to 4× `TRUDNO` while `ENERGIA > 0`,
   then the UFF rest line gated on `(ENERGIA > 0) and (PASZOL = 0)`.
-- Registered (entry O): the port gates SECRET LISTA/KUP DOKUMENT/KUP PLECAK
+- Registered (entry 10): the port gates SECRET LISTA/KUP DOKUMENT/KUP PLECAK
   behind `duncan_black_market_unlocked` (quest completion), whereas the
   original only needed FORSA (KUP DOKUMENT, no Duncan test) or Duncan present
   (SECRET LISTA, KUP PLECAK); plants clear only on KO in the port, while the
@@ -658,7 +658,7 @@ Full machine-verified register added to INTEGRATED-FIELD-MAP.md
     WriteLn('CO CHCESZ TRENOWAC?')`, then SILA/ZRECZNOSC/MADROSC branches with
     gates `PRA > 2/1/2` and costs 3/2/3 — mirrors the port's `train_attribute`
     (confirmed 1:1, game.c 2835-2875).
-- Registered (entry P): the port's basic/street advice middle band is
+- Registered (entry 11): the port's basic/street advice middle band is
   `score > 21 && score < 28` (game.c 3077) — off by one vs the original band
   `22 < OGOL < 28`; score 22 prints 'RACZEJ NIE...' in the port where the
   original printed nothing. The oracle formula itself is 1:1 (the port's
@@ -684,7 +684,7 @@ Full machine-verified register added to INTEGRATED-FIELD-MAP.md
     quest progress 50/200 (`QUEST`=1/>1), `ENERGIA := MONSTRA.MAXE`,
     `KUNSZT -= 250 - Random(50) + 5*POZIOM`, `MIECHO := 20`, `POTWORY`,
     `wpisz := 'PAMIETAJ'`, `save`, `ReadLn`.
-- Registered (entries Q, R, S): port `parse_direction` (parser.c 42-68) maps
+- Registered (entries 12, 13, 14): port `parse_direction` (parser.c 42-68) maps
   `W`→west and `E`→east, but the original `W` = *wschód* (east) and
   `E` = the EXIT exits-list command; `M`/`MODE` is unknown in the port and
   N/S/U plus `POLUDNIE` were added (untested single letters). PIERDOLY colour
@@ -715,8 +715,8 @@ Full machine-verified register added to INTEGRATED-FIELD-MAP.md
     DYPLOM/FAJKA side-effects `MAXE +5/-5`, `MAD +1` (gated `< MAXMAD`)/`-1`.
     All 10 messages and side-effects match `take_item`/`drop_item` (game.c
     1036-1114); the countable-quantity storage, missing `PRZED` counter and the
-    equipped-weapon/shield drop guard are entry F territory.
-- Registered (entry T): `game_regenerate_encounters` (game.c 227-294) re-spawns
+    equipped-weapon/shield drop guard are entry 3 territory.
+- Registered (entry 15): `game_regenerate_encounters` (game.c 227-294) re-spawns
   the same actor groups but as room placements (arena crowd →
   `ROOM_ARENA_33 + random(25)`, streets/concert/plant pools, fixed
   STARUCH/LIVING_DOOR rooms + `old_elf_present`/`living_door_alive`); the
@@ -744,10 +744,10 @@ Full machine-verified register added to INTEGRATED-FIELD-MAP.md
 - Cross-checked against `use_item`/`unequip_item`/`destroy_item` (game.c
   1140-1431): all messages and the food/heart/bottle effect table are verbatim
   and 1:1 (`restore_energy`/`restore_mana` cap like MAXE/MAXMANA; pipe kept).
-- Registered (entry U): the transport pill omits the original's `POTWORY`
+- Registered (entry 16): the transport pill omits the original's `POTWORY`
   re-roll (the port only regenerates encounters on init/death); SYF/GARNITUR
   side-stats fold into `equipped_clothing` + item definitions (PRO/CIALO/
-  ILOSC/FUKSROLL have no analog — same family as entry S); ZNISZCZ PRZEPUSTKA
+  ILOSC/FUKSROLL have no analog — same family as entry 14); ZNISZCZ PRZEPUSTKA
   uses the quantity model (consume + `quest_passage_open`) instead of
   `PRZED + 1`; the port adds ITEM_BEER. MAD-penalty tiers match 1:1.
 
@@ -788,7 +788,7 @@ Full machine-verified register added to INTEGRATED-FIELD-MAP.md
   `resolve_basic_combat_round` (2417-2508): dodge tables, both damage tier
   sets (verbatim strings), parry bands, magic, KOP, flee, reward/POTRAWKI
   and the KO ordering are 1:1.
-- Registered (entry V): `recovered_combat_chance` reproduces the margin
+- Registered (entry 17): `recovered_combat_chance` reproduces the margin
   prologue 1:1, but `resolve_victory_kunszt` never adds the original's
   per-round `MINIKUNSZT + 1` accrual, and the parry-learn `+5` is granted
   immediately as experience instead of banked into the `ZABILES GO !`
@@ -825,7 +825,7 @@ Full machine-verified register added to INTEGRATED-FIELD-MAP.md
   the world.c arena grid (entrance 32, asserted by test_world.c 243-268),
   all ten exit-list variants match world.c 718-939, the tier dispatch
   matches the enemies.c profiles, and the GLADIATOR/WOJOWNIK/TRENER
-  give-aways match game.c 1555-1685. Registered deviations (entry W, all
+  give-aways match game.c 1555-1685. Registered deviations (entry 18, all
   minor): the `%.` status prompt and the one-shot arena `KTO` list are not
   printed by the port's CLI, the `WYJSCIE` leave word is not ported, and
   arena drops clear only on kill (the original also clears most creatures
