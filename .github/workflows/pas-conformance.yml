@@ -1,0 +1,21 @@
+name: pas-conformance
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  conformance:
+    name: TP-mode conformance sweep
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Run conformance sweep in FPC image
+        run: |
+          docker run --rm \
+            -v "${{ github.workspace }}":/src -w /src \
+            freepascal/fpc:3.2.2-full \
+            sh pascal-decomp/analysis-tools/pas-conformance.sh
