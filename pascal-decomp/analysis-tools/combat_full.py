@@ -5,9 +5,8 @@ d=open(r"E:\Develop\Reverse\bombki\BOMBKI.EXE","rb").read()
 (mag,pp,cnt,rels,hdr,m1,m2,ss,sp,ip,tab,ovl)=struct.unpack_from("<12H",d,0)
 img=d[hdr*16:]
 md=Cs(CS_ARCH_X86,CS_MODE_16)
-start=0x16C00; end=0x17200
 out=[]
-for ins in md.disasm(img[start:end],start):
+for ins in md.disasm(img[0x16E76:0x181C6],0x16E76):
     out.append("%04X  %-16s %s %s" % (ins.address," ".join("%02x"%b for b in ins.bytes[:8]),ins.mnemonic,ins.op_str))
-open(r"E:\Develop\Reverse\bombki\RE\entry_16c00.txt","w",encoding="utf-8").write("\n".join(out))
+open(r"E:\Develop\Reverse\bombki\analysis-results\combat_full.txt","w",encoding="utf-8").write("\n".join(out))
 print("ins:",len(out))

@@ -2,7 +2,7 @@
 # -*- coding: cp437 -*-
 """pack.py - assemble RECONSTRUCTED\\ skeleton package.
 
-Reads the resolved per-unit interface dumps and emits:
+Reads the resolved per-unit interface dumps (analysis-results\\tpu_reports) and emits:
   RECONSTRUCTED\\MONSTRA.PAS   (unit skeleton, exports + body stubs)
   RECONSTRUCTED\\SWIAT.PAS
   RECONSTRUKCJA: PRZEDM.PAS
@@ -12,7 +12,7 @@ Reads the resolved per-unit interface dumps and emits:
 import os, re, struct, sys
 
 RELDIR = os.path.dirname(os.path.abspath(__file__))
-REPORTS = os.path.join(RELDIR, 'tpu_reports')
+REPORTS = os.path.join(RELDIR, '..', 'analysis-results', 'tpu_reports')
 OUT = os.path.join(RELDIR, '..', 'RECONSTRUCTED')
 LOG = os.path.normpath(os.path.join(RELDIR, '..', 'RECONSTRUCTION-LOG.md'))
 EXE = r'E:\Develop\Reverse\bombki\BOMBKI.EXE'
@@ -38,7 +38,7 @@ def build_unit(name, iface):
     body.append('implementation\n')
     body.append('  (* BODY TODO: reconstruct from BOMBKI.EXE code disassembly.\n')
     body.append('     Linked code blocks & entries are documented in\n')
-    body.append('     RE\\tpu_reports\\%s.*.txt and RE\\exe_reports\\exe.*.txt *)' % name)
+    body.append('     analysis-results\\tpu_reports\\%s.*.txt and analysis-results\\exe_reports\\exe.*.txt *)' % name)
     body.append('\n')
     # list exported procs from the interface markers so the body stub has an anchor
     for m in re.finditer(r'\{ (Proc|Func) \$[0-9A-F]+\b', iface or ''):

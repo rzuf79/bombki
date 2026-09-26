@@ -30,7 +30,7 @@ uses  crt, System;
 implementation
   (* BODY TODO: reconstruct from BOMBKI.EXE code disassembly.
      Linked code blocks & entries are documented in
-     RE\tpu_reports\MONSTRA.*.txt and RE\exe_reports\exe.*.txt *)
+     analysis-results\tpu_reports\MONSTRA.*.txt and analysis-results\exe_reports\exe.*.txt *)
 begin
   { unit-initialization: runs once at program start }
 end.

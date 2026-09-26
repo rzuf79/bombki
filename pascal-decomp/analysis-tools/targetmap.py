@@ -1,7 +1,7 @@
 import os, struct, re
 from collections import defaultdict, Counter
 EXE=r"E:\Develop\Reverse\bombki\BOMBKI.EXE"
-OUT=r"E:\Develop\Reverse\bombki\RECONSTRUCTED\disasm\procs\TARGETMAP.ASM"
+OUT=r"E:\Develop\Reverse\bombki\analysis-results\disasm\procs\TARGETMAP.ASM"
 def u16(b,o): return struct.unpack_from("<H",b,o)[0]
 d=open(EXE,"rb").read()
 (mag,pp,cnt,rels,hdr,m1,m2,ss,sp,ip,tab,ovl)=struct.unpack_from("<12H",d,0)

@@ -1,6 +1,6 @@
 import io,re,sys
 sys.stdout.reconfigure(encoding="utf-8",errors="replace")
-lines=io.open(r"E:\Develop\Reverse\bombki\RECONSTRUCTED\disasm\annotated-BOMBKI.asm",encoding="utf-8").read().splitlines()
+lines=io.open(r"E:\Develop\Reverse\bombki\analysis-results\disasm\annotated-BOMBKI.asm",encoding="utf-8").read().splitlines()
 print("---- commands referenced with strcmp in 14800-15400 (dispatcher) ----")
 for l in lines:
     l=l.strip()

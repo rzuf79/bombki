@@ -1,6 +1,6 @@
 import os, csv, glob, re
 import stat
-rep=r"E:\Develop\Reverse\bombki\RE\tpu_reports"
+rep=r"E:\Develop\Reverse\bombki\analysis-results\tpu_reports"
 units=["MONSTRA","SWIAT","PRZEDM"]
 allvars=[]
 for u in units:
@@ -20,7 +20,7 @@ for u in units:
                 try: offv=int(off.split("=")[1],16)
                 except Exception: offv=int(off,16)
                 allvars.append((u,blk,offv,name,row[7]))
-out=r"E:\Develop\Reverse\bombki\RECONSTRUCTED\disasm\procs\DATA-MAP.txt"
+out=r"E:\Develop\Reverse\bombki\analysis-results\disasm\procs\DATA-MAP.txt"
 with open(out,"w",encoding="cp1250") as f:
     f.write("; unit  block  +ofs  name                type\n")
     for u,b,o,n,t in sorted(allvars,key=lambda x:(x[0],x[1],x[2])):

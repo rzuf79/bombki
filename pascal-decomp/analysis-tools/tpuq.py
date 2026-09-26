@@ -3,7 +3,7 @@
 """TPUQ (Turbo Pascal 7.0) unit file dumper - Python port of Milan Dadok's INTRFC70.
 
 Usage: python tpuq.py <file.tpu> [outdir]
-Writes per-unit reports into outdir (default: RE\\tpu_reports).
+Writes per-unit reports into outdir (default: analysis-results\\tpu_reports).
 """
 import struct, sys, os
 

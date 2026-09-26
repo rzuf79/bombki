@@ -1,10 +1,10 @@
 # C-PORT vs ORIGINAL — discrepancy report (human-readable)
 
 Source of truth: the original x86-16 disassembly
-(`RECONSTRUCTED\disasm\annotated-BOMBKI.asm`), cross-checked against the TP7
+(`analysis-results\disasm\annotated-BOMBKI.asm`), cross-checked against the TP7
 save/load reconstructions. The "port" is `..\..\c-port\` relative to this file
 (e.g. `src\game.c`, `src\persistence.c`), and the disasm is
-`RECONSTRUCTED\disasm\annotated-BOMBKI.asm` under `pascal-decomp\`. Every
+`analysis-results\disasm\annotated-BOMBKI.asm` under `pascal-decomp\`. Every
 formula below was re-derived from the raw instructions in this pass (not taken
 from earlier notes).
 

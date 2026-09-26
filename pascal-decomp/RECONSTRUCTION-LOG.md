@@ -16,16 +16,16 @@ entry `0000:B0CF`, 5295 MZ relocs / 239 in-image cells), `MONSTRA.TPU`,
 | `PRZEDM.PAS` | fullest — 167 globals, 35 entries: `BRANIE, UZYWANIE, TARCZA, WALKA, MINIARENA, KTO, MODE, SLABO..BARUDNO, PRZEDM/BOMBKI text` ; Integer/Text/string typing resolved |
 | `BOMBKI.PAS` | main skeleton with `uses crt,swiat,przedm,monstra,dos,system` |
 | `..\RECONSTRUCTION-LOG.md` | this log + save-format spec |
-| `RECONSTRUCTED\disasm\*.asm` | code-body disassembly reports (see §3) |
+| `analysis-results\disasm\*.asm` | code-body disassembly reports (see §3) |
 
-Interfaces are **verified byte-accurate** against `RE\tpu_reports\*.interface.pas`
+Interfaces are **verified byte-accurate** against `analysis-results\tpu_reports\*.interface.pas`
 (0 leftover foreign `System.ofsXXXX` references; all far pointers resolved to
 `System`/`CRT`/unit-local, plus `string`=System.ofs00BA seed).
 
 Port status (2026-09-26): the portable port (`c-port/`) was cross-checked
 against this reconstruction and now develops separately; it is NOT a reference
 for the PAS deliverable, which is grounded in the EXE/TPU evidence only
-(`RECONSTRUCTED\disasm\*.asm`, `INTEGRATED-FIELD-MAP.md`, per-proc reconstructions).
+(`analysis-results\disasm\*.asm`, `INTEGRATED-FIELD-MAP.md`, per-proc reconstructions).
 
 ## 2. Save format (PLIKI.TPU = text, CRLF)
 Plain-text save, cp437-safe, CRLF line endings — *not* a TPU. First bytes of
@@ -52,21 +52,21 @@ Three independent x86-16 experiments against BOMBKI.EXE (reproducible):
 3. **Reloc histogram** (the usable map): stored far-pointer paragraphs
    cluster at **0E42 (52 refs: game code seg)** and **05DD (35 refs: data
    seg)** — these are the two paragraphs the game body really lives in.
-   `RECONSTRUCTED\disasm\hits.txt` lists top slide windows; the two
+   `analysis-results\disasm\hits.txt` lists top slide windows; the two
    paragraphs above are the anchor for a future capstone2 pass.
 
-Packaging tooling is in `RE\` (`tpuq.py` TPUQ parser, `tplsplit.py` TPL→TPU,
+Packaging tooling is in `analysis-tools\` (`tpuq.py` TPUQ parser, `tplsplit.py` TPL→TPU,
 `pack.py` assemble, `lindis.py` x86-16 disasm harness + capstone 5.0.7).
 
 
 ## DISASM phase (BOMBKI.EXE) - DONE
 
 Two listing artifacts were produced with capstone(x86/16, cs be16):
-  RECONSTRUCTED\disasm\BOMBKI-body.asm   27 320 129 B  (game code body,
+  analysis-results\disasm\BOMBKI-body.asm   27 320 129 B  (game code body,
       every procedure headered as "; ===== proc para:ofs (cell@imgXXXX) =====";
       far operands resolve loader-fixed from the image, so they match the
       standalone paragraph addresses used in the TPU interface reports above)
-  RECONSTRUCTED\disasm\entry.asm            54 961 B  (MZ entry init region)
+  analysis-results\disasm\entry.asm            54 961 B  (MZ entry init region)
 
 Key data recovered this phase:
   - 3 game-unit code bodies were SEARCHED by masked-slide over the image:
