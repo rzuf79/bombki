@@ -1291,6 +1291,423 @@ begin
   end;
 end;
 
+procedure WALKA;
+begin
+  if MONSTRA.MAXE > WROGEN then begin
+    TEST1 := MONSTRA.MAXE - WROGEN;
+    if TEST1 < 4 then
+      MINIKUNSZT := MINIKUNSZT + 10;
+    if (TEST1 > 2) and (TEST1 < 7) then
+      MINIKUNSZT := MINIKUNSZT + 9;
+    if (TEST1 > 6) and (TEST1 < 11) then
+      MINIKUNSZT := MINIKUNSZT + 8;
+    if (TEST1 > 9) and (TEST1 < 13) then
+      MINIKUNSZT := MINIKUNSZT + 7;
+    if (TEST1 > 12) and (TEST1 < 16) then
+      MINIKUNSZT := MINIKUNSZT + 6;
+    if (TEST1 > 15) and (TEST1 < 19) then
+      MINIKUNSZT := MINIKUNSZT + 5;
+    if (TEST1 > 18) and (TEST1 < 22) then
+      MINIKUNSZT := MINIKUNSZT + 4;
+    if (TEST1 > 21) and (TEST1 < 25) then
+      MINIKUNSZT := MINIKUNSZT + 3;
+    if (TEST1 > 24) and (TEST1 < 28) then
+      MINIKUNSZT := MINIKUNSZT + 2;
+    if (TEST1 > 27) and (TEST1 < 31) then
+      MINIKUNSZT := MINIKUNSZT + 1;
+  end;
+  if MONSTRA.MAXE < WROGEN then begin
+    TEST1 := WROGEN - MONSTRA.MAXE;
+    if TEST1 = 2 then
+      MINIKUNSZT := MINIKUNSZT + 12;
+    if TEST1 = 4 then
+      MINIKUNSZT := MINIKUNSZT + 13;
+    if TEST1 = 6 then
+      MINIKUNSZT := MINIKUNSZT + 14;
+    if TEST1 = 8 then
+      MINIKUNSZT := MINIKUNSZT + 15;
+    if TEST1 = 10 then
+      MINIKUNSZT := MINIKUNSZT + 16;
+    if TEST1 = 12 then
+      MINIKUNSZT := MINIKUNSZT + 17;
+    if TEST1 = 14 then
+      MINIKUNSZT := MINIKUNSZT + 18;
+    if TEST1 = 16 then
+      MINIKUNSZT := MINIKUNSZT + 19;
+    if TEST1 = 18 then
+      MINIKUNSZT := MINIKUNSZT + 20;
+    if TEST1 > 20 then
+      MINIKUNSZT := MINIKUNSZT + 21;
+  end;
+  if MONSTRA.MAXE = WROGEN then
+    MINIKUNSZT := MINIKUNSZT + 11;
+  if SIL > WROGSIL then begin
+    TEST1 := SIL - WROGSIL;
+    if TEST1 = 1 then
+      MINIKUNSZT := MINIKUNSZT + 10;
+    if TEST1 = 2 then
+      MINIKUNSZT := MINIKUNSZT + 9;
+    if TEST1 = 3 then
+      MINIKUNSZT := MINIKUNSZT + 8;
+    if TEST1 = 4 then
+      MINIKUNSZT := MINIKUNSZT + 7;
+    if TEST1 = 5 then
+      MINIKUNSZT := MINIKUNSZT + 6;
+    if TEST1 = 6 then
+      MINIKUNSZT := MINIKUNSZT + 5;
+    if TEST1 = 7 then
+      MINIKUNSZT := MINIKUNSZT + 4;
+    if TEST1 = 8 then
+      MINIKUNSZT := MINIKUNSZT + 3;
+    if TEST1 = 9 then
+      MINIKUNSZT := MINIKUNSZT + 2;
+    if TEST1 = 10 then
+      MINIKUNSZT := MINIKUNSZT + 1;
+  end;
+  if SIL < WROGSIL then begin
+    TEST1 := WROGSIL - SIL;
+    if TEST1 = 1 then
+      MINIKUNSZT := MINIKUNSZT + 12;
+    if TEST1 = 2 then
+      MINIKUNSZT := MINIKUNSZT + 13;
+    if TEST1 = 3 then
+      MINIKUNSZT := MINIKUNSZT + 14;
+    if TEST1 = 4 then
+      MINIKUNSZT := MINIKUNSZT + 15;
+    if TEST1 = 5 then
+      MINIKUNSZT := MINIKUNSZT + 16;
+    if TEST1 = 6 then
+      MINIKUNSZT := MINIKUNSZT + 17;
+    if TEST1 = 7 then
+      MINIKUNSZT := MINIKUNSZT + 18;
+    if TEST1 = 8 then
+      MINIKUNSZT := MINIKUNSZT + 19;
+    if TEST1 = 9 then
+      MINIKUNSZT := MINIKUNSZT + 20;
+    if TEST1 > 9 then
+      MINIKUNSZT := MINIKUNSZT + 21;
+  end;
+  if SIL = WROGSIL then
+    MINIKUNSZT := MINIKUNSZT + 11;
+  if ZRE > WROGZRE then begin
+    TEST1 := ZRE - WROGZRE;
+    if (TEST1 = 1) or (TEST1 = 2) then
+      MINIKUNSZT := MINIKUNSZT + 10;
+    if (TEST1 = 3) or (TEST1 = 4) then
+      MINIKUNSZT := MINIKUNSZT + 9;
+    if (TEST1 = 5) or (TEST1 = 6) then
+      MINIKUNSZT := MINIKUNSZT + 8;
+    if (TEST1 = 7) or (TEST1 = 8) then
+      MINIKUNSZT := MINIKUNSZT + 7;
+    if (TEST1 = 9) or (TEST1 = 10) then
+      MINIKUNSZT := MINIKUNSZT + 6;
+    if (TEST1 = 11) or (TEST1 = 12) then
+      MINIKUNSZT := MINIKUNSZT + 5;
+    if (TEST1 = 13) or (TEST1 = 14) then
+      MINIKUNSZT := MINIKUNSZT + 4;
+    if (TEST1 = 15) or (TEST1 = 16) then
+      MINIKUNSZT := MINIKUNSZT + 3;
+    if (TEST1 = 17) or (TEST1 = 18) then
+      MINIKUNSZT := MINIKUNSZT + 2;
+    if (TEST1 = 19) or (TEST1 = 20) then
+      MINIKUNSZT := MINIKUNSZT + 1;
+  end;
+  if ZRE < WROGZRE then begin
+    TEST1 := WROGZRE - ZRE;
+    if (TEST1 = 1) or (TEST1 = 2) then
+      MINIKUNSZT := MINIKUNSZT + 12;
+    if (TEST1 = 3) or (TEST1 = 4) then
+      MINIKUNSZT := MINIKUNSZT + 13;
+    if (TEST1 = 5) or (TEST1 = 6) then
+      MINIKUNSZT := MINIKUNSZT + 14;
+    if (TEST1 = 7) or (TEST1 = 8) then
+      MINIKUNSZT := MINIKUNSZT + 15;
+    if (TEST1 = 9) or (TEST1 = 10) then
+      MINIKUNSZT := MINIKUNSZT + 16;
+    if (TEST1 = 11) or (TEST1 = 12) then
+      MINIKUNSZT := MINIKUNSZT + 17;
+    if (TEST1 = 13) or (TEST1 = 14) then
+      MINIKUNSZT := MINIKUNSZT + 18;
+    if (TEST1 = 15) or (TEST1 = 16) then
+      MINIKUNSZT := MINIKUNSZT + 19;
+    if (TEST1 = 17) or (TEST1 = 18) then
+      MINIKUNSZT := MINIKUNSZT + 20;
+    if (TEST1 = 19) or (TEST1 = 20) then
+      MINIKUNSZT := MINIKUNSZT + 21;
+  end;
+  if ZRE = WROGZRE then
+    MINIKUNSZT := MINIKUNSZT + 11;
+  repeat
+    ON := 0;
+    TY := 0;
+    WriteLn('WALCZYSZ - <<<<TWOJ WROG MA ', WROGEN, '%>>>><<<< A TY MASZ ', ENERGIA, '% ENERGII>>>>>');
+    if ZRE > WROGZRE then begin
+      SZANSA := ZRE - WROGZRE;
+      if SZANSA > 30 then
+        FUKS := Random(12);
+      if (SZANSA > 27) and (SZANSA < 31) then
+        FUKS := Random(13);
+      if (SZANSA > 24) and (SZANSA < 28) then
+        FUKS := Random(14);
+      if (SZANSA > 20) and (SZANSA < 31) then
+        FUKS := Random(15);
+      if (SZANSA > 18) and (SZANSA < 21) then
+        FUKS := Random(16);
+      if (SZANSA > 16) and (SZANSA < 19) then
+        FUKS := Random(17);
+      if (SZANSA > 12) and (SZANSA < 17) then
+        FUKS := Random(18);
+      if (SZANSA > 9) and (SZANSA < 13) then
+        FUKS := Random(19);
+      if (SZANSA > 6) and (SZANSA < 10) then
+        FUKS := Random(20);
+      if (SZANSA > 4) and (SZANSA < 7) then
+        FUKS := Random(21);
+      if (SZANSA > 2) and (SZANSA < 5) then
+        FUKS := Random(22);
+      if SZANSA < 3 then
+        FUKS := Random(23);
+      if FUKS < 10 then begin
+        WriteLn('UNIKASZ CIOSU WROGA TWEGO I SMIEJESZ SIE Z JEGO NIEPORADNOSCI');
+        TY := 1;
+      end;
+      if SZANSA > 30 then
+        FUKS := Random(60);
+      if (SZANSA > 27) and (SZANSA < 31) then
+        FUKS := Random(58);
+      if (SZANSA > 24) and (SZANSA < 28) then
+        FUKS := Random(56);
+      if (SZANSA > 20) and (SZANSA < 31) then
+        FUKS := Random(54);
+      if (SZANSA > 18) and (SZANSA < 21) then
+        FUKS := Random(52);
+      if (SZANSA > 16) and (SZANSA < 19) then
+        FUKS := Random(51);
+      if (SZANSA > 12) and (SZANSA < 17) then
+        FUKS := Random(48);
+      if (SZANSA > 9) and (SZANSA < 13) then
+        FUKS := Random(46);
+      if (SZANSA > 6) and (SZANSA < 10) then
+        FUKS := Random(42);
+      if (SZANSA > 4) and (SZANSA < 7) then
+        FUKS := Random(40);
+      if (SZANSA > 2) and (SZANSA < 5) then
+        FUKS := Random(38);
+      if SZANSA < 3 then
+        FUKS := Random(35);
+      if FUKS < 10 then begin
+        WriteLn('PRZECIWNIK UNIKA TWOJEGO LAMERSKIEGO ATAKU');
+        ON := 1;
+      end;
+    end;
+    if WROGZRE > ZRE then begin
+      SZANSA := WROGZRE - ZRE;
+      if SZANSA > 30 then
+        FUKS := Random(12);
+      if (SZANSA > 27) and (SZANSA < 31) then
+        FUKS := Random(13);
+      if (SZANSA > 24) and (SZANSA < 28) then
+        FUKS := Random(14);
+      if (SZANSA > 20) and (SZANSA < 31) then
+        FUKS := Random(15);
+      if (SZANSA > 18) and (SZANSA < 21) then
+        FUKS := Random(16);
+      if (SZANSA > 16) and (SZANSA < 19) then
+        FUKS := Random(17);
+      if (SZANSA > 12) and (SZANSA < 17) then
+        FUKS := Random(18);
+      if (SZANSA > 9) and (SZANSA < 13) then
+        FUKS := Random(19);
+      if (SZANSA > 6) and (SZANSA < 10) then
+        FUKS := Random(20);
+      if (SZANSA > 4) and (SZANSA < 7) then
+        FUKS := Random(21);
+      if (SZANSA > 2) and (SZANSA < 5) then
+        FUKS := Random(22);
+      if SZANSA < 3 then
+        FUKS := Random(23);
+      if FUKS < 10 then begin
+        WriteLn('PRZECIWNIK Z GRACJA UNIKA TWEGO CIOSU');
+        ON := 1;
+      end;
+      if SZANSA > 30 then
+        FUKS := Random(60);
+      if (SZANSA > 27) and (SZANSA < 31) then
+        FUKS := Random(58);
+      if (SZANSA > 24) and (SZANSA < 28) then
+        FUKS := Random(56);
+      if (SZANSA > 20) and (SZANSA < 31) then
+        FUKS := Random(54);
+      if (SZANSA > 18) and (SZANSA < 21) then
+        FUKS := Random(52);
+      if (SZANSA > 16) and (SZANSA < 19) then
+        FUKS := Random(51);
+      if (SZANSA > 12) and (SZANSA < 17) then
+        FUKS := Random(48);
+      if (SZANSA > 9) and (SZANSA < 13) then
+        FUKS := Random(46);
+      if (SZANSA > 6) and (SZANSA < 10) then
+        FUKS := Random(42);
+      if (SZANSA > 4) and (SZANSA < 7) then
+        FUKS := Random(40);
+      if (SZANSA > 2) and (SZANSA < 5) then
+        FUKS := Random(38);
+      if SZANSA < 3 then
+        FUKS := Random(35);
+      if FUKS < 10 then begin
+        WriteLn('BEZ PARDONU OMIJASZ CIOS TWOJEGO PRZECIWNIKA');
+        TY := 1;
+      end;
+    end;
+    if TY = 0 then begin
+      WPYSK := Random(WROGSIL);
+      if WPYSK < 6 then
+        WriteLn('PRZECIWNIK CIE TYLKO DRASNA I TRACISZ ', WPYSK, '% ENERGII');
+      if (WPYSK > 5) and (WPYSK < 21) then
+        WriteLn('DOSTALES I TRACISZ ', WPYSK, '% ENERGII');
+      if (WPYSK > 20) and (WPYSK < 51) then
+        WriteLn('PRZECIWNIK !MASAKRUJE! CIEBIE I TRACISZ AZ ', WPYSK, '% ENERGII');
+      if WPYSK > 50 then
+        WriteLn('PRZECIWNIK !!!WYPRUWA FLAKI!!! Z CIEBIE I TRACISZ !!! ', WPYSK, '% ENERGII');
+      MINIKUNSZT := MINIKUNSZT + 1;
+      TARCZA;
+      if (PAR > 0) and (WPYSK > 0) then begin
+        FUKS := Random(140);
+        if FUKS <= PAR then begin
+          if WPYSK < 3 then begin
+            WriteLn('            <<<<<ODPAROWUJESZ ATAK PRZECIWNIKA !!! TRACISZ 0% ENERGI');
+            WPYSK := 0;
+          end;
+          if (WPYSK > 2) and (WPYSK < 10) then begin
+            WPYSK := WPYSK - 2;
+            WriteLn('            <<<<<ODPAROWUJESZ ATAK PRZECIWNIKA !!! TRACISZ ', WPYSK, '% ENERGI');
+          end;
+          if WPYSK > 9 then begin
+            WPYSK := WPYSK - 3;
+            WriteLn('            <<<<<ODPAROWUJESZ ATAK PRZECIWNIKA !!! TRACISZ ', WPYSK, '% ENERGI');
+          end;
+          if (FUKS < 1) and (PAR < 100) then begin
+            WriteLn('*************** UCZYSZ SIE ZDOLNOSCI PAROWANIE !!!!! ***************');
+            PAR := PAR + 1;
+            MINIKUNSZT := MINIKUNSZT + 5;
+          end;
+        end;
+      end;
+      ENERGIA := ENERGIA - WPYSK;
+      if FIREBALL > 0 then begin
+        FUKS := Random(100);
+        if FUKS < 10 then begin
+          TextColor(14);
+          FUKS := Random(20);
+          WriteLn('PRZECIWNIK PUSZCZA FIREBALLA W TWYM KIERUNKU - TRACISZ ', FUKS, '% ENERGII');
+          ENERGIA := ENERGIA - FUKS;
+          FIREBALL := FIREBALL - 1;
+          TextColor(15);
+        end;
+      end;
+      if POISON > 0 then begin
+        FUKS := Random(100);
+        if FUKS < 10 then begin
+          TextColor(4);
+          WriteLn('PRZECIWNIK RZUCA CZAR "POISON" ');
+          POISON := POISON - 1;
+          TextColor(15);
+          ILEPOI := ILEPOI + 10;
+        end;
+      end;
+      if ILEPOI > 0 then begin
+        FUKS := Random(5);
+        WriteLn('JESTES ZATRUTY - TRACISZ ', FUKS, '% ENERGI');
+        ENERGIA := ENERGIA - FUKS;
+        ILEPOI := ILEPOI - 1;
+      end;
+    end;
+    if ON = 0 then begin
+      WPYSK := Random(SIL);
+      if WPYSK * 10 < FUKSROLL then begin
+        repeat
+          WPYSK := Random(SIL);
+          WriteLn('FUKSROLL FUKSROLL FUKSROLL ! ');
+        until (WPYSK * 10) > FUKSROLL;
+      end;
+      WROGEN := WROGEN - WPYSK;
+      if WPYSK < 6 then
+        WriteLn('MASZ PECHA : LEKKO POPCHNALES GO I STRACIL TYLKO ', WPYSK, '% ENERGII');
+      if (WPYSK > 5) and (WPYSK < 21) then
+        WriteLn('DOSTAL I STRACIL ', WPYSK, '% ENERGII');
+      if (WPYSK > 20) and (WPYSK < 51) then
+        WriteLn(' !MASAKRUJESZ! PRZECIWNIKA I TRACI ON AZ ', WPYSK, '% ENERGII');
+      if WPYSK > 50 then
+        WriteLn(' !!!WYPRUWASZ FLAKI!!! Z PRZECIWNIKA I TRACI ON  !!!! ', WPYSK, '% ENERGII');
+    end;
+    Delay(2000);
+    if (KOP > 0) and (MANA > KOPM) and (ENERGIA < KOPHP) then begin
+      FUKS := Random(100);
+      if FUKS <= KOP - 10 then begin
+        FUKS := Random(POZIOM) + Random(10);
+        TextColor(14);
+        WriteLn('TWOJ SUPER KOP ZABIERA ', FUKS, '% ENERGI');
+        TextColor(15);
+        MANA := MANA - Random(3) - 3;
+        WROGEN := WROGEN - FUKS;
+      end else WriteLn('TWOJ SUPER KOP CHYBIA PRZECIWNIKA ');
+      MANA := MANA - Random(2) - 2;
+    end;
+    if (ZWIEJ > 0) and (ENERGIA < WIMP) and (MANA > 14) then begin
+      MANA := MANA - 15;
+      FUKS := Random(100);
+      if FUKS <= ZWIEJ then begin
+        PASZOL := 1;
+        WriteLn('WSTYD !!! UCIEKLES Z POLA BITWY TRACISZ 20 KUNSZTU');
+        KUNSZT := KUNSZT - 20;
+      end else WriteLn('NIE UDALO CI SIE UCIEC !!!! WALCZYSZ DALEJ !!! ');
+    end;
+  until (ENERGIA < 1) or (WROGEN < 1) or (PASZOL = 1);
+  if (WROGEN < 1) and (ENERGIA > 0) then begin
+    if MONSTRA.MAXE > 75 then
+      MINIKUNSZT := MINIKUNSZT - 2;
+    if MONSTRA.MAXE > 115 then
+      MINIKUNSZT := MINIKUNSZT - 3;
+    if PAR > 50 then
+      MINIKUNSZT := MINIKUNSZT - 2;
+    if PAR > 75 then
+      MINIKUNSZT := MINIKUNSZT - 2;
+    if PAR > 95 then
+      MINIKUNSZT := MINIKUNSZT - 1;
+    if KOP > 50 then
+      MINIKUNSZT := MINIKUNSZT - 5;
+    if KOP > 95 then
+      MINIKUNSZT := MINIKUNSZT - 2;
+    if MINIKUNSZT < 0 then
+      MINIKUNSZT := 0;
+    WriteLn('ZABILES GO ! ZYSKUJESZ ZA TO ', MINIKUNSZT, ' KUNSZTU ');
+    KUNSZT := KUNSZT + MINIKUNSZT;
+    FIREBALL := 0;
+    POISON := 0;
+    if QUEST > 0 then
+      QUESTWYK := QUESTWYK - 1;
+    if POTRAWKI > 0 then begin
+      FUKS := Random(100);
+      if POTRAWKI > FUKS then begin
+        WriteLn('ROBISZ SOBIE PYSZNY PYSZNY BIGOS Z KAPUSTA Z WROGA');
+        BIGOS := BIGOS - 10;
+        PRZED := PRZED + 1;
+        if (FUKS < 1) and (POTRAWKI < 100) then begin
+          WriteLn('UCZYSZ SIE ZDOLNOSCI POTRAWKI !!! ');
+          POTRAWKI := POTRAWKI + 1;
+          KUNSZT := KUNSZT + 10;
+        end;
+      end;
+    end;
+  end;
+  if ENERGIA < 1 then begin
+    WriteLn('!!!!!!!!!!!ZOSTALES ZABITY!!!!!!!!!!!!');
+    Delay(3000);
+    MIECHO := 10000;
+  end;
+  MINIKUNSZT := 0;
+end;
+
   (* Remaining bodies are still to be reconstructed from the retained TPU
      listings and BOMBKI.EXE disassembly. *)
 begin
