@@ -22,6 +22,11 @@ Interfaces are **verified byte-accurate** against `tpu_reports\*.interface.pas`
 (0 leftover foreign `System.ofsXXXX` references; all far pointers resolved to
 `System`/`CRT`/unit-local, plus `string`=System.ofs00BA seed).
 
+Port status (2026-09-26): the portable port (`c-port/`) was cross-checked
+against this reconstruction and now develops separately; it is NOT a reference
+for the PAS deliverable, which is grounded in the EXE/TPU evidence only
+(`disasm\*.asm`, `INTEGRATED-FIELD-MAP.md`, per-proc reconstructions).
+
 ## 2. Save format (PLIKI.TPU = text, CRLF)
 Plain-text save, cp437-safe, CRLF line endings — *not* a TPU. First bytes of
 the real save: `1000\r\n24\r\n-100\r\n0\r\n-10\r\n-100\r\n0\r\n99\r\n380...

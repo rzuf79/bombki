@@ -1,46 +1,53 @@
 { WSTEP-reconstructed.pas
-  BODY-A = EXE para 0E42:9A57 (abs 17E77) -- combat-damage routine.
+  BODY-A = the KOPANIE (kick) + UCIEKANIE (flee) round block at the head of
+  the shared combat engine WALKA (BOMBKI.exe img 0x17E87..0x1800B, inside
+  WALKA img 0x16E76..0x181C6, para 0x129D:0x44A6). The earlier "SWIAT:0x46
+  shared engine, not yet traced" note refers to this same engine; it is now
+  traced (see WALKA-CombatEngine-reconstructed.pas and the combat engine
+  section of INTEGRATED-FIELD-MAP.md).
 
-  CORRECTED 2026-09-24 by the merged load/save record (see
-  INTEGRATED-FIELD-MAP.md):
-  - The "proven MONSTRA band 0x1AC..0x1D4 = MAXE..SILNY" claim is RETRACTED.
-    Per the merged save/load map those slots are player stats/skills:
-      0x1AC/0x1AE = ManaCur/ManaMax (250/250)
-      0x1C4..0x1D4 = SZ parts + skill-chance fields + "%." percent (>0x1D4=99)
-    Monster characteristics are NOT stored in the saved DGROUP record.
-  - 0x19C = Energy (not FORSA/money); money = 0x194; max energy = 0x664.
-  - 0x1D6 = CurrentContext (room/interface id), not a bare scene menu var.
-  So the exact monster-stat constants used by the combat math (HP/ATK of
-  OWCZAREK etc.) live elsewhere (SWIAT:0x46 shared engine, not yet traced),
-  and this body's DGROUP operand NAMES below are placeholder-only pending that.
+  Operand names are the corrected merged map (2026-09-24): the retracted
+  MONSTRA band 0x1AC..0x1D4 are player stats/skills (ManaCur, skill gates,
+  Uciekanie, KUNSZT), NOT monster HP. Monster HP/Dmg/Dex live in the unsaved
+  slots [0x1B0]/[0x1B6]/[0x1B8], written per fight by the launchers (see the
+  launcher table in INTEGRATED-FIELD-MAP.md).
 
   BODY-B = para 05DD:1C71 (abs 07A41) is a STAGE/DIALOGUE routine (PRZEDM
   SCENA/TLUM), NOT a WSTEP sibling; its 0x1D6 writes are menu room options.
 }
 
-procedure WSTEP;                  { from BODY-A: BOMBKI.exe 0E42:9A57 }
+procedure WSTEP;                  { kick+flee block: BOMBKI.exe img 0x17E87..0x1800B }
 var dmg: Integer;
 begin
-   if (PEDAL > 0) and (MAXE > PARA) and ({g19C Energy} < MACIEK) then
+   if (Kopanie > 0) and (ManaCur > ManaGateKopanie) and (Energy < EnergyGateKopanie) then
    begin
-      dmg := Random(100);                    { lcall be4 }
-      if PEDAL - 10 >= dmg then
+      dmg := Random(100);                     { lcall be4; kept in [0x19E] scratch }
+      if Kopanie - 10 >= dmg then
       begin
-         dmg := Random({b25C lvl+23}) + Random(10);  { + Random(10) }
-         Write('...'); Write(dmg);            { string at cs:4363 }
+         dmg := Random(CharacterLevel) + Random(10);   { byte [0x25C]; + Random(10) }
+         Write('TWOJ SUPER KOP ZABIERA ', dmg, '% ENERGI');   { cs:4363 / 41E0 }
          Delay;                               { lcall 1C71:5DD }
          Random;                              { 1C71:291 }
-         MAXE := MAXE - (Random(3) + 3);
-         OWCZAREK := OWCZAREK - dmg;
+         ManaCur := ManaCur - (Random(3) + 3);   { [0x1AC] }
+         MonsterHP := MonsterHP - dmg;           { [0x1B0] }
       end
       else
-      begin
-         Write('...');                        { cs:437b }
-         Delay;
-         MAXE := MAXE - (Random(2) + 2);
-      end;
-      if (OGOL > 0) and ({g19C} < DRZWI) and (MAXE > 14) then
-         MAXE := MAXE - 15;
-      {... continues with more damage/monster handling ...}
+         Write('TWOJ SUPER KOP CHYBIA PRZECIWNIKA ');   { cs:437B }
+      ManaCur := ManaCur - (Random(2) + 2);   { img 0x17F6D: flee attempt drain }
    end;
+   if (Uciekanie > 0) and (Energy < EnergyGateUciekanie) and (ManaCur > 14) then
+   begin
+      ManaCur := ManaCur - 15;                { [0x1AC] -= 0xF }
+      if Random(100) <= Uciekanie then        { [0x1CE] }
+      begin
+         FleeFlag := 1;                        { [0x1D2] := 1 }
+         Write('WSTYD !!! UCIEKLES Z POLA BITWY TRACISZ 20 KUNSZTU');  { cs:439E }
+         Delay;
+         KUNSZT := KUNSZT - 20;                { [0x1D4] -= 0x14 }
+      end
+      else
+         Write('NIE UDALO CI SIE UCIEC !!!! WALCZYSZ DALEJ !!! ');  { cs:43D1 }
+   end;
+   { img 0x1800B: loop another round while Energy>=1 && MonsterHP>=1 && !FleeFlag;
+     otherwise fall into the victory/death ladder (rewardXP [0x1B4] deductions). }
 end;

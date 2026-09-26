@@ -615,6 +615,11 @@ MONSTRA/PRZEDM/SWIAT.TPU), evidence/generated/inventories.md (full TPU symbol
 hash), and docs/{todo,recovery-notes}.md. Port comparisons are tracked in
 C-PORT-DISCREPANCIES.md.
 
+Port status (2026-09-26): the portable port (`c-port/`) was cross-checked
+against this reconstruction and now develops separately; its C code is NOT a
+reference for the Pascal deliverable, which is grounded only in the EXE/TPU
+evidence above.
+
 ### TPU Pascal symbols -> EXE offsets (confirmed bindings)
 
 | Pascal symbol | Meaning | EXE mapping |
@@ -756,10 +761,15 @@ annotated disassembly. Port-side behaviour and deviations are tracked in
   "...MASZ <0x194> PRAKTYK" and debit 1; at school "ZAWSZE... ZYSKALES
   <0x194> PRAKTYK" awards 3-6 by Madrosc tier. PlayerState.pas "Money"
   mislabels it. (→ `C-PORT-DISCREPANCIES.md` entry 1.)
-- Skill gates [0x1CA]/[0x1CC]/[0x1D0] (KOPM/KOPHP/ZWIEV-gate): saved fields
-  (f56/f57/f59); configured by the CWICZ training posts / a threshold prompt
-  (compat: "ZWIEJ retains its original threshold prompt and configures the
-  energy value"). Initial values still unlocated.
+- RESOLVED: skill gates [0x1CA]/[0x1CC]/[0x1D0] (KOPM/KOPHP/ZWIEV-gate): saved
+  fields f56/f57/f59 with fresh-game value 0 — no char-select/init write to
+  these slots exists in the image; the only writers are the integer-ReadLn
+  threshold prompts: CWICZ KOPAC img 0xF34E..0xF3A2 ("1)PONIZEJ JAKIEJ ENERGI
+  CHCESZ ZACZAC KOPAC" -> [0x1CC], "2)DO JAKIECH ILOSCI MANA CHCESZ KOPAC"
+  -> [0x1CA]); the ZWIEJ prompt img 0xEEDC ("PONIZEJ ILU ENERGII CHCESZ
+  UCIEKAC?" -> [0x1D0]); and the ReadLn skill/talent config sequence
+  img 0x831C..0x8361 (all three). WALKA applies the kick/flee gates at
+  img 0x17E94..0x17FC0. (→ confirmed-1:1 flee list, `C-PORT-DISCREPANCIES.md`.)
 - RESOLVED: the post-kill `[0x17E]==0 && Random(0x20)` gate that assigns
   `[0x19E]` is the StaryMiecz (MMIECZ) loot-roll seen in the kill/body-drop
   ladder (Random(20)<7 -> acquire if 0x17E==0), not a separate event.
