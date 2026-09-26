@@ -183,7 +183,7 @@ addr-adjacency strings. RHETRO-CORRECTIONS to my earlier DGROUP naming:
                                 Monster stats are NOT in the save record.
   0x1D6 = scene command var    0x1D6 = CurrentContext (room/interface id;
                                 'E','F','G','H' writes = menu-selected room ids;
-                                1000 = COMMON_MODE via MODE/UNMODE, prev in 0x180)
+                                1000 = STAN PODSWIADOMOSCI (MODE) via MODE/UNMODE, prev in 0x180)
   CharacterLevel unknown        0x25C = level, saved as lvl+0x17 (24 => lvl 1)
 
 Also confirmed: Money vs 0x21A:0x21C longint pool (BAZAR buy gates) still open;

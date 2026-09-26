@@ -48,12 +48,9 @@ uses  dos, monstra, crt, System;
   WIMP: Integer;
   PASZOL: Integer;
   KUNSZT: Integer;
-  (* MIECHO = the player's numeric location id (the EXE field map calls the
-     same DGROUP word 0x1D6 "CurrentContext (room/interface id)", INTEGRATED-
-     FIELD-MAP.md). This PRZEDM.TPU export is the very storage the EXE uses
-     as the location register: MINIARENA compares it against the arena cells
-     33..57 (0x21..0x39) in PRZEDM.MINIARENA.md. 1000 = COMMON_MODE while a
-     menu is up; 10000 = the knockout context. *)
+  (* MIECHO = despite the confusing name, it's the player's numeric location id
+     (stored in 0x1D6 originally). 1000 = STAN PODSWIADOMOSCI (MODE);
+     10000 = ZABITY. *)
   MIECHO: Integer;
   ARENA: Integer;
   KORNIK: Integer;
