@@ -38,6 +38,7 @@ different inputs/values; `minor` = cosmetic/faithfulness only.
 | S | Small-shield block (TARCZA): mutable PRO/ILOSC vs fixed 10%/1pt | PORT-DEVIATION | moderate |
 | T | Monster regeneration (POTWORY): numeric state model + re-roll guards vs room-placement spawns | PORT-DEVIATION (deliberate) | moderate |
 | U | Item use (UZYWANIE): stat side-effects (PRO/CIALO/ILOSC/FUKSROLL) folded into equipped_clothing; pill's POTWORY re-roll missing | PORT-DEVIATION | minor |
+| V | WALKA: kill-reward reductions key off opponent max HP (original: player MONSTRA.MAXE); per-round/per-parry reward accrual and FUKSROLL heavy-blow reroll missing | PORT-DEVIATION | moderate |
 
 ---
 
@@ -547,6 +548,81 @@ are 1:1 (`restore_energy`/`restore_mana` cap exactly like MAXE/MAXMANA). The
 
 ---
 
+## V. WALKA: reward accrual, kill-reward reductions, heavy-blow reroll (moderate)
+
+### ORIGINAL (`PRZEDM.WALKA`, PRZEDM.PAS:611-905, TPU 0x04EC, source rows for
+the full fight loop)
+
+The generic combat round. Stat-margin bonus, per-round accrual, kill rewards
+and KO handling:
+
+- **Margin bonus** runs once (before the loop): `MONSTRA.MAXE` vs `WROGEN`,
+  `SIL` vs `WROGSIL`, `ZRE` vs `WROGZRE` chains accumulate `MINIKUNSZT`
+  (+10..+1 up, +11 equal, +12..+21 down). Matches the port's
+  `recovered_combat_chance` (game.c 2031-2141) band-for-band and case-for-case
+  (incl. the `(6,11)`/`<31` overlap semantics of the sequential ifs).
+- **Per-round accrual**: every round the enemy attacks (`TY = 0` path,
+  PRZEDM.PAS:776) does `MINIKUNSZT := MINIKUNSZT + 1`, and a successful
+  parry-learn (PRZEDM.PAS:793-796) adds `MINIKUNSZT + 5`. Both are banked into
+  the reward shown by `ZABILES GO ! ...`, so a longer/closer fight pays more.
+- **Kill reward** (PRZEDM.PAS:869-897): reductions key off the **player's own
+  maximum energy** `MONSTRA.MAXE > 75 → −2`, `> 115 → −3` (raw `cmp word ptr
+  [0], 0x4b/0x73 ; data MONSTRA.MAXE`), then PAR `>50/75/95 → −2/−2/−1`, KOP
+  `>50/95 → −5/−2`, floor at 0; `ZABILES GO ! ZYSKUJESZ ZA TO ' , MINIKUNSZT
+  , ' KUNSZTU '`; `KUNSZT := KUNSZT + MINIKUNSZT`; `FIREBALL := 0`,
+  `POISON := 0`; `QUEST > 0 → QUESTWYK − 1`; bigos learn block (POTRAWKI).
+- **Heavy blow** (PRZEDM.PAS:831-836): the player's own strike
+  `if WPYSK * 10 < FUKSROLL` re-rolls `WPYSK := Random(SIL)` in a `repeat`,
+  printing `FUKSROLL FUKSROLL FUKSROLL ! `, until `WPYSK * 10 > FUKSROLL`.
+- Everything else is 1:1 with the port (see anchors below): twin dodge
+  tables/`FUKS < 10` flags in both `ZRE` directions, damage-tier strings
+  (`<6`, `(5,21)`, `(20,51)`, `>50`) on both sides, `MINIKUNSZT + 1` + `TARCZA`
+  order, parry `Random(140)/FUKS <= PAR` + 0/2/3 bands, FIREBALL/POISON/ILEPOI
+  magic, KOP gate `(KOP>0) and (MANA>KOPM) and (ENERGIA<KOPHP)` +
+  `FUKS <= KOP − 10` + `Random(POZIOM)+Random(10)` + `Random(3)+3`/
+  `Random(2)+2` mana, the `until (ENERGIA < 1) or (WROGEN < 1) or (PASZOL = 1)`
+  loop, death line `!!!!!!!!!!!ZOSTALES ZABITY!!!!!!!!!!!!` + `MIECHO := 10000`
+  on `ENERGIA < 1`, and the ZWIEJ flee block (gate `ZWIEJ>0`, `ENERGIA<WIMP`,
+  `MANA>14`; `MANA −= 15`; `FUKS <= ZWIEJ` → `PASZOL := 1` + `KUNSZT −= 20`).
+
+### PORT (game.c 1984-2029, 2031-2141, 2145-2170, 2196-2228, 2230-2272,
+2292-2340, 2342-2375, 2417-2508)
+
+- `recovered_combat_chance` reproduces the margin bonus 1:1, but the victory
+  reward (`resolve_victory_kunszt`, game.c 1835-1869) never adds the original's
+  per-round `MINIKUNSZT + 1` accrual. The parry-learn `+5` is instead granted
+  immediately as experience in `apply_automatic_parry` (game.c 2335-2337), not
+  banked into the `ZABILES GO ! ...` reward and not withheld when the fight is
+  lost (the original zeroes `MINIKUNSZT` on death). Net: the printed kill
+  reward is lower and no longer reflects fight length.
+- The kill reductions compare `state->active_opponent_maximum_energy > 75 /
+  > 115` (game.c 1839-1843) where the original compares the **player's**
+  `MONSTRA.MAXE`. Since the player's max energy routinely exceeds 75/115, the
+  original nearly always applies both reductions; the port only applies them
+  against high-HP monsters. Gameplay-visible difference in `ZABILES GO !`.
+- The `FUKSROLL` heavy-blow reroll has no port analog: the player's strike is a
+  single `random_below(state, state->strength)` (game.c 2483-2486). This is the
+  same mutable-stat family as entries S/U (`FUKSROLL` only rises via the
+  GARNITUR suit, which the port folds into `equipped_clothing`).
+
+### Confirmed 1:1 (all other WALKA mechanics)
+
+Dodge double-table (`recovered_dodge_roll` 1984-2029) in both directions with
+the four verbatim dodge strings; `WALCZYSZ - <<<<TWOJ WROG MA ...` header;
+enemy/player damage-tier strings (2230-2272) incl. the `!MASAKRUJE!`/`FLAKI`
+variants and the trailing `% ENERGII`; `MINIKUNSZT + 1` after the tier print
+and the `TARCZA` call order (apply_small_shield 2274-2290, entry S covers its
+fixed 10%/1pt); parry roll/bands and its learn line; FIREBALL/POISON/ILEPOI
+magic block (2342-2375); KOP (`try_kick` 2196-2228, incl. the per-round
+auto-kick attempt and both mana costs); reward message + `KUNSZT +=
+MINIKUNSZT` / `add_clamped(experience)`; `QUESTWYK − 1`; bigos cooking
+(`try_cook_defeated_enemy` 1871-1896, POTRAWKI learn tier incl. `FUKS < 1`
+test); flee (`try_flee` 2145-2170, verbatim WSTYD/NIE UDALO lines, `KUNSZT
+−= 20`, WIMP ⇒ `flee_energy_threshold`); KO line + death-resolution ordering
+(game.c 2505-2508).
+
+---
+
 ## Confirmed 1:1 (checked, no deviation)
 
 - Arena N/S/E/W edge table (cells 33-57, entrance 17/32) + "EXIT" texts.
@@ -628,4 +704,5 @@ are 1:1 (`restore_energy`/`restore_mana` cap exactly like MAXE/MAXMANA). The
 | take/drop 5 items | PRZEDM.BRANIE / TPU 0x023F..0x0508 (source 908-963) | game.c 1036-1114 (take_item/drop_item) |
 | monster regeneration | PRZEDM.POTWORY / TPU 0x0000..0x05D8 (source 70-164) | game.c 227-294 (game_regenerate_encounters) |
 | use-item dispatcher | PRZEDM.UZYWANIE / TPU 0x00D8 (source 965-1108) | game.c 1140-1431 (use_item/unequip_item/destroy_item) |
+| combat round WALKA | PRZEDM.WALKA / TPU 0x04EC (source 611-905) | game.c 1835-1869 (resolve_victory_kunszt), 1871-1896 (try_cook), 1984-2029 (recovered_dodge_roll), 2031-2141 (recovered_combat_chance), 2196-2228 (try_kick), 2230-2272 (damage tiers), 2292-2340 (apply_automatic_parry), 2417-2508 (resolve_basic_combat_round) |
 | armour and shield mitigation | PRZEDM.UZYWANIE 0x0e3d..0x0eaf and 0x0f26..0x0f42; PRZEDM.TARCZA 0x0030..0x0054; PRZEDM.WALKA 0x112a | game.c 2305-2320, 2507-2508, 3739-3757 |

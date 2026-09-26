@@ -751,3 +751,51 @@ Full machine-verified register added to INTEGRATED-FIELD-MAP.md
   uses the quantity model (consume + `quest_passage_open`) instead of
   `PRZED + 1`; the port adds ITEM_BEER. MAD-penalty tiers match 1:1.
 
+## 2026-09-26 (30): PRZEDM WALKA reconstructed
+
+- Added the `WALKA` body at the marker (source 611-905, TPU 0x04EC): the
+  generic combat round used by every fight launcher. One-time stat-margin
+  `MINIKUNSZT` prologue (`MONSTRA.MAXE`/`SIL`/`ZRE` vs `WROGEN`/`WROGSIL`/
+  `WROGZRE`: up +10..+1, equal +11, down +12..+21 — chains decoded from raw
+  `jne`/band jumps), then the `repeat ... until (ENERGIA < 1) or (WROGEN < 1)
+  or (PASZOL = 1)` loop: `ON/TY := 0` + the `WALCZYSZ - <<<<...` header; twin
+  dodge tables (`Random(12..23)`/`Random(35..60)`, `FUKS < 10` flags) in both
+  `ZRE` directions with the four verbatim dodge lines; enemy strike
+  `WPYSK := Random(WROGSIL)` with the four tier lines
+  (`<6`/`(5,21)`/`(20,51)`/`>50`), `MINIKUNSZT + 1`, `TARCZA`, parry
+  (`Random(140)`, `FUKS <= PAR`, 0/2/3-point bands, learn `(FUKS<1) and
+  (PAR<100)` → `PAR + 1`, `MINIKUNSZT + 5`), FIREBALL/POISON/ILEPOI magic;
+  player riposte `WPYSK := Random(SIL)` with the FUKSROLL heavy-blow re-roll
+  (`repeat ... until (WPYSK*10) > FUKSROLL`) and four tier lines;
+  `Delay(2000)`; the per-round auto KOP block (gate `(KOP>0) and (MANA>KOPM)
+  and (ENERGIA<KOPHP)`, test `FUKS <= KOP - 10`, damage
+  `Random(POZIOM)+Random(10)`, mana `Random(3)+3`/tail `Random(2)+2`); the
+  ZWIEJ flee block (gate `(ZWIEJ>0) and (ENERGIA<WIMP) and (MANA>14)`,
+  `MANA −= 15`, `FUKS <= ZWIEJ` → `PASZOL := 1` + `KUNSZT −= 20`); kill block
+  `(WROGEN<1) and (ENERGIA>0)` with reductions off the player's own
+  `MONSTRA.MAXE` (`>75 → −2`, `>115 → −3`), PAR (`>50/75/95 → −2/−2/−1`), KOP
+  (`>50/95 → −5/−2`), floor 0, `ZABILES GO ! ZYSKUJESZ ZA TO ' , MINIKUNSZT ,
+  ' KUNSZTU '`, `KUNSZT += MINIKUNSZT`, `FIREBALL/POISON := 0`,
+  `QUESTWYK − 1`, the POTRAWKI bigos + learn block (`POTRAWKI > FUKS` →
+  `BIGOS −= 10`, `PRZED + 1`, learn `(FUKS<1) and (POTRAWKI<100)`); death
+  block `ENERGIA < 1` → `!!!!!!!!!!!ZOSTALES ZABITY!!!!!!!!!!!!`,
+  `Delay(3000)`, `MIECHO := 10000`, and the unconditional `MINIKUNSZT := 0`.
+- Cross-checked against `resolve_victory_kunszt` (game.c 1835-1869),
+  `try_cook_defeated_enemy` (1871-1896), `recovered_dodge_roll`
+  (1984-2029), `recovered_combat_chance` (2031-2141), `try_flee`
+  (2145-2170), `try_kick` (2196-2228), the damage-tier describers
+  (2230-2272), `apply_automatic_parry` (2292-2340) and
+  `resolve_basic_combat_round` (2417-2508): dodge tables, both damage tier
+  sets (verbatim strings), parry bands, magic, KOP, flee, reward/POTRAWKI
+  and the KO ordering are 1:1.
+- Registered (entry V): `recovered_combat_chance` reproduces the margin
+  prologue 1:1, but `resolve_victory_kunszt` never adds the original's
+  per-round `MINIKUNSZT + 1` accrual, and the parry-learn `+5` is granted
+  immediately as experience instead of banked into the `ZABILES GO !`
+  reward (withheld on death in the original). The two kill-reward reductions
+  compare `active_opponent_maximum_energy > 75/115` instead of the player's
+  own `MONSTRA.MAXE` — the original nearly always applies them. The
+  FUKSROLL heavy-blow re-roll has no port analog (player strike is a single
+  `random_below(state, strength)`) — same mutable-stat family as entries
+  S/U.
+
