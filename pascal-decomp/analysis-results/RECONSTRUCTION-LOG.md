@@ -4,7 +4,7 @@
 Game: **BOMBKI**, a turn-based text RPG by Mateusz Pawluczuk.
 Ground truth: `BOMBKI.EXE` (MZ real-mode image, entry `0000:B0CF`) and the
 TP7 TPUQ units `MONSTRA.TPU`, `SWIAT.TPU`, and `PRZEDM.TPU`. The retained
-`../og/PLIKI.TPU` artifact is the game's plain-text save record, not a compiled
+`../../og/PLIKI.TPU` artifact is the game's plain-text save record, not a compiled
 TPU unit. The EXE uses the filename literal `pliki.tpu` for both saving
 (img 0x2BEF) and loading (img 0x7DAC). The retained artifact spells the name
 uppercase; the EXE literal is lowercase. Uppercase was conventional for DOS
@@ -32,7 +32,7 @@ not source evidence, requirements, or a compatibility target.
 ## 2. Save format (`PLIKI.TPU`)
 
 The game's save file is named `pliki.tpu` in the EXE; the retained artifact is
-`../og/PLIKI.TPU` (uppercase spelling). It is plain text, not a compiled TPU
+`../../og/PLIKI.TPU` (uppercase spelling). It is plain text, not a compiled TPU
 unit. The game writes an unlabelled sequence with Pascal `WriteLn`; the
 save-field report records 80 serialized fields. The
 sample at field 15 is anomalous, so its interpretation remains OPEN. See
@@ -694,7 +694,7 @@ reconstruction. Original-side findings are grounded in the EXE/TPU.
   - `MONSTRA.TPU` → `MONSTRA.PAS`
   - `SWIAT.TPU` → `SWIAT.PAS`
   - `PRZEDM.TPU` → `PRZEDM.PAS`
-  These match our reconstructed filenames 1:1 — no rename needed, confirming the reconstruction maps to the original units. Persisted as per-unit `*.src.txt` reports in `analysis-results/tpu_reports/` (date cell kept raw, not DOS-decoded).
+  These match our reconstructed filenames 1:1 — no rename needed, confirming the reconstruction maps to the original units. Persisted as per-unit `*.src.txt` reports in `tpu_reports/` (date cell kept raw, not DOS-decoded).
 - **Checksums / uses.** MONSTRA `$242F`, SWIAT `$3B76`, PRZEDM `$647E`; uses chains MONSTRA(`crt,System`), PRZEDM(`dos,monstra,crt,System`), SWIAT(`przedm,monstra,crt,System`) match the reconstruction interfaces.
 - **PLIKI.TPU is not a unit.** It is the in-game save file despite its extension, not a TP7 unit; `tpuq` correctly refuses to parse it as `TPUQ`.
 - **Correction of the §4.2 "entry sweep" claim.** The earlier claim that the loader's entry IP lands on the Pascal string `"NOSISZ ZE SOBA:"` mixed up image-relative and file-relative offsets:
@@ -721,7 +721,7 @@ reconstruction. Original-side findings are grounded in the EXE/TPU.
   POKOJ83 0x11ECA, POKOJ100 0x12414. POKOJ83 is block `$50`, not
   a missing block `$60`; `$60` is its *interface entry-record offset*.
   Ground truth: `SWIAT.codeblocks.txt`, `SWIAT.entries.txt`, and
-  `analysis-results/disasm/SWIAT-region.asm` (all addresses img 0x…).
+  `disasm/SWIAT-region.asm` (all addresses img 0x…).
 - POKOJE is the four-room dispatcher for contexts 6/8/7/10 (img 0x10B97,
   0x10CB1, 0x10DCB, 0x10EE5); the garden generator at img 0x12ACA is a
   separate PRZEDM procedure. Room 11 calls PRZEDM.KOMENDY after each input
@@ -763,7 +763,7 @@ reconstruction. Original-side findings are grounded in the EXE/TPU.
   main prologue (including its overload check before img 0xB193).
   Any `WYJSCIE` in an inline room jumps directly to img 0xF5C2
   (e.g. img 0xB396). The compact dispatch/call index is
-  `analysis-results/disasm/BOMBKI-main-dispatch.asm`.
+  `disasm/BOMBKI-main-dispatch.asm`.
 - **OPEN transcription scope:** inline room handlers and the MODE command
   body at img 0xB25A..0xF5B1 still need source transcription before the
   main-program `BODY TODO` can be replaced with a source-equivalent loop.

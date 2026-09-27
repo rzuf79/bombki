@@ -1,8 +1,9 @@
 # Pascal reconstruction — current handoff
 
 This is the active work queue, not a chronological record. Keep it synchronized
-with `RECONSTRUCTION-LOG.md` when tasks are completed or priorities change. The
-log preserves dated findings; the EXE/TPU evidence remains authoritative.
+with `analysis-results/RECONSTRUCTION-LOG.md` when tasks are completed or
+priorities change. The log preserves dated findings; the EXE/TPU evidence
+remains authoritative.
 
 ## Reconstruction work
 
@@ -32,4 +33,4 @@ log preserves dated findings; the EXE/TPU evidence remains authoritative.
   pairing the EXE save and load order (log §6).
 - A nonzero-money save would independently exercise the FORSA serialization
   transform; current machine-level evidence for the transform is in
-  `INTEGRATED-FIELD-MAP.md`.
+  `analysis-results/INTEGRATED-FIELD-MAP.md`.

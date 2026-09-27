@@ -20,9 +20,10 @@ apologizing.
 2. Establish the working baseline by checking the branch and worktree status,
    then identify the files and behavior relevant to the task.
 3. Read `TODO.md` for the active work queue and the latest relevant findings in
-   `RECONSTRUCTION-LOG.md`.
-4. Consult the relevant sections of `INTEGRATED-FIELD-MAP.md` and inspect the
-   specific EXE/TPU evidence under `analysis-results/` before making claims.
+   `analysis-results/RECONSTRUCTION-LOG.md`.
+4. Consult the relevant sections of `analysis-results/INTEGRATED-FIELD-MAP.md`
+   and inspect specific EXE/TPU evidence under `analysis-results/` before
+   making claims.
 5. Refresh your view of any in-scope document changed during the task before
    relying on its updated contents.
 
@@ -74,7 +75,8 @@ listings, TPU/EXE reports, raw dumps) under `analysis-results\`.
   or field-map citations. The discrepancy report is a historical archive only.
 - Undecided facts: write them as OPEN items with their evidence state; mark
   RESOLVED only after machine verification.
-- Do not complete or reword `BODY TODO` stubs (scoped cut, `RECONSTRUCTION-LOG.md` §3).
+- Do not complete or reword `BODY TODO` stubs (scoped cut,
+  `analysis-results/RECONSTRUCTION-LOG.md` §3).
 - `../og/` must never appear in a staged change.
 
 ## Committing
