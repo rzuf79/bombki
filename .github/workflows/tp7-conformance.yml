@@ -30,4 +30,4 @@ jobs:
             -v "${{ github.workspace }}":/workspace \
             --entrypoint sh \
             ${{ steps.image.outputs.image }} \
-            -c 'sh /workspace/pascal-decomp/analysis-tools/tp7-conformance.sh'
+            -c 'sh /workspace/pascal-decomp/conformance/tp7-conformance.sh'
