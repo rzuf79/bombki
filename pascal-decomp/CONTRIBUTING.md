@@ -2,7 +2,17 @@
 
 Source-level reconstruction of the original MONSTRA / SWIAT / PRZEDM Turbo
 Pascal 7 units from `../og/` (EXE + TPU units). Covers this directory only;
-the port (`../c-port/`) has its own rules.
+the port (`../c-port/`) has its own rules and is outside this project's scope.
+
+## Scope boundary
+
+- Never inspect or modify anything under `../c-port/` (source, documentation,
+  tests, configuration, generated files, or file locations). This prohibition applies
+  even when a task mentions the port or its documentation. Keep all requested
+  reconstruction work within `pascal-decomp/`; ask the user if a request cannot
+  be completed without changing the port.
+- Do not modify the repository-root `../README.md`; it is shared by the projects
+  and outside this reconstruction's ownership.
 
 ## Ground truth
 
@@ -25,16 +35,18 @@ reference. `../og/` is read-only.
 
 ## Docs
 
-- `INTEGRATED-FIELD-MAP.md` records original behaviour only; port comparisons
-  live exclusively in `C-PORT-DISCREPANCIES.md` (entries 1..19 + "Confirmed
-  1:1"). Register letters (A..H) and entry numbers (1..19) are separate
-  numbering systems.
+- `INTEGRATED-FIELD-MAP.md` records original behaviour.
 - `RECONSTRUCTION-LOG.md` dated highlights are history — keep them.
+- `TODO.md` is the maintained active work queue; keep it current as work lands.
+- `C-PORT-DISCREPANCIES.md` and references to the C port are historical
+  comparisons only. They are not evidence, requirements, or a compatibility
+  target for this reconstruction; use the EXE/TPU machine evidence instead.
 
 ## Evidence
 
-- Claims cite `img 0x…` or a C-PORT entry number; undecided facts stay as
-  explicit OPEN items; RESOLVED means machine-verified.
+- Original-behaviour claims cite `img 0x…`; undecided facts stay as explicit
+  OPEN items; RESOLVED means machine-verified. C-port observations are never
+  evidence for original behaviour.
 - `BODY TODO` stubs are the scoped cut (see `RECONSTRUCTION-LOG.md` §3), not debt.
 
 ## Commits

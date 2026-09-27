@@ -14,12 +14,37 @@ respond and contribute entirely in English.
 When you do something dumb, broken, or inane, reply with a joke instead of
 apologizing.
 
-## Start of task
+## Task-start sequence
 
-Read, in order: `CONTRIBUTING.md`, then the areas the task touches
-(`RECONSTRUCTION-LOG.md`, `INTEGRATED-FIELD-MAP.md`,
-`C-PORT-DISCREPANCIES.md`). Re-read any of these that change mid-task before
-acting on the new state.
+1. Read `CONTRIBUTING.md` in full to learn the project conventions and scope.
+2. Establish the working baseline by checking the branch and worktree status,
+   then identify the files and behavior relevant to the task.
+3. Read `TODO.md` for the active work queue and the latest relevant findings in
+   `RECONSTRUCTION-LOG.md`.
+4. Consult the relevant sections of `INTEGRATED-FIELD-MAP.md` and inspect the
+   specific EXE/TPU evidence under `analysis-results/` before making claims.
+5. Refresh your view of any in-scope document changed during the task before
+   relying on its updated contents.
+
+## Scope boundaries
+
+- Never inspect or modify `../c-port/`; its code and comparisons are outside
+  this reconstruction and are historical only.
+- Do not modify the shared repository-root `../README.md`.
+
+## End-of-task verification
+
+- Run the applicable Pascal conformance/compile checks and `git diff --check`;
+  report only checks that actually ran.
+- Update `TODO.md` and the dated log as work is completed or priorities change.
+- Verify the worktree, then commit and push when the current task is complete.
+
+## Autonomy
+
+Do not stop after completing an intermediate task. Continue autonomously with
+the next useful step. Only stop when the entire requested objective is
+complete or you genuinely require information that cannot be obtained
+independently.
 
 Research layout: tooling under `analysis-tools\` (binary dissection) and
 `conformance\` (reconstruction verification); machine evidence (disasm
@@ -35,17 +60,18 @@ listings, TPU/EXE reports, raw dumps) under `analysis-results\`.
 ## Branch workflow
 
 - Always work on a branch; never commit directly to `main`.
+- Commit coherent checkpoints as work progresses; push the branch only after
+  all current tasks are complete.
 - Reviews happen on GitHub: push the branch and open the PR; `main` advances
   only through reviewed merges, never by direct push.
 
 ## Writing or editing docs
 
-- Every claim carries an evidence identifier: `img 0x…` for disassembly
-  findings, a C-PORT entry number for comparisons. Claims that can't be pinned
-  to one go in the open items.
-- Field-map edits: add `(→ entry N)` / `(→ confirmed-1:1 …)` pointers;
-  comparison text and verdicts are written only into
-  `C-PORT-DISCREPANCIES.md`.
+- Original-behaviour claims cite machine evidence (`img 0x…` for EXE findings,
+  TPU symbol/report identifiers for unit findings). Claims that cannot be
+  established from that evidence remain OPEN.
+- Do not use C-PORT entries or port behavior as evidence, acceptance criteria,
+  or field-map citations. The discrepancy report is a historical archive only.
 - Undecided facts: write them as OPEN items with their evidence state; mark
   RESOLVED only after machine verification.
 - Do not complete or reword `BODY TODO` stubs (scoped cut, `RECONSTRUCTION-LOG.md` §3).
