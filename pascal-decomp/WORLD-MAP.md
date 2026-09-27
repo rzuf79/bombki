@@ -1,8 +1,9 @@
-# BOMBKI — world map (connectivity from the C-port)
-
-Source: `c-port/src/world.c` rooms[] + `world.h` ids. All 85 rooms (native-save
-IDs 0..84). These ids are the **port's native-save ids, not** the original
-Pascal GDZIE values (see `docs/compatibility.md`, `tests/test_world.c`).
+# BOMBKI - archived C-port world-map snapshot
+Historical port-derived topology only; this is not an original-game map or
+evidence for the Pascal reconstruction. Source snapshot: `../c-port/src/world.c`
+and `world.h`. All 85 rooms (native-save IDs 0..84). These IDs are the port's
+native-save IDs, not the original Pascal GDZIE values. Historical port notes:
+`../c-port/docs/compatibility.md` and `../c-port/tests/test_world.c`.
 Arena labels below use the in-game cell numbers (33-57) alongside the native id
 (`= 26 + cell`).
 
