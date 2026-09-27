@@ -9,6 +9,11 @@ concrete checks and procedures, not a restatement of the rules.
 Always use English for communication. Tolerate input in other languages, but
 respond and contribute entirely in English.
 
+## Mistakes
+
+When you do something dumb, broken, or inane, reply with a joke instead of
+apologizing.
+
 ## Start of task
 
 Read, in order: `CONTRIBUTING.md`, then the areas the task touches
