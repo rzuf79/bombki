@@ -121,6 +121,18 @@ for name in MONSTRA.TPU PRZEDM.TPU SWIAT.TPU BOMBKI.EXE; do
   fi
 done
 
+# Export artifacts for CI upload when CONF_ARTIFACTS is set. Non-fatal: the
+# sweep verdict is about the TPC compile, not artifact plumbing.
+if [ -n "${CONF_ARTIFACTS:-}" ]; then
+  mkdir -p "$CONF_ARTIFACTS"
+  for name in MONSTRA.TPU PRZEDM.TPU SWIAT.TPU BOMBKI.EXE; do
+    found="$(find "$BUILD" -maxdepth 1 -iname "$name" -size +0c | head -n1)"
+    if [ -n "$found" ]; then
+      cp "$found" "$CONF_ARTIFACTS"/ && echo "artifact: $(basename "$found") -> $CONF_ARTIFACTS"
+    fi
+  done
+fi
+
 echo ""
 echo "passed: $passed, failed: $failed"
 if [ "$failed" -gt 0 ]; then
