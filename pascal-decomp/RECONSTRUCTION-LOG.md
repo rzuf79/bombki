@@ -737,6 +737,33 @@ formula.
   messages (img 0x17BE3..0x17CA5). SWIAT's boss writes at img
   0x1297F/0x12984 update these existing fields.
 
+### 2026-09-27 (34): BOMBKI main dispatcher at img 0xB193
+
+- The main body is not a single room call: img 0xB193..0xB1E4 checks the
+  bleed counter `[0x260]`, prints `JESTES ZATRUTY TRACISZ <Random(5)> % ENERGI`
+  and decrements that counter (img 0xB19A..0xB1E2). In this block no
+  subtraction from ENERGIA appears. The ordered room dispatch begins at
+  img 0xB1E5. Its direct SWIAT calls are POKOJ0 (0xB1EC), POKOJ1
+  (0xB1F8), POKOJ4 (0xB218), POKOJ5 (0xB224), POKOJE (0xB229),
+  POKOJ11 (0xB23F), POKOJ13 (0xB255), POKOJ75 (0xBF11), POKOJ30
+  (0xBF1D), POKOJ83 (0xCC13), POKOJ100 (0xE0F9), POKOJ60 (0xE85B).
+- Other rooms are *inline in the main body*: room 14 begins at img
+  0xB264, room 15 at 0xB52B, room 16 at 0xB7F2, room 17 at 0xBAAB;
+  the later garden, road, school, arena-entrance and MODE cases extend
+  through img 0xF5B7. The arena range 33..57 is handled by
+  PRZEDM.MINIARENA (img 0xEA15 -> 0x19B30); img 0xEA25..0xEA31 caps
+  ENERGIA at MAXE before the MODE context-1000 branch (img 0xEA34).
+- At img 0xF5A1, `UNMODE`/`UM` restores context `[0x1D6]` from previous
+  room `[0x180]`. Img 0xF5B2 resets PASZOL `[0x1D2]`; context 193
+  terminates at img 0xF5C2, otherwise `jmp 0xB0F0` repeats the entire
+  main prologue (including its overload check before img 0xB193).
+  Any `WYJSCIE` in an inline room jumps directly to img 0xF5C2
+  (e.g. img 0xB396). The compact dispatch/call index is
+  `analysis-results/disasm/BOMBKI-main-dispatch.asm`.
+- **OPEN transcription scope:** inline room handlers and the MODE command
+  body at img 0xB25A..0xF5B1 still need source transcription before the
+  main-program `BODY TODO` can be replaced with a source-equivalent loop.
+
 ## 6. Open items
 
 - Exact name per 0x1D8..0x218 slot — solvable by pairing save()/wczytaj()

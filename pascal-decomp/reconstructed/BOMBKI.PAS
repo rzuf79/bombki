@@ -3,9 +3,9 @@ program BOMBKI;
   MZ: CS:IP = 0000:B0CF, header paragraphs 0x52E, image length 0x1D4F0;
   img = file[0x52E*16:]. At img 0xB0CF sits lcall 1C71:0000 (System
   bootstrap); the program prologue is at img 0xB0D9 and the main-loop
-  head at img 0xB193. Traced startup order: RECONSTRUCTION-LOG.md entry
-  (32); the entry-vector "NOSISZ ZE SOBA:" reading was corrected there
-  (file- vs image-relative offset mix-up). }
+   bleed check at img 0xB193; room dispatch starts at img 0xB1E5.
+   Backedge img 0xF5BF returns to img 0xB0F0. Traced startup order:
+   RECONSTRUCTION-LOG.md entries (32), (34). }
 uses
   crt, swiat, przedm, monstra, dos;
 
@@ -26,13 +26,14 @@ begin
   { Checkpoint (call 0x51C3); LevelUp (call 0x872E, body 0x87A2..) }
   { Overload gate: PRZED [0x182] > carrying capacity -> overload-print
     block ("JESTES OBLADOWANY"); capacity field in DGROUP. }
-  { --- 0xB193 main loop --- }
-  repeat
-    { BODY TODO: transcribe from img 0xB193.. — reads wpisz (textrec
-      0x564), dispatches through the room layer (SWIAT.POKOJE + POKOJ*
-      room handlers), the PRZEDM command procs (KOMENDY/BRANIE/UZYWANIE/
-      MODE/...), and save/wczytaj; the loop's exit conditions are part
-      of the decode. }
-  until False;
-  { BODY TODO: post-loop termination path (TP7 exits at program end). }
+   { --- img 0xB193 bleed tick; img 0xB1E5 ordered room dispatch --- }
+   repeat
+     { BODY TODO: inline rooms and MODE body, img 0xB25A..0xF5B1.
+       Dispatched SWIAT calls: 0xB1EC..0xB255, 0xBF11/0xBF1D,
+       0xCC13, 0xE0F9, 0xE85B. PRZEDM.MINIARENA at img 0xEA15;
+       UNMODE/UM restores MIECHO2 at img 0xF5A1. See the dated
+       dispatch index in RECONSTRUCTION-LOG.md entry (34). }
+   until False;
+   { Exit path: MIECHO = 193, or WYJSCIE in an inline room, jumps to
+     img 0xF5C2 (System termination at img 0xF5C5). }
 end.
