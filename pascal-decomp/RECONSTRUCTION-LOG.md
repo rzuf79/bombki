@@ -13,7 +13,7 @@ entry `0000:B0CF`, 5295 MZ relocs / 239 in-image cells), `MONSTRA.TPU`,
 | file | content |
 |---|---|
 | `MONSTRA.PAS` | unit interface skeleton — 21 Integer globals (`MAXE`…`SILNY`+`WSTEP`), `procedure WSTEP`; body stubs by TPU entry codes |
-| `SWIAT.PAS` | `POKOJ0..POKOJ100, POKOJE` + room vars; 13 proc stubs |
+| `SWIAT.PAS` | 12 room bodies, POKOJ0..POKOJ100 and POKOJE (img 0xF5D0..0x129C6) |
 | `PRZEDM.PAS` | fullest — 167 globals, 35 entries: `BRANIE, UZYWANIE, TARCZA, WALKA, MINIARENA, KTO, MODE, SLABO..BARUDNO`; Integer/Text/string typing resolved; source-equivalent bodies for the interface procs (see §5) |
 | `BOMBKI.PAS` | main skeleton with `uses crt,swiat,przedm,monstra,dos,system` |
 | `WALKA-CombatEngine-reconstructed.pas` | full combat-engine body (see entry (9)) |
@@ -40,23 +40,24 @@ text afterwards; `plik: Text` write with `WriteLn`.
 
 ## 3. Scope — cut line
 
-The deliverable "interfaces + save format + the reconstructed bodies listed in
-§1" is complete. The TPU unit bodies are a *different build generation* than
-the final EXE (see §4): byte-exact bodies are not recoverable by TPU→EXE
-slide. Reimplementing the remaining bodies as TP7 source is a separate
-authoring task on top of the preserved interface skeletons; the `BODY TODO`
-stubs in the skeleton files are the scoped cut, not debt.
+The interface/save-format reconstruction and PRZEDM source bodies preceded the
+room transcription. SWIAT's 12 bodies now have a same-build EXE/TPU mapping
+(img 0xF5D0..0x129C6; see §5, 2026-09-27), superseding the previous
+different-build assumption *for SWIAT*. The remaining `BODY TODO` stubs in
+other units are the earlier scoped cut, not implicit reconstruction claims.
 
 ## 4. Evidence grounding (disassembly, all verified)
 
 Three independent x86-16 experiments against BOMBKI.EXE:
 
-1. **RAW slide** of the MONSTRA (1195B) / SWIAT (13303B) / PRZEDM (38118B) TPU
-   code blobs over the image: even *masked* (all 4 reloc-cell bytes wildcarded
-   on both sides), every window saturates at **65 non-cell mismatches** — the
-   TPU code bodies are NOT a byte-slice of the final linked EXE. The TPUs in
-   this tree are a different build snapshot of the source than what produced
-   BOMBKI.EXE (interfaces & save layout carry over; bodies do not slide).
+1. **Earlier RAW slide, superseded for SWIAT**: a whole-blob scan of MONSTRA
+   (1195B), SWIAT (13303B), and PRZEDM (38118B) failed to locate a match,
+   yielding 65 non-cell mismatches even when relocation cells were masked.
+   That experiment did not establish different build generations: the SWIAT
+   region is img 0xF5D0..0x129C6, and SWIAT.code.bin[$0E+i] matches the EXE
+   through img 0x129B8 outside patched relocation slots; the last 14 bytes
+   are absent from the TPU dump (see §5, 2026-09-27). No same-build
+   conclusion follows for MONSTRA or PRZEDM from this SWIAT-only correction.
 2. **Entry sweep** (`0000:B0CF`): the loader's entry IP lands on a Pascal
    string-const, `"NOSISZ ZE SOBA:"` (0F-length prefix), not on code — so the
    EXE entry is not a linear code start and the real main is elsewhere.
@@ -700,6 +701,41 @@ formula.
 - **Open nuance — first game call.** `call 0x116EF` at img 0xB0E8 (`E8 04 66`) computes target `0x116EF`, which is **byte 2 of the 5-byte `lcall 1C71:09D7`** at img 0x116EE (`9A D7 09 71 1C`) — off-by-one against the linear sweep. The enclosing routine's prologue is at img 0x11638 (`push bp; mov bp,sp; xor ax,ax`); taking img 0x116EE as the start yields the clean stream (`lcall 1C71:0291`; `mov di,0x564`; push/push; `lcall 1C71:09D7`; `jne`; `lcall 129D:3114` `PRZEDM_MODE`). Not blocking — the startup/input-overwrite routine writes textrec 0x564 with strings cs:0x1FEE/0x1FF3/0x1FF8 and calls `PRZEDM_MODE`.
 - **Stat-table writes are spread, not central.** `OWCZAREK` `[0x1B0]` (`mov word [0x1B0],imm`) hits at 0x5DB4, 0xB3CE, 0xB695, 0xB85E, 0xD091, 0x10981, 0x12995, 0x12A20, 0x13843; `[0x1B8]` at 0x5DBA, 0xB3D4, 0xB69B, 0xB864, 0xD097, 0x10987, 0x1298F, 0x12A26, 0x13849, 0x13DE9, 0x13F0C; `StaryMiecz` `[0x17E]` at 0x3F5C, 0xEC33, 0xED5E, 0xEDB5, 0x18446 — i.e. stats are written inside many game procs (WSTEP, spawns, LevelUp), not a single central init block. The proc at 0x5C36 reads textrec 0x564 with string cs:0x5B7C, checks `[0x58]==0xC`, then writes fresh MONSTRA stats and calls `WALKA 0x129D:0x44A6`.
 - **Unit inits live in the program-body prologue.** The RTL/System zone (paras `0x1C0F..0x1D4F`) never calls game code below `0x1C00`, so unit initialization blocks are emitted into the program-body prologue after the traced head rather than being called from System/CRT.
+
+### 2026-09-27 (33): SWIAT same-build region and room bodies
+
+- **Correction to §4's RAW-slide inference:** `SWIAT.code.bin` has 14 leading
+  zero bytes. At offset `$0E+i`, its 13,289 remaining bytes correspond to EXE
+  img `0xF5D0+i` through img `0x129B8`: 3,987 differences are exclusively
+  TPU zero relocation slots; there are zero nonzero byte differences. The TPU
+  extract lacks the EXE region's last 14 bytes (img 0x129B9..0x129C6).
+  `analysis-tools/verify_swiat_region.py` reproduces the comparison.
+- The 12 blocks pack consecutively at img 0xF5D0..0x129C6, with entries
+  POKOJ5 0xF766, POKOJ0 0xFA5F, POKOJ1 0xFEDF, POKOJ4 0x10447,
+  POKOJ13 0x10803, POKOJE 0x10B8D, POKOJ11 0x11261,
+  POKOJ30 0x11638, POKOJ60 0x118FE, POKOJ75 0x11BDC,
+  POKOJ83 0x11ECA, POKOJ100 0x12414. POKOJ83 is block `$50`, not
+  a missing block `$60`; `$60` is its *interface entry-record offset*.
+  Ground truth: `SWIAT.codeblocks.txt`, `SWIAT.entries.txt`, and
+  `analysis-results/disasm/SWIAT-region.asm` (all addresses img 0x…).
+- POKOJE is the four-room dispatcher for contexts 6/8/7/10 (img 0x10B97,
+  0x10CB1, 0x10DCB, 0x10EE5); the garden generator at img 0x12ACA is a
+  separate PRZEDM procedure. Room 11 calls PRZEDM.KOMENDY after each input
+  (img 0x11345 -> 0x1BB07). Room 83 calls PRZEDM.BLUSZCZ on entry and
+  KOMENDY/FIGHTBLUSZCZ after input (img 0x11F32, 0x11F97, 0x11F9C).
+  Room 100 calls PRZEDM.ULSKLEPIKOWA on entry (img 0x12460 -> 0x155F2).
+- `MONSTRA.SILNY` is the room-13 tracker: MONSTRA's TPU variable blocks
+  have sizes `$12`, `$16`, `$02`, and `SILNY` is block `$10`, offset zero
+  (`MONSTRA.varblocks.txt`, `MONSTRA.symbols.csv`). With linked MAXE at
+  `$664` (img 0x12824), the final block is at `$664+$12+$16 = $68C`,
+  initialized to 13 at img 0x1973 and tested/cleared by SWIAT at img
+  0x10833/0x109A4. The BOMBKI startup transcription must reproduce that
+  initialization; the declaration belongs to MONSTRA.
+- `PRZEDM.FIREBALL` and `PRZEDM.POISON` are the `$25E`/`$25F` bytes:
+  TPU block `$58` offsets `$08`/`$09` in `PRZEDM.symbols.csv`. The combat
+  body tests/decrements them while printing the fireball and poison
+  messages (img 0x17BE3..0x17CA5). SWIAT's boss writes at img
+  0x1297F/0x12984 update these existing fields.
 
 ## 6. Open items
 

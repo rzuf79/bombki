@@ -1,27 +1,11 @@
 unit SWIAT;
 { checksum = $3B76 }
-{ Turbo Pascal 7.0 unit — the room/world layer of BOMBKI.
-  Ground truth:
-    - TPU: analysis-results\tpu_reports\SWIAT.*.txt. 12 export entries,
-      13 code blocks (13.3 KB total; block 0x60, POKOJ83's, is missing
-      from the codeblocks extract — extraction gap to fix).
-    - Uses chain: przedm, monstra, crt, System (RECONSTRUCTION-LOG.md
-      entry (32)).
-    - Room model (INTEGRATED-FIELD-MAP.md "Room graph"; machine-verified):
-      contexts 0..3 start/sub/school/training; 4..17 school (5 = six-way
-      MUD SZKOLA, 11 = cage hall, 12..16 monster rooms); 20 city centre
-      (respawn); 21..22 ULSKLEPIKOWA; 30..31 ULICA DLUGA; 32 arena
-      entrance; 33..57 arena grid; 60 DOLINA ROZRYWEK; 61..66 crowd;
-      67 piwiarnia; 68 estrada; 69..72 scena; ~73 LIROY; 77..82 BLUSZCZ;
-      83 PIERDUT/BLUSZCZ tree; 84 PODEJRZANE KRZAKI; 100..103 road.
-  EXE anchors registered so far (img-relative):
-      room procs calling KillDispatch  0x6A20..0x76xx
-      city-square dispatch (ctx 0x64)  0x12414..0x129C6
-      Room map/garden generator        0x12ACA..0x130A1
-      room command vocabulary          0x13190..0x15400
-      KillDispatch router              0x4F53
-  The POKOJx -> room/context and POKOJx -> EXE-region mapping is OPEN
-  (per-proc notes below; pin it with entry/codeblock + img anchors). }
+{ Turbo Pascal 7.0 room/world unit. The final EXE at img 0xF5D0..0x129C6
+  contains all 12 SWIAT code blocks, including POKOJ83 (block $50,
+  entry img 0x11ECA) and POKOJ100 (block $58, entry img 0x12414).
+  TPU SWIAT.code.bin[$0E+i] matches through img 0x129B8 except patched
+  zero relocation cells; the EXE supplies the last 14 bytes. See
+  analysis-results/disasm/SWIAT-region.asm. }
 interface
 
 uses  przedm, monstra, crt;
@@ -52,136 +36,480 @@ uses  przedm, monstra, crt;
   { Proc $0060 Entry 80:012B }
 implementation
 
-{ ------------------------------------------------------------------ }
-{ Bodies are RECONSTRUCTION-LOG.md §3's scoped cut — "reimplementing the
-  remaining bodies as TP7 source is a separate authoring task on top of
-  the preserved interface skeletons". Each stub below carries its TPU
-  code anchor and the machine-verified EXE semantics known so far.
-  Decode source: SWIAT.code.bin / SWIAT.reloc_code.txt (TPU side) plus
-  the EXE regions in the header; every claim keeps an img 0x… anchor. }
-{ ------------------------------------------------------------------ }
-
 procedure POKOJ0;
-{ TPU entry 8:005A, code block 8 (0x143 B). Room 0 = game start
-  (room graph). EXE room-region target: open. }
+{ img 0xFA5F..0xFB47 }
 begin
-  { BODY TODO: transcribe POKOJ0 from SWIAT.code.bin block 8 + the EXE
-    room region (0x6A20..0x76xx candidate); start-room bios/commands. }
+  WriteLn('TU ZACZYNA SIE GRE');
+  repeat
+    Write(ENERGIA, '%.', KUNSZT);
+    WriteLn('>');
+    ReadLn(wpisz);
+    if wpisz = 'EXIT' then
+      WriteLn('DOSTEPNE WYJSCIE-POLNOC-HALA GLOWNA MUD SZKOLE ');
+    if wpisz = 'WYJSCIE' then Exit;
+    if wpisz = 'POLNOC' then MIECHO := 1;
+  until MIECHO <> 0;
 end;
 
 procedure POKOJ1;
-{ TPU entry 16:0397, code block 16 (0x71D B). Room 1 = start/sub area
-  (room graph). EXE target: open. }
+{ img 0xFEDF..0x10261 }
 begin
-  { BODY TODO: transcribe POKOJ1 from SWIAT.code.bin block 16 + EXE
-    room region. }
+  WriteLn('JESTES W OKROGLYM SALONIE WYPELNIONYM WITRAZAMI ');
+  WriteLn('W POWIETRZU UNOSZA SIE ZAPACHY I SO TO ZAPACHY OK');
+  WriteLn('NO A POZA TYM NA SCIANIE JEST!!! PLAKAT!!!!');
+  WriteLn('NAPISZ PATRZ PLAKAT ABY GO ODCZYTA'#143' ');
+  repeat
+    Write(ENERGIA, '%.', KUNSZT);
+    WriteLn('>');
+    ReadLn(wpisz);
+    if wpisz = 'MODE' then MODE;
+    if wpisz = 'EXIT' then begin
+      WriteLn('DOSTEPNE WYJSCIA:');
+      WriteLn('POLODNIE-TAM GDZIE ZACZYNASZ GRE');
+      WriteLn('POLNOC-MIASTO');
+      WriteLn('WSCHOD-POKOJ TRENINGOWY 1');
+      WriteLn('ZACHOD-MUD SZKOLA');
+      WriteLn('DOL-PODDZIEMNY POKOJ TRENINGOWY(2)');
+    end;
+    if wpisz = 'WYJSCIE' then Exit;
+    if wpisz = 'POLODNIE' then MIECHO := 0;
+    if wpisz = 'WSCHOD' then MIECHO := 2;
+    if wpisz = 'DOL' then MIECHO := 3;
+    if wpisz = 'ZACHOD' then MIECHO := 4;
+    if wpisz = 'POLNOC' then MIECHO := 20;
+    if wpisz = 'PATRZ PLAKAT' then begin
+      WriteLn(#169' NA PLAKACIE PISZE:');
+      WriteLn('JE'#189'ELI CHCESZ TRENOWAC UDAJ SIE DO POKOJU TRENINGOWEGO');
+      WriteLn('JE'#189'ELI CHCESZ NAUCZYC SIE NOWYCH KOMEND IDZ DO MUD SZKOLY');
+      WriteLn('DOPIERO POTEM IDZ DO MIASTA ');
+      WriteLn('A OTO TAJNE KOMENDY :');
+      WriteLn(' MODE - WPROWADZENIE W STAN PODSWIADOMOSCI');
+      WriteLn(' UNMODE - POWROT DO POPRZEDNIEGO STANU');
+      WriteLn('W CZASIE POBYTU W STANIE PODSWIADOMOSCI DZIALA WIELE KOMEND MIN:');
+      WriteLn(' JA - WSZYSTKO O TOBIE , BIERZ , UZYJ , ZDEJMIJ , ODRZUC I INNE ');
+      WriteLn(' PONADTO WIELE KOMEND TRZEBA ODKRYC NP:ZMIEN KOLOR , ZMIEN TLO ');
+      WriteLn(' UWAGA Z OSTATNIEJ CHWILI : KOMENDA SPIJ W STANIE PODSWIADOMOSCI!');
+    end;
+  until MIECHO <> 1;
 end;
 
 procedure POKOJ4;
-{ TPU entry 24:01E2, code block 24 (0x3F7 B). Room 4 = school
-  (room graph). EXE target: open. }
+{ img 0x10447..0x1065A }
 begin
-  { BODY TODO: transcribe POKOJ4 from SWIAT.code.bin block 24 + EXE
-    room region; school commands (CWICZ/TRENUJ paths run through the
-    vocabulary region 0x13190..). }
+  if MIECHO <> 4 then Exit;
+  WriteLn('JESTES W HALLU MUD SZKOLY- OGARNIA CIE CYKORIA  ');
+  WriteLn('NO A POZA TYM NA SCIANIE JEST!!! AFISZ!!!');
+  repeat
+    Write(ENERGIA, '%.', KUNSZT);
+    WriteLn('>');
+    ReadLn(wpisz);
+    if wpisz = 'MODE' then MODE;
+    if wpisz = 'EXIT' then begin
+      WriteLn('DOSTEPNE WYJSCIA:');
+      WriteLn('WSCHOD-POKOJ CENTRALNY');
+      WriteLn('ZACHOD-MUD SZKOLA (2)');
+    end;
+    if wpisz = 'WYJSCIE' then Exit;
+    if wpisz = 'WSCHOD' then MIECHO := 1;
+    if wpisz = 'ZACHOD' then MIECHO := 5;
+    if wpisz = 'PATRZ AFISZ' then begin
+      WriteLn(#169' NA AFISZU BYNAJMNIEJ PISZE');
+      WriteLn('TO JEST MUD SZKOLA KUJ KOMEDY ALBO ZGINIESZ!!!!!!!!');
+      WriteLn('JESLI CHODZI O EKWIPUNEK TO BIERZ (PRZEDMIOT)=BIERZESZ PRZEDMIOT');
+      WriteLn('UZYJ (PRZEDMIOT) = UZYWASZ PRZEDMIOTU ODRZUC (PRZEDMIOT) = ODRZUCASZ');
+      WriteLn('BRONIE I TARCZE I UBRONIA MOZNA ZDJAC KOMENDA ODLORZ (PRZEDMIOT) ');
+    end;
+  until MIECHO <> 4;
 end;
 
 procedure POKOJ13;
-{ TPU entry 32:01A7, code block 32 (0x468 B). Room 13 = monster/cage
-  room: tracker slot 7 == 13 fires the ZABIJ launcher 0x10981
-  (HP20/Dex3/Dmg10/Random(15) — log entry (9), field map). EXE target:
-  open. }
+{ img 0x10803..0x10AC3; room-13 tracker at DGROUP $68C }
 begin
-  { BODY TODO: transcribe POKOJ13 from SWIAT.code.bin block 32 + EXE
-    room region; cage/monster interactions. }
+  if MIECHO <> 13 then Exit;
+  WriteLn('TEN POKOJ JEST CALY OBRYZGANY KRWIA NA SCIANACH FLAKI I MOZGI LODZKIE ');
+  if MONSTRA.SILNY = 13 then
+    WriteLn('SILNY , NAPAKOWANY POTWOR STOI POD SCIANA');
+  if MONSTRA.SILNY = 0 then
+    WriteLn('PAROJACE WNETRZNOSCI POTWORA SA ROZWLECZONE DOOKOLA');
+  repeat
+    Write(ENERGIA, '%.', KUNSZT);
+    WriteLn('>');
+    ReadLn(wpisz);
+    if wpisz = 'EXIT' then begin
+      WriteLn('DOSTEPNE WYJSCIA:');
+      WriteLn('WSCHOD-KLATKI PELNE GAJDY');
+    end;
+    if wpisz = 'MODE' then MODE;
+    if wpisz = 'WYJSCIE' then Exit;
+    if wpisz = 'WSCHOD' then MIECHO := 11;
+    if (wpisz = 'ZABIJ POTWOR') and (MONSTRA.SILNY = 13) then begin
+      WROGEN := 20;
+      WROGZRE := 3;
+      WROGSIL := 10;
+      WALKA;
+      if PASZOL = 0 then begin
+        MONSTRA.SILNY := 0;
+        CZY := Random(15);
+        WriteLn('WYCIAGASZ ', CZY, ' MONET Z CIALA POTWORA');
+        FORSA := FORSA + CZY;
+        if MMIECZ = 0 then begin
+          FUKS := Random(20);
+          if FUKS < 7 then begin
+            MMIECZ := MIECHO;
+            WriteLn('WYCIAGASZ STARY ZARDZEWIALY MIECZ Z CIALA POTWORA');
+          end;
+        end;
+        if MTARCZA = 0 then begin
+          FUKS := Random(20);
+          if FUKS < 7 then begin
+            MTARCZA := MIECHO;
+            WriteLn('WYCIAGASZ ZWYKLA MALA TARCZA Z CIALA POTWORA');
+          end;
+        end;
+        if SERCE = 0 then begin
+          FUKS := Random(20);
+          if FUKS < 6 then begin
+            SERCE := MIECHO;
+            WriteLn('WYCIAGASZ ZAKRWAWIONE SERCE Z CIALA POTWORA');
+          end;
+        end;
+      end else
+        PASZOL := 0;
+    end;
+  until MIECHO <> 13;
 end;
 
 procedure POKOJE;
-{ TPU entry 40:00C9, code block 40 (0x53C B). "POKOJE" = the rooms
-  dispatcher candidate; may map to the Room map/garden generator
-  (EXE img 0x12ACA..0x130A1, para 0x129D:0xFA) which seeds monster pen
-  positions [0x1DA..0x1EE], stage musicians [0x226..0x22C], plants
-  [0x232..0x246], garden animals [0x666..0x678], marker [0x261] (log
-  entry (11)). Mapping hypothesis only — pin before transcribing. }
+{ img 0x10B8D..0x10FFF; four separate guarded rooms }
 begin
-  { BODY TODO: transcribe POKOJE from SWIAT.code.bin block 40 + EXE
-    img 0x12ACA..0x130A1 (pending mapping confirmation). }
+  if MIECHO = 6 then begin
+    WriteLn('JESTES W DOSYC CIASNYM POKOJU I NICZEGO TU NIEMA ');
+    repeat
+      Write(ENERGIA, '%.', KUNSZT);
+      WriteLn('>');
+      ReadLn(wpisz);
+      if wpisz = 'MODE' then MODE;
+      if wpisz = 'EXIT' then begin
+        WriteLn('DOSTEPNE WYJSCIA:');
+        WriteLn('WSCHOD-MUD SZKOLA(2)');
+      end;
+      if wpisz = 'WYJSCIE' then Exit;
+      if wpisz = 'WSCHOD' then MIECHO := 5;
+    until MIECHO <> 6;
+  end;
+  if MIECHO = 8 then begin
+    WriteLn('JESTES W DOSYC CIASNYM POKOJU I NICZEGO TU NIEMA ');
+    repeat
+      Write(ENERGIA, '%.', KUNSZT);
+      WriteLn('>');
+      ReadLn(wpisz);
+      if wpisz = 'MODE' then MODE;
+      if wpisz = 'EXIT' then begin
+        WriteLn('DOSTEPNE WYJSCIA:');
+        WriteLn('POLNOC-MUD SZKOLA(2)');
+      end;
+      if wpisz = 'WYJSCIE' then Exit;
+      if wpisz = 'POLNOC' then MIECHO := 5;
+    until MIECHO <> 8;
+  end;
+  if MIECHO = 7 then begin
+    WriteLn('JESTES W DOSYC CIASNYM POKOJU I NICZEGO TU NIEMA ');
+    repeat
+      Write(ENERGIA, '%.', KUNSZT);
+      WriteLn('>');
+      ReadLn(wpisz);
+      if wpisz = 'MODE' then MODE;
+      if wpisz = 'EXIT' then begin
+        WriteLn('DOSTEPNE WYJSCIA:');
+        WriteLn('POLODNIE-MUD SZKOLA(2)');
+      end;
+      if wpisz = 'WYJSCIE' then Exit;
+      if wpisz = 'POLODNIE' then MIECHO := 5;
+    until MIECHO <> 7;
+  end;
+  if MIECHO = 10 then begin
+    WriteLn('JESTES W DOSYC CIASNYM POKOJU I NICZEGO TU NIEMA ');
+    repeat
+      Write(ENERGIA, '%.', KUNSZT);
+      WriteLn('>');
+      ReadLn(wpisz);
+      if wpisz = 'MODE' then MODE;
+      if wpisz = 'EXIT' then begin
+        WriteLn('DOSTEPNE WYJSCIA:');
+        WriteLn('GORA-MUD SZKOLA(2)');
+      end;
+      if wpisz = 'WYJSCIE' then Exit;
+      if wpisz = 'GORA' then MIECHO := 5;
+    until MIECHO <> 10;
+  end;
 end;
 
 procedure POKOJ5;
-{ TPU entry 0:0196 (code block 0; continuation block 48, 0x547 B).
-  Room 5 = six-way MUD SZKOLA junction (room graph). EXE target: open. }
+{ img 0xF766..0xFA04 }
 begin
-  { BODY TODO: transcribe POKOJ5 from SWIAT.code.bin blocks 0/48 + EXE
-    room region; six-way exit handling. }
+  WriteLn('SZOK!! AAA UPSI  O NIE FUJ ACH AJ OCH NEIN EEE UGH   ');
+  WriteLn('STWIERDZASZ ZE W TYM POKOJU JEST X POKOI O NIE !! JAK SIE WYDOSTAC?');
+  WriteLn('AHA (NA SCIANIE JEST PLAKAT)');
+  repeat
+    Write(ENERGIA, '%.', KUNSZT);
+    WriteLn('>');
+    ReadLn(wpisz);
+    if wpisz = 'MODE' then MODE;
+    if wpisz = 'EXIT' then begin
+      WriteLn('DOSTEPNE WYJSCIA:');
+      WriteLn('WSCHOD-MUD SZKOLA');
+      WriteLn('ZACHOD-POKOJ');
+      WriteLn('POLNOC-POKOJ');
+      WriteLn('POLODNIE-POKOJ');
+      WriteLn('GORA-POKOJ');
+      WriteLn('DOL-POKOJ');
+    end;
+    if wpisz = 'WYJSCIE' then Exit;
+    if wpisz = 'WSCHOD' then MIECHO := 4;
+    if wpisz = 'ZACHOD' then MIECHO := 6;
+    if wpisz = 'POLNOC' then MIECHO := 7;
+    if wpisz = 'POLODNIE' then MIECHO := 8;
+    if wpisz = 'GORA' then MIECHO := 9;
+    if wpisz = 'DOL' then MIECHO := 10;
+    if wpisz = 'PATRZ PLAKAT' then begin
+      WriteLn('NA PLAKACIE BYNAJMNIEJ PISZE');
+      WriteLn('TO JEST POKOJ DO ORIETACJI W TERENIE ORAZ W KIERUNKACH');
+    end;
+  until MIECHO <> 5;
 end;
 
 procedure POKOJ11;
-{ TPU entry 48:0261, code block 56 (0x298 B). Room 11 = cage hall, six
-  cages (room graph). EXE target: open. }
+{ img 0x11261..0x11546 }
 begin
-  { BODY TODO: transcribe POKOJ11 from SWIAT.code.bin block 56 + EXE
-    room region; cage commands. }
+  if MIECHO <> 11 then Exit;
+  WriteLn('JESTES W POKOJU PROWADZACYM DO KLATEK');
+  WriteLn('DRZWI POD TOBA SIE ZATRZASNELY I NIE MASZ ODWROTU');
+  WriteLn('WE WSZYSTKICH KIERUNKACH SA KLATKI I UJADAJACE SIE W NICH POTWORY');
+  WriteLn('NO A POZA TYM NA SCIANIE JEST!!! PLAKAT!!!!');
+  repeat
+    Write(ENERGIA, '%.', KUNSZT);
+    WriteLn('>');
+    ReadLn(wpisz);
+    KOMENDY; { img 0x11345 -> 0x1BB07 }
+    if wpisz = 'MODE' then MODE;
+    if wpisz = 'EXIT' then begin
+      WriteLn('DOSTEPNE WYJSCIA:');
+      WriteLn('WSCHOD-KLATKA CIENIASA');
+      WriteLn('ZACHOD-KLATKA SILNEGO');
+      WriteLn('POLNOC-KLATKA ZRECZNEGO');
+      WriteLn('POLODNIE-KLATKA ODPORNEGO');
+      WriteLn('GORA-KLATKA SILNEGO,ODPORNEGO I ZRECZNEGO ');
+      WriteLn('DOL-JEDYNA DROGA NIE PROWADZACA DO KLATEK');
+    end;
+    if wpisz = 'WYJSCIE' then Exit;
+    if wpisz = 'WSCHOD' then MIECHO := 12;
+    if wpisz = 'ZACHOD' then MIECHO := 13;
+    if wpisz = 'POLNOC' then MIECHO := 14;
+    if wpisz = 'POLODNIE' then MIECHO := 15;
+    if wpisz = 'GORA' then MIECHO := 16;
+    if wpisz = 'DOL' then MIECHO := 17;
+    if wpisz = 'PATRZ PLAKAT' then begin
+      WriteLn('NA PLAKACIE PISZE:');
+      WriteLn('W KLATKACH SA POTWORKI - ZABIJ JE! KOMEDA : ZABIJ [COS] - ZABIJA ');
+      WriteLn('CZASAMI COS WYPADNIE Z POTWORKA MOZE CI SIE TO PRZYDAC');
+    end;
+  until MIECHO <> 11;
 end;
 
 procedure POKOJ30;
-{ TPU entry 56:00F1, code block 64 (0x2AF B). Room 30 = ULICA DLUGA,
-  31 -> 60 (room graph). EXE target: open. }
+{ img 0x11638..0x117DE }
 begin
-  { BODY TODO: transcribe POKOJ30 from SWIAT.code.bin block 64 + EXE
-    room region; street commands/shops. }
+  if MIECHO <> 30 then Exit;
+  WriteLn('ULICA DLUGA CIAGNIE SIE W NIESKONCZONOSC,SORKI');
+  WriteLn('NA POLNOCY ZNAJDUJESZ OGROMNA BUDOWLE=TO ARENA PRZEZNACZONA DO WALKI');
+  repeat
+    Write(ENERGIA, '%.', KUNSZT);
+    WriteLn('>');
+    ReadLn(wpisz);
+    if wpisz = 'MODE' then MODE;
+    if wpisz = 'EXIT' then begin
+      WriteLn('DOSTEPNE WYJSCIA:');
+      WriteLn('WSCHOD-CENTRUM MIASTA');
+      WriteLn('ZACHOD-ULICA DLUGA');
+      WriteLn('POLNOC-WEJSCIE NA ARENE');
+    end;
+    if wpisz = 'WYJSCIE' then Exit;
+    if wpisz = 'WSCHOD' then MIECHO := 20;
+    if wpisz = 'ZACHOD' then MIECHO := 31;
+    if wpisz = 'POLNOC' then MIECHO := 32;
+  until MIECHO <> 30;
 end;
 
 procedure POKOJ60;
-{ TPU entry 64:011F, code block 72 (0x311 B). Room 60 = DOLINA ROZRYWEK
-  (room graph). EXE target: open. }
+{ img 0x118FE..0x11A8C }
 begin
-  { BODY TODO: transcribe POKOJ60 from SWIAT.code.bin block 72 + EXE
-    room region; valley/concert edge commands. }
+  if MIECHO <> 60 then Exit;
+  WriteLn('JESTES W DOLINIE ROZRYWEK DOLINA CIAGNIE SIE NA POLNOC, NA WSCHODZIE');
+  WriteLn('JEST SLYSZALNY JAKIS DZIWNY  HALAS , NA ZACHODZIE ZAS "LA LA LA LA" ');
+  WriteLn('ZAWSZE MOZESZ WROCIC SIE IDAC NA POLODNIE ;)');
+  repeat
+    Write(ENERGIA, '%.', KUNSZT);
+    WriteLn('>');
+    ReadLn(wpisz);
+    if wpisz = 'MODE' then MODE;
+    if wpisz = 'EXIT' then begin
+      WriteLn('DOSTEPNE WYJSCIA:');
+      WriteLn('POLODNIE-ULICA DLUGA');
+      WriteLn('WSCHOD-BUDOWLA PELNA HALASU');
+    end;
+    if wpisz = 'WYJSCIE' then Exit;
+    if wpisz = 'POLODNIE' then MIECHO := 31;
+    if wpisz = 'WSCHOD' then MIECHO := 61;
+  until MIECHO <> 60;
 end;
 
 procedure POKOJ75;
-{ TPU entry 72:014E, code block 80 (0x2CA B). Room 75 = concert district
-  (near LIROY ~73, rooms 69..73; room graph). EXE target: open. }
+{ img 0x11BDC..0x11D9E }
 begin
-  { BODY TODO: transcribe POKOJ75 from SWIAT.code.bin block 80 + EXE
-    room region; FIGHTSCENA-side interactions. }
+  if MIECHO <> 75 then Exit;
+  WriteLn('JESTES NA ULICY CIEMNEJ , WLASCIWIE NARAZIE NIE JEST TU JESZCZE TAK CIEMNO ');
+  WriteLn('TA ULICA WYGLADA NA REMONTOWAN'#164' , NA POLNOC WIDZISZ JAKIS BAR ');
+  WriteLn('NA POLODNIE PRZEBIEGAJA CIE DRESZCZE , JEST TAM NAPRAWDE CIEMNO');
+  repeat
+    Write(ENERGIA, '%.', KUNSZT);
+    WriteLn('>');
+    ReadLn(wpisz);
+    if wpisz = 'MODE' then MODE;
+    if wpisz = 'EXIT' then begin
+      WriteLn('DOSTEPNE WYJSCIA:');
+      WriteLn('ZACHOD-CENTRUM MIASTA');
+      WriteLn('POLNOC-BAR POD DWOMA PEDALAMI');
+      WriteLn('POLODNIE-BLUSZCZ');
+    end;
+    if wpisz = 'WYJSCIE' then Exit;
+    if wpisz = 'ZACHOD' then MIECHO := 20;
+    if wpisz = 'POLNOC' then MIECHO := 76;
+    if wpisz = 'POLODNIE' then MIECHO := 77;
+  until MIECHO <> 75;
 end;
 
 procedure POKOJ100;
-{ TPU entry 88:03AB, code block 88 (0x95E B) — the largest SWIAT proc.
-  Candidate EXE anchor: city-square dispatch img 0x12414..0x129C6,
-  guard [0x1D6] == 0x64 (100) — mapping hypothesis, pin before
-  transcribing. Machine-verified semantics (INTEGRATED-FIELD-MAP.md §
-  "City square dispatch", log entries (12)/(17)):
-    - shows Energy [0x19C] and KUNSZT [0x1D4]; street bios (strings
-      para 0x17CB, img 0x1A660..0x1AE00)
-    - quest buys: 200 / 100 / 50 coins -> QuestCount 75 / 200 / 200
-      (QuestType [0x248], QuestCount [0x24A], Forsa [0x21A:0x21C])
-    - turn-ins: KUNSZT +100 / +0xFA / +0x1A9, Przepustka
-      [0x21E:0x220] -= 10; type2 consumes Dyplom [0x188], EnergyMax -5;
-      type3 consumes Fajka [0x18A], PRAKTYK -1, PRZED -1, Madrosc -1
-    - boss fight: 188/26/10 + wounds 20/10 -> Przepustka on win
-    - room changes: exit / ->0x16 / ->0x65 (pass owned) /
-      PRZEDM_MODE (lcall 0x129D:0x3114) -> context 0x3E8
-    - loops while [0x1D6] == 0x64 }
+{ img 0x12414..0x129C6; quest-master road }
 begin
-  { BODY TODO: transcribe POKOJ100 from SWIAT.code.bin block 88 + EXE
-    img 0x12414..0x129C6. }
+  if MIECHO <> 100 then Exit;
+  WriteLn('ZNALAZLES SIE NA ROZJEZDZIE DROG , DROGI PILNUJE QUEST-MASTER ');
+  WriteLn('QUEST-MASTER NIE POSCI CIE DALEJ DOPOKI NIE KUPISZ I ROZWIAZESZ QUESTA');
+  ULSKLEPIKOWA; { img 0x12460 -> 0x155F2 }
+  repeat
+    Write(ENERGIA, '%.', KUNSZT);
+    WriteLn('>');
+    ReadLn(wpisz);
+    if wpisz = 'MODE' then MODE;
+    if wpisz = 'EXIT' then begin
+      WriteLn('DOSTEPNE WYJSCIA:');
+      WriteLn('POLODNIE-UL.SKLEPIKOWA');
+      WriteLn('WSCHOD-DROGA O KTOREJ MOZESZ POMAZYC ( BO JEST W PRODUKCJI !!! )');
+      if PRZEPUSTKA = 0 then
+        WriteLn('ZACHOD-DROGA ( ZABLOKOWANA PRZEZ QUEST-MASTERA)');
+      if PRZEPUSTKA < 0 then
+        WriteLn('ZACHOD-DROGA');
+    end;
+    if wpisz = 'LISTA' then begin
+      WriteLn('LATWY QUEST      - 200');
+      WriteLn('PRZECIETNY QUEST - 100');
+      WriteLn('TRUDNY QUEST     - 50');
+      WriteLn('KOMEDA - SPRZEDAJ QUEST - OZNACZA IZ QUEST ZOSTAL WYKONANY');
+    end;
+    if (wpisz = 'KUP LATWY QUEST') and (FORSA > 199) then begin
+      WriteLn('ZABIJ 75 POTWOROW');
+      QUEST := 1;
+      QUESTWYK := 75;
+      FORSA := FORSA - 200;
+    end;
+    if (wpisz = 'KUP PRZECIETNY QUEST') and (FORSA > 99) then begin
+      WriteLn('ZABIJ 50 POTWOROW W TYM LIROYA I DAJ MI DYPLOM MUD SZKOLY');
+      QUEST := 2;
+      QUESTWYK := 200;
+      FORSA := FORSA - 100;
+    end;
+    if (wpisz = 'KUP TRUDNY QUEST') and (FORSA > 49) then begin
+      WriteLn('ZABIJ 50 POTWOROW W TYM LIROYA I DAJ MI FAJKE I POSWIEC 1 PRAKTYKE');
+      QUEST := 3;
+      QUESTWYK := 200;
+      FORSA := FORSA - 50;
+    end;
+    if (wpisz = 'SPRZEDAJ QUEST') and (QUEST > 0) then begin
+      if (QUEST = 1) and (QUESTWYK < 1) then begin
+        WriteLn('AAAAA BARDZO MI MILO ZE UDALO CI SIE WYKONAC TEN QUEST');
+        WriteLn(' ------ OTRZYMUJESZ 100 KUNSZTU -----');
+        KUNSZT := KUNSZT + 100;
+        QUEST := 0;
+        QUESTWYK := 0;
+        PRZEPUSTKA := PRZEPUSTKA - 10;
+        PRZED := PRZED + 1;
+      end;
+      if (QUEST = 2) and (QUESTWYK < 1) and (DYPLOM <= -10) then begin
+        WriteLn('AAAAA BARDZO MI MILO ZE UDALO CI SIE WYKONAC TEN QUEST');
+        WriteLn(' ------ OTRZYMUJESZ 250 KUNSZTU -----');
+        KUNSZT := KUNSZT + 250;
+        QUEST := 0;
+        QUESTWYK := 0;
+        DYPLOM := 0;
+        MONSTRA.MAXE := MONSTRA.MAXE - 5;
+        PRZEPUSTKA := PRZEPUSTKA - 10;
+      end;
+      if (QUEST = 3) and (QUESTWYK < 1) and (FAJKA <= -10)
+        and (PRA > 0) then begin
+        WriteLn('AAAAA BARDZO MI MILO ZE UDALO CI SIE WYKONAC TEN QUEST');
+        WriteLn(' ------ OTRZYMUJESZ 425 KUNSZTU -----');
+        KUNSZT := KUNSZT + 425;
+        PRZED := PRZED - 1;
+        MAD := MAD - 1;
+        QUEST := 0;
+        QUESTWYK := 0;
+        FAJKA := FAJKA + 10;
+        PRA := PRA - 1;
+        PRZEPUSTKA := PRZEPUSTKA - 10;
+      end;
+    end;
+    if wpisz = 'WYJSCIE' then Exit;
+    if wpisz = 'POLODNIE' then MIECHO := 22;
+    if (wpisz = 'ZACHOD') and (PRZEPUSTKA <= -10) then MIECHO := 101;
+    if (wpisz = 'ZACHOD') and (PRZEPUSTKA = 0) then
+      WriteLn('QUEST-MASTER MOWI CI : BARDZO MI PRZYKRO ALE MUSISZ MIEC PRZEPUSTKE');
+    if wpisz = 'ZABIJ QUEST-MASTER' then begin
+      POISON := 10; { DGROUP $25F, img 0x1297F }
+      FIREBALL := 20; { DGROUP $25E, img 0x12984 }
+      WROGSIL := 10;
+      WROGZRE := 26;
+      WROGEN := 188;
+      WALKA;
+      if WROGEN < 1 then PRZEPUSTKA := PRZEPUSTKA - 10;
+    end;
+  until MIECHO <> 100;
 end;
 
 procedure POKOJ83;
-{ TPU entry 80:012B, code block 96 (block 0x60) — block missing from the
-  codeblocks extract. Room 83 = PIERDUT/BLUSZCZ tree room (room graph);
-  Duncan black market (SECRET LISTA / KUP DOKUMENT / KUP PLECAK) lives
-  in PRZEDM.FIGHTBLUSZCZ (EXE 0x1B5D2/0x1B6F5, log entry (25)). EXE
-  target: open. }
+{ img 0x11ECA..0x12068 }
 begin
-  { BODY TODO: transcribe POKOJ83 from SWIAT.code.bin block 96 (re-extract
-    the block first) + EXE room region. }
+  if MIECHO <> 83 then Exit;
+  WriteLn('............................. PIERDUT...........PIERDUT......PIERDUT');
+  WriteLn('DOPIERO TERAZ SIE ZORIENTOWALES ZE NA SRODKU STOI WIELKIE DRZEWO');
+  WriteLn('HMMM ALE ZARAZ ... TE KRZAKI NA ZACHOD WYGLADAJA BARDZO PODEJRZANIE....');
+  BLUSZCZ; { img 0x11F32 -> 0x13629 }
+  repeat
+    Write(ENERGIA, '%.', KUNSZT);
+    WriteLn('>');
+    ReadLn(wpisz);
+    KOMENDY; { img 0x11F97 -> 0x1BB07 }
+    FIGHTBLUSZCZ; { img 0x11F9C -> 0x1B5B7 }
+    if wpisz = 'MODE' then MODE;
+    if wpisz = 'EXIT' then begin
+      WriteLn('DOSTEPNE WYJSCIA:');
+      WriteLn('POLNOC-BLUSZCZ');
+      WriteLn('ZACHOD-PODEJRZANE KRZAKI');
+    end;
+    if wpisz = 'WYJSCIE' then Exit;
+    if wpisz = 'POLNOC' then MIECHO := 80;
+    if wpisz = 'ZACHOD' then MIECHO := 84;
+  until MIECHO <> 83;
 end;
 
 begin
-  { unit-initialization: runs once at program start; the EXE emits unit
-    init blocks into the program prologue (entry (32)) }
+  { BOMBKI main initializes MONSTRA.SILNY := 13 at img 0x1973. }
 end.
