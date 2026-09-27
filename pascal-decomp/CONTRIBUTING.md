@@ -32,3 +32,5 @@ History rewrites on `main` are agreed first.
 
 LF, UTF-8, Polish diacritics preserved.
 Files always end with a newline.
+Enforced locally by `.githooks/pre-commit`
+(`git config core.hooksPath .githooks`).
