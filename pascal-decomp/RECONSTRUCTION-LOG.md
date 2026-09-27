@@ -12,13 +12,12 @@ entry `0000:B0CF`, 5295 MZ relocs / 239 in-image cells), `MONSTRA.TPU`,
 
 | file | content |
 |---|---|
-| `MONSTRA.PAS` | unit interface skeleton — 21 Integer globals (`MAXE`…`SILNY`+`WSTEP`), `procedure WSTEP`; body stubs by TPU entry codes |
+| `MONSTRA.PAS` | 20 Integer globals (`MAXE`…`SILNY`) and `procedure WSTEP`; WSTEP is the intro routine |
 | `SWIAT.PAS` | 12 room bodies, POKOJ0..POKOJ100 and POKOJE (img 0xF5D0..0x129C6) |
 | `PRZEDM.PAS` | fullest — 167 globals, 35 entries: `BRANIE, UZYWANIE, TARCZA, WALKA, MINIARENA, KTO, MODE, SLABO..BARUDNO`; Integer/Text/string typing resolved; source-equivalent bodies for the interface procs (see §5) |
-| `BOMBKI.PAS` | main skeleton with `uses crt,swiat,przedm,monstra,dos,system` |
+| `BOMBKI.PAS` | partial main-program reconstruction: startup, numerous inline contexts, and an incomplete main loop |
 | `WALKA-CombatEngine-reconstructed.pas` | full combat-engine body (see entry (9)) |
 | `WCZYTANIE-LoadEngine-reconstructed.pas` | full save/load-engine body (see entry (10)) |
-| `WSTEP-reconstructed.pas` | WALKA kick+flee block |
 
 Interfaces are verified byte-accurate against the TP7 unit dumps: 0 leftover
 foreign `System.ofsXXXX` references; all far pointers resolved to
@@ -38,13 +37,16 @@ the real save: `1000\r\n24\r\n-100\r\n0\r\n-10\r\n-100\r\n0\r\n99\r\n380...
 10000\r\n21JA\r\n-15...`. Integer stats are stored one-per-line; narrative
 text afterwards; `plik: Text` write with `WriteLn`.
 
-## 3. Scope — cut line
+## 3. Current reconstruction status
 
-The interface/save-format reconstruction and PRZEDM source bodies preceded the
-room transcription. SWIAT's 12 bodies now have a same-build EXE/TPU mapping
-(img 0xF5D0..0x129C6; see §5, 2026-09-27), superseding the previous
-different-build assumption *for SWIAT*. The remaining `BODY TODO` stubs in
-other units are the earlier scoped cut, not implicit reconstruction claims.
+`BOMBKI.PAS` is still being reconstructed. Its startup, numerous inline
+contexts (through concert context 72), and the dispatch loop are partially
+transcribed; concert encounter helpers, MODE/save-load tail, and remaining
+inline behavior remain open (img 0xB193..0xF5C9; see §5, findings (34)
+onward). SWIAT's 12 bodies have a
+same-build EXE/TPU mapping (img 0xF5D0..0x129C6; see finding (33)). Stubs in
+other units remain outside the current BOMBKI.PAS task and are not
+reconstruction claims.
 
 ## 4. Evidence grounding (disassembly, all verified)
 
@@ -58,9 +60,9 @@ Three independent x86-16 experiments against BOMBKI.EXE:
    through img 0x129B8 outside patched relocation slots; the last 14 bytes
    are absent from the TPU dump (see §5, 2026-09-27). No same-build
    conclusion follows for MONSTRA or PRZEDM from this SWIAT-only correction.
-2. **Entry sweep** (`0000:B0CF`): the loader's entry IP lands on a Pascal
-   string-const, `"NOSISZ ZE SOBA:"` (0F-length prefix), not on code — so the
-   EXE entry is not a linear code start and the real main is elsewhere.
+2. **Entry trace** (`0000:B0CF`): the loader enters `lcall 1C71:0000`, the
+   System bootstrap (img 0xB0CF); the literal `"NOSISZ ZE SOBA:"` is at img
+   0x00000 and is not the entry target (see finding (32), corrected below).
 3. **Reloc histogram**: stored far-paragraph cells cluster at **0E42 (52 refs:
    game code seg)** and **05DD (35 refs: data seg)** — the two paragraphs the
    game body really lives in. The image was disassembled recursive-descent
@@ -697,10 +699,10 @@ formula.
   - MZ header: `CS:IP = 0000:B0CF`, header paragraphs `0x52E`, image length `0x1D4F0`. With `img = file[0x52E*16:]`, the entry is at **img 0xB0CF**, not img 0x00000.
   - Bytes at img 0xB0CF are `9A 00 00 71 1C` = **`lcall 1C71:0000`** — real code, the System bootstrap (DS=DGROUP 0x1D49, BSS zeroed 0x52..0x8EE, CPU probe, heap init).
   - The string `'NOSISZ ZE SOBA:'` (0F-length prefix) sits at **img 0x00000**, at the literal-pool start — it is not the entry target.
-- **Traced startup order (img-relative):** `0xB0CF` `lcall 1C71:0000` (System bootstrap) → `1C0F:000D` (std TextRec init) → main prologue `0xB0D9` (`push bp; mov bp,sp; xor ax,ax`) → `1C71:02CD` (heap check) → `1C71:0C79` (`GetTime` → `Randomize` seed) → `call 0x116EF` → `1C0F:031A` → `call 0x51C3` (`Checkpoint`) → `call 0x872E` (`LevelUp`) → `mov ax,[0x182]` (PRZED) / `cmp [0x62]` (MaxLoad) / `jg` overload-print block → `jmp 0xB193` main loop.
-- **Open nuance — first game call.** `call 0x116EF` at img 0xB0E8 (`E8 04 66`) computes target `0x116EF`, which is **byte 2 of the 5-byte `lcall 1C71:09D7`** at img 0x116EE (`9A D7 09 71 1C`) — off-by-one against the linear sweep. The enclosing routine's prologue is at img 0x11638 (`push bp; mov bp,sp; xor ax,ax`); taking img 0x116EE as the start yields the clean stream (`lcall 1C71:0291`; `mov di,0x564`; push/push; `lcall 1C71:09D7`; `jne`; `lcall 129D:3114` `PRZEDM_MODE`). Not blocking — the startup/input-overwrite routine writes textrec 0x564 with strings cs:0x1FEE/0x1FF3/0x1FF8 and calls `PRZEDM_MODE`.
-- **Stat-table writes are spread, not central.** `OWCZAREK` `[0x1B0]` (`mov word [0x1B0],imm`) hits at 0x5DB4, 0xB3CE, 0xB695, 0xB85E, 0xD091, 0x10981, 0x12995, 0x12A20, 0x13843; `[0x1B8]` at 0x5DBA, 0xB3D4, 0xB69B, 0xB864, 0xD097, 0x10987, 0x1298F, 0x12A26, 0x13849, 0x13DE9, 0x13F0C; `StaryMiecz` `[0x17E]` at 0x3F5C, 0xEC33, 0xED5E, 0xEDB5, 0x18446 — i.e. stats are written inside many game procs (WSTEP, spawns, LevelUp), not a single central init block. The proc at 0x5C36 reads textrec 0x564 with string cs:0x5B7C, checks `[0x58]==0xC`, then writes fresh MONSTRA stats and calls `WALKA 0x129D:0x44A6`.
-- **Unit inits live in the program-body prologue.** The RTL/System zone (paras `0x1C0F..0x1D4F`) never calls game code below `0x1C00`, so unit initialization blocks are emitted into the program-body prologue after the traced head rather than being called from System/CRT.
+- **Corrected startup order (img-relative):** `0xB0CF` `lcall 1C71:0000` (System bootstrap) -> `1C0F:000D` (TextRec initialization) -> main prologue `0xB0D9` -> heap check `1C71:02CD` -> `1C71:0C79` (`Randomize`) -> near `call` at `0xB0E8`. Its rel16 arithmetic yields `0x116EF`, but the real-mode 16-bit IP wraps to `0x16EF`; this is the `WybierzRase` entry (`push bp; mov bp,sp`, img 0x16EF). At img 0x16F9 it far-calls `1BC4:022B`, the MONSTRA TPU entry `WSTEP`; the literal intro runs before the race prompt. After it returns, race/name setup proceeds, then `1C0F:031A`, `Checkpoint` (`0x51C3`), `LevelUp` (`0x872E`), overload gate, and main loop (`0xB193`). Evidence: `annotated-BOMBKI.asm` at img 0xB0E8, 0x16EF, and 0x16F9; `MONSTRA.entries.txt` maps WSTEP to block 0000:022B.
+- **Superseded startup interpretation:** the previous "mid-instruction/off-by-one" reading treated the linear disassembler's unwrapped near-call target as an actual IP. The target wraps to img 0x16EF; `WybierzRase` then calls `WSTEP` by far call at img 0x16F9. The inference that this was an unrelated startup/input-overwrite routine was wrong. The earlier statement that unit initialization blocks therefore belong to the program prologue is withdrawn; this call evidence does not establish where every unit initialization runs.
+- **Stat-table writes are spread, not central.** `OWCZAREK` `[0x1B0]` (`mov word [0x1B0],imm`) hits at 0x5DB4, 0xB3CE, 0xB695, 0xB85E, 0xD091, 0x10981, 0x12995, 0x12A20, 0x13843; `[0x1B8]` at 0x5DBA, 0xB3D4, 0xB69B, 0xB864, 0xD097, 0x10987, 0x1298F, 0x12A26, 0x13849, 0x13DE9, 0x13F0C; `StaryMiecz` `[0x17E]` at 0x3F5C, 0xEC33, 0xED5E, 0xEDB5, 0x18446 — writes occur in multiple game procedures and launchers, not a single central init block. The proc at 0x5C36 reads textrec 0x564 with string cs:0x5B7C, checks `[0x58]==0xC`, then writes fresh combat stats and calls `WALKA 0x129D:0x44A6`.
+- **Unit-initialization placement remains OPEN.** The startup path explicitly calls `MONSTRA.WSTEP` from `WybierzRase` (img 0x16F9); this supersedes the unsupported general claim that game-unit code is only emitted into the program prologue. This one call does not locate every unit initialization block.
 
 ### 2026-09-27 (33): SWIAT same-build region and room bodies
 
@@ -763,6 +765,273 @@ formula.
 - **OPEN transcription scope:** inline room handlers and the MODE command
   body at img 0xB25A..0xF5B1 still need source transcription before the
   main-program `BODY TODO` can be replaced with a source-equivalent loop.
+
+### 2026-09-27 (35): first inline room handlers transcribed
+
+- Transcribed the room-2 loop at img 0x548A..0x5651: context-2 description,
+  status prompt, MODE and exit handling, west transition, poster text, and the
+  PRZEDM training call at img 0x5641. The poster and exit literals are at img
+  0x542D, 0x5442, 0x546B, 0x53E8, and 0x53FA; the call target is
+  PRZEDM:0x7B5.
+- Transcribed room 3's context-3 description, prompt, exit, up/down transitions,
+  and the program-local poster/CWICZ handler at img 0x2395..0x2B74 (called at
+  img 0x5853). `PATRZ PLAKAT` prints the ability poster; the six practice
+  commands update KOP, Uciekanie, Powracanie, Parowanie, POR, and POTRAWKI with
+  their stat gates, caps, costs, formulas, and failure message, grounded at
+  img 0x23A5..0x2B74. The unclaimed DGROUP word 0x78 is exposed as the invented
+  Pascal label `Powracanie` (skill use at img 0x2930..0x2958).
+- Transcribed room 9's text, prompt, exit list, and DOL/GORA transitions from
+  img 0x5923..0x5A8C.
+- Added the context-18 teleport vignette: four lines print and the context is
+  immediately set to room 1 (img 0xBCA2..0xBD1E). Room 17's DOL command selects
+  context 18 at img 0xBC92.
+- Transcribed room 12's flavor, context-12 gate, west/exit loop, combat profile
+  (HP20/Dex3/Dmg3), flee handling, coin reward, and the three conditional item
+  drop attempts from img 0x5C36..0x5F08. The room's encounter flag is DGROUP
+  0x58 (tested against 12 and cleared on non-flee); its ownership is still
+  unnamed. The writes of 500/300/50 to DGROUP 0x66/0x68/0x6A are represented by
+  neutral invented labels rather than inferred meanings (img 0x5E6C/0x5EAE/
+  0x5EF0).
+- MODE's broader main-program command handling remains OPEN at img
+  0xB25A..0xF5B1. Compilation was checked with FPC 3.2.2 in TP mode after the
+  room-3 handler was transcribed; the compiler returned exit status 0.
+
+### 2026-09-27 (36): WSTEP intro call and log corrections
+
+- The startup call at img 0xB0E8 is a near `CALL rel16`. Its arithmetic gives
+  0x116EF, but the real-mode 16-bit IP wraps to 0x16EF, the `WybierzRase`
+  prologue. That procedure far-calls `1BC4:022B` at img 0x16F9; the
+  `MONSTRA.entries.txt` record maps block 0000:022B to `WSTEP`. Thus the intro
+  is executed before the race prompt; the previous “middle of an instruction”
+  interpretation confused the disassembler's unwrapped linear target with the
+  processor's wrapped IP. Source call added to `BOMBKI.PAS`.
+- Refreshed the present-day scope/status above: the earlier “cut line” wording
+  and main-skeleton deliverable label no longer described the active work.
+- **OPEN:** finish transcribing the inline contexts and MODE/main-loop body
+  before marking `BOMBKI.PAS` complete (img 0xB193..0xF5C9).
+
+### 2026-09-27 (37): ordered dispatch and garden/city contexts
+
+- Replaced the Pascal `case` approximation with independent, ordered context
+  tests. This matters when a handler changes context to a later branch during
+  the same pass (e.g. context 20 to 75, img 0xBF00..0xBF22). `POKOJE` is called
+  unconditionally after the context-5 test, matching img 0xB21D..0xB229.
+- Split garden behavior by active context 77..82 inside the invented helper:
+  distinct entry descriptions, exits, and transitions follow img
+  0xC20C..0xCC0C. Context 80 includes the well/inscription responses and
+  Random(3)+1 coin reward; the 40% hostile event is grounded at img
+  0xC8A1..0xC978.
+- Added context 20's city description, PRZEDM.ULSKLEPIKOWA call, poster text,
+  exit list, and movement destinations from img 0xBD29..0xBF0A.
+- Corrected the arena entrance gate to context 32 only; MINIARENA handles
+  cells 33..57 internally (img 0xEA0B..0xEA1A), not every context >=33.
+- **OPEN:** the remaining inline contexts and MODE/main-loop tail still require
+  transcription (img 0xCC18..0xF5C9).
+
+### 2026-09-27 (38): cave entrance and encounter handlers
+
+- Added partial source transcriptions for contexts 84, 87, and 88 from img
+  0xCC18..0xD1FB: room prose,
+  exits/transitions, context-87 random damage (`Random(100) < 40`, damage
+  `25-ZrecznoscCur`), and context-88 monster setup (HP 200, dexterity 15,
+  damage 18; wound bytes 5 and 1), combat, conditional drops/quest decrement,
+  and return to 87 while Energy is positive. The kill reward/quest path tests
+  monster HP `< 0`, not `< 1` (img 0xD0B2..0xD0D9).
+- Added context 85's living-door prose, combat gate (`PRZEDM.NEASY`), open-door
+  condition, exits, and transitions from img 0xD205..0xD41D. The door-state
+  word at DGROUP 0x688 is given the invented label `StanDrzwi`; the conditional
+  behavior and linked prose support that meaning.
+- Added a partial context-86 handler below; its multi-stage old-man quest and
+  remaining inline actions are not yet a complete reconstruction (img
+  0xD427..0xD7F0).
+- **OPEN:** remaining main-loop contexts and tail still require reconstruction
+  (img 0xD7F0..0xF5C9).
+
+### 2026-09-27 (39): living-door context
+
+- Added the context-85 handler and dispatch branch. `StanDrzwi` represents
+  DGROUP word 0x688: nonzero blocks entry and enables the `ZABIJ DRZWI` /
+  `PRZEDM.NEASY` path; successful damage clears it. Westward entry to context
+  86 is permitted only after it is zero (img 0xD244..0xD3D9).
+
+### 2026-09-27 (40): old man's room, partial
+
+- Added the context-86 prose, visible actions, dialogue/payment branches,
+  old-man kill path, exits, and transitions. Field 0x68A is represented as
+  `StanStarucha`; the unidentified DGROUP words 0x7A/0x7C remain neutral
+  `PoleBOMBKI007A`/`PoleBOMBKI007C` labels. Source remains partial: the
+  dialogue's precise conditions and subsequent branches still need instruction-
+  level reconciliation (img 0xD427..0xD7F0).
+
+### 2026-09-27 (41): shop street context
+
+- Added context 21's description, conditional street encounter flavor via
+  `PRZEDM.ULSKLEPIKOWA`, prompt/command processing, exits, and four movement
+  transitions (img 0xD7FA..0xD9C0). The call target at img 0xD832 matches the
+  helper's MIECHO-keyed street-description behavior.
+- **OPEN:** contexts 22 onward and main-loop tail remain unfinished (img
+  0xD9CA..0xF5C9).
+
+### 2026-09-27 (42): extended shop street
+
+- Added context 22's continuation description, street encounter helper, exit
+  list, and movement to contexts 21, 101, 25, and 26 (img 0xD9CA..0xDBA4).
+- **OPEN:** contexts 101 onward and main-loop tail remain unfinished (img
+  0xDBA4..0xF5C9).
+
+### 2026-09-27 (43): road context
+
+- Added a partial context-101 handler with road narrative, signpost response,
+  exit list, and the observed east/west/north destination writes (img
+  0xDBA4..0xDDA8). The neighboring near-call `0x11C2A` is not yet interpreted
+  in the Pascal source and remains OPEN.
+- **OPEN:** contexts 102 onward and main-loop tail remain unfinished (img
+  0xDDA8..0xF5C9).
+
+### 2026-09-27 (44): road fork contexts
+
+- Added partial context-102 and context-103 transcriptions: road descriptions,
+  command prompts, exit text, and their observed movement branches (img
+  0xDDA8..0xE0F2). The northern/southern forest exits are printed but do not
+  receive movement writes in these code blocks.
+- **OPEN:** context 100, context 23 onward, and the MODE/main-loop tail remain
+  unfinished (img 0xE0F2..0xF5C9).
+
+### 2026-09-27 (45): bakery and armory shells
+
+- Added partial inline context-23 bakery and context-24 armory handlers with
+  room prose, prompts, poster responses, exits, and observed movement writes
+  (img 0xE0FE..0xE42B). Both call the reconstructed command normalizer; the
+  bakery transaction helper at img 0x139BE and armory/shop behavior remain
+  OPEN rather than guessed.
+- The context-100 quest-master room is already supplied by `SWIAT.POKOJ100`
+  and dispatches at img 0xEA15; it is not an untranscribed inline room.
+- **OPEN:** contexts 25, 26, 31 and the MODE/main-loop tail remain (img
+  0xE42B..0xF5C9).
+
+### 2026-09-27 (46): multi-purpose shop contexts
+
+- Added partial inline handlers for contexts 25 and 26: store descriptions,
+  posters, exits, and the observed west/east transitions (img 0xE435..0xE6EB).
+  Their calls to the original shop transaction routines at img 0x143A5 and
+  0x14ADD remain explicit OPEN behavior rather than guessed mechanics.
+- **OPEN:** context 31 and the MODE/main-loop tail remain (img
+  0xE6EB..0xF5C9).
+
+### 2026-09-27 (47): long street context
+
+- Added inline context 31's street prose, prompt, exit list, and north/east
+  context writes (img 0xE6F5..0xE854). The adjacent POKOJ60 dispatch remains
+  in SWIAT; context 31 does not process the poster action, which belongs to the
+  later arena context 32 block.
+- **OPEN:** the called context-61..64 crowd/concert handlers and MODE/main-loop
+  tail remain (img 0xE854..0xF5C9; nested handler begins at img 0x68BC).
+
+### 2026-09-27 (48): arena entrance and MINIARENA dispatch
+
+- Added context 32's entrance narrative, warning poster, exits, and transitions
+  to contexts 30/33 from img 0xE86D..0xEA0B. Corrected main dispatch: the
+  original calls `PRZEDM.MINIARENA` unconditionally at img 0xEA15, and its
+  reconstructed body is guarded to contexts 33..57; the inline entrance must
+  therefore remain a distinct handler before that call.
+
+### 2026-09-27 (49): concert hall and crowd-edge shells
+
+- Added partial handlers for contexts 61, 62, and 63, including prose,
+  `PRZEDM.TLUM`, poster text in 61, exits, and the observed transitions
+  (img 0x68D0..0x6DCD). Their `KillDispatch` calls at img 0x6A20, 0x6BF1,
+  and 0x6D67 remain OPEN rather than silently omitted from the status.
+- **OPEN:** crowd contexts 64..66, venue contexts 67..72, and the main-loop
+  tail remain (nested handler img 0x6DD2..0x7D69; main tail img
+  0xEA15..0xF5C9).
+
+### 2026-09-27 (50): inner crowd contexts
+
+- Added partial context 64, 65, and 66 handlers with crowd prose, `TLUM`
+  descriptions where called, exits, and observed movement destinations (img
+  0x6DD2..0x723C). The additional helpers at img 0x6E74/0x701D/0x7177 and
+  `KillDispatch` at 0x6F10/0x709D/0x71F7 remain OPEN.
+- **OPEN:** venue contexts 67..72 and the main-loop tail remain (img
+  0x723C..0x7D69; tail img 0xEA15..0xF5C9).
+
+### 2026-09-27 (51): pub encounter and beer rewards
+
+- Added partial context 67 with the conditional bartender/drunk prose, exits,
+  movement, and both `ZABIJ` combat/reward sequences (img 0x7250..0x74FA).
+  The two flag words remain neutral `PoleBOMBKI007A`/`PoleBOMBKI007C`; the
+  shared `KillDispatch` and helper at img 0x7333 remain OPEN.
+- **OPEN:** contexts 68..72 and the MODE/main-loop tail remain (img
+  0x74FA..0x7D69; main tail img 0xEA15..0xF5C9).
+
+### 2026-09-27 (52): stage entrance and scene contexts
+
+- Added partial room handlers for contexts 68..72: entry sign, stage/crowd
+  descriptions, exit lists, and observed movement writes (img
+  0x750E..0x7D69). `SCENA` calls and the DJ context test use the recovered
+  unit symbol; other context-specific helpers, DJ combat/reward logic, and
+  stage combat helpers remain OPEN.
+- **OPEN:** exact transcription of those nested helpers and the MODE/save-load
+  /return tail (img 0x75AB..0x7D5A and 0xEA15..0xF5C9).
+
+### 2026-09-27 (53): main-loop return and flee reset
+
+- Transcribed the confirmed tail behavior: `UNMODE`/`UM` restore
+  `PRZEDM.MIECHO2` to the active context (img 0xF584..0xF5A7),
+  `PRZEDM.PASZOL := 0` follows the MODE block (img 0xF5B2..0xF5B4), and
+  context 193 exits while all other contexts return to the main prologue
+  (img 0xF5B7..0xF5C5). This records the control flow, not the still-open
+  command implementation within MODE.
+- **OPEN:** MODE's command body, including save/load and skill/item commands,
+  and the inline context-specific helpers (img 0xEAF8..0xF584 and
+  0x75AB..0x7D5A).
+
+### 2026-09-27 (54): restore inline room dispatch order
+
+- Moved the context-32 entrance check ahead of contexts 61 onward, matching
+  the original order: POKOJ60 at img 0xE85B, context 32 at img 0xE86D, then
+  context 61 at img 0xE8BC. This preserves same-pass transitions into later
+  room handlers.
+
+### 2026-09-27 (55): race prompt and checkpoint repetition
+
+- Corrected the race loop to read directly after the race list, with no
+  `CZLOWIEK` prompt, and removed the invalid-choice line that duplicated intro
+  prose. The machine sequence is list output/read at img 0x1703..0x1732,
+  followed by the race comparisons; invalid choices return to the list at
+  img 0x1925..0x1928. Added the POL-ELF 30-coin grant and removed the invented
+  checkpoint-stage value 12; its zero start is from cleared DGROUP at img
+  0x51D5 and the first stage checks at img 0x51C3.
+- A checkpoint invocation now stops after its first eligible transition, so a
+  high starting KUNSZT cannot print several checkpoints in one call. **OPEN
+  fidelity note:** the EXE uses sequential independent checks at img
+  0x51C3..0x5344, which can cascade when later-stage thresholds are already
+  met; retain this UI-reported fix unless further evidence calls for strict
+  instruction-equivalent cascading.
+
+### 2026-09-27 (56): connect stage encounter helpers
+
+- Reconnected the existing `PRZEDM.SCENA` and `PRZEDM.FIGHTSCENA` calls in
+  contexts 70..72 at img 0x7986/0x7AA8, 0x7AF9/0x7C1B, and
+  0x7C6C/0x7D5A. `SCENA` supplies the active musician description and
+  `FIGHTSCENA` handles kill commands, rewards, and Liroy quest progress; both
+  procedure bodies are in `PRZEDM.PAS` (EXE call targets PRZEDM:0x31FF and
+  0x85C7). Context 69 has its separate inline DJ encounter; no shared stage
+  fight call was added there.
+- **OPEN at entry time:** context 69's DJ fight/reward branch (img
+  0x7817..0x78DC; resolved by finding (57)), and the MODE/save-load command
+  implementation (img 0xB25A..0xF5B1).
+
+### 2026-09-27 (57): transcribe the backstage DJ encounter
+
+- Reconstructed `ZABIJ D.J` in context 69: it is gated by the room flag being
+  69, runs `PRZEDM.BTRUDNO`, and only awards drops when enemy HP is negative.
+  The flag then clears; one `Random(100)` result grants a ration below 25 and
+  a Liroy cassette below 3, with the cassette's max-energy, max-load, carried
+  count, and dexterity effects (img 0x7817..0x78D9). The gating/clear word at
+  DGROUP 0x67E is the recovered `MONSTRA.DJ` variable, confirmed by the same
+  storage's context-69 description test.
+- **OPEN:** finish MODE/save-load command implementation (img
+  0xB25A..0xF5B1) and remaining inline kill dispatches.
 
 ## 6. Open items
 
