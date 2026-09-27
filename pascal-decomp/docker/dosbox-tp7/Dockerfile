@@ -13,7 +13,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 #       volumes:
 #         - ${{ github.workspace }}:/workspace
 #
-# See .github/workflows/build-dosbox-image.yml for the build and
+# See .github/workflows/build-dosbox-tp7-image.yml for the build and
 # push to GHCR.
 
 RUN apt-get update -qq && \

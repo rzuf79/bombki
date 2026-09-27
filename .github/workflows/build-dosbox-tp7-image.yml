@@ -1,10 +1,10 @@
-name: build-dosbox-image
+name: build-dosbox-tp7-image
 
 on:
   push:
     paths:
       - 'pascal-decomp/docker/dosbox-tp7/**'
-      - '.github/workflows/build-dosbox-image.yml'
+      - '.github/workflows/build-dosbox-tp7-image.yml'
     branches: [main]
   workflow_dispatch:
 
