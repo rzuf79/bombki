@@ -1,4 +1,4 @@
-// BOMBKI-body.pas -- reconstructed game proc bodies (EXE image)
+// BOMBKI-body.asm -- raw game proc body disassembly (EXE image)
 // DGROUP anchors: MONSTRA @0x1AC (21 ints), PRZEDM @~0x17E.
 // Comments resolve memory operands to interface globals.
 
