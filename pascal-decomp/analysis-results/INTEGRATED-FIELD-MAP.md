@@ -2,10 +2,10 @@
 
 The EXE save routine (img 0x2BA1) writes 80 fields to the unlabelled text save
 file whose filename literal is lowercase `pliki.tpu` (save at img 0x2BEF,
-load at img 0x7DAC). The retained sample is `../og/PLIKI.TPU` (uppercase
+load at img 0x7DAC). The retained sample is `../../og/PLIKI.TPU` (uppercase
 spelling); despite its `.TPU` extension, it is a text save record, not a
 compiled TPU unit.
-`analysis-results/disasm/procs/SAVE-FIELD-MAP.txt` records the write order. The
+`disasm/procs/SAVE-FIELD-MAP.txt` records the write order. The
 EXE load routine (img 0x7D80..0x85FF) reads those fields into DGROUP. The field
 map below is cross-checked against the character-sheet display routine
 (img 0x11BA..0x1405), level-up routine (img 0x8990..0x8BA0), and PRZEDM TPU
@@ -602,7 +602,7 @@ were a miscalculated paragraph; img offsets are authoritative (0E42*16+9A57 =
 
 The source of truth is `BOMBKI.EXE`, the retained `MONSTRA.TPU`, `SWIAT.TPU`,
 and `PRZEDM.TPU`, and machine evidence derived from those files under
-`analysis-results/`. The C-port comparison is a historical, non-authoritative
+this directory. The C-port comparison is a historical, non-authoritative
 record only; it does not corroborate or constrain any claim below.
 
 ### TPU Pascal symbols -> EXE offsets (confirmed bindings)
