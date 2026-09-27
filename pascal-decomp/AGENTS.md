@@ -53,6 +53,9 @@ listings, TPU/EXE reports, raw dumps) under `analysis-results\`.
 - Stage explicit paths only (`git add <files>`), never `git add -A`.
 - Pre-commit checks: file is LF-only (no CR bytes), no trailing whitespace,
   `git diff --check` clean.
+- Hook: enable `.githooks/pre-commit` with `git config core.hooksPath .githooks`
+  — enforces newline at EOF, LF-only, no trailing whitespace, and never staging
+  `../og/`.
 
 ## History rewrites
 
