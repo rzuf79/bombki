@@ -1,10 +1,14 @@
 # BOMBKI - reverse-engineering reconstruction results
 ### MONSTRA / SWIAT / PRZEDM (Turbo Pascal 7, x86-16 real-mode, Polish DOS)
 
-Game: **BONDBI** / BOMBKI — turn-based adventure, Mateusz Pawluczuk (Kraków).
-Ground truth: `BOMBKI.EXE` (MZ real-mode, 120 048 B image, base img `0052E0`,
-entry `0000:B0CF`, 5295 MZ relocs / 239 in-image cells), `MONSTRA.TPU`,
-`SWIAT.TPU`, `PRZEDM.TPU` (TP7 TPUQ units), `PLIKI.TPU` (text save).
+Game: **BOMBKI**, a turn-based text RPG by Mateusz Pawluczuk.
+Ground truth: `BOMBKI.EXE` (MZ real-mode image, entry `0000:B0CF`) and the
+TP7 TPUQ units `MONSTRA.TPU`, `SWIAT.TPU`, and `PRZEDM.TPU`. The retained
+`../og/PLIKI.TPU` artifact is the game's plain-text save record, not a compiled
+TPU unit. The EXE uses the filename literal `pliki.tpu` for both saving
+(img 0x2BEF) and loading (img 0x7DAC). The retained artifact spells the name
+uppercase; the EXE literal is lowercase. Uppercase was conventional for DOS
+8.3 filenames, and DOS APIs generally treated filename case as insignificant.
 
 ---
 
@@ -12,41 +16,36 @@ entry `0000:B0CF`, 5295 MZ relocs / 239 in-image cells), `MONSTRA.TPU`,
 
 | file | content |
 |---|---|
-| `MONSTRA.PAS` | 20 Integer globals (`MAXE`…`SILNY`) and `procedure WSTEP`; WSTEP is the intro routine |
-| `SWIAT.PAS` | 12 room bodies, POKOJ0..POKOJ100 and POKOJE (img 0xF5D0..0x129C6) |
-| `PRZEDM.PAS` | fullest — 167 globals, 35 entries: `BRANIE, UZYWANIE, TARCZA, WALKA, MINIARENA, KTO, MODE, SLABO..BARUDNO`; Integer/Text/string typing resolved; source-equivalent bodies for the interface procs (see §5) |
-| `BOMBKI.PAS` | partial main-program reconstruction: startup, numerous inline contexts, and an incomplete main loop |
-| `WALKA-CombatEngine-reconstructed.pas` | full combat-engine body (see entry (9)) |
-| `WCZYTANIE-LoadEngine-reconstructed.pas` | full save/load-engine body (see entry (10)) |
+| `reconstructed/MONSTRA.PAS` | 21 integer globals and `WSTEP` (intro routine) |
+| `reconstructed/SWIAT.PAS` | 12 room procedures and `POKOJE` (img 0xF5D0..0x129C6) |
+| `reconstructed/PRZEDM.PAS` | reconstructed unit globals and interface procedures, including combat and arena handlers |
+| `reconstructed/BOMBKI.PAS` | partial main-program reconstruction: startup, many inline contexts, and an incomplete main loop |
 
 Interfaces are verified byte-accurate against the TP7 unit dumps: 0 leftover
 foreign `System.ofsXXXX` references; all far pointers resolved to
 `System`/`CRT`/unit-local, plus `string` = System.ofs00BA seed.
 
-Port status (2026-09-26): the portable port (`c-port/`) was cross-checked
-against this reconstruction and develops separately; it is NOT a reference for
-the PAS deliverables, which are grounded in the EXE/TPU evidence only. Port
-comparisons live exclusively in `C-PORT-DISCREPANCIES.md` (entries 1..19 +
-"Confirmed 1:1"); this file carries original-side results and register
-pointers only.
+The reconstruction is grounded in EXE/TPU evidence only. Any C-port comparisons
+preserved in this log or `C-PORT-DISCREPANCIES.md` are historical snapshots,
+not source evidence, requirements, or a compatibility target.
 
-## 2. Save format (PLIKI.TPU = text, CRLF)
+## 2. Save format (`PLIKI.TPU`)
 
-Plain-text save, cp437-safe, CRLF line endings — *not* a TPU. First bytes of
-the real save: `1000\r\n24\r\n-100\r\n0\r\n-10\r\n-100\r\n0\r\n99\r\n380...
-10000\r\n21JA\r\n-15...`. Integer stats are stored one-per-line; narrative
-text afterwards; `plik: Text` write with `WriteLn`.
+The game's save file is named `pliki.tpu` in the EXE; the retained artifact is
+`../og/PLIKI.TPU` (uppercase spelling). It is plain text, not a compiled TPU
+unit. The game writes an unlabelled sequence with Pascal `WriteLn`; the
+save-field report records 80 serialized fields. The
+sample at field 15 is anomalous, so its interpretation remains OPEN. See
+findings (6) and (7) for the write order and field-name cross-check.
 
 ## 3. Current reconstruction status
 
-`BOMBKI.PAS` is still being reconstructed. Its startup, numerous inline
-contexts (through concert context 72), and the dispatch loop are partially
-transcribed; concert encounter helpers, MODE/save-load tail, and remaining
-inline behavior remain open (img 0xB193..0xF5C9; see §5, findings (34)
-onward). SWIAT's 12 bodies have a
-same-build EXE/TPU mapping (img 0xF5D0..0x129C6; see finding (33)). Stubs in
-other units remain outside the current BOMBKI.PAS task and are not
-reconstruction claims.
+`BOMBKI.PAS` remains partial. Startup and many inline contexts are transcribed;
+open work includes the MODE command body, shop transactions, and several
+room-specific kill handlers (see findings (34) onward and §6). `SWIAT.PAS`
+contains all 12 mapped room procedures; the matching EXE region and TPU bytes
+are compared in finding (33). The three reconstructed unit files are the
+scope of this Pascal project.
 
 ## 4. Evidence grounding (disassembly, all verified)
 
@@ -72,6 +71,10 @@ Three independent x86-16 experiments against BOMBKI.EXE:
    addresses used in the TPU interface reports.
 
 ## 5. Reconstruction findings (dated)
+
+C-port comparisons appearing in dated findings below record the state of a
+separate project at that time; they are retained for history only and never
+establish reconstruction facts or requirements.
 
 ### 2026-09-24 (1): DGROUP anchors verified
 Empirical scan of TP7 global-access idioms (C7 06 / 89 06 / 3B 06 / A1 / ...)
@@ -121,14 +124,14 @@ by room(+fight)-outcome flags, NOT strictly a 32-array and NOT a 100-room map
 129D:12A1. Open item: exact name per slot — solvable by pairing save()/
 wczytaj() WriteLn order.
 
-### 2026-09-24 (5): save()=DGROUP serialization -> SUPERSEDED by (6)
-Preliminary read of PLIKI.TPU (thought 81 fields); field numbering/guesses here
+### 2026-09-24 (5): preliminary save-field read -> SUPERSEDED by (6)
+Preliminary read of `PLIKI.TPU` (thought 81 fields); field numbering/guesses here
 are WRONG (off-by-one + interpretation) and are replaced by the decoded save()
-(see (6)). Developer side-finding stands: author box path /Users/zrfu/...
-(Linux/macOS).
+(see (6)).
 
 ### 2026-09-24 (6): save() proc decoded (80 fields = file 1:1)
-PRZEDM.save() = EXE paragraph at img 0x2BA1 (write order = file order):
+EXE `save` routine at img 0x2BA1 (write order = file order). The labels below
+are preliminary and are superseded by the load-side cross-check in finding (7):
 
   #   slot  expr(saved->raw)      file         meaning
   1  0x1AC  [0x1AC]<<2 =1000      1000      MAXE*4? (raw 250)
@@ -144,18 +147,16 @@ PRZEDM.save() = EXE paragraph at img 0x2BA1 (write order = file order):
  67  0x1DE  raw                       33      gameflag/score
  70  0x1E0  raw                       54      gameflag/score
 
-CONFIRMS the descending stat band DGROUP layout (MIECHO>KUNSZT>PASZOL>WIMP>ZWIEJ).
-save() also emits a player-name Pascal string (ds:0x264) -> field '21JA' and a
-cs-const path string '/Users/zrfu/gry/BOMBKI/PRZEDM.TPU' (field 15; dev box
-remnant, author 'zrfu' built on Linux/macOS). File = 80 numeric lines + name.
+The initial stat-band interpretation was superseded by finding (7). The save
+map records 80 serialized fields; the sample at field 15 is anomalous and its
+interpretation remains OPEN (see `INTEGRATED-FIELD-MAP.md`).
 
 ### 2026-09-24 (7): load-side readback reconstruction integrated — corrections
-A second, independent load-side reconstruction (PLIKI.TPU readback + 616
+A second, independent load-side reconstruction (`PLIKI.TPU` readback + 616
 string-compare call-sites, 380 resolved; CurrentContext/PreviousRoomContext +
 MODE/UNMODE + the shared combat engine SWIAT:0x46 + per-monster room trackers
-at 0x668,+6/ea) was integrated with the save-side map
-(`WCZYTANIE-LoadEngine-reconstructed.pas`). Its address map and the save-side
-map agree field-for-field; transforms are exact inverses. Names were
+at 0x668,+6/ea) was integrated with the save-side map. The save and load
+address maps agree field-for-field; transforms are exact inverses. Names were
 cross-validated against the character-sheet display routine (0x11ba-0x1405),
 the level-up routine (0x8990-0x8ba0), and PRZEDM addr-adjacency strings.
 RETRO-CORRECTIONS to the earlier DGROUP naming:
@@ -165,9 +166,9 @@ RETRO-CORRECTIONS to the earlier DGROUP naming:
   0x182 = KUNSZT (4)           0x182 = PRZED, carried-item count (±1 per pick-up/
                                 drop and talent event); the "JESTES OBLADOWANY"
                                 gate compares it to the capacity field, see (9).
-                                Ceiling stat = MaxLoad/PRO [0x1C2]
+                                Clothing-modified stat = PRO [0x1C2] (not the carry limit at 0x062)
   0x19C = FORSA / Money        0x19C = Energy (55; save (E+40)*4=380; max=0x664)
-  0x194 = -                    0x194 = Money (0 here)
+  0x194 = -                    0x194 = PRAKTYK (0 here)
   0x1AC..0x1D4 = MONSTRA HP     0x1AC/0x1AE = ManaCur/ManaMax (250/250);
                                 0x1C4..0x1D4 = skill-chance block (SZ parts,
                                 Kopanie/Uciekanie/Parowanie/Powracanie, "%."x54)
@@ -177,10 +178,11 @@ RETRO-CORRECTIONS to the earlier DGROUP naming:
                                 1000 = STAN PODSWIADOMOSCI (MODE) via MODE/UNMODE, prev in 0x180)
   CharacterLevel unknown        0x25C = level, saved as lvl+0x17 (24 => lvl 1)
 
-Also confirmed: Money vs 0x21A:0x21C longint pool (BAZAR buy gates) still open;
+At this finding date, Money vs 0x21A:0x21C longint pool was still open; finding
+(17) resolves it as PRAKTYK vs FORSA. Also confirmed:
 0x257 = PIGULKA (saved byte, drop-count shortint); the old 0x74 "POTRAWKI
 chance" name is a separate CWICZ field, not a count — ambiguity resolved. Full
-merged record incl. byte-flag cluster 0x255..0x262 and TPlayerMisc
+merged record, including byte-flag cluster 0x255..0x262 and TPlayerMisc
 (0x664=EnergiaMax, 0x668+ monster trackers): `INTEGRATED-FIELD-MAP.md`. The
 earlier "proven MONSTRA band" claim is RETRACTED (see (8)).
 
@@ -235,15 +237,16 @@ EXE proc paragraph 0x129D:0x44A6 = img 0x16E76..0x181C6 (the old "BODY-A
 - **0x182 = PRZED**, the carried-item count (±1 per sentinel pick-up/drop and
   talent events); the overburden "JESTES OBLADOWANY" gate compares it to the
   carrying-capacity field. (The stat bumped by outfits +7 SYF/+10 GARNITUR and
-  Kaseta's PRO −8 is MaxLoad/PRO [0x1C2].) 0x1B2 = combat margin/reward scratch.
-- Full body: `WALKA-CombatEngine-reconstructed.pas`; mechanics also in
-  `INTEGRATED-FIELD-MAP.md` §"Combat engine".
+  Kaseta's −8 are PRO [0x1C2].) 0x1B2 = combat margin/reward scratch.
+- The source-equivalent combat body is `reconstructed/PRZEDM.PAS`, procedure
+  `WALKA`; mechanics are also summarized in `INTEGRATED-FIELD-MAP.md`.
 
 ### 2026-09-24 (10): wczytaj() load engine + trening + level gates decoded
-Full readback body: `WCZYTANIE-LoadEngine-reconstructed.pas`:
+The load routine is in the EXE at img 0x7D80..0x85FF; the save-field map is in
+`INTEGRATED-FIELD-MAP.md`:
 
 - **wczytaj() = img 0x7D80** (proc-init; ends ~0x85FF). RTL: `0x6C6`
-  ReadLn(cmd), `0x2E6` Assign to cs:0x7D6B "plik.tpu", `0x364` Reset, **`0x72D`
+  ReadLn(cmd), `0x2E6` Assign to cs:0x7D6B "pliki.tpu", `0x364` Reset, **`0x72D`
   = ReadLn(plik, scalar)** returning AX / DX:AX for longint, `0x5FE` flush.
 - Reads the **exact 80-field order of save()**, inverting transforms
   byte-exact: ManaCur=`v div 4`, Level=`v-0x17`, Energy=`v div 4 - 0x28`,
@@ -394,13 +397,13 @@ The 0x129D paragraph contains a whole second game layer beyond Walka:
   Energy-0x28/kün-0x1E; >15: none). ODLORZ/ZNISZCZ/PATRZ PRZEPUSTKA =
   certificate (longint [0x21E:0x220] owned as -10).
 - **Outfits**: wear flag OutfitEquipped [0x218], worn-name buffer ds:0x264.
-  UZYJ KOMPLET SYF (0x216) → MaxLoad [0x1C2]+=7; UZYJ GARNITUR (0x222) →
-  MaxLoad+=0xA, OutfitZrecznoscBonus [0x1C4]+=1, HeavyBlow [0x224]+=0xF.
+  UZYJ KOMPLET SYF (0x216) → PRO [0x1C2]+=7; UZYJ GARNITUR (0x222) →
+  PRO+=0xA, OutfitZrecznoscBonus [0x1C4]+=1, HeavyBlow [0x224]+=0xF.
   ODLORZ reverses. Item_Bigos byte 0x259 (+20% E).
 - **ColorChangeDispatch 0x197F1**: ZMIEN KOLOR/ZMIEN TLO → lcall 0x1C0F:0x263/
   0x1C0F:0x27D with a user number.
 - Fields named StaryMiecz (0x17E), MalaTarcza (0x184), DyplomMudSzkoly (0x188),
-  MaxLoad (0x1C2), OutfitZrecznoscBonus (0x1C4), OutfitEquipped (0x218);
+  PRO (0x1C2), OutfitZrecznoscBonus (0x1C4), OutfitEquipped (0x218);
   INTEGRATED-FIELD-MAP.md §"Item subsystem" added.
 
 ### 2026-09-24 (15): Room-level ZABIJ handlers + launcher entry-point fixes + Kaseta decode
@@ -411,12 +414,12 @@ The 0x129D paragraph contains a whole second game layer beyond Walka:
   StaryMiecz/MalaTarcza/Serce if each still 0), MINI-BARMAN `[0x67A]==0x43` &
   GRUBAS `[0x67C]==0x43` (arena 'C'; 15% Piwo `[0x7C]-=10`), D.J
   `[0x67E]==0x45` (scene 'E'; 25% SuchaRacja `[0x1A4]-=10`, 3% **Kaseta Liroya
-  UNIQE** = `[0x22E]-=10`, EnergyMax+5, **MaxLoad-8**, Zrecznosc+1), DRZWI
+  UNIQE** = `[0x22E]-=10`, EnergyMax+5, **PRO-8**, Zrecznosc+1), DRZWI
   `[0x688]!=0` door → `[0x688]=0` (high-tier Potwor3 fight to break the door),
   STARUCH `[0x68A]!=0` → corpse-vanish no-loot, PEDAL/MACIEK → ZabijPotwor2 +
   PIGULKAZYSK, PARA → ZabijPotwor4 twice.
-- **Kaseta flavor resolved**: "SMIEC . S.Z -8 MAXE +5 ZRE +1" == MaxLoad [0x1C2]
-  −8 / EnergyMax [0x664] +5 / ZrecznoscCur [0x190] +1 — confirms MaxLoad at
+- **Kaseta flavor resolved**: "SMIEC . S.Z -8 MAXE +5 ZRE +1" == PRO [0x1C2]
+  −8 / EnergyMax [0x664] +5 / ZrecznoscCur [0x190] +1 — confirms PRO at
   0x1C2.
 - **Launcher entry-point fixes**: true `push bp` entries are ZabijMrowka 0x13839,
   ZabijPotwor1..4 = 0x13CA4/0x13DD0/0x13EF3/0x14016 (the earlier keys were 1..5
@@ -442,7 +445,7 @@ The 0x129D paragraph contains a whole second game layer beyond Walka:
   [0x1C8]/[0x1CA]/[0x1CC], ZWIEJ [0x1CE], JAKIEUB/ABRON/ATAR = worn-id buffer.
 - Unique-loot ladder + KillDispatch actor→profile table + stacked room-procs
   (SWIAT POKOJ0/5/11/30/60/75/83/100/…) + stores/price oddities + race init +
-  save schema (PLIKI.TPU flat ReadLn text dump) recorded.
+  `PLIKI.TPU` save schema (flat text read with ReadLn) recorded.
 - Open items updated: `[0x17E]` post-kill event RESOLVED = StaryMiecz drop
   ladder gate; skill gates confirmed saved fields (f56/57/59); 0x257 is
   PIGULKA (not POTRAWKI); FORSA-vs-0x194 money still open here (closed in (17)).
@@ -455,8 +458,9 @@ The 0x129D paragraph contains a whole second game layer beyond Walka:
   "GardenSpot_01DA..0x210" words), **EXIT**, **WYJSCIE**, and the N/E/S/W grid
   moves guarded by **ArenaMoveLatch [0x214]** / **ArenaSouthLatch [0x1D8]**.
   Full 26-cell N/E/S/W edge table recovered (EXIT text variants match the room
-  maps). 1:1 with the port's arena room table (rooms 33-57 = contexts
-  0x21..0x39, entrance 32 = 0x20) — confirmed in the register.
+  maps). A comparison at the time noted the same arena edges in the separate
+  port; the original mapping is established by the EXE dispatch itself, not by
+  that comparison.
 - **Forsa load math pinned**: wczytaj does `Forsa := Forsa div MadroscCur`
   (img 0x7FA4..0x7FBB via TP7 RTL @LDiv 0x1C71:0x7FA); the sign-in block in
   save() prints Forsa x Madrosc (img 0x2E0F..0x2E22, @LMul 0x1C71:0x7BD).
@@ -466,13 +470,11 @@ The 0x129D paragraph contains a whole second game layer beyond Walka:
   tier; CWICZ lessons cost 1); FORSA [0x21A:0x21C] = coins/monety (loot,
   DAWAJ KASE, shop/BAZAR gates).
 
-### 2026-09-24 (18): c-port vs disasm discrepancy audit
-The full machine-verified register lives in `C-PORT-DISCREPANCIES.md` (entries
-1..19 + "Confirmed 1:1"); it was added as the "c-port discrepancy register"
-inside INTEGRATED-FIELD-MAP.md and moved out when that file was made
-discrepancy-free. Confirmed 1:1: arena edges, quest prices/counters/rewards,
-death penalty, TRENUJ 3/2/3, monster tiers, food/mana percentages, POROWNANIE
-formula.
+### 2026-09-24 (18): historical C-port comparison audit
+This dated audit produced the comparison register in
+`C-PORT-DISCREPANCIES.md`. It records the separate port at that time only; its
+comparisons and "1:1" labels are not evidence or requirements for the Pascal
+reconstruction. Original-side findings are grounded in the EXE/TPU.
 
 ### 2026-09-25 (19): PRZEDM MODE/SCENA/TLUM reconstructed
 - Source-equivalent bodies for `MODE` (TPU source 543..546; EXE img
@@ -694,7 +696,7 @@ formula.
   - `PRZEDM.TPU` → `PRZEDM.PAS`
   These match our reconstructed filenames 1:1 — no rename needed, confirming the reconstruction maps to the original units. Persisted as per-unit `*.src.txt` reports in `analysis-results/tpu_reports/` (date cell kept raw, not DOS-decoded).
 - **Checksums / uses.** MONSTRA `$242F`, SWIAT `$3B76`, PRZEDM `$647E`; uses chains MONSTRA(`crt,System`), PRZEDM(`dos,monstra,crt,System`), SWIAT(`przedm,monstra,crt,System`) match the reconstruction interfaces.
-- **PLIKI.TPU is not a unit.** It is the in-game saved-game text file (a save record), not a TP7 unit; `tpuq` correctly refuses to parse it as `TPUQ`.
+- **PLIKI.TPU is not a unit.** It is the in-game save file despite its extension, not a TP7 unit; `tpuq` correctly refuses to parse it as `TPUQ`.
 - **Correction of the §4.2 "entry sweep" claim.** The earlier claim that the loader's entry IP lands on the Pascal string `"NOSISZ ZE SOBA:"` mixed up image-relative and file-relative offsets:
   - MZ header: `CS:IP = 0000:B0CF`, header paragraphs `0x52E`, image length `0x1D4F0`. With `img = file[0x52E*16:]`, the entry is at **img 0xB0CF**, not img 0x00000.
   - Bytes at img 0xB0CF are `9A 00 00 71 1C` = **`lcall 1C71:0000`** — real code, the System bootstrap (DS=DGROUP 0x1D49, BSS zeroed 0x52..0x8EE, CPU probe, heap init).

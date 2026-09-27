@@ -1,27 +1,26 @@
 # BOMBKI integrated player-state + save-field map
 
-Two independent reconstructions, now reconciled field-for-field:
-- **this repo** (`analysis-results\disasm\procs\SAVE-FIELD-MAP.txt`) - SAVE side:
-  the EXE's save() proc (img 0x2BA1) writes 80 fields to PLIKI.TPU as text.
-- **load-side reconstruction** (`WCZYTANIE-LoadEngine-reconstructed.pas`):
-  PLIKI.TPU read back by the load routine (word-strided record 0x52..0x262),
-  cross-validated against the character-sheet display routine (0x11ba-0x1405),
-  the level-up routine (0x8990-0x8ba0), and PRZEDM strings.
-
-Key result: addresses agree field-for-field; transforms are exact inverses;
-several names from the single-pass SAVE-side analysis were WRONG and are
-corrected here (Energy!=Money, 0x182=PRZED carried count, 0x180=PreviousRoomContext,
-0x1AC/0x1AE=ManaCur/ManaMax not monster HP).
+The EXE save routine (img 0x2BA1) writes 80 fields to the unlabelled text save
+file whose filename literal is lowercase `pliki.tpu` (save at img 0x2BEF,
+load at img 0x7DAC). The retained sample is `../og/PLIKI.TPU` (uppercase
+spelling); despite its `.TPU` extension, it is a text save record, not a
+compiled TPU unit.
+`analysis-results/disasm/procs/SAVE-FIELD-MAP.txt` records the write order. The
+EXE load routine (img 0x7D80..0x85FF) reads those fields into DGROUP. The field
+map below is cross-checked against the character-sheet display routine
+(img 0x11BA..0x1405), level-up routine (img 0x8990..0x8BA0), and PRZEDM TPU
+symbols. The save/load addresses agree field-for-field. Energy is distinct from
+coins; 0x1AC/0x1AE are mana fields, not monster HP.
 
 ## Headers / how the two reads agree
 
-- PLIKI.TPU is a flat sequential text dump of the player record;
-  saves write the same 80 fields the loader reads back, in the same order.
+- The retained `PLIKI.TPU` sample is a flat sequential text save, not a compiled
+  TPU unit; it contains the 80 fields read by the loader in the same order.
 - Field transforms are byte-exact inverses (verified for f1, f9, f11, f12, f2).
 
 ## The merged record (word fields, base DGROUP 0000)
 
-                 SAVE(mine)          LOAD-theirs        merged meaning
+                 SAVE field          LOAD destination   meaning / symbol
    0x52   f16     0                   0x52               Field_0052
    0x54   f30     1                   0x54               Field_0054
    0x56   f33     1                   0x56               Field_0056
@@ -30,23 +29,20 @@ corrected here (Energy!=Money, 0x182=PRZED carried count, 0x180=PreviousRoomCont
    0x5C   f37     0                   0x5c               Field_005C
    0x5E   f38     0                   0x5e               Field_005E
    0x60   f39     1                   0x60               Field_0060
-   0x62   f21     10  (=raw)          0x62  "MaxLoad"    MaxLoad
-   0x6C   f15     0/Users/zrfu/...    0x6c  CheckpointStage (0..3)
-                                        (dev-path is a dev-box artifact baked into
-                                        PLIKI.TPU; stage reset to 0 on level-up)
-   0x6E   f40     25                  0x6e               Field_006E
+   0x62   f21     10  (=raw)          0x62  CarryLimit (used with PRZED; see img 0xB0F6..0xB102)
+   0x6C   f15     anomalous sample   0x6c  Field_006C (meaning OPEN)
    0x74   f42     0                   0x74 "Potrawki"   (chance) (conflict, see below)
    0x76   f43     0                   0x76               Field_0076
    0x78   f72     0                   0x78 "Powracanie"  (chance)
    0x7A   f76     0                   0x7a "ScrollPowrot"(item flag)
    0x7C   f74     0                   0x7c "Piwo"        (item count)
    0x17E  f3     -100                 0x17e              Field_017E
-   0x180  f10     10000               0x180 "PreviousRoomContext"
+   0x180  f10     10000               0x180 PreviousRoomContext (MIECHO2; see MODE finding)
    0x182  f27     4                   0x182 "PRZED"        = carried-item count
                         (pick-up/drop and talent events -> +1; the overburden
-                        "JESTES OBLADOWANY" gate compares it to the carrying-
-                        capacity field; ceiling stat MaxLoad/PRO [0x1C2], outfits
-                        +7 SYF/+10 GARNITUR, Kaseta -8; WAS GIMMICK "KUNSZT(4)")
+                         "JESTES OBLADOWANY" gate compares it to the carry limit
+                         [0x062]; distinct TPU stat PRO [0x1C2] changes with
+                         clothing/cassette effects)
    0x184  f6     -100                 0x184              Field_0184
 0x186  f44    -10                  0x186              Item_Serce (sentinel -10 = none)
 0x188  f5     -10                  0x188              Item_DyplomMudSzkoly <- WAS "ZWIEJ(-10)"
@@ -55,7 +51,7 @@ corrected here (Energy!=Money, 0x182=PRZED carried count, 0x180=PreviousRoomCont
    0x18E  f12   -15 (+0x18) save     0x18e  0x18e+SilaCur?  "SILA -" label at addr-cand
    0x190  f11    "21JA" (corrupt)    0x190  "ZRECZNOSC -"  ZrecznoscCur
    0x192  f45     0                   0x192              ItemCount_ButelkaMany
-   0x194  f14     0                   0x194  "PRAKTYK"   PRAKTYK (practice money)
+   0x194  f14     0                   0x194  "PRAKTYK"   PRAKTYK (practice points)
    0x196  f26     25                  0x196              MadroscMax
    0x198  f24     15                  0x198              SilaMax
    0x19A  f25     11                  0x19a              ZrecznoscMax
@@ -74,7 +70,7 @@ corrected here (Energy!=Money, 0x182=PRZED carried count, 0x180=PreviousRoomCont
                         (reward deltas + monster-type base; see WALKA engine)
    0x1B6  (unsaved)                        MonsterDmg  (combat, launcher-set)
    0x1B8  (unsaved)                        MonsterDex  (combat, launcher-set)
-   0x1C2  f28     15                  0x1c2               MaxLoad (outfits +7 SYF / +10 GARNITUR)
+   0x1C2  f28     15                  0x1c2               PRO (TPU symbol; clothing effects)
    0x1C4  f53     1                   0x1c4               OutfitZrecznoscBonus (S.Z part; GARNITUR +1)
    0x1C6  f54     0                   0x1c6               SkillChance_Parowanie
                         (combat: Random(140)<=Parowanie parries; roll==0 && <100 -> +1)
@@ -95,7 +91,7 @@ corrected here (Energy!=Money, 0x182=PRZED carried count, 0x180=PreviousRoomCont
    0x1D4  f8      99                  0x1d4  "%."x54      KUNSZT  <- was Field_01D4
                     CONFIRMED 2026-09-24 by death-penalty decode: it is the
                     skill/experience stat, hit by a LEVEL-BASED loss on death:
-                      [0x1D4] -= 250 - Random(50) + 5*[0x25C]  (img 0x3800-0x3811)
+                      [0x1D4] := [0x1D4] - 250 + Random(50) - 5*[0x25C] (img 0x37DC..0x3811)
                     ("TRACISZ KUNSZT ADEKWATNIE DO TWOJEGO LEVELKA").
                     "%."x54 labels are the adjoint percent display (SZ%/chance).
    0x1D6  (not saved)    0x1d6 = CurrentContext (room/interface id); 1000=STAN PODSWIADOMOSCI (MODE)
@@ -241,13 +237,12 @@ fleeFlag [0x1D2]==0 -> loot `LootMoney` [0x212] = Random(n)+base, print
 "WYCIAGASZ <n> MONET Z CIALA", `[0x21A:0x21C] += n`; then **Serce** `[0x186]`
 roll: if `[0x186]==0` and Random(20)<drops -> `[0x186]=0xFFF6`, LoadCapacity++):
 
-**CROSS-CHECKED vs retained TPU units (PORT-RECOVERY GROUND TRUTH)**. By matching
-stats, the coin range and "WYCIAGASZ PACZEK Z CIALA MROWKI" against the PRZEDM.TPU
-dossiers (procedures.tsv, PRZEDM.SLABO.md, enemies.c profiles), the launcher
-procs ARE the PRZEDM difficulty procedures SLABO..BTRUDNO/VEASY..NEASY. Pascal
-names: `WROGEN/WROGSIL/WROGZRE` = Monster HP/Dmg/Dex; `CZY` = Random-scratch
-[0x19E]; `FORSA` = money longint [0x21A:0x21C]; `PRZED` = LoadCounter [0x182];
-item sentinel -10 = carried.
+The EXE call targets and TPU procedure mappings identify these as PRZEDM
+difficulty procedures SLABO..BTRUDNO/VEASY..NEASY. TPU symbols map as follows:
+`WROGEN/WROGSIL/WROGZRE` = enemy HP/damage/dexterity; `CZY` = random scratch
+[0x19E]; `FORSA` = money longint [0x21A:0x21C]; `PRZED` = carried-item count
+[0x182]. Item sentinel -10 means carried. These identifications come from the
+EXE/TPU evidence, not from the C port.
 
 | Launcher (img) | PRZEDM proc | Energy | Dmg(SIL) | Dex(ZRE) | Coins | Body drop |
 |---|---|---|---|---|---|---|
@@ -307,14 +302,14 @@ POROWNAC targets, NOT fights; actual kills are KillDispatch + these launchers.
 | ZABIJ POTWOR | `[0x5A]==0xE` | custom HP20/Dex30/Dmg3, loot R(15) | if `Random(20)<7` && item==0: StaryMiecz [0x17E]‑=10; same MalaTarcza [0x184]; Serce [0x186] `<6` |
 | ZABIJ MINI-BARMAN | `[0x67A]==0x43` (arena 'C') | PRZEDM_BTRUDNO 0x14016 | Energy>0 → clear; `R(100)<15` → Piwo [0x7C]‑=10 |
 | ZABIJ GRUBAS | `[0x67C]==0x43` (arena 'C') | PRZEDM_BTRUDNO 0x14016 | clear; `R(100)<15` → Piwo [0x7C]‑=10 |
-| ZABIJ D.J | `[0x67E]==0x45` (scene 'E') | PRZEDM_BTRUDNO 0x14016 | clear; `R(100)<0x19` → SuchaRacja [0x1A4]‑=10; `R(100)<3` → **Kaseta Liroya [0x22E]‑=10** +EnergyMax 5, MaxLoad‑=8, Zrecz+1 "UNIQE 3%" |
+| ZABIJ D.J | `[0x67E]==0x45` (scene 'E') | PRZEDM_BTRUDNO 0x14016 | clear; `R(100)<0x19` → SuchaRacja [0x1A4]‑=10; `R(100)<3` → **Kaseta Liroya [0x22E]‑=10** +EnergyMax 5, PRO‑=8, Zrecz+1 "UNIQE 3%" |
 | ZABIJ DRZWI | `[0x688]!=0` (door) | PRZEDM_NEASY 0x13EF3 | Energy>0 → `[0x688]=0` (door breaks) |
 | ZABIJ STARUCH | `[0x68A]!=0` (present) | PRZEDM_SLABO 0x13839 | `[0x68A]=0`; corpse-vanish text (no loot) |
 | ZABIJ PEDAL | garden | PRZEDM_EASY 0x13DD0 | PIGULKAZYSK on win |
 | ZABIJ PARA | garden | PRZEDM_BTRUDNO 0x14016 ×2 | two consecutive fights |
 | ZABIJ MACIEK | garden | PRZEDM_EASY 0x13DD0 | |
 
-Kaseta text ("SMIEC . S.Z -8 MAXE +5 ZRE +1") resolves against MaxLoad
+Kaseta text ("SMIEC . S.Z -8 MAXE +5 ZRE +1") resolves against PRO
 [0x1C2]/EnergyMax [0x664]/ZrecznoscCur [0x190], confirming those fields.
 
 ## Item subsystem (ItemPickupDropDispatch 0x18405 / ItemUseDispatch 0x18E95)
@@ -356,8 +351,8 @@ then sets `field = PreviousRoom[0x180]`. PRZED [0x182] ±1 tracks each.
   <10 → EnergyMax--, Energy=1, KUNSZT-=0x32; 9<x<16 → Energy-=0x28 (min 1),
   KUNSZT-=0x1E; >15 → no penalty ("ZNASZ SIE NA TEGO TYPU PRZEDMIOTACH").
 - **Outfits** (wear flag OutfitEquipped 0x218, name written to buffer ds:0x264):
-  SYF KOMPLET (0x216) → MaxLoad[0x1C2]+=7; GARNITUR kolce (0x222) →
-  MaxLoad+=0xA, OutfitZrecznoscBonus[0x1C4]+=1, HeavyBlow[0x224]+=0xF. ODLORZ X
+  SYF KOMPLET (0x216) → PRO[0x1C2]+=7; GARNITUR kolce (0x222) →
+  PRO+=0xA, OutfitZrecznoscBonus[0x1C4]+=1, HeavyBlow[0x224]+=0xF. ODLORZ X
   (only while matching name in 0x264) reverses all.
 - ZNISZCZ PRZEPUSTKA: Przepustka longint += 10 → 0, PRZED++. PATRZ
   PRZEPUSTKA: prints the certificate box.
@@ -518,9 +513,8 @@ grid 33..57). Commands (ds:0x564 strcmp):
   arena directions; others print the matching subset ("MOZESZ WYJSC NA:",
   "MOZESZ ISC NA:", or "DOSTEPNE WYJSCIE:" for 0x38/0x39).
 
-  **VERIFIED** (rooms 33-57 = contexts 0x21..0x39, entrance 32 = 0x20): every
-  N/S/E/W edge and every EXIT text variant is as tabled above (the c-port's
-  ARENA_ROOM table agrees — `C-PORT-DISCREPANCIES.md` confirmed-1:1 list).
+  **VERIFIED from the EXE** (rooms 33-57 = contexts 0x21..0x39, entrance 32 =
+  0x20): every N/S/E/W edge and every EXIT text variant is as tabled above.
   The ZOO placard hangs at the entrance: "NIE
   ATAKUJ LUDZI I ZWIERZAT Z ZOO CHYBA ZE MASZ 3 LEVEL (LUB WYZEJ :P))" - the
   beasts below are the zoo pens (gardener's "school" zoo behind the school).
@@ -532,11 +526,10 @@ grid 33..57). Commands (ds:0x564 strcmp):
 1. **0x19C is Energy, NOT money.** save(): [0x19C]+0x28 <<2 (380 ⇒ raw 55);
    load: idiv 4, sub 0x28 (380/4-40=55). BAZAR death does [0x19C]:=[0x664] =
    Energy := EnergiaMax. The 0x1AC.. band is Mana, not monster HP.
-2. **0x182 = CurrentLoad (4), not KUNSZT.** BAZAR shop "KUNSZT+1" reads were
-   actually a CurrentLoad increment; overburden strings are at 0x182
-   ("JESTES OBLADOWANY"). Monster stat band hypothesis (MIECHO/KUNSZT/PASZOL/
-   WIMP/ZWIEJ at 0x180..0x188) is WRONG as named - those slots are
-   PreviousRoomContext/CurrentLoad/unnamed fields.
+2. **0x182 is PRZED, the carried-item counter**, not KUNSZT or CurrentLoad.
+   The overburden check compares it with the limit at 0x062 (img
+   0xB0F6..0xB102). The clothing-modified TPU stat PRO is at 0x1C2 (img
+   0x1950C..0x19529). Earlier guesses about this band were superseded.
 3. **0x1D6 = CurrentContext** (room/interface id; 1000 = STAN PODSWIADOMOSCI (MODE), entered
    via MODE/Unmode which save/restore the room in 0x180). BODY-B's writes of
    'E','F','G','H' into 0x1D6 are menu-selected room/context ids, consistent
@@ -546,20 +539,19 @@ grid 33..57). Commands (ds:0x564 strcmp):
    school/CWICZ practice counter (lesson costs 1). FORSA [0x21A:0x21C] = the
    coins/monety longint: combat loot "WYCIAGASZ N MONET", DAWAJ KASE, BAZAR
    buy gates (>= 8/12/15/19), shop prices 1999/4800. The game has two saved
-   quantities — FORSA [0x21A:0x21C] and PRAKTYK [0x194]; "Money" in
-   PlayerState.pas mislabels 0x194. (The port's two-field save schema:
-   `C-PORT-DISCREPANCIES.md` entry 1.)
+    quantities — FORSA [0x21A:0x21C] and PRAKTYK [0x194]; "Money" in
+    the earlier field-map label was incorrect.
 5. CharacterLevel = 0x25C, saved as level+0x17 (file shows 24 ⇒ level 1);
-   level-up routine is 0x8990-0x8ba0 (see WCZYTANIE-LoadEngine-reconstructed.pas).
+   level-up routine is at img 0x8990..0x8BA0.
 6. **KUNSZT = 0x1D4** (f8=99). Death penalty (BAZAR proc img 0x36F5,
    decoded 0x37DC-0x3811) is **level-based**:
-   `[0x1D4] -= 250 - Random(50) - 5*[0x25C]` (level from 0x25C),
+   `[0x1D4] := [0x1D4] - 250 + Random(50) - 5*[0x25C]` (img 0x37DC..0x3811),
    matching the string "NIESTETY WRAZ ZE SMIERCIA TRACISZ KUNSZT
    ADEKWATNIE DO TWOJEGO LEVELKA". Same proc: Energy:=[0x664],
    CurrentContext:=0x14 (respawn at city square), quest counter
    [0x24A] set to 50/200 by QuestType[0x248], then ROOM + save().
 
-## Combat engine (fully decoded 2026-09-24) — `WALKA-CombatEngine-reconstructed.pas`
+## Combat engine (fully decoded 2026-09-24) — `reconstructed/PRZEDM.PAS`, procedure `WALKA`
 
 EXE proc **paragraph 0x129D:0x44A6 = img 0x16E76..0x181C6** (`push bp; mov bp,sp;
 lcall 0x1C71:0x2CD` … `pop bp; retf`). The old "BODY-A para 0E42:9A57" labels
@@ -591,7 +583,7 @@ were a miscalculated paragraph; img offsets are authoritative (0E42*16+9A57 =
 - **Kill reward** (0x18037): clip `[0x1B4]` (EnergiaMax>75 −2, >115 −3;
   Parowanie>50/75/95 −2/−2/−1; Kopanie>50/95 −5/−2; clamp ≥0), print
   "ZYSKALES", `KUNSZT += rw`, clear wounds, quest kill `[0x24A]-=1`, then the
-  talent event (`Random(100) < [0x258]` ⇒ `[0x259]-=10; MaxLoad[0x182]+=1`;
+  talent event (`Random(100) < [0x258]` ⇒ `[0x259]-=10; PRZED[0x182]+=1`;
   and `Random(100)==0 && [0x258]<100` ⇒ `[0x258]+=1; KUNSZT+=10`).
 - **Knock-out** (0x1818E): if `Energy<1` print defeat, `sound(3000)`,
   **`CurrentContext := 10000`** (contrast BAZAR death → 20). Then `[0x1B4]:=0`,
@@ -606,19 +598,12 @@ were a miscalculated paragraph; img offsets are authoritative (0E42*16+9A57 =
   tracker, `[0x212]:=Random(N)`, prints it, and `Forsa[0x21A:0x21C] += d`.
   Far-lcall opcode `9A A6 44 9D 12`; same-seg thunk at 0x13843.
 
-## Ground truth (retained TPU units + portable-port recovery, 2026-09-24)
+## Ground truth (EXE and retained TPU units)
 
-Corroborated against the retained TPU units and the recovery dossiers in
-c-port/: docs/compatibility.md (recovered-facts register),
-evidence/recovered/PRZEDM.*.md (symbol-aware per-proc listings from
-MONSTRA/PRZEDM/SWIAT.TPU), evidence/generated/inventories.md (full TPU symbol
-hash), and docs/{todo,recovery-notes}.md. Port comparisons are tracked in
-C-PORT-DISCREPANCIES.md.
-
-Port status (2026-09-26): the portable port (`c-port/`) was cross-checked
-against this reconstruction and now develops separately; its C code is NOT a
-reference for the Pascal deliverable, which is grounded only in the EXE/TPU
-evidence above.
+The source of truth is `BOMBKI.EXE`, the retained `MONSTRA.TPU`, `SWIAT.TPU`,
+and `PRZEDM.TPU`, and machine evidence derived from those files under
+`analysis-results/`. The C-port comparison is a historical, non-authoritative
+record only; it does not corroborate or constrain any claim below.
 
 ### TPU Pascal symbols -> EXE offsets (confirmed bindings)
 
@@ -653,8 +638,9 @@ evidence above.
   PIGULKA, SCROLL POROWNYWANIE. Only items with resale commands can be sold.
   Price oddities preserved: small mana bottle affordable at 15 coins while
   advertised/deducted 20; lucky leaf advert + check 820 but deducts 830.
-- Capacity = dex-derived (10..16) + backpack +4 etc; the stored MaxLoad [0x1C2]
-  is what outfits/Kaseta modify (+7 SYF / +0xA GARNITUR / -8 KASETA).
+- Original carry capacity: the limit at 0x062 is compared with PRZED [0x182]
+  (img 0xB0F6..0xB102). The TPU stat PRO [0x1C2] is modified by clothing
+  and cassette effects (img 0x1950C..0x19529).
 - Consumables: heart +5E; doughnut 8, cake 12, dry ration 16, roll 20, bread 26,
   weka 34 (E capped at EnergyMax); bigos +20E; beer +10E AND +10M; small mana
   bottle +30M cap ManaMax.
@@ -700,33 +686,32 @@ evidence above.
 - Races: CZLOWIEK 10/15 all + 100 mana; OLBRZYM 13/20,13/20,5/7,70; NIMFA
   10/15,13/20,7/11,100; POL-ELF 6/10,16/24,8/12,80+30 coins; UFOK 9/13,9/14,
   13/20,150; CZAROMIL 6/9,7/11,16/25,250. Start ENERGIA 50, PRA 10, POZIOM 1.
-- Save (PLIKI.TPU): flat sequential text dump, one value per line via plain
-  ReadLn in record order (player record + world trackers); PAMIETAJ/WLACZ
-  POSTAC gated to MODE mode. (Original-only format; the port's `v16`
-  `key=value` schema is `C-PORT-DISCREPANCIES.md` entry 1.)
+- Save file `PLIKI.TPU`: despite its extension, this is a flat sequential text
+  save record read with `ReadLn` in field order; PAMIETAJ/WLACZ POSTAC are gated
+  to MODE mode (img 0x7D80..0x85FF).
 
 ### Verified original behaviour (2026-09-24 audit, machine-verified)
 
 Original-side facts machine-verified against the TP7 reconstructions and the
-annotated disassembly. Port-side behaviour and deviations are tracked in
-`C-PORT-DISCREPANCIES.md`.
+annotated disassembly. The C-port comparison document is archived separately
+and is not part of the evidence chain for these facts.
 
 - **Flee (ZWIEJ)** — attempt drains Mana-(Random(2)+2); gates Uciekanie>0 &&
   Energy<[0x1D0] && ManaCur>14; Mana-=15; success iff Random(100)<=Uciekanie
-  -> FleeFlag=1 + KUNSZT-=20. (Confirmed-1:1 list, `C-PORT-DISCREPANCIES.md`.)
+  -> FleeFlag=1 + KUNSZT-=20 (img 0x17F55..0x1800B).
 - **Max-stat offsets** (char-select init 0x1748..0x18B9):
   0x196=MadroscMax, 0x198=SilaMax, 0x19A=ZrecznoscMax (field table above).
-- **Save file format** — unlabelled flat sequence, one value per line
-  (WCZYTANIE reconstruction). (→ `C-PORT-DISCREPANCIES.md` entry 1.)
+- **Save file format** — `PLIKI.TPU`, an unlabelled flat text save despite its
+  extension; one field per line (EXE load routine, img 0x7D80..0x85FF).
 - **Forsa (f18 net-worth encoding)** — the save file holds `coins × Madrosc`
   (written via @LMul, echoed on the save screen) and `wczytaj()` re-derives
   the wallet with the matching @LDiv; the pair is a reversible field
   transform, **not** an economy scaling — costs/payables read only the runtime
-  wallet. (→ `C-PORT-DISCREPANCIES.md` entry 1.)
+  wallet (img 0x2E0F..0x2E22 and 0x7FA4..0x7FBB).
 - **Quest turn-in side effects** — type1 KUNSZT+100 + pass + PRZED[0x182]+1;
   type2 KUNSZT+250 + pass + consume Dyplom + EnergyMax-5; type3 KUNSZT+425 +
   pass + consume Fajka + PRAKTYK-1 + PRZED-1 + Madrosc-1 ("removes the pipe's
-  carried +1 wisdom"). (→ `C-PORT-DISCREPANCIES.md` entry 2.)
+  carried +1 wisdom") (img 0x1276B..0x127C4).
 - **Arena level placard** — arena grids advertise "3 LEVEL" prose; there is no
   actual level gate on arena operations (flavour-only).
 - **Room numbers** — 83 = PIERDUT/BLUSZCZ tree room (side-west), 84 the
@@ -740,7 +725,7 @@ annotated disassembly. Port-side behaviour and deviations are tracked in
   one-time **SERCE** `[0x186]` (only if `[0x186]==0`) at `R(20)<K`
   (MNIEJSLABO 25% @0x139E3, SREDNIO 35% @0x13B05, etc), `[0x186]=0xFFF6` +
   PRZED+1. Foods/heart are sentinel slots (-10=carrying; eat PACZEK does
-  `[0x1A0]+=0xA`, PRZED-1 @0x19095). (→ `C-PORT-DISCREPANCIES.md` entries 3, 9.)
+  `[0x1A0]+=0xA`, PRZED-1 @0x19095 (launcher tails img 0x13839..0x14016).
 - Further verified facts: arena N/S/E/W edge table & MINIARENA redistributed
   rooms 33-57; QuestMaster prices/counters/rewards; death penalty formula;
   TRENUJ costs 3/2/3 with gates >2/>1/>2; monster stat tiers; food/mana
@@ -749,7 +734,7 @@ annotated disassembly. Port-side behaviour and deviations are tracked in
   gates/formulas/caps (img 0x27D5..0x2B73), each costing 1 PRAKTYK [0x194];
   the ZDOLNOSCI poster gates on Sila.
 
-## Open items / conflicts to resolve
+## Resolved field identifications / open items
 
 - RESOLVED: 0x257 = PIGULKA (saved f64 byte; TPU `PIGULKA: Shortint`; pills are
   gained by drop via `-=10` and used as the time-travel pill). 0x74 = the
@@ -757,10 +742,10 @@ annotated disassembly. Port-side behaviour and deviations are tracked in
 - 0x21A longint vs 0x194 word Money: **RESOLVED — not two cash pools.** Disasm
   evidence: FORSA/[0x21A:0x21C] = coins (monety: loot "WYCIAGASZ N MONET",
   DAWAJ KASE, BAZAR/staruch buy gates, shop prices 1999/4800); 0x194 = the
-  saved **PRAKTYK counter** (practice money): CWICZ KOPANIE/UCIEKANIE print
+  saved **PRAKTYK counter** (practice points): CWICZ KOPANIE/UCIEKANIE print
   "...MASZ <0x194> PRAKTYK" and debit 1; at school "ZAWSZE... ZYSKALES
-  <0x194> PRAKTYK" awards 3-6 by Madrosc tier. PlayerState.pas "Money"
-  mislabels it. (→ `C-PORT-DISCREPANCIES.md` entry 1.)
+  <0x194> PRAKTYK" awards 3-6 by Madrosc tier. The earlier field-map label
+  was incorrect.
 - RESOLVED: skill gates [0x1CA]/[0x1CC]/[0x1D0] (KOPM/KOPHP/ZWIEV-gate): saved
   fields f56/f57/f59 with fresh-game value 0 — no char-select/init write to
   these slots exists in the image; the only writers are the integer-ReadLn
@@ -769,7 +754,7 @@ annotated disassembly. Port-side behaviour and deviations are tracked in
   -> [0x1CA]); the ZWIEJ prompt img 0xEEDC ("PONIZEJ ILU ENERGII CHCESZ
   UCIEKAC?" -> [0x1D0]); and the ReadLn skill/talent config sequence
   img 0x831C..0x8361 (all three). WALKA applies the kick/flee gates at
-  img 0x17E94..0x17FC0. (→ confirmed-1:1 flee list, `C-PORT-DISCREPANCIES.md`.)
+  img 0x17E94..0x17FC0.
 - RESOLVED: the post-kill `[0x17E]==0 && Random(0x20)` gate that assigns
   `[0x19E]` is the StaryMiecz (MMIECZ) loot-roll seen in the kill/body-drop
   ladder (Random(20)<7 -> acquire if 0x17E==0), not a separate event.
@@ -785,7 +770,7 @@ annotated disassembly. Port-side behaviour and deviations are tracked in
   0x2E0F..0x2E22) computes and displays **Forsa × Madrosc** (`lcall
   0x1C71:0x7BD` = @LMul from the same operands) — the inverse of this @LDiv.
   Reversible field transform, not a scaling; costs/payables use the runtime
-  wallet only. RESOLVED. (→ `C-PORT-DISCREPANCIES.md` entry 1.)
+   wallet only. RESOLVED.
 - Monster HP stats (JAMNIK/OWCZAREK/SPANIEL...) are NOT in the saved record;
   the earlier "MONSTRA band 0x1AC..0x1D4" interpretation was wrong - those
   offsets are player stats/skills (see RECONSTRUCTION-LOG.md finding (7)).

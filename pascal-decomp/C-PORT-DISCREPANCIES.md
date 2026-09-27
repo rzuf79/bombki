@@ -1,5 +1,10 @@
 # C-PORT vs ORIGINAL — discrepancy report (human-readable)
 
+> **Historical snapshot only (2026-09-27).** The C rewrite and this comparison
+> are separate, divergent efforts. This report preserves a dated comparison;
+> it is not a current compatibility target, source of requirements, or evidence
+> for the Pascal reconstruction. The original EXE/TPU evidence is authoritative.
+
 Source of truth: the original x86-16 disassembly
 (`analysis-results\disasm\annotated-BOMBKI.asm`), cross-checked against the TP7
 save/load reconstructions. The "port" is `..\..\c-port\` relative to this file
@@ -10,8 +15,8 @@ from earlier notes).
 
 Verdict vocabulary:
 
-- `ORIGINAL` — this is how the original game works; the port should match it.
-- `PORT-DEVIATION` — the port behaves measurably differently from the original.
+- `ORIGINAL` — the report's interpretation of original behavior at the time.
+- `PORT-DEVIATION` — the port snapshot differed from the original at the time.
 - `DOSSIER-ERROR` — a helper dossier/doc misstates the ORIGINAL (the port is
   usually innocent here).
 
