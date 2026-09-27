@@ -1,0 +1,33 @@
+name: tp7-conformance
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  conformance:
+    name: TP7 conformance sweep
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Use published TP7 image or build locally
+        id: image
+        run: |
+          if docker pull ghcr.io/rzuf79/bombki-dosbox-tp7:latest; then
+            echo "image=ghcr.io/rzuf79/bombki-dosbox-tp7:latest" >> "$GITHUB_OUTPUT"
+          else
+            echo "Published image unavailable; building pascal-decomp/docker/dosbox-tp7 locally"
+            docker build -t bombki-tp7 pascal-decomp/docker/dosbox-tp7
+            echo "image=bombki-tp7" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Run TP7 conformance sweep in DOSBox image
+        run: |
+          timeout 300s docker run --rm \
+            -v "${{ github.workspace }}":/workspace \
+            --entrypoint sh \
+            ${{ steps.image.outputs.image }} \
+            -c 'sh /workspace/pascal-decomp/analysis-tools/tp7-conformance.sh'
