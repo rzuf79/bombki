@@ -1,4 +1,4 @@
-name: CI
+name: c-port
 
 on:
   push:
