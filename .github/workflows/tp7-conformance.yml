@@ -27,7 +27,16 @@ jobs:
       - name: Run TP7 conformance sweep in DOSBox image
         run: |
           timeout 300s docker run --rm \
+            -e CONF_ARTIFACTS=/workspace/pascal-decomp/conformance/artifacts \
             -v "${{ github.workspace }}":/workspace \
             --entrypoint sh \
             ${{ steps.image.outputs.image }} \
             -c 'sh /workspace/pascal-decomp/conformance/tp7-conformance.sh'
+
+      - name: Upload sweep artifacts
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v5
+        with:
+          name: tp7-sweep
+          path: pascal-decomp/conformance/artifacts/
+          if-no-files-found: warn

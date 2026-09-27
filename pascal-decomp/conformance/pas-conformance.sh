@@ -71,6 +71,18 @@ compile_unit "$RECON/MONSTRA.PAS"
 compile_unit "$RECON/PRZEDM.PAS"
 compile_unit "$RECON/SWIAT.PAS"
 compile_and_check_binary "$RECON/BOMBKI.PAS"
+
+# Export built binaries for CI artifact upload when CONF_ARTIFACTS is set.
+# Non-fatal: the sweep verdict is about compilation, not artifact plumbing.
+if [ -n "${CONF_ARTIFACTS:-}" ]; then
+  mkdir -p "$CONF_ARTIFACTS"
+  for f in "$TMP"/BOMBKI "$TMP"/BOMBKI.exe; do
+    if [ -s "$f" ]; then
+      cp "$f" "$CONF_ARTIFACTS"/ && echo "artifact: $(basename "$f") -> $CONF_ARTIFACTS"
+    fi
+  done
+fi
+
 echo ""
 echo "passed: $passed, failed: $failed"
 if [ "$failed" -gt 0 ]; then
