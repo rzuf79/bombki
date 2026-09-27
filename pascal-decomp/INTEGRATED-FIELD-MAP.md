@@ -787,5 +787,5 @@ annotated disassembly. Port-side behaviour and deviations are tracked in
   Reversible field transform, not a scaling; costs/payables use the runtime
   wallet only. RESOLVED. (→ `C-PORT-DISCREPANCIES.md` entry 1.)
 - Monster HP stats (JAMNIK/OWCZAREK/SPANIEL...) are NOT in the saved record;
-  the earlier "MONSTRA band 0x1AC..0x1D4" reading in WSTEP-reconstructed.pas
-  must be retracted - those offsets are player stats/skills.
+  the earlier "MONSTRA band 0x1AC..0x1D4" interpretation was wrong - those
+  offsets are player stats/skills (see RECONSTRUCTION-LOG.md finding (7)).

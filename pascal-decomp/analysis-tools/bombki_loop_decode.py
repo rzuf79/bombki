@@ -13,6 +13,9 @@ for line in listing.read_text(encoding="utf-8").splitlines():
     if match is None or not START <= int(match[1], 16) < END:
         continue
     mnemonic, operands = match[2], match[3].split(" ; ")[0].strip()
+    # CS=0 here: 16-bit relative CALL/JMP wraps IP, not the image address.
+    if mnemonic in ("call", "jmp") and operands.startswith("0x"):
+        operands = hex(int(operands, 16) & 0xFFFF)
     if (mnemonic == "cmp" and "[0x1d6]" in operands
             or mnemonic == "lcall" and not operands.startswith(("0x1c71", "0x1c0f"))
             or mnemonic == "call"
