@@ -231,6 +231,12 @@ static void test_duncan_quest_and_black_market(void)
     state.world_actor_rooms[WORLD_ACTOR_DUNCAN] = state.room_id;
 
     execute(&state, &capture, "SECRET LISTA");
+    assert(strcmp(capture.text,
+        "OTO CO AKTUALNIE MAM DO ZAOFEROWANIA : PAMIETAJ U MNIE TYLKO KUPUJEMY\n"
+        "MARCHEWKA Z SADU DUNCANA   : 7000\n"
+        "PRZEPUSTKA QUEST-MASTERA   :  400\n"
+        "PLECAK                     : 4800\n") == 0);
+    clear_capture(&capture);
     execute(&state, &capture, "KUP DOKUMENT");
     assert(capture.text[0] == '\0');
 
@@ -325,6 +331,31 @@ static void test_duncan_quest_and_black_market(void)
     assert(strcmp(capture.text, "HE HE HE MILO SIE Z TOBA ROBI INTERESY\n") == 0);
     assert(state.coins == 0);
     assert(state.item_quantities[ITEM_BACKPACK] == 1);
+}
+
+static void test_duncan_market_precedes_quest(void)
+{
+    GameState state;
+    Capture capture = {{0}, 0};
+
+    game_initialize(&state);
+    state.room_id = ROOM_BRUSZCZ_EAST;
+
+    state.coins = 400;
+    execute(&state, &capture, "KUP DOKUMENT");
+    assert(strcmp(capture.text,
+        "OTO PODROBIONA PRZEPUSTKA HE , HE NAWET QUEST-MASTER SIE NIE POKAPUJE\n")
+        == 0);
+    assert(state.item_quantities[ITEM_QUEST_PASS] == 1);
+    assert(state.coins == 0);
+
+    state.coins = 4800;
+    state.world_actor_rooms[WORLD_ACTOR_DUNCAN] = state.room_id;
+    clear_capture(&capture);
+    execute(&state, &capture, "KUP PLECAK");
+    assert(strcmp(capture.text, "HE HE HE MILO SIE Z TOBA ROBI INTERESY\n") == 0);
+    assert(state.item_quantities[ITEM_BACKPACK] == 1);
+    assert(state.coins == 0);
 }
 
 static void test_old_elf_fetch_quest(void)
@@ -531,6 +562,7 @@ int main(void)
     test_general_store();
     test_magic_store();
     test_wrong_room_feedback();
+    test_duncan_market_precedes_quest();
     test_duncan_quest_and_black_market();
     test_old_elf_fetch_quest();
     test_talk_fallbacks();

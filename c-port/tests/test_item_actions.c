@@ -283,6 +283,7 @@ static void test_pill_and_return_scroll(void)
     game_initialize(&state);
     state.wisdom = 9;
     state.item_quantities[ITEM_TRANSPORT_PILL] = 1;
+    state.world_actor_rooms[WORLD_ACTOR_KORNIK] = BOMBKI_ROOM_NOWHERE;
     execute(&state, &capture, "UZYJ PIGULKA");
     assert(strcmp(capture.text,
         "WSZYSTKO ZACZYNA WIROWAC , POTEM NAGLY BLYSK I ZNAJDUJESZ SIE W PRZESZLOSCI\n"
@@ -291,6 +292,8 @@ static void test_pill_and_return_scroll(void)
     assert(state.maximum_energy == 49);
     assert(state.energy == 1);
     assert(state.experience == -50);
+    assert(state.world_actor_rooms[WORLD_ACTOR_KORNIK] >= ROOM_ARENA_33);
+    assert(state.world_actor_rooms[WORLD_ACTOR_KORNIK] <= ROOM_ARENA_57);
 
     game_initialize(&state);
     state.wisdom = 10;

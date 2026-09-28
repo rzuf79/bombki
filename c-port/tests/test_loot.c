@@ -132,6 +132,32 @@ static void test_dj_nested_drop(void)
     assert(state.item_quantities[ITEM_LIROY_CASSETTE] == 1);
 }
 
+static void test_knockout_suppresses_guarded_unique_drops(void)
+{
+    GameState state;
+    Capture capture = {{0}, 0};
+    GameOutput output = {capture_write, &capture};
+
+    game_initialize(&state);
+    state.energy = 0;
+    state.random_state = seed_for_roll(100, 1);
+    assert(game_resolve_enemy_loot(&state, GAME_LOOT_LIROY, output) == 0);
+    assert(capture.length == 0);
+    assert(state.item_quantities[ITEM_LIROY_CASSETTE] == 0);
+
+    game_initialize(&state);
+    memset(&capture, 0, sizeof(capture));
+    state.energy = 0;
+    state.random_state = seed_for_nettle_success();
+    assert(game_resolve_enemy_loot(&state, GAME_LOOT_POKRZYWA, output) == 1);
+    assert(strcmp(capture.text,
+        "HMMM , A TO CO ? , TOZ TO !!! PIGULKA TRANSPORTUJACA !!! PROSTO Z CIALA WROGA\n")
+        == 0);
+    assert(state.item_quantities[ITEM_LUCKY_LEAF] == 0);
+    assert(state.item_quantities[ITEM_TRANSPORT_PILL] == 1);
+    assert(state.item_quantities[ITEM_COMPARISON_SCROLL] == 0);
+}
+
 static void test_source_groups(void)
 {
     static const GameLootSource suit_sources[] = {
@@ -208,6 +234,7 @@ int main(void)
     test_named_unique_routines();
     test_nettle_drop_order();
     test_dj_nested_drop();
+    test_knockout_suppresses_guarded_unique_drops();
     test_source_groups();
     test_invalid_source_does_nothing();
     return 0;

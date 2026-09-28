@@ -172,6 +172,7 @@ static void test_advice_groups_and_boundaries(void)
     assert_advice(26, "GLADIATOR",
         "TO BEDZIE TAK PROSTE JAK ZABICIE DZIECKA TOPOREM !!!\n");
     assert_advice(21, "TAKSOWKARZ", "");
+    assert_advice(22, "TAKSOWKARZ", "");
     assert_advice(36, "ROZA",
         "JESTES SILNIEJSZY STAD WNIOSEK ZE SOBIE PORADZISZ\n"
         "P.S - JESTES DUZO DUZO SILNIEJSZY ZABIJ BEZ OGRODEK!!!\n");

@@ -624,6 +624,16 @@ static void add_clamped(int *value, int64_t amount)
     }
 }
 
+static int add_wrapped_long(int value, int amount)
+{
+    uint32_t result = (uint32_t)(int32_t)value + (uint32_t)(int32_t)amount;
+
+    if (result <= INT32_MAX) {
+        return (int)result;
+    }
+    return (int)(INT32_MIN + (int64_t)(result - UINT32_C(0x80000000)));
+}
+
 static int64_t level_threshold(int level)
 {
     if (level == 1) {
@@ -1341,6 +1351,7 @@ static ItemActionResult use_item(
         emit(output,
             "WSZYSTKO ZACZYNA WIROWAC , POTEM NAGLY BLYSK I ZNAJDUJESZ SIE W PRZESZLOSCI\n"
         );
+        game_regenerate_encounters(state);
         if (state->wisdom < 10) {
             emit(output,
                 "BRAK OBYCIA W POSLUGIWANIU SIE MAGICZNYMI PRZEDMIOTAMI SPRAWIL ZE \n"
@@ -1581,6 +1592,13 @@ typedef enum {
     UNIQUE_DROP_COMPARISON_SCROLL
 } UniqueDrop;
 
+static bool unique_drop_requires_surviving(UniqueDrop drop)
+{
+    return drop == UNIQUE_DROP_LIROY_CASSETTE
+        || drop == UNIQUE_DROP_LUCKY_LEAF
+        || drop == UNIQUE_DROP_COMPARISON_SCROLL;
+}
+
 static bool try_unique_drop(
     GameState *state,
     UniqueDrop drop,
@@ -1636,6 +1654,9 @@ static bool try_unique_drop(
     }
 
     if (random_below(state, roll_limit) >= successful_rolls) {
+        return false;
+    }
+    if (state->energy <= 0 && unique_drop_requires_surviving(drop)) {
         return false;
     }
     ++state->item_quantities[item_id];
@@ -1797,11 +1818,7 @@ static void resolve_ordinary_enemy_rewards(
 {
     int coins = roll_enemy_stat(state, rewards->coins);
 
-    if (state->coins <= INT_MAX - coins) {
-        state->coins += coins;
-    } else {
-        state->coins = INT_MAX;
-    }
+    state->coins = add_wrapped_long(state->coins, coins);
 
     switch (rewards->kind) {
     case ENEMY_REWARD_STANDARD:
@@ -1859,6 +1876,43 @@ static void resolve_ordinary_enemy_rewards(
     case ENEMY_REWARD_NONE:
         break;
     }
+}
+
+static void emit_spaniel_speech(GameOutput output)
+{
+    emit(output,
+        "GDY NAGLE!!!! NIEBIOSA SIE OTWIERAJA\n"
+        "A SPANIEL PRZEMAWIA DO CIEBIE LUDZKIM GLOSEM !!!!!\n"
+        "HAU HAU CHAMIE PO CO MNIE ZABILES ??? \n"
+    );
+}
+
+static void resolve_fled_dog_post_fight(
+    GameState *state,
+    WorldActorId actor,
+    GameOutput output
+)
+{
+    const EnemyProfile *profile = enemy_profile_find(
+        enemy_profile_for_world_actor(actor)
+    );
+
+    if (profile == NULL || profile->rewards.kind != ENEMY_REWARD_DOG) {
+        return;
+    }
+
+    resolve_ordinary_enemy_rewards(state, actor, &profile->rewards, output);
+    state->world_actor_rooms[actor] = BOMBKI_ROOM_NOWHERE;
+    if (actor == WORLD_ACTOR_SPANIEL) {
+        emit_spaniel_speech(output);
+    }
+}
+
+static bool ordinary_rewards_require_surviving(EnemyProfileId profile)
+{
+    return profile == ENEMY_PROFILE_VEASY
+        || profile == ENEMY_PROFILE_EASY
+        || profile == ENEMY_PROFILE_NEASY;
 }
 
 static int recovered_combat_chance(const GameState *state);
@@ -1965,7 +2019,9 @@ bool game_resolve_active_opponent_victory(
     if (state->energy > 0) {
         resolve_victory_kunszt(state, output);
     }
-    resolve_ordinary_enemy_rewards(state, actor, &profile->rewards, output);
+    if (state->energy > 0 || !ordinary_rewards_require_surviving(profile->id)) {
+        resolve_ordinary_enemy_rewards(state, actor, &profile->rewards, output);
+    }
     if (state->energy > 0) {
         try_cook_defeated_enemy(state, output);
     }
@@ -1974,11 +2030,7 @@ bool game_resolve_active_opponent_victory(
         (void)game_resolve_enemy_loot(state, loot_source, output);
     }
     if (actor == WORLD_ACTOR_SPANIEL) {
-        emit(output,
-            "GDY NAGLE!!!! NIEBIOSA SIE OTWIERAJA\n"
-            "A SPANIEL PRZEMAWIA DO CIEBIE LUDZKIM GLOSEM !!!!!\n"
-            "HAU HAU CHAMIE PO CO MNIE ZABILES ??? \n"
-        );
+        emit_spaniel_speech(output);
     }
     if (state->quest_type > 0) {
         add_clamped(&state->quest_progress, -1);
@@ -2302,19 +2354,68 @@ static void describe_player_damage(int damage, GameOutput output)
     }
 }
 
-static int apply_small_shield(
+static int combat_protection_chance(const GameState *state)
+{
+    int64_t chance = 0;
+
+    if (state->equipped_shield == ITEM_SMALL_SHIELD) {
+        chance += 15;
+    }
+    if (state->equipped_clothing == ITEM_CLOTHES) {
+        chance += 7;
+    } else if (state->equipped_clothing == ITEM_SPIKED_SUIT) {
+        chance += 10;
+    }
+    chance -= 8 * (int64_t)state->item_quantities[ITEM_LIROY_CASSETTE];
+
+    if (chance > INT_MAX) {
+        return INT_MAX;
+    }
+    if (chance < INT_MIN) {
+        return INT_MIN;
+    }
+    return (int)chance;
+}
+
+static int combat_damage_absorption(const GameState *state)
+{
+    int absorption = 0;
+
+    if (state->equipped_shield == ITEM_SMALL_SHIELD) {
+        ++absorption;
+    }
+    if (state->equipped_clothing == ITEM_SPIKED_SUIT) {
+        ++absorption;
+    }
+    return absorption;
+}
+
+static int combat_heavy_blow_threshold(const GameState *state)
+{
+    int threshold = 0;
+
+    if (state->equipped_weapon == ITEM_OLD_SWORD) {
+        threshold += 3;
+    }
+    if (state->equipped_clothing == ITEM_SPIKED_SUIT) {
+        threshold += 15;
+    }
+    return threshold;
+}
+
+static int apply_combat_protection(
     GameState *state,
     int damage,
     GameOutput output
 )
 {
-    if (state->equipped_shield != ITEM_SMALL_SHIELD
-        || random_below(state, 100) > 10) {
+    if ((int)random_below(state, 100) > combat_protection_chance(state)) {
         return damage;
     }
 
-    if (damage > 0) {
-        --damage;
+    damage -= combat_damage_absorption(state);
+    if (damage < 0) {
+        damage = 0;
     }
     emit_formatted(output, "OSLONILES SIE ! TRACISZ %d ENERGII\n", damage);
     return damage;
@@ -2504,7 +2605,7 @@ static bool resolve_basic_combat_round(
                 : 0
         );
         describe_enemy_damage(damage, output);
-        damage = apply_small_shield(state, damage, output);
+        damage = apply_combat_protection(state, damage, output);
         damage = apply_automatic_parry(state, damage, output);
         state->energy = damage >= state->energy ? 0 : state->energy - damage;
         apply_enemy_magic(state, output);
@@ -2515,6 +2616,13 @@ static bool resolve_basic_combat_round(
             state,
             state->strength > 0 ? (size_t)state->strength : 0
         );
+        while ((int64_t)damage * 10 < combat_heavy_blow_threshold(state)) {
+            damage = (int)random_below(
+                state,
+                state->strength > 0 ? (size_t)state->strength : 0
+            );
+            emit(output, "FUKSROLL FUKSROLL FUKSROLL ! \n");
+        }
         describe_player_damage(damage, output);
         state->active_opponent_energy =
             damage >= state->active_opponent_energy
@@ -2528,6 +2636,7 @@ static bool resolve_basic_combat_round(
         try_kick(state, false, output);
     }
     if (try_flee(state, action == COMBAT_ACTION_FLEE, output)) {
+        resolve_fled_dog_post_fight(state, opponent, output);
         if (opponent == WORLD_ACTOR_STARUCH) {
             resolve_staruch_consequence(state, output);
         }
@@ -3118,7 +3227,7 @@ static void emit_comparison_advice(
         if (score < 21) {
             emit(output, "NIE\n");
         }
-        if (score > 21 && score < 28) {
+        if (score > 22 && score < 28) {
             emit(output, "RACZEJ NIE , CHOC MOZNA ZARYZYKOWAC(NIE POLECAM)\n");
         }
         if (score > 27) {
@@ -3327,8 +3436,7 @@ static ItemActionResult buy_shop_item(
         return ITEM_ACTION_FAILED;
     }
     duncan_result = ITEM_ACTION_FAILED;
-    if (state->duncan_black_market_unlocked
-        && definition->id == ITEM_QUEST_PASS
+    if (definition->id == ITEM_QUEST_PASS
         && state->coins >= 400
         && state->item_quantities[ITEM_QUEST_PASS] < INT_MAX) {
         state->coins -= 400;
@@ -3338,8 +3446,7 @@ static ItemActionResult buy_shop_item(
             "OTO PODROBIONA PRZEPUSTKA HE , HE NAWET QUEST-MASTER SIE NIE POKAPUJE\n"
         );
         duncan_result = ITEM_ACTION_SUCCEEDED;
-    } else if (state->duncan_black_market_unlocked
-        && definition->id == ITEM_BACKPACK
+    } else if (definition->id == ITEM_BACKPACK
         && state->world_actor_rooms[WORLD_ACTOR_DUNCAN] == state->room_id
         && state->coins >= 4800
         && state->item_quantities[ITEM_BACKPACK] < INT_MAX) {
@@ -3448,8 +3555,7 @@ static bool talk_to_old_elf(GameState *state, GameOutput output)
 
 static void list_duncan_market(const GameState *state, GameOutput output)
 {
-    if (!state->duncan_black_market_unlocked
-        || state->world_actor_rooms[WORLD_ACTOR_DUNCAN] != state->room_id) {
+    if (state->world_actor_rooms[WORLD_ACTOR_DUNCAN] != state->room_id) {
         return;
     }
     emit(output,
@@ -3706,8 +3812,8 @@ static void describe_status(const GameState *state, GameOutput output)
         "JESTES NA TRZYNASTYM LEVELU A DO NASTEPNEGO BRAKUJE CI "
     };
     size_t index;
-    int protection = 0;
-    int luck = 0;
+    int protection;
+    int luck;
 
     emit(output, "NOSISZ ZE SOBA:\n");
     for (index = 0; index < sizeof(inventory_order) / sizeof(inventory_order[0]);
@@ -3736,25 +3842,22 @@ static void describe_status(const GameState *state, GameOutput output)
     emit_formatted(output, "W SUMIE MASZ %zu/%d PRZEDMIOTOW\n",
         game_carried_item_count(state), game_carrying_capacity(state));
 
+    protection = combat_protection_chance(state)
+        + 10 * combat_damage_absorption(state);
+    luck = combat_heavy_blow_threshold(state);
+
     if (state->equipped_weapon == BOMBKI_NO_ITEM) {
         emit(output, "BIJESZ SIE NA PIESCI\n");
-    } else {
-        luck += 3;
     }
     if (state->equipped_shield == BOMBKI_NO_ITEM) {
         emit(output, "NIE MASZ ZADNEJ OCHRONY\n");
-    } else {
-        protection += 25;
     }
     if (state->equipped_clothing == BOMBKI_NO_ITEM) {
         emit(output, "JESTES NAGI !!!!!!!!\n");
     } else if (state->equipped_clothing == ITEM_CLOTHES) {
         emit(output, "MASZ NA SOBIE KOMPLET UBRAN FIRMY \"SYF\"\n");
-        protection += 7;
     } else {
         emit(output, "MASZ NA SOBIE GRANITUR Z KOLCAMI \n");
-        protection += 20;
-        luck += 15;
     }
     if (state->equipped_shield == ITEM_SMALL_SHIELD) {
         emit(output, "TWOJA OCHRONA JEST MALA TARCZA\n");

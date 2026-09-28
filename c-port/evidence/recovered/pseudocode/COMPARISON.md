@@ -140,13 +140,13 @@ if OGOL > 34:
 ```text
 if OGOL < 21:
     "NIE"
-if OGOL > 21 and OGOL < 28:
+if OGOL > 22 and OGOL < 28:
     "RACZEJ NIE , CHOC MOZNA ZARYZYKOWAC(NIE POLECAM)"
 if OGOL > 27:
     "TAK"
 ```
 
-`OGOL == 21` produces no advice for this group.
+`OGOL == 21` and `OGOL == 22` produce no advice for this group.
 
 ### `PEDAL`, `PARA`, `MACIEK`, `ROZA`, `MALINA`, `TRAWA`, `AGREST`, `JEZYNA`
 

@@ -69,10 +69,10 @@ static void test_equal_dexterity_exchanges_both_hits(void)
     assert(strcmp(capture.text,
         "WALCZYSZ - <<<<TWOJ WROG MA 20%>>>><<<< A TY MASZ 50% ENERGII>>>>>\n"
         "PRZECIWNIK CIE TYLKO DRASNA I TRACISZ 2% ENERGII\n"
-        "MASZ PECHA : LEKKO POPCHNALES GO I STRACIL TYLKO 2% ENERGII\n"
+        "DOSTAL I STRACIL 9% ENERGII\n"
     ) == 0);
     assert(state.energy == 48);
-    assert(state.active_opponent_energy == 18);
+    assert(state.active_opponent_energy == 11);
     assert(state.active_opponent_actor == WORLD_ACTOR_CAGE_WEAK);
     assert(state.turn == 1);
     assert(game_state_is_valid(&state));
@@ -125,6 +125,96 @@ static void test_small_shield_uses_recovered_defense_roll(void)
     assert(game_state_is_valid(&state));
 }
 
+static void test_equipment_defense_and_cassette_penalty(void)
+{
+    GameState protected_state;
+    GameState cassette_state;
+    Capture protected_capture = {{0}, 0};
+    Capture cassette_capture = {{0}, 0};
+
+    prepare_enemy(&protected_state, WORLD_ACTOR_CAGE_WEAK, ROOM_CAGE_WEAK);
+    protected_state.dexterity = 3;
+    protected_state.item_quantities[ITEM_SPIKED_SUIT] = 1;
+    protected_state.equipped_clothing = ITEM_SPIKED_SUIT;
+    protected_state.random_state = 8u;
+
+    execute(&protected_state, &protected_capture, "ZABIJ POTWOR");
+
+    assert(strstr(protected_capture.text,
+        "OSLONILES SIE ! TRACISZ 1 ENERGII\n"
+    ) != NULL);
+    assert(protected_state.energy == 49);
+
+    prepare_enemy(&cassette_state, WORLD_ACTOR_CAGE_WEAK, ROOM_CAGE_WEAK);
+    cassette_state.dexterity = 3;
+    cassette_state.item_quantities[ITEM_SPIKED_SUIT] = 1;
+    cassette_state.item_quantities[ITEM_LIROY_CASSETTE] = 1;
+    cassette_state.equipped_clothing = ITEM_SPIKED_SUIT;
+    cassette_state.random_state = 8u;
+
+    execute(&cassette_state, &cassette_capture, "ZABIJ POTWOR");
+
+    assert(strstr(cassette_capture.text, "OSLONILES SIE !") == NULL);
+    assert(cassette_state.energy == 48);
+    assert(game_state_is_valid(&protected_state));
+    assert(game_state_is_valid(&cassette_state));
+}
+
+static void test_fuksroll_rerolls_weak_player_damage(void)
+{
+    GameState state;
+    Capture capture = {{0}, 0};
+
+    prepare_enemy(&state, WORLD_ACTOR_CAGE_WEAK, ROOM_CAGE_WEAK);
+    state.dexterity = 3;
+    state.strength = 4;
+    state.item_quantities[ITEM_OLD_SWORD] = 1;
+    state.item_quantities[ITEM_SPIKED_SUIT] = 1;
+    state.equipped_weapon = ITEM_OLD_SWORD;
+    state.equipped_clothing = ITEM_SPIKED_SUIT;
+    state.random_state = 3u;
+
+    execute(&state, &capture, "ZABIJ POTWOR");
+
+    assert(strstr(capture.text, "FUKSROLL FUKSROLL FUKSROLL ! \n") != NULL);
+    assert(strstr(capture.text,
+        "MASZ PECHA : LEKKO POPCHNALES GO I STRACIL TYLKO 3% ENERGII\n"
+    ) != NULL);
+    assert(state.active_opponent_energy == 17);
+    assert(game_state_is_valid(&state));
+}
+
+static void test_fleeing_dog_still_pays_out_and_leaves(void)
+{
+    GameState state;
+    Capture capture = {{0}, 0};
+
+    prepare_enemy(&state, WORLD_ACTOR_SPANIEL, ROOM_SHOP_STREET);
+    state.flee_skill = 100;
+    state.random_state = 0u;
+    assert(game_select_opponent(&state, "SPANIEL"));
+
+    execute(&state, &capture, "ZWIEJ");
+
+    assert(strcmp(capture.text,
+        "WALCZYSZ - <<<<TWOJ WROG MA 10%>>>><<<< A TY MASZ 50% ENERGII>>>>>\n"
+        "PRZECIWNIK CIE TYLKO DRASNA I TRACISZ 3% ENERGII\n"
+        "WSTYD !!! UCIEKLES Z POLA BITWY TRACISZ 20 KUNSZTU\n"
+        "WYCIAGASZ 7 MONET Z CIALA PSA\n"
+        "WYCIAGASZ ZAKRWAWIONE SERCE Z CIALA PSA\n"
+        "GDY NAGLE!!!! NIEBIOSA SIE OTWIERAJA\n"
+        "A SPANIEL PRZEMAWIA DO CIEBIE LUDZKIM GLOSEM !!!!!\n"
+        "HAU HAU CHAMIE PO CO MNIE ZABILES ??? \n"
+    ) == 0);
+    assert(state.energy == 47);
+    assert(state.mana == 82);
+    assert(state.coins == 7);
+    assert(!game_combat_is_active(&state));
+    assert(state.world_actor_rooms[WORLD_ACTOR_SPANIEL] == BOMBKI_ROOM_NOWHERE);
+    assert(state.world_object_rooms[WORLD_OBJECT_BLOODY_HEART] == ROOM_SHOP_STREET);
+    assert(game_state_is_valid(&state));
+}
+
 static void test_victory_finishes_the_same_atomic_turn(void)
 {
     GameState state;
@@ -132,7 +222,7 @@ static void test_victory_finishes_the_same_atomic_turn(void)
 
     prepare_enemy(&state, WORLD_ACTOR_KORNIK, ROOM_ARENA_33);
     state.dexterity = 1;
-    state.strength = 2;
+    state.strength = 3;
     state.item_quantities[ITEM_BLOODY_HEART] = 1;
     state.random_state = 1u;
 
@@ -141,12 +231,12 @@ static void test_victory_finishes_the_same_atomic_turn(void)
     assert(strcmp(capture.text,
         "WALCZYSZ - <<<<TWOJ WROG MA 1%>>>><<<< A TY MASZ 50% ENERGII>>>>>\n"
         "PRZECIWNIK CIE TYLKO DRASNA I TRACISZ 0% ENERGII\n"
-        "MASZ PECHA : LEKKO POPCHNALES GO I STRACIL TYLKO 1% ENERGII\n"
-        "ZABILES GO ! ZYSKUJESZ ZA TO 22 KUNSZTU \n"
-        "WYCIAGASZ 2 MONET Z CIALA\n"
+        "MASZ PECHA : LEKKO POPCHNALES GO I STRACIL TYLKO 2% ENERGII\n"
+        "ZABILES GO ! ZYSKUJESZ ZA TO 21 KUNSZTU \n"
+        "WYCIAGASZ 1 MONET Z CIALA\n"
     ) == 0);
-    assert(state.coins == 2);
-    assert(state.experience == 22);
+    assert(state.coins == 1);
+    assert(state.experience == 21);
     assert(state.world_actor_rooms[WORLD_ACTOR_KORNIK] == BOMBKI_ROOM_NOWHERE);
     assert(state.active_opponent_actor == BOMBKI_NO_ACTOR);
     assert(state.turn == 1);
@@ -181,7 +271,7 @@ static void test_death_stops_the_current_combat(void)
         "P.S : AHA POTWORY SIE ODREGENEROWALY\n"
     ) == 0);
     assert(state.energy == state.maximum_energy);
-    assert(state.experience == -208);
+    assert(state.experience == -221);
     assert(state.room_id == ROOM_CITY_THRESHOLD);
     assert(state.active_opponent_actor == BOMBKI_NO_ACTOR);
     assert(state.world_actor_rooms[WORLD_ACTOR_CAGE_WEAK] == ROOM_CAGE_WEAK);
@@ -380,12 +470,12 @@ static void test_successful_automatic_kick(void)
     assert(strcmp(capture.text,
         "WALCZYSZ - <<<<TWOJ WROG MA 20%>>>><<<< A TY MASZ 50% ENERGII>>>>>\n"
         "PRZECIWNIK CIE TYLKO DRASNA I TRACISZ 0% ENERGII\n"
-        "DOSTAL I STRACIL 7% ENERGII\n"
-        "TWOJ SUPER KOP ZABIERA 8% ENERGI\n"
+        "MASZ PECHA : LEKKO POPCHNALES GO I STRACIL TYLKO 5% ENERGII\n"
+        "TWOJ SUPER KOP ZABIERA 9% ENERGI\n"
     ) == 0);
     assert(state.energy == 50);
     assert(state.mana == 94);
-    assert(state.active_opponent_energy == 5);
+    assert(state.active_opponent_energy == 6);
     assert(state.turn == 1);
     assert(game_state_is_valid(&state));
 }
@@ -402,19 +492,19 @@ static void test_failed_automatic_kick(void)
     state.kick_skill = 100;
     state.kick_energy_threshold = 60;
     state.kick_mana_threshold = 0;
-    state.random_state = 0u;
+    state.random_state = 10u;
 
     execute(&state, &capture, "ZABIJ POTWOR");
 
     assert(strcmp(capture.text,
         "WALCZYSZ - <<<<TWOJ WROG MA 20%>>>><<<< A TY MASZ 50% ENERGII>>>>>\n"
-        "PRZECIWNIK CIE TYLKO DRASNA I TRACISZ 1% ENERGII\n"
-        "MASZ PECHA : LEKKO POPCHNALES GO I STRACIL TYLKO 2% ENERGII\n"
+        "PRZECIWNIK CIE TYLKO DRASNA I TRACISZ 0% ENERGII\n"
+        "DOSTAL I STRACIL 6% ENERGII\n"
         "TWOJ SUPER KOP CHYBIA PRZECIWNIKA \n"
     ) == 0);
-    assert(state.energy == 49);
-    assert(state.mana == 98);
-    assert(state.active_opponent_energy == 18);
+    assert(state.energy == 50);
+    assert(state.mana == 97);
+    assert(state.active_opponent_energy == 14);
     assert(state.turn == 1);
     assert(game_state_is_valid(&state));
 }
@@ -428,17 +518,17 @@ static void test_successful_automatic_flee(void)
     state.dexterity = 3;
     state.flee_skill = 21;
     state.flee_energy_threshold = 60;
-    state.random_state = 4u;
+    state.random_state = 9u;
 
     execute(&state, &capture, "ZABIJ POTWOR");
 
     assert(strcmp(capture.text,
         "WALCZYSZ - <<<<TWOJ WROG MA 20%>>>><<<< A TY MASZ 50% ENERGII>>>>>\n"
-        "PRZECIWNIK CIE TYLKO DRASNA I TRACISZ 0% ENERGII\n"
-        "MASZ PECHA : LEKKO POPCHNALES GO I STRACIL TYLKO 2% ENERGII\n"
+        "PRZECIWNIK CIE TYLKO DRASNA I TRACISZ 1% ENERGII\n"
+        "MASZ PECHA : LEKKO POPCHNALES GO I STRACIL TYLKO 4% ENERGII\n"
         "WSTYD !!! UCIEKLES Z POLA BITWY TRACISZ 20 KUNSZTU\n"
     ) == 0);
-    assert(state.energy == 50);
+    assert(state.energy == 49);
     assert(state.mana == 82);
     assert(state.experience == -20);
     assert(state.active_opponent_actor == BOMBKI_NO_ACTOR);
@@ -463,14 +553,14 @@ static void test_failed_automatic_flee(void)
     assert(strcmp(capture.text,
         "WALCZYSZ - <<<<TWOJ WROG MA 20%>>>><<<< A TY MASZ 50% ENERGII>>>>>\n"
         "PRZECIWNIK CIE TYLKO DRASNA I TRACISZ 1% ENERGII\n"
-        "MASZ PECHA : LEKKO POPCHNALES GO I STRACIL TYLKO 2% ENERGII\n"
+        "DOSTAL I STRACIL 7% ENERGII\n"
         "NIE UDALO CI SIE UCIEC !!!! WALCZYSZ DALEJ !!! \n"
     ) == 0);
     assert(state.energy == 49);
-    assert(state.mana == 82);
+    assert(state.mana == 83);
     assert(state.experience == 0);
     assert(state.active_opponent_actor == WORLD_ACTOR_CAGE_WEAK);
-    assert(state.active_opponent_energy == 18);
+    assert(state.active_opponent_energy == 13);
     assert(state.turn == 1);
     assert(game_state_is_valid(&state));
 }
@@ -495,7 +585,7 @@ static void test_flee_low_mana_blocked_silently(void)
         "WALCZYSZ - <<<<TWOJ WROG MA 20%>>>><<<< A TY MASZ 50% ENERGII>>>>>\n"
         "PRZECIWNIK CIE TYLKO DRASNA I TRACISZ 0% ENERGII\n"
     ) == 0);
-    assert(state.mana == 12);
+    assert(state.mana == 13);
     assert(game_combat_is_active(&state));
     assert(state.active_opponent_energy == 20);
     assert(state.turn == 1);
@@ -545,19 +635,19 @@ static void test_combat_loop_kick_and_flee_choices(void)
     prepare_enemy(&state, WORLD_ACTOR_CAGE_WEAK, ROOM_CAGE_WEAK);
     state.dexterity = 3;
     state.kick_skill = 100;
-    state.random_state = 0u;
+    state.random_state = 1u;
     assert(game_select_opponent(&state, "POTWOR"));
 
     execute(&state, &capture, "KOP");
-    assert(strstr(capture.text, "TWOJ SUPER KOP ZABIERA 4% ENERGI\n") != NULL);
+    assert(strstr(capture.text, "TWOJ SUPER KOP ZABIERA 2% ENERGI\n") != NULL);
     assert(strstr(capture.text, "MASZ PECHA") == NULL);
-    assert(state.active_opponent_energy == 16);
+    assert(state.active_opponent_energy == 18);
     assert(state.turn == 1);
 
     prepare_enemy(&state, WORLD_ACTOR_CAGE_WEAK, ROOM_CAGE_WEAK);
     state.dexterity = 3;
     state.flee_skill = 20;
-    state.random_state = 28u;
+    state.random_state = 4u;
     assert(game_select_opponent(&state, "POTWOR"));
     memset(&capture, 0, sizeof(capture));
 
@@ -566,7 +656,7 @@ static void test_combat_loop_kick_and_flee_choices(void)
         "WSTYD !!! UCIEKLES Z POLA BITWY TRACISZ 20 KUNSZTU\n"
     ) != NULL);
     assert(!game_combat_is_active(&state));
-    assert(state.mana == 83);
+    assert(state.mana == 82);
     assert(state.experience == -20);
     assert(state.turn == 1);
 }
@@ -606,18 +696,18 @@ static void test_automatic_parry_and_learning(void)
     state.dexterity = 3;
     state.strength = 1;
     state.parry_skill = 50;
-    state.random_state = 7186u;
+    state.random_state = 9715u;
 
     execute(&state, &capture, "ZABIJ POTWOR");
 
     assert(strcmp(capture.text,
         "WALCZYSZ - <<<<TWOJ WROG MA 20%>>>><<<< A TY MASZ 50% ENERGII>>>>>\n"
-        "PRZECIWNIK CIE TYLKO DRASNA I TRACISZ 5% ENERGII\n"
-        "            <<<<<ODPAROWUJESZ ATAK PRZECIWNIKA !!! TRACISZ 3% ENERGI\n"
+        "PRZECIWNIK CIE TYLKO DRASNA I TRACISZ 4% ENERGII\n"
+        "            <<<<<ODPAROWUJESZ ATAK PRZECIWNIKA !!! TRACISZ 2% ENERGI\n"
         "*************** UCZYSZ SIE ZDOLNOSCI PAROWANIE !!!!! ***************\n"
         "MASZ PECHA : LEKKO POPCHNALES GO I STRACIL TYLKO 0% ENERGII\n"
     ) == 0);
-    assert(state.energy == 47);
+    assert(state.energy == 48);
     assert(state.parry_skill == 51);
     assert(state.experience == 5);
     assert(state.turn == 1);
@@ -683,13 +773,12 @@ static void test_enemy_fireball_and_poison(void)
     assert(strcmp(capture.text,
         "WALCZYSZ - <<<<TWOJ WROG MA 20%>>>><<<< A TY MASZ 50% ENERGII>>>>>\n"
         "PRZECIWNIK CIE TYLKO DRASNA I TRACISZ 3% ENERGII\n"
-        "PRZECIWNIK PUSZCZA FIREBALLA W TWYM KIERUNKU - TRACISZ 19% ENERGII\n"
         "PRZECIWNIK RZUCA CZAR \"POISON\" \n"
         "JESTES ZATRUTY - TRACISZ 0% ENERGI\n"
         "MASZ PECHA : LEKKO POPCHNALES GO I STRACIL TYLKO 0% ENERGII\n"
     ) == 0);
-    assert(state.energy == 28);
-    assert(state.active_opponent_fireballs == 19);
+    assert(state.energy == 47);
+    assert(state.active_opponent_fireballs == 20);
     assert(state.active_opponent_poison_casts == 9);
     assert(state.poison_turns == 9);
     assert(state.turn == 1);
@@ -713,10 +802,10 @@ static void test_ongoing_poison_damage(void)
     assert(strcmp(capture.text,
         "WALCZYSZ - <<<<TWOJ WROG MA 20%>>>><<<< A TY MASZ 50% ENERGII>>>>>\n"
         "PRZECIWNIK CIE TYLKO DRASNA I TRACISZ 2% ENERGII\n"
-        "JESTES ZATRUTY - TRACISZ 4% ENERGI\n"
+        "JESTES ZATRUTY - TRACISZ 2% ENERGI\n"
         "MASZ PECHA : LEKKO POPCHNALES GO I STRACIL TYLKO 0% ENERGII\n"
     ) == 0);
-    assert(state.energy == 44);
+    assert(state.energy == 46);
     assert(state.poison_turns == 1);
     assert(state.turn == 1);
     assert(game_state_is_valid(&state));
@@ -1077,6 +1166,9 @@ int main(void)
     test_equal_dexterity_exchanges_both_hits();
     test_dodge_rolls_skip_both_attacks();
     test_small_shield_uses_recovered_defense_roll();
+    test_equipment_defense_and_cassette_penalty();
+    test_fuksroll_rerolls_weak_player_damage();
+    test_fleeing_dog_still_pays_out_and_leaves();
     test_victory_finishes_the_same_atomic_turn();
     test_death_stops_the_current_combat();
     test_simultaneous_victory_resolves_before_death();

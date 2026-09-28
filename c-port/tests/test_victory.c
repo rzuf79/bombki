@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <limits.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
@@ -183,6 +184,25 @@ static void test_weak_standard_rewards_are_coins_only(void)
     assert(state.experience == 9);
     assert(state.item_quantities[ITEM_BLOODY_HEART] == 0);
     assert(state.item_quantities[ITEM_DOUGHNUT] == 0);
+    assert_victory_state(&state, WORLD_ACTOR_KORNIK);
+}
+
+static void test_coin_rewards_wrap_like_original_longint(void)
+{
+    GameState state;
+    Capture capture = {{0}, 0};
+    GameOutput output = {capture_write, &capture};
+    uint32_t seed = 0;
+    int coins = (int)(next_value(seed) % 3);
+
+    assert(coins > 0);
+    prepare_enemy(&state, WORLD_ACTOR_KORNIK, ROOM_ARENA_33, "KORNIK");
+    state.coins = INT_MAX;
+    state.random_state = seed;
+    state.active_opponent_energy = 0;
+
+    assert(game_resolve_active_opponent_victory(&state, output));
+    assert(state.coins == INT_MIN + coins - 1);
     assert_victory_state(&state, WORLD_ACTOR_KORNIK);
 }
 
@@ -450,10 +470,43 @@ static void test_named_loot_follows_ordinary_rewards(void)
     assert_victory_state(&state, WORLD_ACTOR_TRENER);
 }
 
+static void test_high_tier_rewards_require_surviving(void)
+{
+    static const struct {
+        WorldActorId actor;
+        int room;
+        const char *name;
+    } opponents[] = {
+        {WORLD_ACTOR_TAKSOWKARZ, ROOM_CITY_THRESHOLD, "TAKSOWKARZ"},
+        {WORLD_ACTOR_ROZA, ROOM_BRUSZCZ, "ROZA"},
+        {WORLD_ACTOR_LIROY, ROOM_STAGE, "LIROY"}
+    };
+    size_t index;
+
+    for (index = 0; index < sizeof(opponents) / sizeof(opponents[0]); ++index) {
+        GameState state;
+        Capture capture = {{0}, 0};
+        GameOutput output = {capture_write, &capture};
+
+        prepare_enemy(&state, opponents[index].actor, opponents[index].room,
+            opponents[index].name);
+        state.energy = 0;
+        state.random_state = 0;
+        state.active_opponent_energy = 0;
+
+        assert(game_resolve_active_opponent_victory(&state, output));
+        assert(state.coins == 0);
+        assert(state.item_quantities[ITEM_BLOODY_HEART] == 0);
+        assert(capture.length == 0);
+        assert_victory_state(&state, opponents[index].actor);
+    }
+}
+
 int main(void)
 {
     test_alive_opponent_is_not_resolved();
     test_weak_standard_rewards_are_coins_only();
+    test_coin_rewards_wrap_like_original_longint();
     test_standard_rewards_are_carried();
     test_standard_heart_rewards_stack();
     test_mrowka_drops_paczek();
@@ -463,5 +516,6 @@ int main(void)
     test_cage_rewards_use_original_roll_order();
     test_school_completion_places_diploma_in_teleporter();
     test_named_loot_follows_ordinary_rewards();
+    test_high_tier_rewards_require_surviving();
     return 0;
 }
