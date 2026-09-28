@@ -48,10 +48,15 @@ fi
 # TPC expects DOS (CRLF) line endings; the reconstruction sources are LF-only.
 sed -i 's/$/\r/' "$BUILD"/*.PAS
 
-# MONSTRA.TPU source record 0x03D2 stores DOS timestamp 0x26BB958B.
-# Set the scratch file's local wall-clock time after conversion: TP7 embeds
-# its mtime in the TPU. The 53-line source also preserves its line metadata.
+# TP7 embeds each source file's mtime in the unit's TPU source record, so the
+# scratch copies get the original wall-clock times back after the CRLF rewrite.
+#
+# MONSTRA.TPU source record 0x03D2 stores DOS timestamp 0x26BB958B
+# (1999-05-27 18:44:22); the 53-line source also preserves its line metadata.
+# SWIAT.TPU source record 0x04CF stores DOS timestamp 0x26CC6711
+# (1999-06-12 12:56:34); the 445-line source restores its per-line code counts.
 touch -t 199905271844.22 "$BUILD/MONSTRA.PAS" || exit 2
+touch -t 199906121256.34 "$BUILD/SWIAT.PAS" || exit 2
 
 cat > "$BUILD/tp7-run.conf" <<EOF
 [dosbox]

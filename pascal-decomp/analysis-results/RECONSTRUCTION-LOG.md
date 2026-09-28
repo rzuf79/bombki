@@ -1237,6 +1237,61 @@ reconstruction. Original-side findings are grounded in the EXE/TPU.
   `git diff --check -- pascal-decomp` passed. PRZEDM/SWIAT physical layout work
   remains as recorded in (61).
 
+### 2026-09-28 (63): SWIAT whole-file byte identity
+
+- **RESOLVED:** genuine TP7 under DOSBox-X now builds the checked-in
+  `reconstructed/SWIAT.PAS` into an exact copy of retained `SWIAT.TPU`: all
+  **26000 bytes** — symbols, source metadata, code, relocation records, and
+  alignment padding. Original and rebuilt SHA-256:
+  `fa10ec7352e0a287793ec5a7919f1667984776086648bba421ffe19823d65961`.
+  This closes the SWIAT half of the layout work left OPEN in (61); PRZEDM
+  remains.
+- The remaining differences were entirely source *layout*, not code. Decoding
+  the unit's line-info records (offset `ofs_line_lengths`, then per procedure:
+  symbol offset, `0`, decl line, entry line, `n`, and `n` per-line code-byte
+  counts whose values sum to the code-block size) fixed the original source at
+  **445 lines**: a 16-line unit header, the 12 interface declarations in
+  alphabetical/block-id order, and the implementations in code-block order
+  `POKOJ5, POKOJ0, POKOJ1, POKOJ4, POKOJ13, POKOJE, POKOJ11, POKOJ30, POKOJ60,
+  POKOJ75, POKOJ83, POKOJ100`. The header must be 16 lines because the
+  original's decl line is always the `begin` line − 1, which rules out any
+  comment line between `procedure X;` and `begin`; the image-range annotations
+  therefore became trailing comments on the declaration lines.
+- Per-line byte counts then fixed the statement grouping, since merging two of
+  our lines into one yields the sum of their counts. `POKOJ0` needs
+  `if … 'EXIT' then` merged with its `WriteLn` (45 bytes); `POKOJ13` needs the
+  two `if MONSTRA.SILNY = … then` pairs, all three `if FUKS < n then begin`
+  blocks, and `end else` merged (35, 35, 41×3, 7); `POKOJ100` needs the two
+  `PRZEPUSTKA` `if`/`WriteLn` pairs (37, 44), the `if (QUEST = 3) …` condition
+  continued onto `and (PRA > 0) then begin` as one line (40), and the
+  `(wpisz = 'ZACHOD') and (PRZEPUSTKA = 0)` `if`/`WriteLn` pair (54). The three
+  `if FUKS < n then begin` blocks additionally keep their matching `end;` on the
+  merged line: runs of zero-byte lines are interchangeable as long as their
+  length matches, and moving a zero-byte `end;` changes nothing in the bytes.
+- Eight bodies need one more attributed line than the statements require — a
+  zero-byte line between the last statement and the closing `end;` of
+  `POKOJ4`, `POKOJ13`, `POKOJ11`, `POKOJ30`, `POKOJ60`, `POKOJ75`, `POKOJ83`,
+  `POKOJ100`, plus a three-zero-line run in `POKOJ100` where the spelling needs
+  two. Emitted as blank lines. Whether the original used blank lines, comments,
+  or a different nesting there is **OPEN**: the TPU records line counts and
+  byte attribution only.
+- One line is at TP7's 127-character source limit. `POKOJ100`'s
+  `if (wpisz = 'ZACHOD') and (PRZEPUSTKA = 0) then WriteLn(…)` is 127
+  characters with this file's spacing before indentation, the line table
+  requires it on one line, and TPC reports `Error 11: Line too long` above
+  127 — so that single statement carries no leading indentation.
+- The unit's source record at TPU `0x04CF` stores DOS date/time `0x26CC6711`,
+  decoded as **1999-06-12 12:56:34**. `conformance/tp7-conformance.sh` now
+  applies `touch -t 199906121256.34` to the scratch SWIAT source after CRLF
+  conversion, alongside the existing MONSTRA touch.
+- The layout evidence, the decoded record format, and the per-procedure table
+  are recorded in `analysis-results/SWIAT-LINE-LAYOUT.md`. The original's exact
+  whitespace and comments remain **OPEN**.
+- **Verification:** local DOSBox-X/genuine TP7 compiled MONSTRA, PRZEDM, SWIAT
+  and BOMBKI; direct full-file equality and SHA-256 comparison passed for
+  MONSTRA and SWIAT. `conformance/compare_tpu.py` reports `PASS SWIAT.TPU:
+  byte-identical (26000 bytes)`. PRZEDM still fails and is the remaining unit.
+
 ## 6. Open items
 
 - Exact name per 0x1D8..0x218 slot — solvable by pairing save()/wczytaj()
