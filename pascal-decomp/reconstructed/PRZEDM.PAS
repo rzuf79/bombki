@@ -2383,6 +2383,4 @@ end;
 
   (* All interface procedure bodies reconstructed from the retained TPU
      listings and BOMBKI.EXE disassembly. *)
-begin
-  { unit-initialization: runs once at program start }
 end.

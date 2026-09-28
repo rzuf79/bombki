@@ -1035,6 +1035,94 @@ reconstruction. Original-side findings are grounded in the EXE/TPU.
 - **OPEN:** finish MODE/save-load command implementation (img
   0xB25A..0xF5B1) and remaining inline kill dispatches.
 
+### 2026-09-27 (58): compare TP7-rebuilt units byte-for-byte
+
+- Added a CI comparison of the three TP7-built reconstructed units against the
+  retained originals. TP7 compilation passes, but all three byte comparisons
+  fail ([CI run 38](https://github.com/rzuf79/bombki/actions/runs/36353016013),
+  head `c4bd114`). Each first differs at header offset `0x10`
+  (`ofs_const_blocks`, rebuilt value +8). Rebuilt file sizes and absolute
+  differing-byte-position counts are:
+
+  | TPU | Original → rebuilt size | Differing positions | Section differing positions (symbols / code / relocations / trailer) |
+  |---|---:|---:|---:|
+  | MONSTRA | 3072 → 3104 | 597 | 140 / 837 / 750 / 21 |
+  | PRZEDM | 80128 → 80720 | 61179 | 2993 / 34357 / 30652 / 14 |
+  | SWIAT | 26000 → 26640 | 20040 | 750 / 11854 / 10686 / 23 |
+
+- The section counts compare each section at its own start and therefore do not
+  sum to the absolute-offset count. Header section sizes also differ: symbols,
+  code, and relocations change by `+7/+12/+8` bytes for MONSTRA,
+  `+542/+43/+8` for PRZEDM, and `+46/+237/+368` for SWIAT. This establishes
+  differences in compiled code and relocation data, not just volatile metadata.
+  Exact source/compiler causes remain OPEN; do not normalize or exclude bytes
+  without identifying their meaning.
+
+### 2026-09-28 (59): isolate empty initializers and procedure-body drift
+
+- TP7's per-code-block comparison showed that the reconstructed
+  `MONSTRA.PAS`, `PRZEDM.PAS`, and `SWIAT.PAS` each emitted an extra unnamed
+  code block. Their final `begin end.` sections were explicit empty unit
+  initializers; the original TPU block tables have no matching block. Removed
+  those no-op sections. In the subsequent [TP7 build (CI run 43)](https://github.com/rzuf79/bombki/actions/runs/36354267789), MONSTRA's
+  `WSTEP` code block became byte-identical to the original, and MONSTRA's code
+  and relocation section sizes now match the original exactly. This verifies
+  the source of the shared `+8` code-block-table and `+12` code-section deltas
+  reported in finding (58).
+- [TP7 results (CI run 44)](https://github.com/rzuf79/bombki/actions/runs/36354440803)
+  and the entry-aligned follow-up [run 47](https://github.com/rzuf79/bombki/actions/runs/36354938979)
+  show that the remaining byte differences are not merely block ordering or
+  entry-offset shifts. All 12 same-name SWIAT room blocks and all 33 same-name
+  PRZEDM procedure blocks differ. All 12 SWIAT procedure entry offsets match
+  exactly; the reported PRZEDM examples also have matching entry offsets. In
+  SWIAT, the 11 room blocks grow by 15 bytes and `POKOJE` by 60; pre-entry and
+  post-entry slices both differ. In PRZEDM, named procedure block sizes are
+  generally equal, but both slices differ substantially; the full code section
+  grows by 31 bytes. MONSTRA's `WSTEP` remains an exact code match. The exported
+  declaration names/order/types in the current units match the TPU-derived
+  interface reports, so remaining symbol-region differences are outside those
+  public declarations (implementation/procedure metadata). Source-file and
+  line-table metadata also differ from the retained TPU records; these explain
+  metadata/trailer changes, not the procedure-code mismatches.
+- The code-block byte windows contain both executable bytes and literal/data
+  bytes (including readable CP437 text). Because the TPU entry offset does not
+  by itself delimit an instruction-only region in these blocks, the current
+  pre-entry/post-entry counts are byte slices, not disassembled-code counts.
+  They establish differences in literal/data content and block payloads, but
+  do not attribute every post-entry mismatch to an instruction versus embedded
+  data. **OPEN:** map differing pool/data bytes and executable instructions
+  to their exact Pascal source statements or local declarations; do not claim
+  byte fidelity for these units yet.
+
+### 2026-09-28 (60): bound named TPU procedure comparison windows
+
+- Replaced the unbounded “first prologue byte pattern in block” diagnostic in
+  `conformance/compare_tpu.py`. That search could match literal bytes and then
+  compare through following procedures, so its reported “machine” deltas were
+  invalid and are withdrawn.
+- The comparator translates each named entry from block-relative to
+  unit-global code position, infers the code-stream prefix (0 or 14 bytes) from
+  original procedure prologues, and locates each old/rebuilt procedure's
+  prologue only within 32 bytes after its own entry. It compares from that
+  per-procedure anchor to the end of the procedure's own block. This avoids
+  treating leading literal bytes as instructions or including the next
+  procedure's literal-pool block.
+  For SWIAT this is consistent with the independently verified
+  `SWIAT.code.bin[0x0E:]` mapping to EXE img `0xF5D0..0x129B8`: POKOJ5 starts
+  at img `0xF766` and its block ends at `0xFA04`; POKOJ0's block begins at
+  `0xFA05`, while its procedure starts at `0xFA5F` (`disasm/SWIAT-POKOJ5.asm`,
+  `disasm/SWIAT-POKOJ0.asm`, and `analysis-tools/verify_swiat_region.py`).
+- The bounded spans are payload windows, not automatically instruction-only:
+  literal/data classification and exact source attribution remain OPEN.
+  Original-vs-original comparisons pass for all three units, and a synthetic
+  SWIAT POKOJ5 body-byte mutation is reported as one difference in its
+  bounded 671-byte original procedure window. The previous “next named entry”
+  version produced an invalid 761-byte window because it included the following
+  literal-pool tail; run 54 predates the block-bound correction. Run 55 used
+  block bounds but still treated the rebuilt entry's prefix bias as uniform;
+  its output exposed leading literal bytes before some rebuilt prologues. The
+  per-procedure anchor correction above supersedes that report.
+  No claim of rebuilt byte identity follows from these diagnostics.
 ## 6. Open items
 
 - Exact name per 0x1D8..0x218 slot — solvable by pairing save()/wczytaj()

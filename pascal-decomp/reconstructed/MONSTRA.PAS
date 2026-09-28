@@ -74,6 +74,4 @@ begin
   NoSound;
 end;
 
-begin
-  { unit-initialization: runs once at program start }
 end.

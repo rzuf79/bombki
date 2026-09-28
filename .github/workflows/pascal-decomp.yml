@@ -2,7 +2,7 @@ name: pascal-decomp
 
 on:
   push:
-    branches: [main]
+    branches: [main, 'recon/**']
   pull_request:
   workflow_dispatch:
 
@@ -54,6 +54,12 @@ jobs:
             --entrypoint sh \
             ${{ steps.image.outputs.image }} \
             -c 'sh /workspace/pascal-decomp/conformance/tp7-conformance.sh'
+
+      - name: Compare reconstructed TPUs byte-for-byte
+        run: |
+          python3 pascal-decomp/conformance/compare_tpu.py \
+            --original-dir og \
+            --rebuilt-dir pascal-decomp/conformance/artifacts
 
       - name: Upload sweep artifacts
         if: ${{ !cancelled() }}
