@@ -53,10 +53,10 @@ listings, TPU/EXE reports, raw dumps) under `analysis-results\`.
 
 ## Installing software
 
-- Always ask the human for approval before installing software on the
-  machine (e.g. winget/apt/choco installs).
-- Prefer portable / temp-only solutions (download-and-extract into a temp
-  dir, then run from there) over system installs whenever possible.
+- On Windows, prefer portable / temp-only solutions (download-and-extract into
+  a temp dir, then run from there) over system installs whenever possible.
+- On Windows, always ask the human for approval before installing software on
+  the machine (e.g. winget/choco installs).
 
 ## Branch workflow
 
