@@ -286,6 +286,44 @@ the full suite covers the quest paths, recovery, native save/load, and river.
       such message should appear and the game should just show race selection
 - [x] display player's hape on the prompt (>), like in classic MUD games
 
+## Milestone 10 — discrepancy corrections
+
+This checklist is derived from
+[`C-PORT-DISCREPANCIES.md`](../../pascal-decomp/C-PORT-DISCREPANCIES.md).
+It excludes the documented, deliberate native-save format, countable-item
+inventory, and room-placement regeneration-model deviations, as well as the
+non-actionable original `PRZED` counter bookkeeping.
+
+- [ ] Apply the Kaseta carrying-capacity penalty (`S.Z -8`) and suppress the
+      Kaseta/Listek/Scroll unique-drop rolls when the player was knocked out.
+- [ ] Gate VEASY/EASY/NEASY ordinary rewards and their heart rolls on surviving
+      the fight, as in the original.
+- [ ] Replace saturating coin rewards with the original signed-long arithmetic.
+- [ ] Restore WALKAPIES post-fight behaviour: reward/heart roll, dog removal,
+      and SPANIEL/PUDEL speech after a flee.
+- [ ] Restore FIGHTSCENA result handling: clear musicians and invoke cassette
+      handling after the fight; gate Liroy's bonus, quest progress, cassette,
+      and exact congratulation line on a clean surviving victory.
+- [ ] Restore non-stage post-fight unique-drop call timing for TAKSOWKARZ,
+      SPRZEDAWCA, PEDAL, MACIEK, and D.J.; retain each drop routine's original
+      knockout guard or lack of one.
+- [ ] Restore FIGHTBLUSZCZ behaviour: Duncan's pre-quest `SECRET LISTA`,
+      document purchase, and backpack access; original plant clear conditions;
+      and the repeatable, never-cleared TRAWA fight with its rest line.
+- [ ] Fix POROWNANIE's basic/street advice band so score 22 prints no advice.
+- [ ] Reconcile recovered KOMENDY abbreviations (`W` east, `Z` west, `E` exits
+      list, `M` MODE) with the user-approved case-insensitive `n`, `s`, `w`,
+      `e`, `u`, and `d` movement aliases; preserve the latter and record/test
+      the chosen handling for the conflicting `W` and `E` inputs.
+- [ ] Model the original shared `PRO`/`ILOSC`/`FUKSROLL` combat-defense state:
+      clothing equip/unequip effects, shield block chance and absorption, and
+      the spiked suit's heavy-blow interaction.
+- [ ] Regenerate encounters after using the transport pill.
+- [ ] Restore WALKA's per-round and parry-learning kill-reward accrual, base
+      maximum-energy reward reductions, and FUKSROLL heavy-blow reroll.
+- [ ] Restore MINIARENA entry ceremony (one-shot `KTO` and status prompt), the
+      `WYJSCIE` leave word, and original fled-monster clearing behaviour.
+
 
 The central and underground posters no longer describe `MODE`/`UNMODE`, the
 subconscious state, or abilities with no handler. `POMOC` now lists the usable

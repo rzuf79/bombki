@@ -433,6 +433,12 @@ CRT clamps the accepted values to the 16 foreground / 8 background palette.
 No equivalent. The port has no terminal-colour framework; both commands fall
 through to the unrecognised-command path. Cosmetic only.
 
+### Port decision
+
+**Non-actionable.** Do not port `ZMIEN KOLOR` or `ZMIEN TLO`: terminal palette
+behaviour is DOS/CRT-specific and would undermine portable plain-text and ANSI
+fallback compatibility. This cosmetic discrepancy is intentionally retained.
+
 ---
 
 ## 14. Small-shield block (TARCZA) (moderate)
