@@ -23,7 +23,7 @@ REC="$WORK/pascal-decomp/reconstructed"
 BUILD="$(mktemp -d)"
 trap 'rm -rf "$BUILD"' EXIT
 
-for c in dosbox-x xvfb-run find sed cp grep; do
+for c in dosbox-x xvfb-run find sed cp grep touch; do
   command -v "$c" >/dev/null 2>&1 || {
     echo "::error::$c missing in the bombki-dosbox-tp7 image" >&2
     exit 2
@@ -47,6 +47,11 @@ fi
 
 # TPC expects DOS (CRLF) line endings; the reconstruction sources are LF-only.
 sed -i 's/$/\r/' "$BUILD"/*.PAS
+
+# MONSTRA.TPU source record 0x03D2 stores DOS timestamp 0x26BB958B.
+# Set the scratch file's local wall-clock time after conversion: TP7 embeds
+# its mtime in the TPU. The 53-line source also preserves its line metadata.
+touch -t 199905271844.22 "$BUILD/MONSTRA.PAS" || exit 2
 
 cat > "$BUILD/tp7-run.conf" <<EOF
 [dosbox]

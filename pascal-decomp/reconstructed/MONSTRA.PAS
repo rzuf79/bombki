@@ -1,37 +1,11 @@
 unit MONSTRA;
-{ checksum = $242F }
 interface
-
-uses  crt;
-
-var
-  MAXE: Integer;
-  JAMNIK: Integer;
-  OWCZAREK: Integer;
-  SPANIEL: Integer;
-  PUDEL: Integer;
-  PIESEK: Integer;
-  TAKSOWKARZ: Integer;
-  SPRZEDAWCA: Integer;
-  ZAMIATACZ: Integer;
-var
-  PIJAK: Integer;
-  ZEBRAK: Integer;
-  MINIBARMAN: Integer;
-  GRUBAS: Integer;
-  DJ: Integer;
-  PEDAL: Integer;
-  PARA: Integer;
-  MACIEK: Integer;
-  OGOL: Integer;
-  DRZWI: Integer;
-  STARUCH: Integer;
-var
-  SILNY: Integer;
-  procedure WSTEP;
-  { Proc $0008 Entry 0:022B }
+uses crt;
+var MAXE, JAMNIK, OWCZAREK, SPANIEL, PUDEL, PIESEK, TAKSOWKARZ, SPRZEDAWCA, ZAMIATACZ: Integer;
+var PIJAK, ZEBRAK, MINIBARMAN, GRUBAS, DJ, PEDAL, PARA, MACIEK, OGOL, DRZWI, STARUCH: Integer;
+var SILNY: Integer;
+procedure WSTEP;
 implementation
-
 procedure WSTEP;
 begin
   ClrScr;

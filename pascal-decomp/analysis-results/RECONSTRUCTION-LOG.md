@@ -1210,6 +1210,33 @@ reconstruction. Original-side findings are grounded in the EXE/TPU.
   remains. Checked-in implementation order is still different from the original;
   strict whole-file comparison therefore continues to fail.
 
+### 2026-09-28 (62): MONSTRA whole-file byte identity
+
+- **RESOLVED:** genuine TP7 under DOSBox-X now builds the checked-in
+  `reconstructed/MONSTRA.PAS` into an exact copy of retained `MONSTRA.TPU`:
+  all **3072 bytes**, including symbols, source metadata, code, relocation
+  records, and alignment padding. Original and rebuilt SHA-256:
+  `ffc02180b11b9198e19f4b5c92f4ff8ab47872d02e99c6b53129c9f1b60c1228`.
+- Only seven byte positions differed in the preceding local build: the DOS
+  source timestamp at TPU file `0x03D5..0x03D8`, total line count at `0x03E9`,
+  and line-table bytes at `0x03EF` and `0x03F3`. The latter changed from
+  35/36 to the retained 9/10 when the implementation's `procedure WSTEP` and
+  `begin` moved to source lines 9/10. Grouped declarations preserve the
+  three variable blocks while reducing the source from 79 to 53 lines;
+  the remaining line-table bytes already matched. This establishes a matching
+  source layout, not recovery of the original spelling or whitespace.
+- The source record at TPU `0x03D2` stores DOS date/time `0x26BB958B`, decoded
+  as **1999-05-27 18:44:22**. `conformance/tp7-conformance.sh` now applies
+  `touch -t 199905271844.22` to the scratch MONSTRA source after CRLF conversion.
+  Both `touch` and DOSBox-X use local wall-clock time for this DOS timestamp.
+  Git does not preserve source mtimes, so this preparation is required for
+  repeatable whole-file identity. The compiler output is compared unmodified.
+- **Verification:** local DOSBox-X/genuine TP7 compiled all three units and
+  BOMBKI; direct full-file equality and SHA-256 comparison passed for MONSTRA.
+  FPC 3.2.2 TP-mode conformance passed all four targets. Shell syntax and
+  `git diff --check -- pascal-decomp` passed. PRZEDM/SWIAT physical layout work
+  remains as recorded in (61).
+
 ## 6. Open items
 
 - Exact name per 0x1D8..0x218 slot — solvable by pairing save()/wczytaj()
