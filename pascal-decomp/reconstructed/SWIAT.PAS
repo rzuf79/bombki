@@ -510,6 +510,4 @@ begin
   until MIECHO <> 83;
 end;
 
-begin
-  { BOMBKI main initializes MONSTRA.SILNY := 13 at img 0x1973. }
 end.
