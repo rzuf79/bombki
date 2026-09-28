@@ -1123,6 +1123,93 @@ reconstruction. Original-side findings are grounded in the EXE/TPU.
   its output exposed leading literal bytes before some rebuilt prologues. The
   per-procedure anchor correction above supersedes that report.
   No claim of rebuilt byte identity follows from these diagnostics.
+### 2026-09-28 (61): resolve TPU alignment and source-level discrepancies
+
+- **RESOLVED: the apparent code-stream prefixes were section padding.** TPUQ
+  section lengths exclude padding to the next 16-byte boundary. Original code
+  starts are MONSTRA `0x430`, PRZEDM `0x1C90`, and SWIAT `0x720`, not the raw
+  symbol lengths `0x421`, `0x1C90`, and `0x712`. Run 59's rebuilt code starts
+  are `0x420`, `0x1EA0`, and `0x730`, explaining the reported +15/+9/+7 biases.
+  Corrected `tpuq.py` and `compare_tpu.py`; procedure entries and block ends now
+  work directly, without prologue searches. Padding is reported separately and
+  remains included in the strict whole-file comparison. The old section,
+  prefix, suffix, and trailer classifications in (58)–(60) are superseded;
+  absolute whole-file difference counts were unaffected.
+- The complete aligned original SWIAT code (`13303` bytes) maps to EXE img
+  `0xF5D0..0x129C6`, with `3991` changed zero relocation bytes and no other
+  differences. The formerly "missing" last 14 bytes were in the TPU all along.
+  `verify_swiat_region.py` now reads the aligned original directly. Historical
+  checked-in `.code.bin`/relocation dumps and their offset reports predate this
+  correction; regenerate from the TPU before using them for new comparisons.
+  The block-table relocation length is in bytes, not records; corrected the
+  report slicer to divide by eight.
+- Downloaded run 59's genuine TP7 artifact (`36361382349`, artifact
+  `10945387850`, ZIP SHA-256
+  `af6b29751f60ddb3b53bef0a57e984d1f78a20761afa08b811e7bf701c668ff9`). With
+  correct alignment, MONSTRA's one block and 29 of PRZEDM's 34 blocks already
+  match, rather than all 33 named PRZEDM procedures differing. The unexported
+  `SMIERC` block has stable entry `0x0110`; the comparator now uses that entry
+  identity instead of calling its moved block missing.
+- **RESOLVED source differences**, verified by genuine TP7 recompilation:
+  - Every SWIAT prompt is one `Write(ENERGIA, '%.', KUNSZT, '>')`, not a split
+    `Write`/`WriteLn`. The split adds 15 instruction bytes and three relocation
+    records per prompt: eleven room blocks grow by 15 bytes and `POKOJE` by 60.
+    Crucially, a combined **WriteLn** produces identical zero-filled code but
+    the wrong runtime relocation (`System` entry `0x1D0` instead of `0x1D8`).
+    The original has no prompt newline: see POKOJ0 img `0xFA85..0xFAC7`,
+    especially finalization at `0xFABE` versus the preceding description's
+    WriteLn at `0xFA7B`. All 15 prompts are corrected.
+  - PRZEDM `SCENA` block `+0x84`, `POROWNANIE` `+0x658/+0x65F/+0x691`, and
+    `UZYWANIE` `+0x3BF` held five DOS character bytes emitted as multibyte UTF-8
+    by the reconstruction. Used explicit `#164/#224/#189/#164/#162`, preserving
+    the exact original bytes, including the unusual byte in `SPROOB...`.
+  - `UZYWANIE` pass destruction/inspection checks are `PRZEPUSTKA <= -10`,
+    not `< -1` (original block `+0xB3C` and `+0xB9A` low-word compares).
+  - `WALKA`'s `(TEST1 > 6)` band ends at `< 10`, not `< 11` (block `+0x53E`).
+    Its damage random calls execute `Random(POZIOM)` before `Random(10)`;
+    TP7 evaluates the reconstructed sum right-to-left, so the faithful source
+    is `Random(10) + Random(POZIOM)` (block `+0x153A..0x1548`).
+  - `MINIARENA`'s EXIT room tests are independent `if`s inside one command
+    guard, not an `else if` chain (block `+0x8E7..0xCD3`). The latter adds
+    eight 3-byte and one 2-byte jumps, explaining its 26-byte growth.
+- **RESOLVED declaration/relocation differences.** Restored uses order from
+  the retained uses chains: PRZEDM `crt, monstra, dos`; SWIAT
+  `crt, monstra, przedm`. Restored the variable-block boundaries with repeated
+  `var` sections: MONSTRA has 3 blocks, PRZEDM 15. TP7 now reproduces their
+  block sizes and every exported variable's block/offset exactly. The previous
+  one-section declarations coalesced each unit's variables into one block.
+  Also restored operand order in the Integer actor/room equality tests in
+  `BLUSZCZ`, `ULSKLEPIKOWA`, `SCENA`, and `KTO`, and the final
+  `MINIKUNSZT + KUNSZT` in `WALKA`. These had identical unrelocated opcodes but
+  exchanged relocation targets. Their original relocation groups establish the
+  operand ordering; code payload identity alone was insufficient.
+- **Verification:** local DOSBox-X 2026.01.02 (SDL2) with the same archived
+  genuine TP7 compiler builds all three units and BOMBKI. Both the checked-in
+  order and original-order scratch builds were rerun under DOSBox-X, replacing
+  the initial DOSBox 0.74-3 validation; their code and relocation sections are
+  unchanged. Use DOSBox-X for subsequent TP7 verification, as in CI.
+  All **47/47** entry-labelled code
+  blocks match byte-for-byte (MONSTRA 1, PRZEDM 34, SWIAT 12). All **47/47**
+  relocation groups match after resolving self CS-pool block IDs by entry;
+  other fields, including runtime targets and data offsets, compare verbatim.
+  The comparator reports that diagnostic while still failing any raw-file
+  difference. Four regression checks cover alignment/padding, original entries,
+  the final RETF byte, and a runtime-target mutation invisible in code bytes.
+  FPC TP-mode compilation and the complete SWIAT/EXE/string check also pass.
+- **Remaining physical differences are attributed.** In a scratch build only,
+  ordered procedure implementations by the original code-block table. Complete
+  code and relocation sections then become byte-identical for all three units.
+  Remaining symbol differences are source timestamps, line counts/line tables,
+  symbol-section size, and the block-record `+6` metadata fields (historically
+  labelled `owner` by the dumper). In MONSTRA even the entire symbol prefix
+  before its source record is identical. PRZEDM's pre-source differences are
+  only header `sym_size` and 33 block `+6` words; SWIAT has `sym_size` and ten
+  block `+6` words. Their line counts are original/rebuilt 53/79, 1575/2401,
+  and 445/498 respectively. Exact line-table encoding/full-file identity remains
+  OPEN; no unexplained procedure payload or resolved relocation difference
+  remains. Checked-in implementation order is still different from the original;
+  strict whole-file comparison therefore continues to fail.
+
 ## 6. Open items
 
 - Exact name per 0x1D8..0x218 slot — solvable by pairing save()/wczytaj()

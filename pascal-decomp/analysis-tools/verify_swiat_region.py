@@ -5,21 +5,24 @@ import re
 import struct
 from pathlib import Path
 
+from tpuq import Tpu
+
 ROOT = Path(__file__).resolve().parents[2]
 exe = (ROOT / "og" / "BOMBKI.EXE").read_bytes()
 header_paragraphs, = struct.unpack_from("<H", exe, 8)
 image = exe[header_paragraphs * 16:]
-code = (ROOT / "pascal-decomp/analysis-results/tpu_reports/SWIAT.code.bin").read_bytes()
+unit = Tpu(str(ROOT / "og/SWIAT.TPU"))
+code = unit.data[unit.ofs_code:unit.ofs_code + unit.h.code_size]
 
 start = 0xF5D0
 size = 0x129C7 - start
 assert len(code) == size
-compared = len(code) - 0x0E
+compared = len(code)
 differences = [(i, a, b) for i, (a, b) in enumerate(
-    zip(code[0x0E:], image[start:start + compared])) if a != b]
+    zip(code, image[start:start + compared])) if a != b]
 unexplained = [(i, a, b) for i, a, b in differences if a != 0]
 assert not unexplained, f"non-relocation byte mismatches: {unexplained[:10]}"
-assert len(differences) == 3987, f"unexpected number of patched cells: {len(differences)}"
+assert len(differences) == 3991, f"unexpected number of patched cells: {len(differences)}"
 print(f"SWIAT img 0x{start:X}..0x{start + compared - 1:X}: "
       f"{compared} comparable bytes, {len(differences)} patched zero slots, "
       "0 nonzero mismatches")

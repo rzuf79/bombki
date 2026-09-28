@@ -12,6 +12,25 @@ def u16(b,o): return struct.unpack_from('<H',b,o)[0]
 def u32(b,o): return struct.unpack_from('<I',b,o)[0]
 def i32(b,o): return struct.unpack_from('<i',b,o)[0]
 
+SECTION_SIZES = (
+    ('symbols', 30), ('browser', 32), ('code', 34), ('relocations', 38),
+    ('constants', 36), ('constant relocations', 40),
+)
+
+def section_layout(data):
+    """TPUQ section lengths exclude their on-disk 16-byte alignment padding."""
+    cursor = 0
+    result = {}
+    for name, size_offset in SECTION_SIZES:
+        size = u16(data, size_offset)
+        result[name] = (cursor, size)
+        cursor += size
+        padding = -cursor % 16
+        result[name + ' padding'] = (cursor, padding)
+        cursor += padding
+    result['trailer'] = (cursor, len(data) - cursor)
+    return result
+
 def pstr(b,o):
     n=b[o]
     return (b[o+1:o+1+n].decode('cp437','replace'), o+1+n)
@@ -56,7 +75,8 @@ TTYPE_TEXTS={1:'Array',2:'Record',3:'Object',4:'File',5:'built-in text',
 class Tpu:
     def __init__(self, path):
         self.path=path
-        self.data=open(path,'rb').read()
+        with open(path,'rb') as source:
+            self.data=source.read()
         self.b=self.data
         self.W=self._w
         self.lines=[]; self.indent=0; self.last_kind=0xB0
@@ -89,12 +109,12 @@ class Tpu:
         self.h=h
         self.unit_self_name,_=pstr(b,h.ofs_this_unit+3)
         self.own_record=h.ofs_this_unit+4+len(self.unit_self_name.encode('cp437'))
-        self.ofs_code=h.sym_size
-        self.ofs_reloc=self.ofs_code+h.code_size
-        self.ofs_const=self.ofs_reloc+h.reloc_size
-        self.ofs_const_reloc=self.ofs_const+h.const_size
-        self.layout_total=(h.sym_size+h.browser_size+h.code_size+h.reloc_size+
-                           h.const_size+h.const_reloc_size)
+        layout=section_layout(b)
+        self.ofs_code=layout['code'][0]
+        self.ofs_reloc=layout['relocations'][0]
+        self.ofs_const=layout['constants'][0]
+        self.ofs_const_reloc=layout['constant relocations'][0]
+        self.layout_total=layout['trailer'][0]
 
     def hash_objs(self, hash_ofs):
         b=self.b
@@ -584,7 +604,7 @@ class Tpu:
         L.append('ofs_dll_list=%04X ofs_unit_list=%04X ofs_src_name=%04X ofs_line_count=%04X ofs_line_lengths=%04X'%(h.ofs_dll_list,h.ofs_unit_list,h.ofs_src_name,h.ofs_line_count,h.ofs_line_lengths))
         L.append('sym_size=%d (0x%X) browser_size=%d code_size=%d const_size=%d reloc_size=%d const_reloc_size=%d var_size=%d'%(h.sym_size,h.sym_size,h.browser_size,h.code_size,h.const_size,h.reloc_size,h.const_reloc_size,h.var_size))
         L.append('flags=%04X object_type_list=%04X br_defs_end=%04X'%(h.flags,h.object_type_list,h.br_defs_end))
-        L.append('file size=%d layout(sym+browser+code+reloc+const+constreloc)=%d'%(len(self.data),self.layout_total))
+        L.append('file size=%d layout(sym+browser+code+reloc+const+constreloc+padding)=%d'%(len(self.data),self.layout_total))
         L.append('code at file offset %d, reloc at %d, const at %d, const_reloc at %d'%(self.ofs_code,self.ofs_reloc,self.ofs_const,self.ofs_const_reloc))
         return '\n'.join(L)
 
@@ -622,7 +642,7 @@ class Tpu:
         return '\n'.join(L)
 
     def block_report(self,name,blocks,ofs_start):
-        L=['%s blocks (ofs  size  relocrecs  owner)'%name]
+        L=['%s blocks (ofs  size  relocbytes  owner)'%name]
         for bl in blocks:
             L.append('  %04X  %04X  %04X  %04X'%(bl.ofs,bl.size,bl.relocbytes,bl.owner))
         return '\n'.join(L)
@@ -656,7 +676,8 @@ class Tpu:
         bi=0; base=0
         for bl in blocks:
             L.append('--- block %04X ---'%bl.ofs)
-            recs=relocs[base:base+bl.relocbytes]
+            count=bl.relocbytes//8
+            recs=relocs[base:base+count]
             for (unit_num,rtype,rblock,roffset,offset) in recs:
                 if rtype==0xFF and unit_num==0xFF:
                     L.append('  %04X:%04X Coproc fixup type=%d roffset=%d'%(bl.ofs,offset,rblock,roffset))
@@ -667,7 +688,7 @@ class Tpu:
                     tnames=['Code','CS Const','Var','DS Const']
                     uname=self.unit_blocks_name(unit_num)
                     L.append('  %04X:%04X %s %s unit=%s blkoff=%04X'%(bl.ofs,offset,names[rt],tnames[tt],uname,roffset if tt!=0 else rblock))
-            base+=bl.relocbytes
+            base+=count
         return '\n'.join(L)
 
     def unit_blocks_name(self,ofs):

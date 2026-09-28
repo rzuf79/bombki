@@ -3,12 +3,12 @@ unit SWIAT;
 { Turbo Pascal 7.0 room/world unit. The final EXE at img 0xF5D0..0x129C6
   contains all 12 SWIAT code blocks, including POKOJ83 (block $50,
   entry img 0x11ECA) and POKOJ100 (block $58, entry img 0x12414).
-  TPU SWIAT.code.bin[$0E+i] matches through img 0x129B8 except patched
-  zero relocation cells; the EXE supplies the last 14 bytes. See
+   TPU code at aligned file offset $720 matches img 0xF5D0..0x129C6 except
+   patched zero relocation cells (the old .code.bin dump was misaligned). See
   analysis-results/disasm/SWIAT-region.asm. }
 interface
 
-uses  przedm, monstra, crt;
+uses  crt, monstra, przedm;
 
   procedure POKOJ0;
   { Proc $0008 Entry 8:005A }
@@ -41,8 +41,7 @@ procedure POKOJ0;
 begin
   WriteLn('TU ZACZYNA SIE GRE');
   repeat
-    Write(ENERGIA, '%.', KUNSZT);
-    WriteLn('>');
+    Write(ENERGIA, '%.', KUNSZT, '>');
     ReadLn(wpisz);
     if wpisz = 'EXIT' then
       WriteLn('DOSTEPNE WYJSCIE-POLNOC-HALA GLOWNA MUD SZKOLE ');
@@ -59,8 +58,7 @@ begin
   WriteLn('NO A POZA TYM NA SCIANIE JEST!!! PLAKAT!!!!');
   WriteLn('NAPISZ PATRZ PLAKAT ABY GO ODCZYTA'#143' ');
   repeat
-    Write(ENERGIA, '%.', KUNSZT);
-    WriteLn('>');
+    Write(ENERGIA, '%.', KUNSZT, '>');
     ReadLn(wpisz);
     if wpisz = 'MODE' then MODE;
     if wpisz = 'EXIT' then begin
@@ -100,8 +98,7 @@ begin
   WriteLn('JESTES W HALLU MUD SZKOLY- OGARNIA CIE CYKORIA  ');
   WriteLn('NO A POZA TYM NA SCIANIE JEST!!! AFISZ!!!');
   repeat
-    Write(ENERGIA, '%.', KUNSZT);
-    WriteLn('>');
+    Write(ENERGIA, '%.', KUNSZT, '>');
     ReadLn(wpisz);
     if wpisz = 'MODE' then MODE;
     if wpisz = 'EXIT' then begin
@@ -132,8 +129,7 @@ begin
   if MONSTRA.SILNY = 0 then
     WriteLn('PAROJACE WNETRZNOSCI POTWORA SA ROZWLECZONE DOOKOLA');
   repeat
-    Write(ENERGIA, '%.', KUNSZT);
-    WriteLn('>');
+    Write(ENERGIA, '%.', KUNSZT, '>');
     ReadLn(wpisz);
     if wpisz = 'EXIT' then begin
       WriteLn('DOSTEPNE WYJSCIA:');
@@ -185,8 +181,7 @@ begin
   if MIECHO = 6 then begin
     WriteLn('JESTES W DOSYC CIASNYM POKOJU I NICZEGO TU NIEMA ');
     repeat
-      Write(ENERGIA, '%.', KUNSZT);
-      WriteLn('>');
+      Write(ENERGIA, '%.', KUNSZT, '>');
       ReadLn(wpisz);
       if wpisz = 'MODE' then MODE;
       if wpisz = 'EXIT' then begin
@@ -200,8 +195,7 @@ begin
   if MIECHO = 8 then begin
     WriteLn('JESTES W DOSYC CIASNYM POKOJU I NICZEGO TU NIEMA ');
     repeat
-      Write(ENERGIA, '%.', KUNSZT);
-      WriteLn('>');
+      Write(ENERGIA, '%.', KUNSZT, '>');
       ReadLn(wpisz);
       if wpisz = 'MODE' then MODE;
       if wpisz = 'EXIT' then begin
@@ -215,8 +209,7 @@ begin
   if MIECHO = 7 then begin
     WriteLn('JESTES W DOSYC CIASNYM POKOJU I NICZEGO TU NIEMA ');
     repeat
-      Write(ENERGIA, '%.', KUNSZT);
-      WriteLn('>');
+      Write(ENERGIA, '%.', KUNSZT, '>');
       ReadLn(wpisz);
       if wpisz = 'MODE' then MODE;
       if wpisz = 'EXIT' then begin
@@ -230,8 +223,7 @@ begin
   if MIECHO = 10 then begin
     WriteLn('JESTES W DOSYC CIASNYM POKOJU I NICZEGO TU NIEMA ');
     repeat
-      Write(ENERGIA, '%.', KUNSZT);
-      WriteLn('>');
+      Write(ENERGIA, '%.', KUNSZT, '>');
       ReadLn(wpisz);
       if wpisz = 'MODE' then MODE;
       if wpisz = 'EXIT' then begin
@@ -251,8 +243,7 @@ begin
   WriteLn('STWIERDZASZ ZE W TYM POKOJU JEST X POKOI O NIE !! JAK SIE WYDOSTAC?');
   WriteLn('AHA (NA SCIANIE JEST PLAKAT)');
   repeat
-    Write(ENERGIA, '%.', KUNSZT);
-    WriteLn('>');
+    Write(ENERGIA, '%.', KUNSZT, '>');
     ReadLn(wpisz);
     if wpisz = 'MODE' then MODE;
     if wpisz = 'EXIT' then begin
@@ -287,8 +278,7 @@ begin
   WriteLn('WE WSZYSTKICH KIERUNKACH SA KLATKI I UJADAJACE SIE W NICH POTWORY');
   WriteLn('NO A POZA TYM NA SCIANIE JEST!!! PLAKAT!!!!');
   repeat
-    Write(ENERGIA, '%.', KUNSZT);
-    WriteLn('>');
+    Write(ENERGIA, '%.', KUNSZT, '>');
     ReadLn(wpisz);
     KOMENDY; { img 0x11345 -> 0x1BB07 }
     if wpisz = 'MODE' then MODE;
@@ -323,8 +313,7 @@ begin
   WriteLn('ULICA DLUGA CIAGNIE SIE W NIESKONCZONOSC,SORKI');
   WriteLn('NA POLNOCY ZNAJDUJESZ OGROMNA BUDOWLE=TO ARENA PRZEZNACZONA DO WALKI');
   repeat
-    Write(ENERGIA, '%.', KUNSZT);
-    WriteLn('>');
+    Write(ENERGIA, '%.', KUNSZT, '>');
     ReadLn(wpisz);
     if wpisz = 'MODE' then MODE;
     if wpisz = 'EXIT' then begin
@@ -348,8 +337,7 @@ begin
   WriteLn('JEST SLYSZALNY JAKIS DZIWNY  HALAS , NA ZACHODZIE ZAS "LA LA LA LA" ');
   WriteLn('ZAWSZE MOZESZ WROCIC SIE IDAC NA POLODNIE ;)');
   repeat
-    Write(ENERGIA, '%.', KUNSZT);
-    WriteLn('>');
+    Write(ENERGIA, '%.', KUNSZT, '>');
     ReadLn(wpisz);
     if wpisz = 'MODE' then MODE;
     if wpisz = 'EXIT' then begin
@@ -371,8 +359,7 @@ begin
   WriteLn('TA ULICA WYGLADA NA REMONTOWAN'#164' , NA POLNOC WIDZISZ JAKIS BAR ');
   WriteLn('NA POLODNIE PRZEBIEGAJA CIE DRESZCZE , JEST TAM NAPRAWDE CIEMNO');
   repeat
-    Write(ENERGIA, '%.', KUNSZT);
-    WriteLn('>');
+    Write(ENERGIA, '%.', KUNSZT, '>');
     ReadLn(wpisz);
     if wpisz = 'MODE' then MODE;
     if wpisz = 'EXIT' then begin
@@ -396,8 +383,7 @@ begin
   WriteLn('QUEST-MASTER NIE POSCI CIE DALEJ DOPOKI NIE KUPISZ I ROZWIAZESZ QUESTA');
   ULSKLEPIKOWA; { img 0x12460 -> 0x155F2 }
   repeat
-    Write(ENERGIA, '%.', KUNSZT);
-    WriteLn('>');
+    Write(ENERGIA, '%.', KUNSZT, '>');
     ReadLn(wpisz);
     if wpisz = 'MODE' then MODE;
     if wpisz = 'EXIT' then begin
@@ -493,8 +479,7 @@ begin
   WriteLn('HMMM ALE ZARAZ ... TE KRZAKI NA ZACHOD WYGLADAJA BARDZO PODEJRZANIE....');
   BLUSZCZ; { img 0x11F32 -> 0x13629 }
   repeat
-    Write(ENERGIA, '%.', KUNSZT);
-    WriteLn('>');
+    Write(ENERGIA, '%.', KUNSZT, '>');
     ReadLn(wpisz);
     KOMENDY; { img 0x11F97 -> 0x1BB07 }
     FIGHTBLUSZCZ; { img 0x11F9C -> 0x1B5B7 }

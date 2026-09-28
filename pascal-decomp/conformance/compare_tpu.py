@@ -7,7 +7,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "analysis-tools"))
-from tpuq import Tpu
+from tpuq import Tpu, section_layout
 
 UNITS = ("MONSTRA.TPU", "PRZEDM.TPU", "SWIAT.TPU")
 DETAIL_LIMIT = 24
@@ -31,26 +31,10 @@ HEADER_WORDS = (
     ("const_reloc_size", 40),
     ("var_size", 42),
 )
-SECTION_SIZES = (
-    ("symbols", 30),
-    ("browser", 32),
-    ("code", 34),
-    ("relocations", 38),
-    ("constants", 36),
-    ("constant relocations", 40),
-)
-
-
 def sections(data: bytes) -> dict[str, bytes]:
-    """Split a TPUQ file into its sequential header-described regions."""
-    cursor = 0
-    result = {}
-    for name, size_offset in SECTION_SIZES:
-        size = struct.unpack_from("<H", data, size_offset)[0]
-        result[name] = data[cursor:cursor + size]
-        cursor += size
-    result["trailer"] = data[cursor:]
-    return result
+    """Split payloads and alignment padding without dropping any file bytes."""
+    return {name: data[start:start + size]
+            for name, (start, size) in section_layout(data).items()}
 
 
 def code_block_deltas(
@@ -68,8 +52,8 @@ def code_block_deltas(
         entries_by_name = {}
         proc_names = unit.proc_entry_map()
         for entry in unit.entries:
-            name = proc_names.get(entry.ofs)
-            if name:
+            name = proc_names.get(entry.ofs, f"entry@{entry.ofs:04X}")
+            if entry.code_block != 0xFFFF:
                 names_by_block.setdefault(entry.code_block, []).append(name)
 
         code_offset = 0
@@ -84,7 +68,7 @@ def code_block_deltas(
             result[label] = code
             code_offset += block.size
         for entry in unit.entries:
-            name = proc_names.get(entry.ofs)
+            name = proc_names.get(entry.ofs, f"entry@{entry.ofs:04X}")
             if name and entry.code_block in block_bases:
                 entries_by_name[name] = (
                     entry.code_block, entry.offset,
@@ -95,30 +79,12 @@ def code_block_deltas(
 
     old_blocks, old_entries, old_code, old_bounds = blocks(original)
     new_blocks, new_entries, new_code, new_bounds = blocks(rebuilt)
-    prologue = b"\x55\x89\xE5\x31\xC0\x9A"
-
-    def entry_bias(code: bytes, entries: dict[str, tuple[int, int, int]]) -> int:
-        counts = {
-            bias: sum(code[offset + bias:offset + bias + len(prologue)] == prologue
-                      for _, _, offset in entries.values())
-            for bias in (0, 0x0E)
-        }
-        return max(counts, key=counts.get)
-
-    stream_bias = entry_bias(old_code, old_entries)
-
     def procedure_window(
         code: bytes, entry: tuple[int, int, int],
         bounds: dict[int, tuple[int, int]],
-    ) -> tuple[bytes, int | None]:
+    ) -> bytes:
         block_base, block_size = bounds[entry[0]]
-        end = min(block_base + block_size + stream_bias, len(code))
-        candidate = entry[2]
-        anchor_end = min(candidate + 0x20, end)
-        relative = code[candidate:anchor_end].find(prologue)
-        anchor = candidate + relative if relative >= 0 else None
-        start = anchor if anchor is not None else candidate
-        return code[start:end], anchor
+        return code[entry[2]:block_base + block_size]
 
     def diff_window(old: bytes, new: bytes) -> str:
         offset = next((i for i, (a, b) in enumerate(zip(old, new)) if a != b),
@@ -151,10 +117,10 @@ def code_block_deltas(
             new_entry = new_entries.get(procedure)
             if not old_entry or not new_entry:
                 continue
-            old_post_entry, old_anchor = procedure_window(
+            old_post_entry = procedure_window(
                 old_code, old_entry, old_bounds
             )
-            new_post_entry, new_anchor = procedure_window(
+            new_post_entry = procedure_window(
                 new_code, new_entry, new_bounds
             )
             post_entry_differences = sum(
@@ -169,20 +135,11 @@ def code_block_deltas(
             prefix_differences += abs(len(old_prefix) - len(new_prefix))
             prefix_first = diff_window(old_prefix, new_prefix)
             post_entry_first = diff_window(old_post_entry, new_post_entry)
-            old_anchor_label = (
-                f"+{old_anchor - old_entry[2]:02X}"
-                if old_anchor is not None else "not-found"
-            )
-            new_anchor_label = (
-                f"+{new_anchor - new_entry[2]:02X}"
-                if new_anchor is not None else "not-found"
-            )
             name_deltas.append(
                 f"{procedure} entry {old_entry[1]:04X}->{new_entry[1]:04X}, "
                 f"pre {prefix_differences} ({len(old_prefix)}->{len(new_prefix)}) "
                 f"{prefix_first}, post-entry {post_entry_differences} "
                 f"({len(old_post_entry)}->{len(new_post_entry)}) "
-                f"prologue {old_anchor_label}->{new_anchor_label} "
                 f"{post_entry_first}"
             )
         deltas.append(
@@ -196,6 +153,41 @@ def code_block_deltas(
         sorted(old_blocks.keys() - new_blocks.keys()),
         sorted(new_blocks.keys() - old_blocks.keys()),
     )
+
+
+def relocation_block_deltas(original_path: Path, rebuilt_path: Path) -> tuple[int, int]:
+    """Compare fixups by entry identity, resolving only self CS-pool block IDs.
+
+    Reordering procedures renumbers their CS literal-pool blocks. All other
+    fields (including runtime call targets and variable-block offsets) must
+    match verbatim. This diagnostic does not change the whole-file verdict.
+    """
+    def groups(path: Path) -> dict:
+        unit = Tpu(str(path))
+        entries = {}
+        for entry in unit.entries:
+            entries.setdefault(entry.code_block, []).append(entry.ofs)
+        identities = {block: tuple(offsets) for block, offsets in entries.items()}
+        result = {}
+        cursor = 0
+        for block in unit.code_blocks:
+            count = block.relocbytes // 8
+            records = []
+            for target_unit, kind, target_block, target_offset, patch_offset in unit.relocs[cursor:cursor + count]:
+                if (kind >> 6 == 1 and
+                        unit.unit_blocks_name(target_unit).upper() == unit.unit_self_name.upper()):
+                    target_block = identities[target_block]
+                records.append((target_unit, unit.unit_blocks_name(target_unit),
+                                kind, target_block, target_offset, patch_offset))
+            result[identities[block.ofs]] = records
+            cursor += count
+        return result
+
+    original, rebuilt = groups(original_path), groups(rebuilt_path)
+    shared = original.keys() & rebuilt.keys()
+    changed = sum(original[key] != rebuilt[key] for key in shared)
+    changed += len(original.keys() ^ rebuilt.keys())
+    return changed, len(original.keys() | rebuilt.keys())
 
 
 def main() -> int:
@@ -260,6 +252,7 @@ def main() -> int:
         block_deltas, matched_blocks, old_only, new_only = code_block_deltas(
             original_path, rebuilt_path
         )
+        reloc_changed, reloc_blocks = relocation_block_deltas(original_path, rebuilt_path)
         print(
             f"FAIL {name}: {total} differing byte position(s); "
             f"original={len(original)} bytes, rebuilt={len(rebuilt)} bytes"
@@ -304,7 +297,7 @@ def main() -> int:
                 f"header: {', '.join(header_differences) or 'no header-word changes'}; "
                 f"sections: {'; '.join(section_summaries)}"
             )
-        if block_deltas:
+        if matched_blocks or old_only or new_only:
             changed_blocks = len(block_deltas)
             details = "; ".join(block_deltas[:12])
             if changed_blocks > 12:
@@ -315,9 +308,10 @@ def main() -> int:
                 details += "; rebuilt-only: " + ", ".join(new_only[:5])
             print(
                 f"::notice title=TPU code-block deltas::{name}: "
-                f"{changed_blocks}/{matched_blocks} same-name blocks differ, "
+                f"{changed_blocks}/{matched_blocks} entry-labelled blocks differ, "
                 f"{len(old_only)} original-only and {len(new_only)} rebuilt-only "
-                f"block label(s); {details}"
+                f"block label(s); relocation groups {reloc_changed}/{reloc_blocks} differ "
+                f"after resolving self CS-pool block IDs; {details}"
             )
         for offset, expected, actual in differing[:DETAIL_LIMIT]:
             print(

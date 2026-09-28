@@ -2,7 +2,7 @@ unit PRZEDM;
 { checksum = $647E }
 interface
 
-uses  dos, monstra, crt;
+uses  crt, monstra, dos;
 
 var
   MMIECZ: Integer;
@@ -17,6 +17,7 @@ var
   ZRE: Integer;
   MBUTELKA: Integer;
   PRA: Integer;
+var
   MAXMAD: Integer;
   MAXSIL: Integer;
   MAXZRE: Integer;
@@ -28,6 +29,7 @@ var
   CHLEB: Integer;
   BULKA: Integer;
   WEKA: Integer;
+var
   MANA: Integer;
   MAXMANA: Integer;
   WROGEN: Integer;
@@ -39,6 +41,7 @@ var
   TY: Integer;
   SZANSA: Integer;
   WPYSK: Integer;
+var
   PRO: Integer;
   ILOSC: Integer;
   PAR: Integer;
@@ -54,6 +57,7 @@ var
      10000 = ZABITY. *)
   MIECHO: Integer;
   ARENA: Integer;
+var
   KORNIK: Integer;
   MUCHA: Integer;
   BAKTERIA: Integer;
@@ -65,6 +69,7 @@ var
   DZIK: Integer;
   SZCZUR: Integer;
   LIS: Integer;
+var
   KUROPATWA: Integer;
   ZAJAC: Integer;
   WILCZUR: Integer;
@@ -76,6 +81,7 @@ var
   WIELBLAD: Integer;
   STRUS: Integer;
   BOA: Integer;
+var
   WILK: Integer;
   BIZON: Integer;
   PANTERA: Integer;
@@ -86,8 +92,10 @@ var
   STOP: Integer;
   KOMPLET: Integer;
   CIALO: Integer;
+var
   FORSA: Longint;
   PRZEPUSTKA: Longint;
+var
   GARNITUR: Integer;
   FUKSROLL: Integer;
   GITARZYSTA: Integer;
@@ -96,6 +104,7 @@ var
   LIROY: Integer;
   kaseta: Integer;
   SCROLLPOR: Integer;
+var
   SZCZAW: Integer;
   STOKROTKA: Integer;
   KONICZYNKA: Integer;
@@ -109,6 +118,7 @@ var
   TRAWA: Integer;
   QUEST: Integer;
   QUESTWYK: Integer;
+var
   DZIECKO: Shortint;
   WARIAT: Shortint;
   SLUCHACZ: Shortint;
@@ -119,6 +129,7 @@ var
   DZIADEK: Shortint;
   GORYL: Shortint;
   PLECAK: Shortint;
+var
   REPORTER: Shortint;
   PIGULKA: Shortint;
   POTRAWKI: Shortint;
@@ -132,10 +143,13 @@ var
   ILEPOI: Shortint;
   DUNCAN: Shortint;
   DUNQ: Shortint;
+var
   JAKIEUB: string;
   JAKABRON: string;
   JAKATAR: string;
+var
   plik: Text;
+var
   wpisz: string;
   procedure BRANIE;
   { Proc $0008 Entry 208:023F }
@@ -477,13 +491,13 @@ end;
 
 procedure SCENA;
 begin
-  if MIECHO = GITARZYSTA then
+  if GITARZYSTA = MIECHO then
     WriteLn('GITARZYSTA GRA TU NA WYSOKIM CE-DUR');
-  if MIECHO = PERKUSISTA then
+  if PERKUSISTA = MIECHO then
     WriteLn('PERKUSISTA TLUCZE TU NIEMILOSIERNIE (W) TALEZE I BEBNY');
-  if MIECHO = ORGANISTA then
-    WriteLn('ORGANISTA KORZYSTA Z 8 CIASIO NARAZ PODLĄCZONYCH DO SIECI');
-  if MIECHO = LIROY then
+  if ORGANISTA = MIECHO then
+    WriteLn('ORGANISTA KORZYSTA Z 8 CIASIO NARAZ PODL'#164'CZONYCH DO SIECI');
+  if LIROY = MIECHO then
     WriteLn('MAGA BOSS TEJ PLANSZY - LIROY SPIEWA JEDEN ZE SWOICH KAWALKOW');
 end;
 
@@ -652,25 +666,25 @@ end;
 
 procedure ULSKLEPIKOWA;
 begin
-  if MIECHO = MONSTRA.JAMNIK then
+  if MONSTRA.JAMNIK = MIECHO then
     WriteLn('DLUGI JAMNIK GRYZIE CI PODESZWY');
-  if MIECHO = MONSTRA.OWCZAREK then
+  if MONSTRA.OWCZAREK = MIECHO then
     WriteLn('PUCHATY OWCZAREK WYLEGUJE SIE W SLONCU');
-  if MIECHO = MONSTRA.PIESEK then
+  if MONSTRA.PIESEK = MIECHO then
     WriteLn('PIESEK SZUKA DRZEWKA ABY ULZYC SOBIE');
-  if MIECHO = MONSTRA.SPANIEL then
+  if MONSTRA.SPANIEL = MIECHO then
     WriteLn('SPANIEL SLINI SIE AZ MILO');
-  if MIECHO = MONSTRA.PUDEL then
+  if MONSTRA.PUDEL = MIECHO then
     WriteLn('PUDEL JE KITIKET WIEC CHYBA MU NIE PRZERWIESZ.....?');
-  if MIECHO = MONSTRA.TAKSOWKARZ then
+  if MONSTRA.TAKSOWKARZ = MIECHO then
     WriteLn('TAKSOWKARZ WTARGNA TU ZE SWOJA BRYKA , I CZEKA NA KLIENTOW');
-  if MIECHO = MONSTRA.SPRZEDAWCA then
+  if MONSTRA.SPRZEDAWCA = MIECHO then
     WriteLn('SPRZEDAWCA PRECELKOW WLASNIE SPRZEDAL OSTATNIEGO , CZYM DOPROWADZA DO SZALENSTWA LATAJACE WOKOLO NIEGO KRUKI');
-  if MIECHO = MONSTRA.ZAMIATACZ then
+  if MONSTRA.ZAMIATACZ = MIECHO then
     WriteLn('ZAMIATACZ ULIC SPRAWIA ZE JEST TU CZYSTO JAK W CHLEWIE');
-  if MIECHO = MONSTRA.PIJAK then
+  if MONSTRA.PIJAK = MIECHO then
     WriteLn('PIJAK TU STOI(DOBRE SOBIE) I SMIERDZI MU Z GEBY');
-  if MIECHO = MONSTRA.ZEBRAK then
+  if MONSTRA.ZEBRAK = MIECHO then
     WriteLn('ZEBRAK UDOWADNIA PRZECHODNIOM ZE ON NAPRAWDE JEST CHORY NA AIDS');
 end;
 
@@ -785,9 +799,9 @@ begin
       if (MONSTRA.OGOL > 27) and (MONSTRA.OGOL < 33) then
         WriteLn('HIHIHIHIHIHIHIHHEHEHEHE :))))))');
       if (MONSTRA.OGOL > 32) and (MONSTRA.OGOL < 44) then
-        WriteLn('SPROOBÓJ A MOŻE WYGRAC SIE UDA......');
+        WriteLn('SPROOB'#224'J A MO'#189'E WYGRAC SIE UDA......');
       if (MONSTRA.OGOL > 43) and (MONSTRA.OGOL < 48) then
-        WriteLn('NIE PRZEJMUJ SIE JEGO MORDĄ JESTES SILNIEJSZY I BASTA');
+        WriteLn('NIE PRZEJMUJ SIE JEGO MORD'#164' JESTES SILNIEJSZY I BASTA');
       if MONSTRA.OGOL > 47 then
         WriteLn('UWAZAJ ... NA CHLAPIACE MOZGI FLAKI PRZECIWNIKA');
     end;
@@ -887,27 +901,27 @@ end;
 
 procedure BLUSZCZ;
 begin
-  if MIECHO = SZCZAW then
+  if SZCZAW = MIECHO then
     WriteLn('PONURY SZCZAW PLANUJE ZEMSCIC SIE NA SWOJEJ TESCIOWEJ-LISCIU KLONOWYM');
-  if MIECHO = STOKROTKA then
+  if STOKROTKA = MIECHO then
     WriteLn('STOKROTKA TUTAJ ROSNIE POLNA ( A NAD NIA SZUMI GEJ) ');
-  if MIECHO = KONICZYNKA then
+  if KONICZYNKA = MIECHO then
     WriteLn('KONICZYNKA KTORA TUTAJ JEST NIE PRZENIESIE CI SZCZESCIA');
-  if MIECHO = MLECZ then
+  if MLECZ = MIECHO then
     WriteLn('MLECZ WLASNIE DOWIODL ZE EINSTEIN SIE MYLIL');
-  if MIECHO = DMUCHAWIEC then
+  if DMUCHAWIEC = MIECHO then
     WriteLn('DMUCHAWIEC WLASNIE DOJRZAL DO TEGO ABY GO ZDMUCHNAC');
-  if MIECHO = ROZA then
+  if ROZA = MIECHO then
     WriteLn('PRZEROSNIETA ROZA POKAZUJE KOLCE NA ZNAK IZ NIE WARTO JEJ ATAKOWAC');
-  if MIECHO = OSET then
+  if OSET = MIECHO then
     WriteLn('KIEDYS MYSLALES ZE OSET TO LATWY DO WYRWANIA CHWAST ... MYLILES SIE');
-  if MIECHO = JEZYNA then
+  if JEZYNA = MIECHO then
     WriteLn('TA JEZYNA W CIEMNOSCIACH WYGLADA JAK JAKIS NIEBYWALY SMOK ... ');
-  if MIECHO = AGREST then
+  if AGREST = MIECHO then
     WriteLn('AGREST JEST TU , CHCESZ SPROBOWAC JAK SMAKUJE ?');
-  if MIECHO = MALINA then
+  if MALINA = MIECHO then
     WriteLn('MALINA JAK DZIEWCZYNA , CHOC DZIEWCZYNY NIE SA CHYBA AZ TAKIMI MUTANTAMI');
-  if MIECHO = TRAWA then
+  if TRAWA = MIECHO then
     WriteLn('TRAWA NIE WYDAJE SIE TRUDNYM PRZECIWNIKIEM , LECZ NIE DAJ SIE ZWIESC');
   if MIECHO = DUNCAN then
     WriteLn('ROLNIK DUNCAN PROBOJE ZAPANOWAC NAD TYM ZYWIOLEM I UPRAWIAC SWOJE MARCHEWKI');
@@ -1019,61 +1033,61 @@ end;
 
 procedure KTO;
 begin
-  if MIECHO = KORNIK then
+  if KORNIK = MIECHO then
     WriteLn('KORNIK SZUKA JAKIEGOS DRZEWA ABY COS PRZEKASIC');
-  if MIECHO = MUCHA then
+  if MUCHA = MIECHO then
     WriteLn('MUCHA BZYKA SOBIE TO TU TO TAM');
-  if MIECHO = BAKTERIA then
+  if BAKTERIA = MIECHO then
     WriteLn('BAKTERIA KTORA ZOBACZYLES POD MIKROSKOPEM STARA USUNAC CI SIE Z DROGI');
-  if MIECHO = SLIMAK then
+  if SLIMAK = MIECHO then
     WriteLn('SLIMAK KTORY ZOSTAWIA SLUZ POWOLI SUNIE PO PODLODZE');
-  if MIECHO = ZUK then
+  if ZUK = MIECHO then
     WriteLn('ZUK KTORY WIDZI CO SIE SWIECI ZWIEWA STAD');
-  if MIECHO = KARALUCH then
+  if KARALUCH = MIECHO then
     WriteLn('OHYDNY KARALUCH MA OCHOTE CIE OBRZYDZIC');
-  if MIECHO = MROWKA then
+  if MROWKA = MIECHO then
     WriteLn('MROWKA NIESIE TLUSTY PACZEK I SIE CIESZY');
-  if MIECHO = PAJAK then
+  if PAJAK = MIECHO then
     WriteLn('PAJAK ZROBIL SIEC NA SCIANIE ARENY');
-  if MIECHO = DZIK then
+  if DZIK = MIECHO then
     WriteLn('TLUSTY DZICZEK BIEGNIE SOBIE TEDY');
-  if MIECHO = SZCZUR then
+  if SZCZUR = MIECHO then
     WriteLn('JEST TUTAJ SZCZUR,TAK WIELKI ZE WIEKSZEGO NIE WIDZIALES');
-  if MIECHO = LIS then
+  if LIS = MIECHO then
     WriteLn('CHYTRY LIS SZUKA SPOSOBU BY CIE ZABIC');
-  if MIECHO = KUROPATWA then
+  if KUROPATWA = MIECHO then
     WriteLn('KUROPATWA PO PROSTU JEST TU');
-  if MIECHO = ZAJAC then
+  if ZAJAC = MIECHO then
     WriteLn('ZAJAC KICA SOBIE SPIEWAJAC "POMYLONE MISIE"');
-  if MIECHO = WILCZUR then
+  if WILCZUR = MIECHO then
     WriteLn('CZARNY WILCZUR PO KRZYWEJ SIE TOCZY (MU PIANA Z UST)');
-  if MIECHO = ORZEL then
+  if ORZEL = MIECHO then
     WriteLn('ORZEL SZYBUJE W POWIETRZYU W POSZUKIWANIU OFIARY');
-  if MIECHO = SARNA then
+  if SARNA = MIECHO then
     WriteLn('SARNA SKASZE SOBIE NIE ZDAJAC SOBIE SPRAWY ZE ZARAZ ZGINIE');
-  if MIECHO = SLON then
+  if SLON = MIECHO then
     WriteLn('OGROMNIASTY SLON ZGNIATA WSZYSTKO CO NAPOTKA');
-  if MIECHO = LEW then
+  if LEW = MIECHO then
     WriteLn('LEW - KROL ZWIERZAT WLASNIE ZABIJA NIEWINNE DZIECKO ROZWALAJAC JEGO MOZG');
-  if MIECHO = ZYRAFA then
+  if ZYRAFA = MIECHO then
     WriteLn('ZYRAFA KTORA TU STOI NIE SZUKA ZACZEPKI');
-  if MIECHO = WIELBLAD then
+  if WIELBLAD = MIECHO then
     WriteLn('WIELBLAD KORZYSTA Z GARBOW UZYWAJAC ICH JAKO SMIERTELNEJ BRONI');
-  if MIECHO = STRUS then
+  if STRUS = MIECHO then
     WriteLn('STRUS NIE CHOWA GLOWY W PIASEK BO JEST NA BETONIE');
-  if MIECHO = BOA then
+  if BOA = MIECHO then
     WriteLn('BOA DUSICIEL WLASNIE ZJADL KROWE ');
-  if MIECHO = WILK then
+  if WILK = MIECHO then
     WriteLn('WILK CHORY NA WSCIEKLIZNE PANOSZY SIE W OKOLICY');
-  if MIECHO = BIZON then
+  if BIZON = MIECHO then
     WriteLn('NIEWINNY BIZON MORDUJE WLASNIE PUBLICZNOSC');
-  if MIECHO = PANTERA then
+  if PANTERA = MIECHO then
     WriteLn('ZWINNA PANTERA NUDZI SIE POLYKAJAC RESZTKI LUDZKIEGO MIESA');
-  if MIECHO = GLADIATOR then
+  if GLADIATOR = MIECHO then
     WriteLn('GLADIATOR ZDOBYWA TUTAJ KUNSZT');
-  if MIECHO = WOJOWNIK then
+  if WOJOWNIK = MIECHO then
     WriteLn('WOJOWNIK GREEN PEACE MORDUJE TUTAJ BEZBRONNE LWIATKA :( ');
-  if MIECHO = TRENER then
+  if TRENER = MIECHO then
     WriteLn('TRENER CYRKU LAPIE ZWIERZETA NA SWOJE PRZEDSTAWIENIE');
 end;
 
@@ -1193,18 +1207,18 @@ begin
     if ENERGIA > MONSTRA.MAXE then
       ENERGIA := MONSTRA.MAXE;
   end;
-  if (wpisz = 'ZNISZCZ PRZEPUSTKA') and (PRZEPUSTKA < -1) then begin
+  if (wpisz = 'ZNISZCZ PRZEPUSTKA') and (PRZEPUSTKA <= -10) then begin
     WriteLn('GRRRRRRRRR .... GLUPIA PRZEPUSTKA');
     PRZEPUSTKA := PRZEPUSTKA + 10;
     PRZED := PRZED + 1;
   end;
-  if (wpisz = 'PATRZ PRZEPUSTKA') and (PRZEPUSTKA < -1) then begin
+  if (wpisz = 'PATRZ PRZEPUSTKA') and (PRZEPUSTKA <= -10) then begin
     WriteLn('|========================|');
     WriteLn('| Niniejszym zaswiadczam |');
     WriteLn('|  Iz osoba posiadajaca  |');
     WriteLn('|      Ten dokument      |');
     WriteLn('|   Ukonczyla pozytywnie |');
-    WriteLn('| Jeden z moich questów  |');
+    WriteLn('| Jeden z moich quest'#162'w  |');
     WriteLn('|========================|');
   end;
   if (wpisz = 'UZYJ CHLEB') and (CHLEB <= -10) then begin
@@ -1303,7 +1317,7 @@ begin
       MINIKUNSZT := MINIKUNSZT + 10;
     if (TEST1 > 2) and (TEST1 < 7) then
       MINIKUNSZT := MINIKUNSZT + 9;
-    if (TEST1 > 6) and (TEST1 < 11) then
+    if (TEST1 > 6) and (TEST1 < 10) then
       MINIKUNSZT := MINIKUNSZT + 8;
     if (TEST1 > 9) and (TEST1 < 13) then
       MINIKUNSZT := MINIKUNSZT + 7;
@@ -1648,7 +1662,7 @@ begin
     if (KOP > 0) and (MANA > KOPM) and (ENERGIA < KOPHP) then begin
       FUKS := Random(100);
       if FUKS <= KOP - 10 then begin
-        FUKS := Random(POZIOM) + Random(10);
+        FUKS := Random(10) + Random(POZIOM);
         TextColor(14);
         WriteLn('TWOJ SUPER KOP ZABIERA ', FUKS, '% ENERGI');
         TextColor(15);
@@ -1685,7 +1699,7 @@ begin
     if MINIKUNSZT < 0 then
       MINIKUNSZT := 0;
     WriteLn('ZABILES GO ! ZYSKUJESZ ZA TO ', MINIKUNSZT, ' KUNSZTU ');
-    KUNSZT := KUNSZT + MINIKUNSZT;
+    KUNSZT := MINIKUNSZT + KUNSZT;
     FIREBALL := 0;
     POISON := 0;
     if QUEST > 0 then
@@ -1878,15 +1892,15 @@ begin
         TRENER := 0;
         GARNITURZYSK;
       end;
-      if wpisz = 'EXIT' then
+      if wpisz = 'EXIT' then begin
         if MIECHO = 33 then begin
           WriteLn('DOSTEPNE WYJSCIA:');
           WriteLn('POLODNIE-WEJSCIE NA ARENE');
           WriteLn('POLNOC-ARENA');
           WriteLn('WSCHOD-ARENA');
           WriteLn('ZACHOD-ARENA');
-        end
-        else if (MIECHO = 34) or (MIECHO = 37) or (MIECHO = 38) or (MIECHO = 39) or
+        end;
+        if (MIECHO = 34) or (MIECHO = 37) or (MIECHO = 38) or (MIECHO = 39) or
                 (MIECHO = 42) or (MIECHO = 43) or (MIECHO = 44) or (MIECHO = 48) or
                 (MIECHO = 49) then begin
           WriteLn('DOSTEPNE WYJSCIA:');
@@ -1894,51 +1908,52 @@ begin
           WriteLn('POLNOC-ARENA');
           WriteLn('WSCHOD-ARENA');
           WriteLn('ZACHOD-ARENA');
-        end
-        else if (MIECHO = 35) or (MIECHO = 36) then begin
+        end;
+        if (MIECHO = 35) or (MIECHO = 36) then begin
           WriteLn('DOSTEPNE WYJSCIA:');
           WriteLn('POLNOC-ARENA');
           WriteLn('WSCHOD-ARENA');
           WriteLn('ZACHOD-ARENA');
-        end
-        else if MIECHO = 40 then begin
+        end;
+        if MIECHO = 40 then begin
           WriteLn('DOSTEPNE WYJSCIA:');
           WriteLn('POLNOC-ARENA');
           WriteLn('ZACHOD-ARENA');
-        end
-        else if MIECHO = 41 then begin
+        end;
+        if MIECHO = 41 then begin
           WriteLn('DOSTEPNE WYJSCIA:');
           WriteLn('POLNOC-ARENA');
           WriteLn('WSCHOD-ARENA');
-        end
-        else if (MIECHO = 45) or (MIECHO = 50) or (MIECHO = 54) then begin
+        end;
+        if (MIECHO = 45) or (MIECHO = 50) or (MIECHO = 54) then begin
           WriteLn('MOZESZ WYJSC NA :');
           WriteLn('POLNOC-ARENA');
           WriteLn('POLODNIE-ARENA');
           WriteLn('ZACHOD-ARENA');
-        end
-        else if (MIECHO = 46) or (MIECHO = 51) or (MIECHO = 55) then begin
+        end;
+        if (MIECHO = 46) or (MIECHO = 51) or (MIECHO = 55) then begin
           WriteLn('MOZESZ WYJSC NA :');
           WriteLn('POLNOC-ARENA');
           WriteLn('POLODNIE-ARENA');
           WriteLn('WSCHOD-ARENA');
-        end
-        else if (MIECHO = 47) or (MIECHO = 52) or (MIECHO = 53) then begin
+        end;
+        if (MIECHO = 47) or (MIECHO = 52) or (MIECHO = 53) then begin
           WriteLn('MOZESZ ISC NA :');
           WriteLn('POLODNIE-ARENA');
           WriteLn('WSCHOD-ARENA');
           WriteLn('ZACHOD-ARENA');
-        end
-        else if MIECHO = 56 then begin
+        end;
+        if MIECHO = 56 then begin
           WriteLn('DOSTEPNE WYJSCIE:');
           WriteLn('POLODNIE-ARENA');
           WriteLn('ZACHOD-ARENA');
-        end
-        else if MIECHO = 57 then begin
+        end;
+        if MIECHO = 57 then begin
           WriteLn('DOSTEPNE WYJSCIE:');
           WriteLn('POLODNIE-ARENA');
           WriteLn('WSCHOD-ARENA');
         end;
+      end;
       if wpisz = 'WYJSCIE' then
         exit;
       if wpisz = 'POLODNIE' then
