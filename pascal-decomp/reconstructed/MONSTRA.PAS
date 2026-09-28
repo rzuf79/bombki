@@ -14,6 +14,7 @@ var
   TAKSOWKARZ: Integer;
   SPRZEDAWCA: Integer;
   ZAMIATACZ: Integer;
+var
   PIJAK: Integer;
   ZEBRAK: Integer;
   MINIBARMAN: Integer;
@@ -25,6 +26,7 @@ var
   OGOL: Integer;
   DRZWI: Integer;
   STARUCH: Integer;
+var
   SILNY: Integer;
   procedure WSTEP;
   { Proc $0008 Entry 0:022B }

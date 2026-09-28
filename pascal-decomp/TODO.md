@@ -26,12 +26,15 @@ remains authoritative.
    compare it with the EXE's sequential checks (img `0x51C3..0x5344`). The
    current single-transition behavior is a reported fix; whether to retain it
    or match cascading checks remains OPEN (log finding (55)).
-6. **Reconcile remaining TP7 rebuild differences.** The extra empty
-   initialization blocks are removed. `compare_tpu.py` now bounds named
-   procedure payload windows from a prologue anchored within 32 bytes of each
-   entry to that procedure's code-block boundary; these bounded bytes still need
-   instruction/data classification and exact source attribution (log findings
-   (59)–(60)).
+6. **Finish physical TPU layout fidelity if whole-file identity is required.**
+   All 47 reconstructed procedure blocks now match the retained TPUs, including
+   literal bytes. Their relocation groups also match when self CS-pool block
+   references are resolved by entry identity. The parser now honors 16-byte
+   section alignment; the earlier prologue/bias diagnostics were artifacts of
+   misreading padding. A scratch TP7 build with original implementation order
+   has byte-identical complete code and relocation sections for all three units.
+   Remaining differences are source metadata and padding; the checked-in source
+   still uses its reconstruction-era implementation order. See finding (61).
 
 ## Open data questions
 
