@@ -41,7 +41,10 @@ remains authoritative.
    PRZEDM still needs its original implementation order in checked-in source,
    plus matching source metadata and padding. See finding (61). Its 15 var
    blocks are already restored; the remaining work is the per-procedure line
-   layout, in the same shape as the SWIAT work.
+   layout, in the same shape as the SWIAT work. POROWNANIE now: DZIADEK lens
+   window idx17–29 aligned (finding 64, `LINE-PARTITION-METHOD.md`); the
+   residual mismatches are the separate indices 30, 31, 33, 34, 37, 38, 41,
+   42, 44, 45, 47, 49, 54, 55–84.
 
 ## Open data questions
 

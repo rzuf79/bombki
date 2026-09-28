@@ -401,11 +401,11 @@ begin
     if KOP > 70 then MONSTRA.OGOL := MONSTRA.OGOL + 2;
     if (wpisz = 'DZIK') or (wpisz = 'SZCZUR') or (wpisz = 'LIS') or
        (wpisz = 'KUROPATWA') or (wpisz = 'ZAJAC') or (wpisz = 'WILCZUR') or
-       (wpisz = 'ORZEL') or (wpisz = 'SARNA') or (wpisz = 'DZIECKO') or
-       (wpisz = 'DZIADEK') then begin if MONSTRA.OGOL < 16 then
-        WriteLn('NICZEGO NIE MOGE ZAGWARANTOWAC ..... MACIE PODOBNE PARAMETRY'); if (SIL > 15) and (SIL < 19) then
-        WriteLn('PRZECIWNIK GODNY TWEJ DUMY , RACZEJ NIE POGRASZ'); if SIL > 18 then
-        WriteLn('WSTYD MI ZA CIEBIE ... JESZCZE TU JESTES ! NA CO CZEKASZ ? KILLUJ'); end;
+       (wpisz = 'ORZEL') or (wpisz = 'SARNA') or (wpisz = 'DZIECKO') or (wpisz = 'DZIADEK') then
+        begin if MONSTRA.OGOL < 16 then WriteLn('NICZEGO NIE MOGE ZAGWARANTOWAC ..... MACIE PODOBNE PARAMETRY');
+        if (SIL > 15) and (SIL < 19) then WriteLn('PRZECIWNIK GODNY TWEJ DUMY , RACZEJ NIE POGRASZ');
+        if SIL > 18 then WriteLn('WSTYD MI ZA CIEBIE ... JESZCZE TU JESTES ! NA CO CZEKASZ ? KILLUJ');
+        end;
     if (wpisz = 'SLON') or (wpisz = 'LEW') or (wpisz = 'ZYRAFA') or
        (wpisz = 'WIELBLAD') or (wpisz = 'STRUS') or (wpisz = 'BOA') or
        (wpisz = 'WILK') or (wpisz = 'BIZON') or (wpisz = 'PANTERA') or

@@ -1292,6 +1292,26 @@ reconstruction. Original-side findings are grounded in the EXE/TPU.
   MONSTRA and SWIAT. `conformance/compare_tpu.py` reports `PASS SWIAT.TPU:
   byte-identical (26000 bytes)`. PRZEDM still fails and is the remaining unit.
 
+### 2026-09-28 (64): POROWNANIE DZIADEK lens window aligned
+
+- **RESOLVED (idx17–29):** the POROWNANIE DZIADEK block's per-line byte
+  attribution now matches the retained TPU, verified by compiling the
+  checked-in `reconstructed/PRZEDM.PAS` under genuine TP7 (DOSBox-X) and
+  comparing the resulting lens rows. Preamble `[128,176]` (chain eval on
+  lines 402/403), idx19..29 match exactly; only the separate pre-existing
+  POROWNANIE indices remain (30, 31, 33, 34, 37, 38, 41, 42, 44, 45, 47, 49,
+  54, 55–84). POROWNANIE mismatch count dropped 42 → 40; the full PRZEDM.TPU
+  delta of this change is exactly the two corrected lens bytes (0x23/0x2A in
+  the symbols/lens section). All 34 code blocks remain byte-identical.
+- The winning layout keeps the chain clause set unbroken — the
+  `(ORZEL)/(SARNA)/(DZIECKO)/(DZIADEK)` tail stays on the continuation line —
+  because dropping a clause corrupts bytecode (the earlier l2a experiment).
+  Each `if cond then WriteLn(...)` pair is merged onto one line so the whole
+  total attributes to the next line index (35 = 7+28, 42 = 14+28, 35 = 7+28),
+  and the compound block closes with its own zero-byte `end;` line.
+- Method and the exact 5-line layout are recorded in
+  `analysis-results/LINE-PARTITION-METHOD.md`.
+
 ## 6. Open items
 
 - Exact name per 0x1D8..0x218 slot — solvable by pairing save()/wczytaj()
