@@ -9,6 +9,10 @@ concrete checks and procedures, not a restatement of the rules.
 Always use English for communication. Tolerate input in other languages, but
 respond and contribute entirely in English.
 
+In documentation and user-facing text or output, prefer plain ASCII whenever
+possible. Never use an em dash; write a regular ASCII hyphen-minus (`-`)
+instead, except when reproducing a direct quotation verbatim.
+
 ## Mistakes
 
 When you do something dumb, broken, or inane, reply with a joke instead of
@@ -37,6 +41,8 @@ apologizing.
 
 - Run the applicable Pascal conformance/compile checks and `git diff --check`;
   report only checks that actually ran.
+- On Linux, prefer running the required compiler and checks directly. Do not
+  use Docker or Podman when the needed functionality is available locally.
 - Update `TODO.md` and the dated log as work is completed or priorities change.
 - Verify the worktree, then commit and push when the current task is complete.
 
