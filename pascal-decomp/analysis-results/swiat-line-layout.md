@@ -6,38 +6,9 @@ out accordingly. This file records *what the TPU proves about the layout*; it
 does not claim to recover the original author's spelling or whitespace.
 
 Related: `disasm/SWIAT-POKOJ*.asm` (per-procedure annotated listings),
-`disasm/SWIAT-region.asm` (whole-unit code region), log finding (63).
-
-## Line-info record format
-
-The per-procedure line records live between the unit's `ofs_line_lengths` word
-and the end of the symbol section. Each record is:
-
-| offset | size | meaning |
-|---|---|---|
-| `+0` | 2 | file offset of the procedure's symbol record |
-| `+2` | 2 | always `0` |
-| `+4` | 2 | **decl** line: the `procedure X;` line |
-| `+6` | 2 | **entry** line: the first executable line of the body |
-| `+8` | 2 | first body-line number |
-| `+10` | 2 | `n`, the number of following per-line count bytes |
-| `+12` | `n` | one code-byte count per procedure body line |
-
-Each count is the number of code bytes the compiler attributed to the `i`-th
-source line between `begin` and `end;` inclusive; the counts sum to the
-procedure's code-block size. A count of `0` means the line contributed no code
-— a block-opening `if ... then begin`, a `repeat`, a closing `end;`, a blank
-line, or a comment.
-
-Consequences that drove the reconstruction:
-
-- Merging two of our source lines into one yields the sum of their code-byte
-  counts, so byte attribution alone can prove or disprove a grouping.
-- Any run of `0`-byte lines is interchangeable as long as its length matches.
-  Where a run had to shrink, an `end;` was moved onto the line that opened the
-  block (it contributes `0` bytes either way).
-- A line must be 127 characters or fewer; TP7 reports `Error 11: Line too
-  long` otherwise.
+`disasm/SWIAT-region.asm` (whole-unit code region), log finding (63), and the
+general record format and reconstruction method in
+[`line-number-reconstruction.md`](line-number-reconstruction.md).
 
 ## Unit header
 
