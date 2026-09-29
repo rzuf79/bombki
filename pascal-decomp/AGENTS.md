@@ -43,6 +43,21 @@ apologizing.
   report only checks that actually ran.
 - On Linux, prefer running the required compiler and checks directly. Do not
   use Docker or Podman when the needed functionality is available locally.
+- For actual behavior tests, prefer a host-native executable when available.
+  Drive it through an interactive PTY with expect-style synchronization: wait
+  for expected output before sending each response. For example, wait for
+  startup `TICK` before sending the race, then wait for the player-name prompt
+  before sending the name. This complete sequence is illustrative only, not a
+  required scenario; tailor the steps and output markers to the behavior under
+  test. Synchronize on expected output rather than using fixed sleeps, blind
+  input batches, or repeated polling.
+- For DOSBox-X or DOSEMU2 runtime tests, track each process started by the
+  session and bound its runtime. Before yielding or finishing, close every such
+  instance and verify it has exited. Never leave an emulator running for the
+  user or kill unrelated pre-existing instances; orphaned/repeated instances
+  can crash WSL.
+- Leave game sound enabled when it is useful for runtime diagnosis, but do not
+  leave a DOSEMU2 game on its intro screen for long.
 - Update `TODO.md` and the dated log as work is completed or priorities change.
 - Verify the worktree, then commit and push when the current task is complete.
 
@@ -67,8 +82,19 @@ listings, TPU/EXE reports, raw dumps) under `analysis-results\`.
 ## Branch workflow
 
 - Always work on a branch; never commit directly to `main`.
-- Commit coherent checkpoints as work progresses; push the branch only after
-  all current tasks are complete.
+- Commit coherent subject-sized work as it progresses, including incomplete
+  TODO items. Keep these commits local until a significant milestone is done
+  (for example, completing one TODO item), then push the branch.
+- Amend a local, unpushed commit only to correct a faulty commit or to record
+  whole or partial completion of work that the commit marked incomplete. Do
+  not amend merely to accumulate more changes on the same subject; commit
+  those changes separately. This standing instruction pre-approves the
+  specified amendments; never amend a pushed commit.
+- Before pushing a completed milestone, review the local commits and squash
+  very closely related commits so the final history has a reasonable number
+  of commits, ideally one per subject. Use the affected-file sets and commit
+  messages as a practical guide. These milestone squashes are pre-approved for
+  local, unpushed commits on this branch.
 - Reviews happen on GitHub: push the branch and open the PR; `main` advances
   only through reviewed merges, never by direct push.
 
@@ -98,7 +124,9 @@ listings, TPU/EXE reports, raw dumps) under `analysis-results\`.
 
 ## History rewrites
 
-1. Propose the amend/rebase to the human; wait for approval.
+1. Amendments and milestone squashes allowed under Branch workflow are
+   pre-approved for local, unpushed commits. For other history rewrites,
+   propose the amend/rebase to the human and wait for approval.
 2. Reword only the intended commits (interactive rebase) or amend the tip.
 3. Verify the rewrite is message-only: `git diff <old-tip> <new-tip>` is empty.
 4. Push with `--force-with-lease`.
