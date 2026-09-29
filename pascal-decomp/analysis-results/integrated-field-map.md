@@ -136,9 +136,16 @@ coins; 0x1AC/0x1AE are mana fields, not monster HP.
                          read back `[0x257]:=ReadLn` in wczytaj 0x83CF); TPU
                          `PIGULKA: Shortint` (gain -=10); 0x74 "Potrawki chance"
                          is the CWICZ skill field, NOT the pill count
-   0x258  f41  0       0x258  TalentChance   <- combat: if >0 && Random(100)<[258]
-                        => talent-up event `[0x259]-=10; PRZED+=1`  (was "Bigos")
-   0x259  f73  0       0x259  TalentPool     <- decremented 10 per talent proc (was "Listek")
+0x258  f41  0       0x258  TalentChance / combat Bigos-award chance
+                         <- on kill, if >0 && Random(100)<[258], the EXE prints
+                         "ROBISZ SOBIE PYSZNY PYSZNY BIGOS Z KAPUSTA Z WROGA"
+                         (img 0x18126), decrements [0x259] by 10, and increments
+                         PRZED; a second roll can increment [0x258] with
+                         "UCZYSZ SIE ZDOLNOSCI POTRAWKI" (img 0x18161).
+0x259  f73  0       0x259  BIGOS item (Shortint in PRZEDM TPU)
+                         <- displayed as "PYSZNY BIGOS Z KAPUSTA Z WROGA"
+                         (img 0x009A8), consumed by UZYJ BIGOS; combat can also
+                         award it through the chance at [0x258] (was "TalentPool")
 0x25B  f71  0       0x25b  LISTEK / lucky-leaf item (byte)
                         <- acquisition decrements it by 10; the distinct
                         compare-skill counter is POR at 0x25D
@@ -635,15 +642,26 @@ record only; it does not corroborate or constrain any claim below.
 | POR | comparison skill | [0x25D] SkillPorownywanie |
 | JAKIEUB, JAKABRON, JAKATAR | equipped clothing/weapon/shield ids | buffer ds:0x264 + flag [0x218] |
 | PLECAK, PIGULKA, BIGOS, LISTEK | backpack/pill/bigos/leaf | backpack capacity-upgrade; pill [0x257]; bigos [0x259]; leaf [0x25B] |
-| KORNIK..PANTERA, SZCZAW..TRAWA, DZIECKO..REPORTER, MINIBARMAN, GRUBAS, DJ, PEDAL, PARA, MACIEK, OGOL, DRZWI, STARUCH, SILNY | per-monster "which room" trackers | [0x666..0x678] animals, [0x24C..0x25x] NPCs, [0x67A]/[0x67C]/[0x67E] arena, [0x688]/[0x68A] door/staruch, plants [0x232..0x246] |
+| KORNIK..PANTERA, SZCZAW..TRAWA, DZIECKO..REPORTER, MINIBARMAN, GRUBAS, DJ, PEDAL, PARA, MACIEK, OGOL, DRZWI, STARUCH, SILNY | per-monster "which room" trackers | [0x666..0x678] dog/city-NPC room ids, [0x24C..0x25x] concert NPCs, [0x67A]/[0x67C]/[0x67E] arena, [0x688]/[0x68A] door/staruch, plants [0x232..0x246] |
 
 ### Compatibility-fact register (authoritative; matches/extends disasm)
 
-- **Items/stores**: bakery sells the 6 foods; armory STARY + MALA; general store
-  FAJKA, KOMPLET "SYF", KASETA, GARNITUR kolce; magic store MBUTELKA, LISTEK,
-  PIGULKA, SCROLL POROWNYWANIE. Only items with resale commands can be sold.
-  Price oddities preserved: small mana bottle affordable at 15 coins while
-  advertised/deducted 20; lucky leaf advert + check 820 but deducts 830.
+- **Room trackers** `[0x666..0x678]` (img 0x12ACA initialization, 0x1C2A
+  command router) are ten individual room ids, not a garden-animal array:
+  Jamnik 0x666, Owczarek 0x668, Spaniel 0x66A, Pudel 0x66C, Piesek 0x66E,
+  Taksowkarz 0x670, Sprzedawca 0x672, Zamiatacz 0x674, Pijak 0x676, Zebrak
+  0x678. Their `ZABIJ` commands are context-gated; Taksowkarz/Sprzedawca/
+  Zamiatacz/Pijak/Zebrak use VEASY, dogs use WALKAPIES. The Spaniel dialogue,
+  Zamiatacz's 35% outfit drop, and Zebrak's conditional money bonus are in
+  img 0x1CBA..0x1E91.
+- **Items/stores** (img 0x139BE..0x14E8A): bakery sells the 6 foods; weapon shop
+  sells STARY + MALA; general store sells FAJKA, KOMPLET "SYF", KASETA, and
+  GARNITUR kolce; magic store sells MBUTELKA, LISTEK, PIGULKA, and SCROLL
+  POROWNYWANIE. General-store transactions also modify stats, capacity,
+  max-energy, and carried-item count. Preserve machine quirks: small mana
+  bottle eligibility is 15 coins but it costs 20; LISTEK eligibility is 820
+  but the debit is 830. The shared city-actor router at img 0x11C2A is called
+  from contexts 20, 21, 22, 24, 25, and 26 (img 0xBEFD..0xE6DE).
 - Original carry capacity: the limit at 0x062 is compared with PRZED [0x182]
   (img 0xB0F6..0xB102). The TPU stat PRO [0x1C2] is modified by clothing
   and cassette effects (img 0x1950C..0x19529).

@@ -23,18 +23,27 @@ remains authoritative.
    source follows img `0xEAF8..0xF584`; the return/control-flow tail is
    documented at `0xF584..0xF5C5`. See findings (53), (59), (77), (84), (87),
    (89)-(93), (101), (103).
-2. **Reconnect remaining inline kill dispatches and helpers.** Open call sites
-   include img `0x6A20`, `0x6BF1`, `0x6D67`, `0x6F10`, `0x709D`, `0x71F7`,
-   `0x73B3` (shared helper at `0x7333`), and `0x7647`. Preserve the established
-   `PRZEDM` launcher behavior; derive each caller from EXE evidence.
-3. **Reconstruct shop transactions.** The inline transaction handlers at img
-   `0x139BE`, `0x143A5`, and `0x14ADD` remain open; source comments in
-   `reconstructed/BOMBKI.PAS` identify the call sites.
-4. **Finish partial room branches.** Reconcile context 86's old-man dialogue
-   conditions and later branches (img `0xD427..0xD7F0`), and resolve the
-   neighboring call at `0x11C2A`. Audit other explicitly partial inline
-   handlers without expanding the project beyond the retained EXE behavior.
-5. **Validate checkpoint transitions.** Reproduce the UI-reported behavior and
-   compare it with the EXE's sequential checks (img `0x51C3..0x5344`). The
-   current single-transition behavior is a reported fix; whether to retain it
-   or match cascading checks remains OPEN (log finding (55)).
+2. **Resolve strict TP7 EXE parity.** The current reconstruction compiles under
+   genuine TP7 and all three TPUs remain byte-identical, but rebuilt
+   `BOMBKI.EXE` is 139,136 bytes versus the retained 141,264-byte executable,
+   with 131,274 differing byte positions.
+   The workflow's `cmp` gate correctly fails; identify and close the remaining
+   source/runtime layout differences before considering the reconstruction done.
+   The latest MZ report shows 141 fewer relocation entries, a 1,568-byte
+   shorter load image, and entry point `0000:BABF` rather than `0000:B0CF`;
+   startup calls resolve `System` and `CRT` at paragraphs 0x1C10 and 0x1BAE
+   rather than 0x1C71 and 0x1C0F. Finding (95) restores the evidenced BAZAR
+   death handler; finding (96) also replaces a shared synthetic training-output
+   helper with the six separately evidenced output branches, reducing the
+   differing-byte count. Finding (97) inlines the carrying-limit calculation
+   into its evidenced JA routine; strict byte-difference count rises, but the
+   extracted helper was not present in the EXE. Finding (98) identified the
+   `SPIJ` counter at DGROUP 0x70 as a source-layout mismatch; finding (100)
+   resolves it by assigning the program-level variable to that emitted offset.
+   Finding (99) moves 24 recovered room handlers into the ordered main
+   dispatcher; this improves entry-point placement but worsens the strict
+   differing-byte count. Finding (102) also matches MODE random draws to
+   `RandomScratch` and the two independent SPIJ draws. Finding (103) removes
+   the synthetic 80-element save/load staging array in favor of the direct
+   DGROUP reads/writes visible in the EXE, improving the differing-byte count.
+   See findings (86)-(89), (94)-(103).

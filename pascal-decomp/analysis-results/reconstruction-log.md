@@ -40,14 +40,13 @@ findings (6) and (7) for the write order and field-name cross-check.
 
 ## 3. Current reconstruction status
 
-`BOMBKI.PAS` remains partial. Startup, the main loop, and the context-1000
-MODE body have been transcribed from retained EXE evidence (findings (53), (59),
-(77), (80), (84), (87), (89)-(93), and (98), (100)-(103)). Host-native PTY
-scenarios cover MODE status/color, sleep, and save/load; DOSEMU2/FreeDOS TP7
-runtime checks also passed. Original-DOS runtime verification and strict TP7
-EXE parity remain open. `SWIAT.PAS` contains all 12 mapped room procedures; the
-matching EXE region and TPU bytes are compared in finding (33). The three
-reconstructed unit files are the scope of this Pascal project.
+`BOMBKI.PAS` remains partial. Startup, the main loop, the MODE command body,
+shop transactions, and the previously open room-specific kill handlers have
+been transcribed from the retained machine evidence (findings (77), (80)-(85)).
+Live MODE behavior and strict TP7 EXE parity remain open (findings (84) and
+(86)). `SWIAT.PAS` contains all 12 mapped room procedures; the matching EXE
+region and TPU bytes are compared in finding (33). The three reconstructed
+unit files are the scope of this Pascal project.
 
 ## 4. Evidence grounding (disassembly, all verified)
 
@@ -1005,12 +1004,9 @@ reconstruction. Original-side findings are grounded in the EXE/TPU.
   img 0x1925..0x1928. Added the POL-ELF 30-coin grant and removed the invented
   checkpoint-stage value 12; its zero start is from cleared DGROUP at img
   0x51D5 and the first stage checks at img 0x51C3.
-- A checkpoint invocation now stops after its first eligible transition, so a
-  high starting KUNSZT cannot print several checkpoints in one call. **OPEN
-  fidelity note:** the EXE uses sequential independent checks at img
-  0x51C3..0x5344, which can cascade when later-stage thresholds are already
-  met; retain this UI-reported fix unless further evidence calls for strict
-  instruction-equivalent cascading.
+- The then-current single-transition guard was based on a UI report and did
+  not match the EXE's independent sequential checks. Finding (83) restores the
+  observed machine behavior.
 
 ### 2026-09-27 (56): connect stage encounter helpers
 
@@ -1489,8 +1485,8 @@ reconstruction. Original-side findings are grounded in the EXE/TPU.
   executables by running `build_fpc.py`. `--no-build` supports setup-only use.
 - **Verification:** Bash syntax passed. Ran the complete setup and dual-target
   build using the previously staged official FPC 3.2.2 archive and MinGW files;
-  Linux ELF and Windows PE32+ executables were produced. Package installation
-  itself was skipped because this environment has no interactive sudo access.
+   Linux ELF and Windows PE32+ executables were produced. Package installation
+   itself was skipped because this environment has no interactive sudo access.
 
 ### 2026-09-29 (77): MODE save/load and Bigos field mapping
 
@@ -1509,6 +1505,31 @@ reconstruction. Original-side findings are grounded in the EXE/TPU.
    the retained 141,264 bytes, so the strict EXE comparison still fails; keep
    that parity work open in `TODO.md`.
 
+### 2026-09-29 (78): generic, idempotent FPC cross-toolchain setup
+
+- Updated `analysis-tools/setup_fpc_windows_cross.sh` to query MinGW package
+  status and install only missing packages; skip apt entirely when none are
+  missing. Existing Win64 `system.ppu` and `crt.ppu` prevent an RTL download.
+  The default RTL/wrapper location is generic under `~/.local/share/fpc-cross`,
+  with an `fpc-win64` command exposed under `~/.local/bin` and a PATH hint.
+- Replaced the project build with a minimal temporary Pascal program compiled
+  for Win64 as a smoke test. A fully configured installation exits without
+  rerunning that test. Binutils symlink checks canonicalize aliases (`ld`
+  resolves to `ld.bfd` on this host).
+- **Verification:** Bash syntax and `git diff --check` passed. With the already
+  installed matching RTL supplied through `--install-dir`, the setup skipped
+  apt and RTL download, installed `~/.local/bin/fpc-win64`, and compiled the
+  standalone smoke program successfully for Win64.
+
+### 2026-09-29 (79): simplify research tooling directory name
+
+- Renamed `analysis-tools/` to `tools/`; the project is already the analysis
+  scope. Updated the conformance import path, tool usage examples, and the
+  research-layout note. Historical log entries retain the path that was
+  correct when those findings were recorded.
+- **Verification:** Bash syntax, `compare_tpu.py --help`, and `git diff --check`
+  passed.
+
 ### 2026-09-29 (80): MODE's adjacent POKOJ9 tail call
 
 - Resolved img 0xEC9B as a far call into POKOJ9's body at img 0x5A36. The
@@ -1522,6 +1543,63 @@ reconstruction. Original-side findings are grounded in the EXE/TPU.
 - **Correction:** the `0xEC9B` target-segment interpretation was wrong; see
   finding (87). The stair-label code at img 0x5A36 is not this far-call target.
 
+### 2026-09-29 (81): crowd kill router and command aliases
+
+- Reconnected all eight inline KillDispatch calls at img 0x6A20, 0x6BF1,
+  0x6D67, 0x6F10, 0x709D, 0x71F7, 0x73B3, and 0x7647 to a shared source
+  procedure. It preserves the 10 command/room-flag pairs and existing
+  PRZEDM difficulty launchers from img 0x4F53; win-only flag clearing, Dziadek
+  Fajka/MAD reward, and Goryl/Ochroniarz GARNITURZYSK calls follow the EXE.
+- Reconnected the shared `PRZEDM.KOMENDY` call at img 0x129D:0x9137 for the
+  crowd, bar, and stage contexts. It expands the one-letter command aliases
+  before MODE, movement, and kill checks (call sites img 0x6B71, 0x6CCB,
+  0x6E74, 0x701D, 0x7177, 0x7333, and 0x75AB).
+- **Verification:** the dual-target FPC build and genuine TP7 build passed;
+  `compare_tpu.py` reports all three TPUs byte-identical. Strict EXE comparison
+  remains open: the rebuilt EXE is 128,160 bytes versus 141,264, with 134,306
+  differing positions (first at file offset 0x2).
+
+### 2026-09-29 (82): shop transactions and city-actor trackers
+
+- Reconstructed and connected the bakery handler at img 0x39BE (six food
+  purchases), weapon shop at 0x3E8E (STARY/MALA buy/sell), general store at
+  0x43A5 (FAJKA, KOMPLET, KASETA, GARNITUR), and magic shop at 0x4ADD
+  (mana bottle, LISTEK, PIGULKA, comparison scroll). Retained machine quirks:
+  mana-bottle eligibility is 15 coins but the debit is 20; LISTEK eligibility
+  is 820 but the debit is 830. Effects on carried count, stats, capacity, and
+  item sentinels follow the EXE accesses.
+- Reconstructed the shared room-gated city actor router at img 0x1C2A, reached
+  from context loops at 0xBEFD, 0xD9BD, 0xDB97, 0xE41E, 0xE589, and 0xE6DE,
+  plus the bakery and weapon handlers at 0x3AA0 and 0x3F2A.
+  Replaced `ZwierzetaOgroda` with ten named room-tracker variables: five dog
+  fields and five city-NPC fields at DGROUP 0x666..0x678, matching the entities
+  used by initialization and kill dispatch.
+- **Verification:** FPC Linux/Win64 build and genuine TP7 compile passed; all
+  three TPUs remain byte-identical. The rebuilt EXE is 136,112 bytes versus
+  141,264, so strict EXE parity remains open.
+
+### 2026-09-29 (83): restore sequential checkpoint transitions
+
+- Removed the source-level early exits from `PunktKontrolny`. The EXE performs
+  six independent ordered checks at img 0x51C3..0x534A, and calls the shared
+  room/reroll helper after each qualifying transition. Changing the stage does
+  not return early; high skill can therefore satisfy a later-stage check during
+  the same invocation. This replaces the prior UI-reported single-transition
+  behavior, which contradicted the retained machine evidence.
+- Confirmed context 86's conversation gates against img 0xD546..0xD6FA:
+  introductory dialogue requires WEKA > -30, FORSA < 200, and no return scroll;
+  the reward branch requires WEKA < -30 and FORSA >= 200. It sets context 20,
+  consumes 2 carried-item slots, 4 WEKA, 200 coins, 10 beer, grants 50 skill,
+  and may force context 16 if the return-scroll flag is negative.
+- Corrected the tracker-router wiring: the helper at img 0x1C2A is called both
+  inside bakery/weapon transaction bodies (img 0x3AA0 and 0x3F2A) and from six
+  context loops (img 0xBEFD, 0xD9BD, 0xDB97, 0xE41E, 0xE589, 0xE6DE). These
+  are distinct call sites and must remain distinct.
+- **Verification:** FPC Linux/Win64 and genuine TP7 compilation passed;
+  all three TPUs remain byte-identical. The TP7 EXE is 136,112 bytes versus
+  141,264; strict comparison still differs at 133,897 byte positions (first
+  difference at file offset 0x2).
+
 ### 2026-09-29 (84): restore MODE color-command dispatch order
 
 - Moved `PRZEDM.PIERDOLY` (`ZMIEN KOLOR` / `ZMIEN TLO`) to after the
@@ -1532,6 +1610,37 @@ reconstruction. Original-side findings are grounded in the EXE/TPU.
   three TPUs remain byte-identical. The TP7 EXE remains 136,112 bytes versus
   141,264, with 133,908 differing byte positions (first at file offset 0x2).
   Interactive DOS command behavior and strict EXE parity remain OPEN.
+
+### 2026-09-29 (85): finish the partial room-handler audit
+
+- Re-audited the active room-handler TODO against the reconstruction and its
+  cited EXE ranges. Context 86's dialogue/reward conditions and exits are
+  transcribed at img 0xD427..0xD7F0; its shared city-actor router is connected
+  at img 0x11C2A. Previously open inline shop transactions at img 0x139BE,
+  0x143A5, and 0x14ADD, plus the eight crowd kill-dispatch sites, were also
+  addressed in findings (81) and (82). No remaining room-handler partial/TODO
+  marker was found in the source; the one remaining partial-handler comment is
+  the active MODE handler.
+- The room-handler TODO is complete. This source audit does not claim full
+  executable parity; see the remaining MODE-runtime and EXE-parity TODOs.
+
+### 2026-09-29 (86): characterize the remaining TP7 EXE layout gap
+
+- Parsed the MZ headers of the latest genuine-TP7 rebuild and retained EXE.
+  The rebuild is 136,112 bytes (MZ header 18,656; load image 117,456) versus
+  141,264 (header 21,216; load image 120,048). The relocation table has 4,654
+  entries versus 5,295, and the entry points are `0000:E853` versus
+  `0000:B0CF`. These structural differences accompany the strict byte-compare
+  failure; they are not just a file-size-field mismatch.
+- The entry-point bytes show matching startup-call shapes but relocated runtime
+  paragraphs: the rebuild calls `1BD0:0000` and `1B6E:000D`, while the retained
+  EXE calls `1C71:0000` and `1C0F:000D` (System and CRT). The difference is
+  `0xA1` paragraphs for both runtime segments.
+- **OPEN:** determine which source/layout differences account for the missing
+  relocations, shifted entry point, shorter image, and runtime segment placement.
+  The three reconstructed TPUs remain byte-identical, localizing this current
+  gap to the program build and its link layout, but not identifying a single
+  cause.
 
 ### 2026-09-29 (87): correct the MODE helper call target
 
@@ -1551,6 +1660,17 @@ reconstruction. Original-side findings are grounded in the EXE/TPU.
   entries; the entry point is `0000:E7E8`. Startup calls target `1BCA:0000`
   and `1B68:000D` (System/CRT), still shifted from the retained image.
   Interactive DOS behavior and strict EXE parity remain OPEN.
+
+### 2026-09-29 (88): break down TP7 relocation differences
+
+- Parsed the current MZ relocation cells and grouped them by the segment
+  paragraph stored at each target. The rebuild has 4,649 entries versus 5,295
+  in the retained EXE: System 4,435 vs. 5,064; PRZEDM 160 vs. 176; CRT 38 vs.
+  39; the remaining segment targets contribute 16 entries in each image.
+- The net deficit is 629 System, 16 PRZEDM, and 1 CRT relocation. This
+  quantifies the dominant missing relocation class but does not identify which
+  source constructs or runtime calls account for it; strict EXE parity remains
+  OPEN.
 
 ### 2026-09-29 (89): restore the MODE save helper call
 
@@ -1629,6 +1749,82 @@ reconstruction. Original-side findings are grounded in the EXE/TPU.
   system package or project dependency was installed. All DOSEMU2 processes
   started for the test were terminated and verified stopped.
 
+### 2026-09-29 (94): align two main-program source shapes with the EXE
+
+- In `WybierzRase`, replaced the invented local `Rasa: string` with the
+  existing `PRZEDM.wpisz` input string. At img 0x171A..0x1728, the race
+  `ReadLn` setup passes DS:0x0564 and a 255-character limit; the main command
+  loop uses that same storage. This removes the extra 256-byte TP7 local-string
+  frame allocation without adding a duplicate variable.
+- Removed `ZdobadzPoziom`'s invented `ProgPoziomu` local and expressed its
+  threshold branches as direct gates to the existing level-up body, following
+  img 0x8740..0x879F. The recovered code calculates thresholds in registers
+  and branches to the level-up body at img 0x87A2 or returns at 0x8BA2.
+- **Verification:** FPC conformance passed (4/4 targets), the native prompt-
+  synchronized MODE scenario passed all 12 steps, and a genuine-TP7 DOSBox-X
+  build succeeded with all three TPUs still matching. The full TP7 shell sweep
+  could not start because this host lacks `xvfb-run` (a dependency of that
+  container-oriented script). The rebuilt EXE is 135,952 bytes with 4,651
+  relocations and entry point 0000:E7C2; it remains 133,786 byte positions
+  different from the 141,264-byte reference. System/CRT remain at paragraphs
+  0x1BC9/0x1B67 versus 0x1C71/0x1C0F. Strict EXE parity remains **OPEN**; these
+  source-shape corrections do not explain the main relocation/image-size gap.
+
+### 2026-09-30 (95): restore the evidenced BAZAR death handler
+
+- The EXE has a complete handler at img 0x36F4..0x3845. Main dispatch checks
+  context 0x2710 and calls it at img 0xEA22. The handler prints the death
+  messages, sets the quest counter at DGROUP 0x24A to 50 when the type at 0x248
+  is 1 and to 200 when it is greater than 1 (img 0x37C2..0x37DC), restores
+  energy from 0x664, subtracts 250 plus a random 0..49 and five times the level
+  from KUNSZT, sets context 20, calls Room at 0x129D:0x00FA, assigns `PAMIETAJ`
+  to the input buffer, and calls the save routine at img 0x2BA1. Added the
+  corresponding `Bazar` procedure and context-10000 dispatch.
+- A genuine-TP7 build succeeds; FPC conformance passes 4/4, and all three TPU
+  comparisons remain byte-identical. Against the retained EXE, the rebuilt
+  executable is 136,784 bytes with 4,675 relocations, load image 118,048 bytes,
+  and entry point 0000:EA8B; startup calls target System/CRT paragraphs
+  0x1BF5/0x1B93 versus 0x1C71/0x1C0F in the reference. There are 133,147
+  differing byte positions. Relative to the pre-change 135,952-byte build
+  (4,651 relocations, 117,312-byte image,
+  entry 0000:E7C2, 133,786 differing positions), the new handler reduces the
+  differing-position count by 639, though the entry moves farther from the
+  reference and total strict parity remains **OPEN**. These are structural
+  measurements, not proof of runtime equivalence.
+- All three TPUs were rechecked and have no mismatches. Original-DOS runtime
+  validation remains separate and unverified.
+
+### 2026-09-30 (96): preserve the six distinct training output branches
+
+- At img 0x280C..0x2B6E, the EXE contains six separate output sequences with
+  distinct constant strings for KOPANIE, UCIEKANIE, POWRACANIE, PAROWANIE,
+  POROWNYWANIE, and POTRAWKI. The reconstruction had factored these into the
+  invented `PokazPostepTreningu` procedure. Removed that helper and restored
+  each constant string and `WriteLn` at its branch site.
+- Genuine-TP7 build and FPC conformance pass; all three TPU comparisons remain
+  byte-identical. The EXE is 137,408 bytes with 4,707 relocations, load image
+  118,544 bytes, and entry 0000:EC7B; startup calls target System/CRT paragraphs
+  0x1C14/0x1BB2 rather than 0x1C71/0x1C0F. It differs from the reference at
+  132,236 byte positions, 911 fewer than the BAZAR-only build. The entry moves
+  farther from the reference, so strict EXE parity remains **OPEN**; this is a
+  measured partial improvement, not a parity claim.
+
+### 2026-09-30 (97): inline the carrying-limit calculation in JA
+
+- The original routine starts at img 0x073C. Its opening instructions perform
+  the full carrying-capacity calculation through img 0x07D4 before proceeding
+  directly to inventory output. The source had extracted that block into an
+  invented `UstawLimitNoszenia` procedure, adding a procedure boundary absent
+  from the EXE. Moved the comparisons back into `PokazPostac` and removed the
+  synthetic procedure and forward declaration.
+- FPC conformance passes 4/4; a genuine-TP7 build succeeds and all three TPUs
+  remain byte-identical. The rebuilt EXE is 137,392 bytes with 4,706
+  relocations, load image 118,528 bytes, entry 0000:EC6C, and startup targets
+  System/CRT paragraphs 0x1C13/0x1BB1. Its strict difference count is 132,876,
+  640 more than before this source-shape correction. Keep the source aligned
+  with the disassembly; strict EXE parity remains **OPEN**, and byte-position
+  count is not a semantic measure.
+
 ### 2026-09-30 (98): identify the SPIJ counter at DGROUP 0x70
 
 - In the original inline context-1000 body, img 0xEEFF..0xEF06 zeroes and
@@ -1643,6 +1839,26 @@ reconstruction. Original-side findings are grounded in the EXE/TPU.
   Its EXE differed at 132,953 byte positions (77 more than the retained source),
   so that experiment was not applied. This identifies the next data-layout
   problem but does not resolve it.
+
+### 2026-09-30 (99): inline recovered handlers in main dispatch order
+
+- The original main body at img 0xB1E5..0xCC13 contains ordered independent
+  context tests and their room bodies. Twenty-four reconstructed handlers had
+  instead been emitted as separate Pascal procedures called from that region.
+  Moved the selected bodies into their matching dispatcher tests, retaining
+  test order and the EXE-evidenced room ranges in their comments. Replaced each
+  procedure-level `Exit` with a jump to a label immediately after its inline
+  body, so the following independent dispatch tests still execute in order.
+- FPC conformance passes 4/4, the genuine-TP7 build succeeds, and the native
+  prompt-synchronized MODE scenario passes all 12 steps. All three TPU
+  comparisons remain byte-identical. The TP7 EXE is 134,960 bytes with 4,682
+  relocations and a 116,192-byte load image; entry is 0000:B1D3 (0x104 after
+  reference entry 0000:B0CF). Startup System/CRT targets are paragraphs
+  0x1B81/0x1B1F versus 0x1C71/0x1C0F. Strict comparison reports 133,636
+  differing byte positions, 760 more than the previous build, despite the
+  closer entry placement. This source-layout correction is evidence-aligned,
+  not a strict-parity improvement; EXE parity remains **OPEN**. Runtime testing
+  here is host-native FPC, not original DOS or DOSBox/FreeDOS evidence.
 
 ### 2026-09-30 (100): place the SPIJ hour counter at DGROUP 0x70
 
