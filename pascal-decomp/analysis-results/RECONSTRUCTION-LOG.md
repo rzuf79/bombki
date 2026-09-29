@@ -1292,9 +1292,132 @@ reconstruction. Original-side findings are grounded in the EXE/TPU.
   MONSTRA and SWIAT. `conformance/compare_tpu.py` reports `PASS SWIAT.TPU:
   byte-identical (26000 bytes)`. PRZEDM still fails and is the remaining unit.
 
-## 6. Open items
+### 2026-09-28 (64): POROWNANIE DZIADEK source-line byte counts aligned
 
-- Exact name per 0x1D8..0x218 slot — solvable by pairing save()/wczytaj()
-  WriteLn order.
-- A nonzero-money save would independently confirm the FORSA [0x21A:0x21C]
-  longint-pool math.
+- **RESOLVED (idx17–29):** the POROWNANIE DZIADEK block's per-line byte
+  attribution now matches the retained TPU, verified by compiling the
+  checked-in `reconstructed/PRZEDM.PAS` under genuine TP7 (DOSBox-X) and
+  comparing the resulting per-source-line code-byte counts. Preamble
+  `[128,176]` (chain eval on lines 402/403), idx19..29 match exactly; only the separate pre-existing
+  POROWNANIE indices remain (30, 31, 33, 34, 37, 38, 41, 42, 44, 45, 47, 49,
+  54, 55–84). POROWNANIE mismatch count dropped 42 → 40; the full PRZEDM.TPU
+  delta of this change is exactly the two corrected per-line count bytes
+  (0x23/0x2A in the symbols section). All 34 code blocks remain byte-identical.
+- The winning layout keeps the chain clause set unbroken — the
+  `(ORZEL)/(SARNA)/(DZIECKO)/(DZIADEK)` tail stays on the continuation line —
+  because dropping a clause corrupts bytecode (the earlier l2a experiment).
+  Each `if cond then WriteLn(...)` pair is merged onto one line so the whole
+  total attributes to the next line index (35 = 7+28, 42 = 14+28, 35 = 7+28),
+  and the compound block closes with its own zero-byte `end;` line.
+- Method and the exact 5-line layout are recorded in
+  `analysis-results/LINE-PARTITION-METHOD.md`.
+
+### 2026-09-28 (65): TP7 CI toolchain pinned in repository
+
+- Added the Archive.org public-domain TP7 `TP.zip` payload under
+  `docker/dosbox-tp7/tools/`, recording its URL and SHA-256; the Docker build
+  verifies the checksum and extracts it at `/tools/tp7`. The conformance
+  script and DOSBox config now use that location, while retaining the previous
+  `/opt/tp7` paths in comments.
+- The image build uses its Dockerfile directory as context and consumes the
+  checked-in archive there. The Pascal conformance workflow skips branch-push
+  sweeps (the matching pull request event runs them), while retaining main
+  pushes and manual dispatches.
+- **Verification:** archive checksum and ZIP integrity passed; the image built
+  successfully with Podman 5.7.0, and the genuine TP7 sweep passed all six
+  checks. `compare_tpu.py` reports MONSTRA and SWIAT byte-identical; PRZEDM
+  remains at its active source-line-count/source-record mismatch (127 symbol-section bytes,
+  while all 34 code blocks and relocation groups match). Shell syntax, YAML
+  parsing, and `git diff --check` passed.
+
+### 2026-09-28 (66): MINIARENA kill-handler source-line counts aligned
+
+- **RESOLVED (idx15–196):** the MODE/Bakteria dispatch and repeated kill
+  handlers now match the per-source-line code-byte counts for MINIARENA from
+  the retained `PRZEDM.TPU` procedure record (decl 1123, body line 1124,
+  310 entries).
+  TP7 compile-and-compare confirmed each helper call, assignment, and output
+  statement was split/merged on the needed adjacent source rows without
+  changing procedure bytecode.
+- **OPEN:** 21 MINIARENA per-line code-byte count mismatches remain, all in navigation indices
+  197–200, 222, 224–226, 250–254, 278–282, and 306–308. POROWNANIE remains at
+  its 40 mismatched per-line code-byte entries.
+- **Verification:** genuine TP7 compilation passed; current MINIARENA per-line
+  byte counts match exactly through idx196. The remaining TPU code-block checks are
+  unchanged from the prior byte-identical 34/34 result.
+
+### 2026-09-28 (67): MINIARENA per-source-line byte counts aligned
+
+- **RESOLVED (idx0–309):** all 310 MINIARENA per-source-line code-byte counts now match the retained
+  `PRZEDM.TPU`. Reflowing the four navigation arms into their original
+  one-row-per-transition shape aligned their condition/assignment bytes and
+  compound-block boundaries; the loop-tail `STOP` reset and `until` clause also
+  now occupy their reference rows.
+- POROWNANIE remains the only open per-source-line code-byte partition, with 40 differing entries
+  (idx30–49 plus the two later dialogue regions recorded above). The source
+  bytecode remains unchanged by these physical line-layout corrections.
+- **Verification:** genuine TP7 compile passed; compile-and-compare reports
+  zero MINIARENA differences and 40 POROWNANIE differences. `git diff --check`
+  passed.
+
+### 2026-09-28 (68): POROWNANIE source-line tryout reduces residuals
+
+- Checked in a line-layout tryout for `POROWNANIE`. The original 40 per-source-line code-byte
+  mismatches are reduced to 7 while preserving all 34 procedure code blocks
+  and all 34 relocation groups byte-for-byte. A first scratch variant had an
+  extra/misplaced `end;` that nested TAKSOWKARZ under MINI-BARMAN; that variant
+  was discarded, and the checked-in candidate has the corrected branch
+  boundary.
+- Remaining TPU per-source-line code-byte differences (`index`, source line, expected bytes,
+  rebuilt bytes): `(60,445,0,7)`, `(61,446,35,28)`, `(72,457,35,0)`,
+  `(73,458,0,35)`, `(74,459,17,0)`, `(75,460,35,17)`, and `(77,462,0,35)`.
+  These are still **OPEN**; the tryout is not a completed POROWNANIE alignment.
+- **Verification:** genuine TP7 compilation succeeded (1575 lines; 38118 code
+  bytes). `compare_tpu.py` reports 0/34 code-block and 0/34 relocation-group
+  mismatches; POROWNANIE has 7/88 per-source-line count mismatches. Full PRZEDM metadata and
+  whole-file identity remain OPEN.
+
+### 2026-09-28 (69): Per-source-line code-byte terminology clarified
+
+- The line-layout notes and comparison utility now describe these values as
+  **per-source-line code-byte counts**: each byte in a procedure's TPU line-info
+  record gives the number of generated code bytes attributed to that body line.
+  No evidence reviewed here establishes a special TP7 name for these values.
+- Renamed the utility to `analysis-tools/compare_tp7_artifacts.py` and updated
+  its output, examples, and internal names to use the descriptive wording.
+
+### 2026-09-29 (70): PRZEDM per-source-line counts aligned
+
+- **RESOLVED:** all recorded PRZEDM per-source-line code-byte counts now match,
+  including all 88 entries in `POROWNANIE`. Its last four differences were a
+  one-row attribution shift: moving the blank line from inside the FUKS block
+  to after the final `POKRZYWA` message yields `[0, 85, 28, 14]` at idx78–81.
+- Reproduced that transfer in an isolated TP7 slice containing the `POKRZYWA`
+  conditions, the intervening animal dialogue, and the FUKS output and two
+  assignments. The procedure code itself is unchanged.
+- **Verification:** genuine TP7 compile passed; all PRZEDM line-count records
+  match; all 34 code blocks and relocation groups match. Complete TPU identity
+  remains OPEN because source-symbol metadata still differs.
+
+### 2026-09-29 (71): PRZEDM timestamp and full TPU identity restored
+
+- **RESOLVED:** `PRZEDM.TPU`'s source record at `0x1516` stores DOS date/time
+  `0x26C19BB0`, decoded as **1999-06-01 19:29:32**. The genuine-TP7 conformance
+  build now restores that timestamp on its CRLF scratch copy before compiling.
+- **Verification:** local genuine TP7/DOSBox-X compilation with the three
+  retained source timestamps makes MONSTRA (3072 bytes), PRZEDM (80128 bytes),
+  and SWIAT (26000 bytes) all byte-identical to their retained TPUs.
+  `conformance/compare_tpu.py` passes all three units.
+
+### 2026-09-29 (72): stale open data questions closed
+
+- **RESOLVED:** the former 0x1D8..0x218 saved-field naming question is superseded
+  by the field map: 0x1D8 is `ArenaSouthLatch`, 0x1DA..0x210 are the 28 named
+  arena beast pens, 0x212 is `CombatLootMoney`, 0x214 is `ArenaMoveLatch`,
+  0x216 is `ItemFlag_KompletUbranSyf`, and 0x218 is `OutfitEquipped`.
+  The EXE arena dispatcher at img 0x19C90..0x1AF1E identifies the pen fields;
+  the field map also records their save-field indices.
+- **RESOLVED:** a nonzero-money save sample already exists: f18 is 1424, which
+  decodes to 89 coins at Madrosc 16. The save-side `@LMul` and load-side `@LDiv`
+  are independently identified in img 0x2E0F..0x2E22 and 0x7FA4..0x7FBB,
+  confirming the reversible FORSA transform without requiring a new save.

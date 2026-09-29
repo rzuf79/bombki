@@ -57,8 +57,11 @@ sed -i 's/$/\r/' "$BUILD"/*.PAS
 # (1999-05-27 18:44:22); the 53-line source also preserves its line metadata.
 # SWIAT.TPU source record 0x04CF stores DOS timestamp 0x26CC6711
 # (1999-06-12 12:56:34); the 445-line source restores its per-line code counts.
+# PRZEDM.TPU source record 0x1516 stores DOS timestamp 0x26C19BB0
+# (1999-06-01 19:29:32).
 touch -t 199905271844.22 "$BUILD/MONSTRA.PAS" || exit 2
 touch -t 199906121256.34 "$BUILD/SWIAT.PAS" || exit 2
+touch -t 199906011929.32 "$BUILD/PRZEDM.PAS" || exit 2
 
 cat > "$BUILD/tp7-run.conf" <<EOF
 [dosbox]
