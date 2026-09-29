@@ -773,4 +773,4 @@ and is not part of the evidence chain for these facts.
    wallet only. RESOLVED.
 - Monster HP stats (JAMNIK/OWCZAREK/SPANIEL...) are NOT in the saved record;
   the earlier "MONSTRA band 0x1AC..0x1D4" interpretation was wrong - those
-  offsets are player stats/skills (see RECONSTRUCTION-LOG.md finding (7)).
+  offsets are player stats/skills (see reconstruction-log.md finding (7)).

@@ -1,7 +1,7 @@
 # Pascal reconstruction — current handoff
 
 This is the active work queue, not a chronological record. Keep it synchronized
-with `analysis-results/RECONSTRUCTION-LOG.md` when tasks are completed or
+with `analysis-results/reconstruction-log.md` when tasks are completed or
 priorities change. The log preserves dated findings; the EXE/TPU evidence
 remains authoritative.
 

@@ -35,13 +35,13 @@ reference. `../og/` is read-only.
 
 ## Docs
 
-- `analysis-results/INTEGRATED-FIELD-MAP.md` records original behaviour.
-- Dated highlights in `analysis-results/RECONSTRUCTION-LOG.md` are history —
+- `analysis-results/integrated-field-map.md` records original behaviour.
+- Dated highlights in `analysis-results/reconstruction-log.md` are history —
   keep them.
-- `analysis-results/WORLD-MAP.md` is an archived port-derived topology, not
+- `analysis-results/world-map.md` is an archived port-derived topology, not
   evidence for the original game.
 - `TODO.md` is the maintained active work queue; keep it current as work lands.
-- `analysis-results/C-PORT-DISCREPANCIES.md` and C-port references are historical
+- `analysis-results/c-port-discrepancies.md` and C-port references are historical
   comparisons only. They are not evidence, requirements, or a compatibility
   target for this reconstruction; use the EXE/TPU machine evidence instead.
 
@@ -51,7 +51,7 @@ reference. `../og/` is read-only.
   OPEN items; RESOLVED means machine-verified. C-port observations are never
   evidence for original behaviour.
 - `BODY TODO` stubs are the scoped cut (see
-  `analysis-results/RECONSTRUCTION-LOG.md` §3), not debt.
+  `analysis-results/reconstruction-log.md` §3), not debt.
 
 ## Commits
 

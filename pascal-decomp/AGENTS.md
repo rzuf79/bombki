@@ -24,8 +24,8 @@ apologizing.
 2. Establish the working baseline by checking the branch and worktree status,
    then identify the files and behavior relevant to the task.
 3. Read `TODO.md` for the active work queue and the latest relevant findings in
-   `analysis-results/RECONSTRUCTION-LOG.md`.
-4. Consult the relevant sections of `analysis-results/INTEGRATED-FIELD-MAP.md`
+   `analysis-results/reconstruction-log.md`.
+4. Consult the relevant sections of `analysis-results/integrated-field-map.md`
    and inspect specific EXE/TPU evidence under `analysis-results/` before
    making claims.
 5. Refresh your view of any in-scope document changed during the task before
@@ -82,7 +82,7 @@ listings, TPU/EXE reports, raw dumps) under `analysis-results\`.
 - Undecided facts: write them as OPEN items with their evidence state; mark
   RESOLVED only after machine verification.
 - Do not complete or reword `BODY TODO` stubs (scoped cut,
-  `analysis-results/RECONSTRUCTION-LOG.md` §3).
+  `analysis-results/reconstruction-log.md` §3).
 - `../og/` must never appear in a staged change.
 
 ## Committing

@@ -8,7 +8,7 @@ Reads the resolved per-unit interface dumps (analysis-results\\tpu_reports) and 
   reconstructed\\PRZEDM.PAS
   reconstructed\\BOMBKI.PAS    (main skeleton)
 
-analysis-results/RECONSTRUCTION-LOG.md is hand-maintained and must never be
+analysis-results/reconstruction-log.md is hand-maintained and must never be
 regenerated here.
 """
 import os, re, struct, sys
