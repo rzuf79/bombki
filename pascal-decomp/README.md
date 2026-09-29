@@ -10,6 +10,8 @@ used for development and prompt-driven tests.
 ## Setup
 
 - Python 3 for the analysis, build, and conformance scripts.
+- Optional `pyte` (`python3 -m pip install pyte`) for screen-aware PTY tests
+  with `conformance/expect_pty.py --pyte`.
 - Free Pascal (FPC) for a host-native build and tests.
 - For genuine TP7 builds, a Turbo Pascal 7 installation and DOSBox-X. Set
   `TP7_ROOT` to the TP7 directory if it is not in a standard location.
@@ -50,10 +52,16 @@ Compile with genuine TP7 in DOSBox-X, without starting the game:
 python3 tools/build_tp7_dosbox.py --no-run
 ```
 
-Run the TP7 executable in DOSEMU2 (without `-dumb`, so its DOS screen is visible):
+Run the TP7 executable in DOSEMU2's terminal frontend without opening a window:
 
 ```sh
-dosemu -q -I '$_cpuemu = (1)' -K "$PWD/build/tp7" -E BOMBKI.EXE
+dosemu -q -t \
+  -I '$_cpu_vm = "emulated"' \
+  -I '$_cpu_vm_dpmi = "emulated"' \
+  -I '$_cpuemu = (1)' \
+  -I '$_external_char_set = "utf8"' \
+  -I '$_internal_char_set = "cp437"' \
+  -K "$PWD/build/tp7" -E BOMBKI.EXE
 ```
 
 The DOSEMU2 command is useful for runtime investigation.
