@@ -53,7 +53,7 @@ the next useful step. Only stop when the entire requested objective is
 complete or you genuinely require information that cannot be obtained
 independently.
 
-Research layout: tooling under `analysis-tools\` (binary dissection) and
+Research layout: tooling under `tools\` (binary dissection) and
 `conformance\` (reconstruction verification); machine evidence (disasm
 listings, TPU/EXE reports, raw dumps) under `analysis-results\`.
 

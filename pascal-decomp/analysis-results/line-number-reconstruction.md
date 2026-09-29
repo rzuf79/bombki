@@ -65,8 +65,8 @@ the entry offset matches that procedure's entry-table item, check that the
 count vector fits before `sym_size`, and verify its length against the record's
 `n`. The checked retained units contain 1 MONSTRA, 12 SWIAT, and 33 PRZEDM
 procedure line records; all resolve to their procedures and entry-table
-offsets. `analysis-tools/tpuq.py` exposes the TPU header, symbol, and entry data;
-`analysis-tools/compare_tp7_artifacts.py` reads and compares the count vectors.
+offsets. `tools/tpuq.py` exposes the TPU header, symbol, and entry data;
+`tools/compare_tp7_artifacts.py` reads and compares the count vectors.
 
 ## Reconstruction workflow
 
@@ -102,15 +102,15 @@ Typical commands from the repository root:
 
 ```sh
 # Show all rows for one procedure in two already-built TPUs.
-python3 pascal-decomp/analysis-tools/compare_tp7_artifacts.py \
+python3 pascal-decomp/tools/compare_tp7_artifacts.py \
   -p POROWNANIE -S candidate/PRZEDM.TPU og/PRZEDM.TPU
 
 # Compile one source and compare its TPU; -s prints candidate lines on mismatches.
-python3 pascal-decomp/analysis-tools/compare_tp7_artifacts.py \
+python3 pascal-decomp/tools/compare_tp7_artifacts.py \
   --compile -s pascal-decomp/reconstructed/PRZEDM.PAS og/PRZEDM.TPU
 
 # Compile a source directory and compare matching artifacts.
-python3 pascal-decomp/analysis-tools/compare_tp7_artifacts.py \
+python3 pascal-decomp/tools/compare_tp7_artifacts.py \
   --compile pascal-decomp/reconstructed/ og/
 ```
 
