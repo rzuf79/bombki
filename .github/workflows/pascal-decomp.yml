@@ -2,7 +2,7 @@ name: pascal-decomp
 
 on:
   push:
-    branches: [main, 'recon/**']
+    branches: [main]
   pull_request:
   workflow_dispatch:
 
@@ -60,6 +60,9 @@ jobs:
           python3 pascal-decomp/conformance/compare_tpu.py \
             --original-dir og \
             --rebuilt-dir pascal-decomp/conformance/artifacts
+
+      - name: Compare rebuilt EXE byte-for-byte
+        run: cmp pascal-decomp/conformance/artifacts/BOMBKI.EXE og/BOMBKI.EXE
 
       - name: Upload sweep artifacts
         if: ${{ !cancelled() }}
