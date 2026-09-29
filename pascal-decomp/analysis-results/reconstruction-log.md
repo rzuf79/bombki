@@ -1248,9 +1248,9 @@ reconstruction. Original-side findings are grounded in the EXE/TPU.
   remains.
 - The remaining differences were entirely source *layout*, not code. Decoding
   the unit's line-info records (offset `ofs_line_lengths`, then per procedure:
-  symbol offset, `0`, decl line, entry line, `n`, and `n` per-line code-byte
-  counts whose values sum to the code-block size) fixed the original source at
-  **445 lines**: a 16-line unit header, the 12 interface declarations in
+  symbol offset, reserved zero, declaration line, code-entry offset, first body
+  line, count `n`, and `n` per-source-line code-byte counts) fixed the original
+  source at **445 lines**: a 16-line unit header, the 12 interface declarations in
   alphabetical/block-id order, and the implementations in code-block order
   `POKOJ5, POKOJ0, POKOJ1, POKOJ4, POKOJ13, POKOJE, POKOJ11, POKOJ30, POKOJ60,
   POKOJ75, POKOJ83, POKOJ100`. The header must be 16 lines because the
@@ -1306,11 +1306,13 @@ reconstruction. Original-side findings are grounded in the EXE/TPU.
 - The winning layout keeps the chain clause set unbroken — the
   `(ORZEL)/(SARNA)/(DZIECKO)/(DZIADEK)` tail stays on the continuation line —
   because dropping a clause corrupts bytecode (the earlier l2a experiment).
-  Each `if cond then WriteLn(...)` pair is merged onto one line so the whole
-  total attributes to the next line index (35 = 7+28, 42 = 14+28, 35 = 7+28),
-  and the compound block closes with its own zero-byte `end;` line.
-- Method and the exact 5-line layout are recorded in
-  `analysis-results/line-partition-method.md`.
+  In this particular outer-chain layout, each `if cond then WriteLn(...)` pair
+  is merged onto one line and its whole total is attributed to the next line
+  index (35 = 7+28, 42 = 14+28, 35 = 7+28). This is a case-specific observed
+  attribution, not a general rule for merged calls. The compound block closes
+  with its own zero-byte `end;` line.
+- The general method and record format are recorded in
+  `analysis-results/line-number-reconstruction.md`.
 
 ### 2026-09-28 (65): TP7 CI toolchain pinned in repository
 
@@ -1421,3 +1423,28 @@ reconstruction. Original-side findings are grounded in the EXE/TPU.
   decodes to 89 coins at Madrosc 16. The save-side `@LMul` and load-side `@LDiv`
   are independently identified in img 0x2E0F..0x2E22 and 0x7FA4..0x7FBB,
   confirming the reversible FORSA transform without requiring a new save.
+
+### 2026-09-29 (73): source-line record method consolidated
+
+- Renamed the working note to `line-number-reconstruction.md` and made it the
+  general reference for TPU line-record fields, record validation, the
+  TP7 compile/compare workflow, and the limits of source-layout inference.
+  `swiat-line-layout.md` now keeps the unit-specific layout evidence and links
+  to that common guide.
+- **Verified:** parsed every retained MONSTRA, SWIAT, and PRZEDM line record
+  against its procedure symbol and entry-table item (1, 12, and 33 records).
+  This confirms that record `+6` is the procedure's code-entry offset, not a
+  source line. Minimal genuine-TP7 probes also confirmed that counts move with
+  actual source-line grouping; the exact attribution must be measured in
+  context, not inferred from a universal "next line" rule.
+
+### 2026-09-29 (74): TP7 sweep accepts the cached image layout
+
+- The TP7 conformance script now searches both `/tools/tp7` (current image)
+  and `/opt/tp7` (previous published image) for `TPC.EXE`. This handles a
+  `latest` GHCR image that predates the checked-in archive relocation without
+  requiring a rebuild merely to run the sweep.
+- **Verification:** shell syntax and a fixture for compiler discovery under
+  the legacy `/opt/tp7` root passed. Pulled the currently published GHCR image,
+  found `TPC.EXE` under `/opt/tp7/BIN`, and ran the genuine TP7 container sweep
+  with Podman; all six checks passed and all four build artifacts were produced.
