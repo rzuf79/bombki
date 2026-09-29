@@ -19,19 +19,20 @@ and the end of the symbol section. Each record is:
 | `+2` | 2 | always `0` |
 | `+4` | 2 | **decl** line: the `procedure X;` line |
 | `+6` | 2 | **entry** line: the first executable line of the body |
-| `+8` | 2 | `n`, the number of following bytes |
-| `+10` | `n` | `lens[]`, one byte per body line |
+| `+8` | 2 | first body-line number |
+| `+10` | 2 | `n`, the number of following per-line count bytes |
+| `+12` | `n` | one code-byte count per procedure body line |
 
-`lens[i]` is the number of code bytes the compiler attributed to the `i`-th
-source line between `begin` and `end;` inclusive; the values sum to the
-procedure's code-block size. A value of `0` means the line contributed no code
+Each count is the number of code bytes the compiler attributed to the `i`-th
+source line between `begin` and `end;` inclusive; the counts sum to the
+procedure's code-block size. A count of `0` means the line contributed no code
 — a block-opening `if ... then begin`, a `repeat`, a closing `end;`, a blank
 line, or a comment.
 
 Consequences that drove the reconstruction:
 
-- Merging two of our source lines into one yields the sum of their `lens`
-  values, so byte attribution alone can prove or disprove a grouping.
+- Merging two of our source lines into one yields the sum of their code-byte
+  counts, so byte attribution alone can prove or disprove a grouping.
 - Any run of `0`-byte lines is interchangeable as long as its length matches.
   Where a run had to shrink, an `end;` was moved onto the line that opened the
   block (it contributes `0` bytes either way).
@@ -94,9 +95,9 @@ cells, which are patched at link time.
 
 ## Statement groupings the TPU forces
 
-Each item below is a place where the retained `lens` values cannot be produced
-by the one-statement-per-line spelling; the sum shown is the target `lens`
-value for the merged line.
+Each item below is a place where the retained per-line code-byte counts cannot
+be produced by the one-statement-per-line spelling; the sum shown is the target
+count for the merged line.
 
 - **`POKOJ0`** — `if wpisz = 'EXIT' then` + `WriteLn(...)` = `17 + 28 = 45`.
 - **`POKOJ13`**
