@@ -15,6 +15,7 @@ uses
 
 var
   EtapPunktuKontrolnego: Integer; { invented label for DGROUP word 0x06C }
+  FlagaZdejmowania: Byte;   { invented label for BOMBKI DGROUP byte 0x264 }
   StanPotwora14: Integer;   { invented label for BOMBKI DGROUP word 0x05A }
   StanPotwora12: Integer;   { invented label for BOMBKI DGROUP word 0x058 }
   PoleBOMBKI0066: Integer;  { invented neutral label; room writes $01F4 }
@@ -24,6 +25,21 @@ var
   StanStarucha: Integer;    { invented name for DGROUP word 0x68A }
   PoleBOMBKI007A: Integer;  { invented neutral label for DGROUP word 0x07A }
   PoleBOMBKI007C: Integer;  { invented neutral label for DGROUP word 0x07C }
+  PoleBOMBKI0054: Integer;  { invented label for DGROUP word 0x054 }
+  PoleBOMBKI0052: Integer;  { invented neutral label for DGROUP word 0x052 }
+  PoleBOMBKI0056: Integer;  { invented neutral label for DGROUP word 0x056 }
+  PoleBOMBKI0076: Integer;  { invented neutral label for DGROUP word 0x076 }
+  PoleBOMBKI01B2: Integer;  { invented neutral label for DGROUP word 0x1B2 }
+  PoleBOMBKI006E: Integer;  { invented neutral label for DGROUP word 0x06E }
+  PoleBOMBKI1D8: Integer;   { invented neutral label for DGROUP word 0x1D8 }
+  PoleBOMBKI0686: Integer;  { invented label for PowerLevel at DGROUP word 0x686 }
+  PoleBOMBKI068C: Integer;  { invented neutral label for DGROUP word 0x68C }
+  PoleBOMBKI0258: Byte;     { invented neutral label for DGROUP byte 0x258 }
+  PoleBOMBKI0262: ShortInt; { invented neutral label for signed DGROUP byte 0x262 }
+  PoleBOMBKI0255: ShortInt; { invented neutral label for signed DGROUP byte 0x255 }
+  PoleBOMBKI0261: Byte;     { invented neutral label for DGROUP byte 0x261 }
+  CarryLimit: Integer;      { invented label for EXE-only DGROUP word 0x062 }
+  PoleBOMBKI0218: Integer;  { invented label for DGROUP word 0x218 }
   StanPotwora15: Integer;   { invented label for BOMBKI DGROUP word 0x05C }
   StanPotwora16: Integer;   { invented label for BOMBKI DGROUP word 0x05E }
   StanPotwora17: Integer;   { invented label for BOMBKI DGROUP word 0x060 }
@@ -214,6 +230,20 @@ begin
   WriteLn('KOMENDA EXIT PODAJE WSZYSTKIE AKTUALNIE DOSTEPNE WYJSCIA');
   WriteLn('PORUSZASZ SIE ZA POMOCA KOMEND POLNOC POLODNIE WSCHOD ZACHOD GORA DOL');
   WriteLn('ABY SIE PATRZEC UZYJ KOMENDY PATRZ RAZEM Z RZECZA KTORA CHCESZ OBEJRZECZ');
+end;
+
+procedure UstawLimitNoszenia;
+{ Invented source name for the carrying-capacity calculation at img
+  0x073C..0x07D4. Independent comparisons intentionally retain their order. }
+begin
+  if ZRE < 11 then CarryLimit := 10;
+  if (ZRE > 10) and (ZRE < 13) then CarryLimit := 11;
+  if (ZRE > 12) and (ZRE < 16) then CarryLimit := 12;
+  if (ZRE > 15) and (ZRE < 19) then CarryLimit := 13;
+  if (ZRE > 18) and (ZRE < 21) then CarryLimit := 14;
+  if (ZRE > 20) and (ZRE < 26) then CarryLimit := 15;
+  if ZRE > 24 then CarryLimit := 16;
+  if PoleBOMBKI0255 < 0 then CarryLimit := CarryLimit + 4;
 end;
 
 procedure PunktKontrolny;
@@ -1623,6 +1653,464 @@ begin
   until MIECHO <> 72;
 end;
 
+procedure ZapiszPostac;
+begin
+  wpisz := 'JA';
+  PoleBOMBKI0056 := 1;
+  WriteLn('ALL RIGHT !!! GRA ZAPISANA! ;)');
+  PRZEDM.save; { img 0x2BE0 -> PRZEDM:0x9263 stack-check wrapper }
+  ClrScr;
+  Assign(PRZEDM.plik, 'pliki.tpu');
+  Rewrite(PRZEDM.plik);
+  WriteLn(PRZEDM.plik, MANA * 4);
+  WriteLn(PRZEDM.plik, POZIOM + $17);
+  WriteLn(PRZEDM.plik, MMIECZ);
+  WriteLn(PRZEDM.plik, FAJKA);
+  WriteLn(PRZEDM.plik, DYPLOM);
+  WriteLn(PRZEDM.plik, MTARCZA);
+  WriteLn(PRZEDM.plik, GARNITUR);
+  WriteLn(PRZEDM.plik, KUNSZT);
+  WriteLn(PRZEDM.plik, (ENERGIA + $28) * 4);
+  WriteLn(PRZEDM.plik, MIECHO2);
+  WriteLn(PRZEDM.plik, ZRE + 12);
+  WriteLn(PRZEDM.plik, SIL - 24);
+  WriteLn(PRZEDM.plik, MAD);
+  WriteLn(PRZEDM.plik, PRA);
+  WriteLn(PRZEDM.plik, EtapPunktuKontrolnego);
+  WriteLn(PRZEDM.plik, PoleBOMBKI0052);
+  WriteLn(PRZEDM.plik, PoleBOMBKI01B2);
+  WriteLn(PRZEDM.plik, FORSA * MAD);
+  WriteLn(PRZEDM.plik, PRZEDM.CZY);
+  WriteLn(PRZEDM.plik, MAXE);
+  WriteLn(PRZEDM.plik, CarryLimit);
+  WriteLn(PRZEDM.plik, PRZEDM.POR);
+  WriteLn(PRZEDM.plik, MAXMANA);
+  WriteLn(PRZEDM.plik, MAXSIL);
+  WriteLn(PRZEDM.plik, MAXZRE);
+  WriteLn(PRZEDM.plik, MAXMAD);
+  WriteLn(PRZEDM.plik, PRZED);
+  WriteLn(PRZEDM.plik, PRO);
+  WriteLn(PRZEDM.plik, FUKSROLL);
+  WriteLn(PRZEDM.plik, PoleBOMBKI0054);
+  WriteLn(PRZEDM.plik, PoleBOMBKI0218);
+  WriteLn(PRZEDM.plik, PoleBOMBKI0686);
+  WriteLn(PRZEDM.plik, PoleBOMBKI0056);
+  WriteLn(PRZEDM.plik, StanPotwora12);
+  WriteLn(PRZEDM.plik, PoleBOMBKI068C);
+  WriteLn(PRZEDM.plik, StanPotwora14);
+  WriteLn(PRZEDM.plik, StanPotwora15);
+  WriteLn(PRZEDM.plik, StanPotwora16);
+  WriteLn(PRZEDM.plik, StanPotwora17);
+  WriteLn(PRZEDM.plik, PoleBOMBKI006E);
+  WriteLn(PRZEDM.plik, PoleBOMBKI0258);
+  WriteLn(PRZEDM.plik, POTRAWKI);
+  WriteLn(PRZEDM.plik, PoleBOMBKI0076);
+  WriteLn(PRZEDM.plik, SERCE);
+  WriteLn(PRZEDM.plik, MBUTELKA);
+  WriteLn(PRZEDM.plik, CIASTKO);
+  WriteLn(PRZEDM.plik, SUCHA);
+  WriteLn(PRZEDM.plik, CHLEB);
+  WriteLn(PRZEDM.plik, BULKA);
+  WriteLn(PRZEDM.plik, WEKA);
+  WriteLn(PRZEDM.plik, CHLEB);
+  WriteLn(PRZEDM.plik, BULKA);
+  WriteLn(PRZEDM.plik, PRZEDM.ILOSC);
+  WriteLn(PRZEDM.plik, PAR);
+  WriteLn(PRZEDM.plik, KOP);
+  WriteLn(PRZEDM.plik, KOPM);
+  WriteLn(PRZEDM.plik, KOPHP);
+  WriteLn(PRZEDM.plik, ZWIEJ);
+  WriteLn(PRZEDM.plik, WIMP);
+  WriteLn(PRZEDM.plik, PASZOL);
+  WriteLn(PRZEDM.plik, PoleBOMBKI1D8);
+  WriteLn(PRZEDM.plik, KOMPLET);
+  WriteLn(PRZEDM.plik, kaseta);
+  WriteLn(PRZEDM.plik, PIGULKA);
+  WriteLn(PRZEDM.plik, KORNIK);
+  WriteLn(PRZEDM.plik, MUCHA);
+  WriteLn(PRZEDM.plik, BAKTERIA);
+  WriteLn(PRZEDM.plik, QUEST);
+  WriteLn(PRZEDM.plik, QUESTWYK);
+  WriteLn(PRZEDM.plik, SLIMAK);
+  WriteLn(PRZEDM.plik, LISTEK);
+  WriteLn(PRZEDM.plik, Powracanie);
+  WriteLn(PRZEDM.plik, BIGOS);
+  WriteLn(PRZEDM.plik, PoleBOMBKI007C);
+  WriteLn(PRZEDM.plik, SCROLLPOR);
+  WriteLn(PRZEDM.plik, PoleBOMBKI007A);
+  WriteLn(PRZEDM.plik, StanStarucha);
+  WriteLn(PRZEDM.plik, PoleBOMBKI0262);
+  WriteLn(PRZEDM.plik, PoleBOMBKI0255);
+  WriteLn(PRZEDM.plik, PoleBOMBKI0261);
+  Close(PRZEDM.plik);
+end;
+
+procedure WczytajPostac;
+begin
+  Assign(PRZEDM.plik, 'pliki.tpu');
+  Reset(PRZEDM.plik);
+  ReadLn(PRZEDM.plik, MANA);
+  MANA := MANA div 4;
+  ReadLn(PRZEDM.plik, POZIOM);
+  POZIOM := POZIOM - $17;
+  ReadLn(PRZEDM.plik, MMIECZ);
+  ReadLn(PRZEDM.plik, FAJKA);
+  ReadLn(PRZEDM.plik, DYPLOM);
+  ReadLn(PRZEDM.plik, MTARCZA);
+  ReadLn(PRZEDM.plik, GARNITUR);
+  ReadLn(PRZEDM.plik, KUNSZT);
+  ReadLn(PRZEDM.plik, ENERGIA);
+  ENERGIA := (ENERGIA div 4) - $28;
+  ReadLn(PRZEDM.plik, MIECHO2);
+  ReadLn(PRZEDM.plik, ZRE);
+  ZRE := ZRE - 12;
+  ReadLn(PRZEDM.plik, SIL);
+  SIL := SIL + 24;
+  ReadLn(PRZEDM.plik, MAD);
+  ReadLn(PRZEDM.plik, PRA);
+  ReadLn(PRZEDM.plik, EtapPunktuKontrolnego);
+  ReadLn(PRZEDM.plik, PoleBOMBKI0052);
+  ReadLn(PRZEDM.plik, PoleBOMBKI01B2);
+  ReadLn(PRZEDM.plik, FORSA);
+  FORSA := FORSA div MAD;
+  ReadLn(PRZEDM.plik, PRZEDM.CZY);
+  ReadLn(PRZEDM.plik, MAXE);
+  ReadLn(PRZEDM.plik, CarryLimit);
+  ReadLn(PRZEDM.plik, PRZEDM.POR);
+  ReadLn(PRZEDM.plik, MAXMANA);
+  ReadLn(PRZEDM.plik, MAXSIL);
+  ReadLn(PRZEDM.plik, MAXZRE);
+  ReadLn(PRZEDM.plik, MAXMAD);
+  ReadLn(PRZEDM.plik, PRZED);
+  ReadLn(PRZEDM.plik, PRO);
+  ReadLn(PRZEDM.plik, FUKSROLL);
+  ReadLn(PRZEDM.plik, PoleBOMBKI0054);
+  ReadLn(PRZEDM.plik, PoleBOMBKI0218);
+  ReadLn(PRZEDM.plik, PoleBOMBKI0686);
+  ReadLn(PRZEDM.plik, PoleBOMBKI0056);
+  ReadLn(PRZEDM.plik, StanPotwora12);
+  ReadLn(PRZEDM.plik, PoleBOMBKI068C);
+  ReadLn(PRZEDM.plik, StanPotwora14);
+  ReadLn(PRZEDM.plik, StanPotwora15);
+  ReadLn(PRZEDM.plik, StanPotwora16);
+  ReadLn(PRZEDM.plik, StanPotwora17);
+  ReadLn(PRZEDM.plik, PoleBOMBKI006E);
+  ReadLn(PRZEDM.plik, PoleBOMBKI0258);
+  ReadLn(PRZEDM.plik, POTRAWKI);
+  ReadLn(PRZEDM.plik, PoleBOMBKI0076);
+  ReadLn(PRZEDM.plik, SERCE);
+  ReadLn(PRZEDM.plik, MBUTELKA);
+  ReadLn(PRZEDM.plik, CIASTKO);
+  ReadLn(PRZEDM.plik, SUCHA);
+  ReadLn(PRZEDM.plik, CHLEB);
+  ReadLn(PRZEDM.plik, BULKA);
+  ReadLn(PRZEDM.plik, WEKA);
+  ReadLn(PRZEDM.plik, CHLEB);
+  ReadLn(PRZEDM.plik, BULKA);
+  ReadLn(PRZEDM.plik, PRZEDM.ILOSC);
+  ReadLn(PRZEDM.plik, PAR);
+  ReadLn(PRZEDM.plik, KOP);
+  ReadLn(PRZEDM.plik, KOPM);
+  ReadLn(PRZEDM.plik, KOPHP);
+  ReadLn(PRZEDM.plik, ZWIEJ);
+  ReadLn(PRZEDM.plik, WIMP);
+  ReadLn(PRZEDM.plik, PASZOL);
+  ReadLn(PRZEDM.plik, PoleBOMBKI1D8);
+  ReadLn(PRZEDM.plik, KOMPLET);
+  ReadLn(PRZEDM.plik, kaseta);
+  ReadLn(PRZEDM.plik, PIGULKA);
+  ReadLn(PRZEDM.plik, KORNIK);
+  ReadLn(PRZEDM.plik, MUCHA);
+  ReadLn(PRZEDM.plik, BAKTERIA);
+  ReadLn(PRZEDM.plik, QUEST);
+  ReadLn(PRZEDM.plik, QUESTWYK);
+  ReadLn(PRZEDM.plik, SLIMAK);
+  ReadLn(PRZEDM.plik, LISTEK);
+  ReadLn(PRZEDM.plik, Powracanie);
+  ReadLn(PRZEDM.plik, BIGOS);
+  ReadLn(PRZEDM.plik, PoleBOMBKI007C);
+  ReadLn(PRZEDM.plik, SCROLLPOR);
+  ReadLn(PRZEDM.plik, PoleBOMBKI007A);
+  ReadLn(PRZEDM.plik, StanStarucha);
+  ReadLn(PRZEDM.plik, PoleBOMBKI0262);
+  ReadLn(PRZEDM.plik, PoleBOMBKI0255);
+  ReadLn(PRZEDM.plik, PoleBOMBKI0261);
+  Close(PRZEDM.plik);
+end;
+
+procedure PokazPostac;
+{ Invented source name for the inventory/status portion of the JA helper at
+  img 0x073C..0x1405 (called through the near-call at img 0xEC98). }
+var Prog: Integer;
+begin
+  UstawLimitNoszenia;
+  if MMIECZ <= -10 then WriteLn('STARY ZARDZEWIALY MIECZ');
+  if MTARCZA <= -10 then WriteLn('MALA TARCZA');
+  if SERCE <= -10 then WriteLn('ZAKRWAWIONE SERCE');
+  if DYPLOM <= -10 then WriteLn('DYPLOM MUD SZKOLY');
+  if PACZEK <= -10 then WriteLn('SMACZNY POLANY LIKIEREM PACZEK ', PACZEK div 10);
+  if CIASTKO <= -10 then WriteLn('CIASTKO ', CIASTKO div 10);
+  if SUCHA <= -10 then WriteLn('SUCHA RACJA ', SUCHA div 10);
+  if BULKA <= -10 then WriteLn('BULKA ', BULKA div 10);
+  if CHLEB <= -10 then WriteLn('CHLEB ', CHLEB div 10);
+  if WEKA <= -10 then WriteLn('WEKA ', WEKA div 10);
+  if BIGOS <= -10 then WriteLn('PYSZNY BIGOS Z KAPUSTA Z WROGA ', BIGOS div 10);
+  if PoleBOMBKI007C <= -10 then
+    WriteLn('OZEWIAJACE PIWSKO Z KONKRETNYM KLIMATEM ', PoleBOMBKI007C div 10);
+  if FAJKA <= -10 then WriteLn('CIEZKA FAJKA OD DZIADA MROZA');
+  if KOMPLET <= -10 then WriteLn('KOMPLET UBRAN FIRMY "SYF"');
+  if GARNITUR <= -10 then WriteLn('GARNITUR Z KOLCAMI ', GARNITUR);
+  if MBUTELKA <= -10 then WriteLn('MALA BUTELKE MANY');
+  if LISTEK <= -10 then WriteLn('DELIKATNY CHOC SZORSTKI LISTEK ', LISTEK);
+  if kaseta <= -10 then WriteLn('KASETA LIROYA : L - JAK LIROY ', kaseta);
+  if PIGULKA <= -10 then WriteLn('PIGULKA TRANSPORTUJACA (M:G) ', PIGULKA);
+  if PRZEPUSTKA <= -10 then
+    WriteLn('PRZEPUSTKA WLASNORECZNIE PODPISANA PRZEZ QUEST-MASTERA ', PRZEPUSTKA);
+  if SCROLLPOR <= -10 then WriteLn('SCROLL Z CZAREM : POROWNYWANIE ', SCROLLPOR);
+  if PoleBOMBKI007A <= -10 then WriteLn('SCROLL Z CZAREM : POWROT ', PoleBOMBKI007A);
+  WriteLn('W SUMIE MASZ ', PRZED, '/', CarryLimit, ' PRZEDMIOTOW');
+  if PoleBOMBKI0054 = 0 then WriteLn('BIJESZ SIE NA PIESCI');
+  if StanPotwora17 = 0 then WriteLn('NIE MASZ ZADNEJ OCHRONY');
+  if FlagaZdejmowania = 0 then WriteLn('JESTES NAGI !!!!!!!!');
+  if PRZEDM.JAKIEUB = 'SYF' then WriteLn('MASZ NA SOBIE KOMPLET UBRAN FIRMY "SYF"');
+  if PRZEDM.JAKIEUB = 'GARNITUR' then WriteLn('MASZ NA SOBIE GRANITUR Z KOLCAMI ');
+  if (StanPotwora17 = 1) and (MTARCZA = -100) then
+    WriteLn('TWOJA OCHRONA JEST MALA TARCZA');
+  if (PoleBOMBKI0054 = 1) and (MMIECZ = -100) then
+    WriteLn('JAKO BRONI UZYWASZ STAREGO MIECZA');
+  WriteLn('MASZ ', FORSA, ' MONET I ', PRA, ' PRAKTYK');
+  if POZIOM > 0 then begin
+    case POZIOM of
+      1: begin Write('JESTES NA PIERWSZYM LEVELU A DO NASTEPNEGO BRAKUJE CI '); Prog := 700; end;
+      2: begin Write('JESTES NA DRUGIM LEVELU A DO NASTEPNEGO BRAKUJE CI '); Prog := 725; end;
+      3: begin Write('JESTES NA TRZECIM LEVELU A DO NASTEPNEGO BRAKUJE CI '); Prog := 730; end;
+      4: begin Write('JESTES NA CZWARTYM LEVELU A DO NASTEPNEGO BRAKUJE CI '); Prog := 735 + POZIOM; end;
+      5: begin Write('JESTES NA PIATYM LEVELU A DO NASTEPNEGO BRAKUJE CI '); Prog := 735 + POZIOM; end;
+      6: begin Write('JESTES NA SZOSTYM LEVELU A DO NASTEPNEGO BRAKUJE CI '); Prog := 735 + POZIOM; end;
+      7: begin Write('JESTES NA SIODMYM LEVELU A DO NASTEPNEGO BRAKUJE CI '); Prog := 735 + POZIOM; end;
+      8: begin Write('JESTES NA OSMYM LEVELU A DO NASTEPNEGO BRAKUJE CI '); Prog := 735 + POZIOM; end;
+      9: begin Write('JESTES NA DZIEWIATYM LEVELU A DO NASTEPNEGO BRAKUJE CI '); Prog := 735 + (2 * POZIOM); end;
+      10: begin Write('JESTES NA DZIESIATYM LEVELU A DO NASTEPNEGO BRAKUJE CI '); Prog := 735 + (2 * POZIOM); end;
+      11: begin Write('JESTES NA JEDENASTYM LEVELU A DO NASTEPNEGO BRAKUJE CI '); Prog := 735 + (2 * POZIOM); end;
+      12: begin Write('JESTES NA DWUNASTYM LEVELU A DO NASTEPNEGO BRAKUJE CI '); Prog := 735 + (2 * POZIOM); end;
+      13: begin Write('JESTES NA TRZYNASTYM LEVELU A DO NASTEPNEGO BRAKUJE CI '); Prog := 735 + (2 * POZIOM); end;
+      else begin Write('JESTES NA BARDZO WYSOKIM LEVELU A DO NASTEPNEGO BRAKUJE CI TYLKO'); Prog := 735 + (2 * POZIOM); end;
+    end;
+    WriteLn(Prog - KUNSZT, ' KUNSZTU');
+  end;
+  WriteLn('MASZ ', MANA, '/', MAXMANA, ' MANY');
+  WriteLn('MASZ ', ENERGIA, '/', MAXE, ' ENERGII');
+  if QUEST = 1 then WriteLn('TWOJ AKTUALNY QUEST - ZABIC MUSISZ JESZCZE ', QUESTWYK, ' POTWOROW');
+  if QUEST > 1 then WriteLn('TWOJ AKTUALNY QUEST - ZABIC MUSISZ JESZCZE ', QUESTWYK - 150, ' POTWOROW');
+  if PoleBOMBKI0262 <> 0 then WriteLn('NIE ZAPOMNIALES O POKRZYWIE W SADACH DUNCANA???');
+end;
+
+procedure StanPodswiadomosci;
+{ Invented source name for the inline context-1000 handler. The known command
+  body is transcribed; keep independent command comparisons in EXE order. }
+var Godzin: Integer;
+begin
+  Write(ENERGIA, '%.', KUNSZT, '>'); { img 0xEAF8..0xEB31 }
+  ReadLn(wpisz);
+
+  if wpisz = 'PAMIETAJ' then ZapiszPostac; { save routine starts img 0x2BA1 }
+  if wpisz = 'SCAN' then
+    WriteLn('FUNKCJA BEDZIE DOSTEPNA ZA DWA LATA , I TAK ZGINIESZ , I TAK :) ');
+  if wpisz = 'CZYSC EKRAN' then ClrScr; { img 0xEB99..0xEBAF }
+  if wpisz = 'DAWAJ EN' then ENERGIA := ENERGIA + 200;
+  if wpisz = 'ZABIERAJ KASE' then FORSA := FORSA - 100;
+
+  if wpisz = 'USTAW SZ' then begin
+    PRZEDM.ILOSC := 0;
+    PRO := 0;
+    FUKSROLL := 0;
+  end;
+  if wpisz = 'ZDEJMUJ' then begin
+    PoleBOMBKI0218 := 0;
+    PoleBOMBKI0054 := 0;
+    StanPotwora17 := 0; { DGROUP word 0x60, shield-equipped flag in this branch }
+    FlagaZdejmowania := 0;
+    MMIECZ := -10;
+    MTARCZA := -10;
+    SIL := SIL - 1;
+  end;
+
+  if wpisz = 'EXIT' then WriteLn('NAPISZ UNMODE ');
+  if wpisz = 'WYJSCIE' then begin MIECHO := 193; Exit; end;
+
+  if wpisz = 'JA' then PokazPostac;
+  PRZEDM.BRANIE; { img 0xEC9B -> PRZEDM:0x5A36 item pickup/drop dispatch }
+  if PoleBOMBKI0056 = 1 then begin
+    if wpisz = 'ZDOLNOSCI' then begin
+      PoleBOMBKI0056 := 0;
+      WriteLn(PRZEDM.MIECHO2, ' MIECHO!');
+    end;
+  end;
+  if wpisz = 'UZYJ PIWO' then begin
+    if PoleBOMBKI007C <= -10 then begin
+      PoleBOMBKI007C := PoleBOMBKI007C + 10;
+      PRZEDM.PRZED := PRZEDM.PRZED - 1;
+      ENERGIA := ENERGIA + 10;
+      MANA := MANA + 10;
+      WriteLn('GDY POCZULES AMBROZJE W USTACH ODZYSKALES 10 MANY ZAS GDY GO WYPILES 10% E.');
+    end;
+  end;
+  if wpisz = 'UZYJ STARY' then begin
+    if (MMIECZ = -10) and (PoleBOMBKI0054 = 0) then begin
+      MMIECZ := -100;
+      PoleBOMBKI0054 := 1;
+      SIL := SIL + 1;
+      FUKSROLL := FUKSROLL + 3;
+      WriteLn('UZYWASZ STAREGO ZARDZEWIALEGO MIECZA JAKO BRONI');
+    end;
+  end;
+  if wpisz = 'ODLOZ STARY' then begin
+    if (MMIECZ = -100) and (PoleBOMBKI0054 = 1) then begin
+      MMIECZ := -10;
+      PoleBOMBKI0054 := 0;
+      WriteLn('CHOWASZ STARY ZARDZEWIALY MIECZ I NIE UZYWASZ GO JAKO BRONI');
+      SIL := SIL - 1;
+      FUKSROLL := FUKSROLL - 3;
+    end;
+  end;
+  if wpisz = 'UZYJ MALA' then begin
+    if (StanPotwora17 = 0) and (MTARCZA = -10) then begin
+      StanPotwora17 := 1;
+      PRO := PRO + 15;
+      PRZEDM.ILOSC := PRZEDM.ILOSC + 1;
+      MTARCZA := -100;
+      WriteLn('UZYWASZ MALEJ TARCZY JAKO TARCZY');
+    end;
+  end;
+  if wpisz = 'ODLOZ MALA' then begin
+    if (StanPotwora17 = 1) and (MTARCZA = -100) then begin
+      StanPotwora17 := 0;
+      PRO := PRO - 15;
+      PRZEDM.ILOSC := PRZEDM.ILOSC - 1;
+      MTARCZA := -10;
+      WriteLn('JUZ NIE UZYWASZ MALEJ TARCZY JAKO TARCZY');
+    end;
+  end;
+
+  { Unit procedures supply the remaining recovered item effects. }
+  PRZEDM.UZYWANIE;
+
+  if wpisz = 'ZWIEJ' then begin
+    if ZWIEJ > 0 then begin
+      WriteLn('PONIZEJ ILU ENERGII CHCESZ UCIEKAC?');
+      ReadLn(PRZEDM.WIMP);
+    end;
+  end;
+  if wpisz = 'SPIJ' then begin
+    Godzin := 0;
+    repeat
+      Inc(Godzin);
+      Delay(5000);
+      WriteLn('SPISZ JUZ ', Godzin, ' GODZIN');
+      KUNSZT := KUNSZT - 20;
+      ENERGIA := ENERGIA + 10;
+    until KeyPressed;
+    Write('PO OBUDZENIU STWIERDZILES ZE ZYSKALES ', Godzin * 10,
+          ' ENERGI I STRACILES ');
+    Write((20 * Godzin) - Random(2 * Godzin), ' KUNSZTU');
+    KUNSZT := KUNSZT + Random(2 * Godzin);
+    if Godzin > 4 then begin
+      WriteLn('DLUGI SEN DODATKOWO POZWOLIL CI ODPOCZAC : ZYSKALES ', MAD, ' ENERGI');
+      ENERGIA := ENERGIA + MAD;
+    end;
+    if Godzin > 8 then begin
+      WriteLn('PELNOWARTOSCIOWY SEN SPOWODOWAL SUPER ZYSK : ', MAD * 2, ' ENERGI');
+      ENERGIA := ENERGIA + (MAD * 2);
+    end;
+    if ENERGIA > MAXE then ENERGIA := MAXE;
+  end;
+  if wpisz = 'POROWNAJ' then begin
+    if PRZEDM.POR > 0 then begin
+      CZY := Random(100);
+      if PRZEDM.POR > CZY then begin
+        PRZEDM.POROWNANIE;
+        MANA := MANA - 10;
+      end
+      else begin
+        WriteLn('POPELNILES PEWNE BLEDY I NIE UDALO SIE WYKONAC CZARU');
+        MANA := MANA - 5;
+      end;
+    end;
+  end;
+  if wpisz = 'DAWAJ KASE' then FORSA := FORSA + 5000;
+  if (wpisz = 'ODRZUC PACZEK') or (wpisz = 'ODRZUC CIASTKO') or
+     (wpisz = 'ODRZUC SUCHA RACJA') or (wpisz = 'ODRZUC BULKA') or
+     (wpisz = 'ODRZUC CHLEB') or (wpisz = 'ODRZUC WEKA') or
+     (wpisz = 'ODRZUC SERCE') or (wpisz = 'ODRZUC BIGOS') then
+    WriteLn('JAK SMIESZ WYRZUCAC JEDZENIE!!! WSTYD MI ZA CIEBIE !!! NIE POZWOLE !!!');
+  if (wpisz = 'POWROT') and (Powracanie > 0) then begin
+       CZY := Random(100);
+       if CZY <= Powracanie then begin
+        WriteLn('OTWIERASZ MAGICZNY PORTAL KTORY PRZENOSI CIE DO MIASTA');
+        MANA := MANA - 15;
+        PRZEDM.MIECHO2 := 20;
+      end
+       else if CZY < Powracanie + 30 then begin
+        WriteLn('NIE UDAJE CI SIE OTWORZYC MAGICZNEGO PORTALU');
+        MANA := MANA - 5;
+      end
+      else begin
+        WriteLn('OTWIERASZ MAGICZNY PORTAL KTORY JEDNAK PRZENOSI CIE DO INNEGO MIEJSCA');
+        MANA := MANA - 10;
+        PRZEDM.MIECHO2 := Random(100) + 1;
+      end;
+  end;
+  if (wpisz = 'UZYJ SCROLL POWROT') and (PoleBOMBKI007A < 0) then begin
+     CZY := Random(100);
+    PoleBOMBKI007A := PoleBOMBKI007A + 10;
+    PRZEDM.PRZED := PRZEDM.PRZED - 1;
+     CZY := Random(1);
+     if CZY <= Powracanie then begin
+      WriteLn('OTWIERASZ MAGICZNY PORTAL KTORY PRZENOSI CIE DO MIASTA');
+      MANA := MANA - 15;
+      PRZEDM.MIECHO2 := 20;
+    end
+     else if CZY < Powracanie + 30 then begin
+      WriteLn('NIE UDAJE CI SIE OTWORZYC MAGICZNEGO PORTALU');
+      MANA := MANA - 5;
+    end
+    else begin
+      WriteLn('OTWIERASZ MAGICZNY PORTAL KTORY JEDNAK PRZENOSI CIE DO INNEGO MIEJSCA');
+      MANA := MANA - 10;
+      PRZEDM.MIECHO2 := Random(100) + 1;
+    end;
+  end;
+  if wpisz = 'UZYJ SCROLL POROWNYWANIE' then begin
+    if PRZEDM.SCROLLPOR < 0 then begin
+      PRZEDM.POROWNANIE;
+      MANA := MANA - 10;
+      PRZEDM.SCROLLPOR := PRZEDM.SCROLLPOR + 10;
+      PRZEDM.PRZED := PRZEDM.PRZED - 1;
+    end;
+  end;
+  if wpisz = 'KOP' then begin
+    if KOP > 0 then begin
+      WriteLn('ZADAM CI PARE PYTAN:');
+      WriteLn('1)PONIZEJ JAKIEJ ENERGI CHCESZ ZACZAC KOPAC');
+      ReadLn(PRZEDM.KOPHP);
+      WriteLn('2)DO JAKIECH ILOSCI MANA CHCESZ KOPAC');
+      ReadLn(PRZEDM.KOPM);
+    end;
+  end;
+  if wpisz = 'JESTEM SPEEDE' then PRZEPUSTKA := PRZEPUSTKA - 10;
+
+  if wpisz = 'ZDOLNOSCI' then begin
+    if (MAD > 10) and (SIL > 11) then WriteLn('KOPANIE       - ', KOP, '%');
+    if (MAD > 10) and (ZRE > 10) then WriteLn('UCIEKANIE     - ', ZWIEJ, '%');
+    if (MAD > 15) and (ZRE > 11) then WriteLn('PAROWANIE     - ', PAR, '%');
+    if MAD > 11 then WriteLn('POROWNYWANIE  - ', PRZEDM.POR, '%');
+    if MAD > 18 then WriteLn('POTRAWKI      - ', PRZEDM.POTRAWKI, '%');
+    if MAD > 18 then WriteLn('POWROT        - ', Powracanie, '%');
+  end;
+  PRZEDM.PIERDOLY; { img 0xF566: color/background command dispatch }
+  if wpisz = 'WLACZ POSTAC' then WczytajPostac;
+end;
+
 begin
   { --- TP7 runtime, implicit (file 0x52E0..): img 0xB0CF..0xB0D8 ---
     lcall 1C71:0000 System bootstrap: DS := DGROUP (para 0x1D49), BSS
@@ -1634,12 +2122,12 @@ begin
   { TextRec init: lcall 1C0F:031A at img 0xB0EB }
   PunktKontrolny; { call 0x51C3 at img 0xB0F0 }
   ZdobadzPoziom; { call 0x872E at img 0xB0F3 }
-  { Overload gate: PRZED [0x182] > PRO [0x62] -> overload-print block }
-  if PRZED > PRO then begin
+  { Overload gate: PRZED [0x182] > CarryLimit [0x62] -> overload-print block }
+  if PRZED > CarryLimit then begin
     Write('JESTES OBLADOWANY !!! MASZ O ');
-    Write(PRZED - PRO, ' ZA DUZO');
+    Write(PRZED - CarryLimit, ' ZA DUZO');
     WriteLn('% ENERGI');
-    ENERGIA := ENERGIA - ((PRZED - PRO) * 10);
+    ENERGIA := ENERGIA - ((PRZED - CarryLimit) * 10);
   end;
   { --- img 0xB193 bleed tick; img 0xB1E5 ordered room dispatch --- }
   repeat
@@ -1704,6 +2192,7 @@ begin
     if MIECHO = 72 then TylSceny;
     { Called unconditionally at img 0xEA15; MINIARENA guards contexts 33..57. }
     PRZEDM.MINIARENA;
+    if MIECHO = 1000 then StanPodswiadomosci;
     { At img 0xF5A1, UNMODE and UM both restore the saved room context. }
     if (MIECHO = 1000) and ((wpisz = 'UNMODE') or (wpisz = 'UM')) then
       MIECHO := PRZEDM.MIECHO2;

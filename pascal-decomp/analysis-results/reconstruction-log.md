@@ -19,7 +19,7 @@ uppercase; the EXE literal is lowercase. Uppercase was conventional for DOS
 | `reconstructed/MONSTRA.PAS` | 21 integer globals and `WSTEP` (intro routine) |
 | `reconstructed/SWIAT.PAS` | 12 room procedures and `POKOJE` (img 0xF5D0..0x129C6) |
 | `reconstructed/PRZEDM.PAS` | reconstructed unit globals and interface procedures, including combat and arena handlers |
-| `reconstructed/BOMBKI.PAS` | partial main-program reconstruction: startup, many inline contexts, and an incomplete main loop |
+| `reconstructed/BOMBKI.PAS` | partial main-program reconstruction: startup, inline contexts, and the main loop |
 
 Interfaces are verified byte-accurate against the TP7 unit dumps: 0 leftover
 foreign `System.ofsXXXX` references; all far pointers resolved to
@@ -40,12 +40,14 @@ findings (6) and (7) for the write order and field-name cross-check.
 
 ## 3. Current reconstruction status
 
-`BOMBKI.PAS` remains partial. Startup and many inline contexts are transcribed;
-open work includes the MODE command body, shop transactions, and several
-room-specific kill handlers (see findings (34) onward and §6). `SWIAT.PAS`
-contains all 12 mapped room procedures; the matching EXE region and TPU bytes
-are compared in finding (33). The three reconstructed unit files are the
-scope of this Pascal project.
+`BOMBKI.PAS` remains partial. Startup, the main loop, and the context-1000
+MODE body have been transcribed from retained EXE evidence (findings (53), (59),
+(77), (80), (84), (87), (89)-(93), and (98), (100)-(103)). Host-native PTY
+scenarios cover MODE status/color, sleep, and save/load; DOSEMU2/FreeDOS TP7
+runtime checks also passed. Original-DOS runtime verification and strict TP7
+EXE parity remain open. `SWIAT.PAS` contains all 12 mapped room procedures; the
+matching EXE region and TPU bytes are compared in finding (33). The three
+reconstructed unit files are the scope of this Pascal project.
 
 ## 4. Evidence grounding (disassembly, all verified)
 
@@ -1055,6 +1057,18 @@ reconstruction. Original-side findings are grounded in the EXE/TPU.
   code, and relocations change by `+7/+12/+8` bytes for MONSTRA,
   `+542/+43/+8` for PRZEDM, and `+46/+237/+368` for SWIAT. This establishes
   differences in compiled code and relocation data, not just volatile metadata.
+
+### 2026-09-29 (59): begin context-1000 command transcription
+
+- Added the `StanPodswiadomosci` entry point to the main-loop dispatch and
+  transcribed a subset of the inline commands against img 0xEAF8..0xF584,
+  including status output, equipment state changes, sleep, comparison, and
+  several item/skill commands.
+- **OPEN:** this is not a complete source-equivalent transcription. Save/load
+  still need their 80-field record handling (save img 0x2BA1..0x356E; load img
+  0x7D80..0x85FF), as do the JA/character-sheet helper, remaining command
+  effects, and exact command ordering. Continue against the EXE before closing
+  TODO item 1.
   Exact source/compiler causes remain OPEN; do not normalize or exclude bytes
   without identifying their meaning.
 
@@ -1477,3 +1491,234 @@ reconstruction. Original-side findings are grounded in the EXE/TPU.
   build using the previously staged official FPC 3.2.2 archive and MinGW files;
   Linux ELF and Windows PE32+ executables were produced. Package installation
   itself was skipped because this environment has no interactive sudo access.
+
+### 2026-09-29 (77): MODE save/load and Bigos field mapping
+
+- Added an 80-slot text save/load path to `StanPodswiadomosci`, using the
+  save/load order and inverse transforms in `SAVE-FIELD-MAP.txt`. Neutral
+  program fields remain neutral where TPU ownership or meaning is unresolved.
+- Transcribed the `JA` inventory/status output and the visible level, mana,
+  energy, quest, and equipment summaries from img 0x073C..0x1405. Corrected
+  the inventory's field 73 mapping: img 0x009A8 prints the Bigos label/value,
+  img 0x18126 grants that item on the [0x258] chance, and PRZEDM's TPU symbol
+  `BIGOS` is consumed by `UZYWANIE`.
+- **OPEN:** the adjacent helper call at img 0xEC9B and live DOS behavior remain
+  unaudited. FPC compile conformance is not a runtime-equivalence test. Genuine
+  TP7 was run locally under DOSBox-X: all four artifacts compiled and all three
+   TPUs were byte-identical. The rebuilt `BOMBKI.EXE` is 127,040 bytes versus
+   the retained 141,264 bytes, so the strict EXE comparison still fails; keep
+   that parity work open in `TODO.md`.
+
+### 2026-09-29 (80): MODE's adjacent POKOJ9 tail call
+
+- Resolved img 0xEC9B as a far call into POKOJ9's body at img 0x5A36. The
+  entered tail prints `GORA-KLATKI PELNE GAJDY`, then handles DOL/GORA by
+  setting context 5/11 (img 0x5A29..0x5A8C). MODE has already set current
+  context to 1000 through PRZEDM.MODE (img 0x15AE4), so the tail's context-9
+  loop-back is not taken. `WYJSCIE` is handled earlier at img 0xEC78..0xEC84.
+- Added the effective label and DOL/GORA transitions to
+  `StanPodswiadomosci`. **OPEN:** live DOS runtime behavior and full TP7 EXE
+  parity remain unverified.
+- **Correction:** the `0xEC9B` target-segment interpretation was wrong; see
+  finding (87). The stair-label code at img 0x5A36 is not this far-call target.
+
+### 2026-09-29 (84): restore MODE color-command dispatch order
+
+- Moved `PRZEDM.PIERDOLY` (`ZMIEN KOLOR` / `ZMIEN TLO`) to after the
+  `ZDOLNOSCI` output and before `WLACZ POSTAC`, matching its call at img
+  0xF566. It was previously dispatched before `ZWIEJ` and `SPIJ`, which could
+  reorder the color command's input prompt relative to the EXE.
+- **Verification:** FPC conformance and genuine TP7 compilation passed; all
+  three TPUs remain byte-identical. The TP7 EXE remains 136,112 bytes versus
+  141,264, with 133,908 differing byte positions (first at file offset 0x2).
+  Interactive DOS command behavior and strict EXE parity remain OPEN.
+
+### 2026-09-29 (87): correct the MODE helper call target
+
+- Rechecked the full far pointer at img 0xEC9B: it is `PRZEDM:0x5A36`, not a
+  near call to main-image offset 0x5A36. The PRZEDM listing identifies
+  `ItemPickupDropDispatch` / `BRANIE` at img 0x18405, para 0x129D:0x5A35; the
+  call enters that routine at 0x5A36. The stair label and DOL/GORA transitions
+  at main-image img 0x5A29..0x5A8C are unrelated.
+- Removed the invented stair output/transitions from MODE and moved
+  `PRZEDM.BRANIE` to the actual post-`JA` call position at img 0xEC9B, removing
+  its later duplicate call. This supersedes finding (80)'s call-target
+  interpretation and entry added to the MODE source.
+- **Verification:** FPC conformance and genuine TP7 compilation passed; all
+  three TPUs remain byte-identical. The rebuilt EXE is 135,984 bytes versus
+  141,264, with 133,869 differing byte positions (first at 0x2). Its MZ header
+  is 18,624 bytes, load image 117,360 bytes, and relocation table has 4,649
+  entries; the entry point is `0000:E7E8`. Startup calls target `1BCA:0000`
+  and `1B68:000D` (System/CRT), still shifted from the retained image.
+  Interactive DOS behavior and strict EXE parity remain OPEN.
+
+### 2026-09-29 (89): restore the MODE save helper call
+
+- Added `PRZEDM.save` to `ZapiszPostac` between the completion message and
+  `ClrScr`, matching the call at img 0x2BE0 to `PRZEDM:0x9263`. The TPU entry
+  report maps `save` to code block 0x108; the EXE body at img 0x1BC33 performs
+  the standard System stack check and returns. Although it has no game-state
+  effect, omitting this call changes TP7 call/relocation layout.
+- **Verification:** FPC conformance and genuine TP7 compilation passed; all
+  three TPUs remain byte-identical. The rebuilt EXE is 136,000 bytes versus
+  141,264, with 133,954 differing byte positions (first at 0x2). The MZ image
+  has 4,651 relocations and entry point `0000:E7ED`; relocation targets are
+  System 4,436, PRZEDM 161, CRT 38, plus 16 to other segments. System/CRT
+  remain at `1BCA`/`1B68`. Interactive DOS behavior and strict EXE parity remain
+  OPEN.
+
+### 2026-09-29 (90): separate MODE transcription from runtime validation
+
+- After findings (84), (87), and (89), audited the complete MODE call sequence:
+  character-sheet display, `BRANIE`, `UZYWANIE`, comparison spell, color
+  dispatch, and load all occur at their decoded positions. The source covers
+  the known inline command range img 0xEAF8..0xF584; its `StanPodswiadomosci`
+  comment and the active queue now describe the source transcription as
+  complete rather than partial.
+- **OPEN:** interactive DOS input and live command behavior remain unverified.
+  The attempted DOSBox session was cancelled during the environment restart;
+  it supplied no runtime evidence.
+
+### 2026-09-29 (91): add prompt-driven host PTY behavior test
+
+- Added `conformance/expect_pty.py`, a stdlib PTY runner that waits for
+  scenario-specific output regexes before sending input. It records timestamped
+  JSONL input and output events, including exact input/output bytes as hex, and
+  terminates the child process when the scenario completes or fails.
+- Added `conformance/scenarios/mode-smoke.json` for the prior startup/race/name
+  and MODE sequence: TICK, POL-ELF, player name, POLNOC, MODE, JA, ZDOLNOSCI,
+  ZMIEN KOLOR/4, UNMODE, and WYJSCIE. The signed energy/skill prompt is matched
+  without fixed sleeps or blind input batching.
+- **Verification:** `build_fpc.py --target linux` built the native executable
+  with FPC 3.2.2. The PTY scenario matched all 12 output steps and completed;
+  its full transcript is at the ignored artifact path
+  `build/pty-native/mode-smoke.jsonl`. The runner recorded and terminated the
+  child after completion. This tests only the host-native FPC build; original
+  TP7/DOS runtime fidelity remains **OPEN**.
+
+### 2026-09-29 (92): probe DOSEMU2 PTY runtime for TP7 build
+
+- Installed DOSEMU2 2.0~pre9 from `ppa:dosemu2/ppa` for Ubuntu 26.04. Its
+  `-dumb` mode successfully routes DOS text output through a PTY: a bounded
+  `dosemu -dumb -q -K <build-dir> -E "echo DOSEMU_OK"` probe emitted the marker.
+- Running the genuine-TP7 `BOMBKI.EXE` through the prompt-driven PTY runner
+  instead exits before `TICK`, reporting `Runtime error 200 at 1B68:0091` in
+  the linked CRT segment. Attempts with a 286 CPU, interpreter CPU emulation,
+  explicit CPU speed, and timer tweaks did not change the failure.
+- **OPEN:** this establishes a DOSEMU2/TP7 CRT-startup incompatibility in the
+  tested environment, not MODE behavior. No game input was accepted; DOS/TP7
+  runtime validation remains unresolved. The emulator process was terminated
+  and verified stopped after each bounded run.
+
+### 2026-09-29 (93): render DOSEMU2 terminal screens through pyte
+
+- Extended `conformance/expect_pty.py` with opt-in `--pyte` screen matching.
+  It sets the PTY size (80x25 by default), sets `TERM=xterm`, decodes the
+  terminal stream into a rendered screen, matches prompts there, and defaults
+  Enter to CR in this mode. Exact PTY bytes remain in the JSONL transcript;
+  matched screens are included for review. The existing raw-output mode is
+  unchanged.
+- DOSEMU2 `-t` (S-Lang terminal mode) exposes the game's direct text-video
+  screen to the PTY; `-dumb` only provides plain stdout and does not. With
+  explicit emulated CPU backends, `$_cpuemu = (1)`, and UTF-8 external / CP437
+  internal character sets, the TP7-built executable completed all 12
+  `mode-smoke.json` prompt/input steps under DOSEMU2/FreeDOS in about 6.6
+  seconds. The test used an 80x25 PTY and reached the room-exit response.
+- This is emulator runtime evidence, not original-DOS verification. The
+  optional `pyte` module was extracted under `/tmp/opencode` for this test; no
+  system package or project dependency was installed. All DOSEMU2 processes
+  started for the test were terminated and verified stopped.
+
+### 2026-09-30 (98): identify the SPIJ counter at DGROUP 0x70
+
+- In the original inline context-1000 body, img 0xEEFF..0xEF06 zeroes and
+  increments word [0x70]; reads at 0xEF02, 0xEF24, and later sleep-result
+  instructions use it as elapsed hours. The main body contains no BP-relative
+  stack-local accesses in img 0xB0CF..0xF5C5. The reconstruction instead
+  declares `Godzin` as a local in `StanPodswiadomosci`, so this storage mapping
+  is a concrete source/layout mismatch. Added the candidate field to the map;
+  precise source placement remains **OPEN**.
+- A temporary TP7 variant inlined the handler and removed its stack frame, but
+  its candidate globals landed at DGROUP 0x74 rather than the evidenced 0x70.
+  Its EXE differed at 132,953 byte positions (77 more than the retained source),
+  so that experiment was not applied. This identifies the next data-layout
+  problem but does not resolve it.
+
+### 2026-09-30 (100): place the SPIJ hour counter at DGROUP 0x70
+
+- Finding (98) established that the original inline MODE handler uses word
+  [0x70] for the elapsed-hour counter, but the reconstructed procedure local
+  did not reproduce that access. Moved `Godzin` to the program-level variable
+  declarations immediately after `PoleBOMBKI0076` and removed it from the
+  `StanPodswiadomosci` local list. In the genuine-TP7 output, the SPIJ body now
+  zeroes/increments [0x70] at img 0x8EC3..0x8EC6 and reads it at img 0x8EE5 and
+  0x8F60, matching original img 0xEEFF..0xEF24 and the later sleep-result
+  accesses. This resolves the source storage mapping against machine output.
+- FPC conformance passes 4/4; the 12-step host-native MODE PTY scenario passes;
+  the genuine-TP7 build succeeds and all three TPU comparisons remain
+  byte-identical. EXE size, relocation count, and load image remain
+  134,960/4,682/116,192 bytes. Entry is 0000:B1D8 and strict comparison reports
+  133,614 differing byte positions, 22 fewer than finding (99). The counter
+  mapping is resolved, but strict EXE parity remains **OPEN**; no original-DOS
+  runtime verification was performed.
+
+### 2026-09-30 (101): exercise SPIJ through a synchronized PTY scenario
+
+- Added `conformance/scenarios/mode-sleep-smoke.json`. It starts the native
+  reconstruction through prompt-synchronized input, enters MODE, runs `SPIJ`,
+  waits for the first hourly message, sends a wake character, waits for the
+  wake-up report, drains the byte buffered by the PTY's line discipline, then
+  exits MODE and the room. The scenario passed all 11 steps against the
+  host-native FPC executable; its complete JSONL transcript was captured under
+  `/tmp/opencode/native-godzin/mode-sleep-smoke-retry.jsonl`.
+- The PTY echoed the wake byte only after the sleep loop returned, and the
+  native run printed a second hourly message before the wake-up report. The
+  scenario explicitly drains the pending byte before sending `UNMODE`; this
+  records host terminal behavior and must not be generalized to DOS keyboard
+  behavior. This is host-native evidence only, not original-DOS or emulator
+  validation.
+
+### 2026-09-30 (102): use the recovered random scratch in MODE
+
+- MODE's random branches use DGROUP word 0x19E (`RandomScratch`/`CZY`), not a
+  procedure-local `Losowanie`: POROWNAJ stores `Random(100)` there at img
+  0xF0AA..0xF0B5; POWROT stores `Random(100)` and compares the same value at
+  0xF1F4..0xF2A5; UZYJ SCROLL POWROT stores `Random(100)` and then `Random(1)`
+  at 0xF1F4..0xF21A before using the latter value. Replaced the synthetic local
+  with `CZY` at these sites. The SPIJ code at img 0xEF95..0xEFD9 also calls
+  `Random(2 * hours)` twice: once for the displayed amount and independently
+  for the KUNSZT adjustment. Replaced the shared `Losowanie` value with the two
+  separate calls. The resulting TP7 sleep body uses DS:0070 and has no local
+  BP-relative temporary accesses in these sequences.
+- FPC conformance passes 4/4; the host-native synchronized SPIJ scenario passes
+  all 11 steps. Genuine-TP7 build succeeds and all three TPU comparisons remain
+  byte-identical. The EXE is 134,976 bytes with 4,683 relocations and a
+  116,208-byte load image; entry is 0000:B1EC and startup System/CRT targets are
+  0x1B82/0x1B20. Strict comparison reports 133,667 differing byte positions,
+  53 more than the prior candidate. This source correction follows the
+  original scratch accesses and random-call count; strict EXE parity remains
+  **OPEN**. Runtime evidence remains host-native, not original DOS.
+
+### 2026-09-30 (103): read and write save fields directly
+
+- The original save routine at img 0x2BA1 writes the 80 fields in the order
+  recorded by `disasm/procs/SAVE-FIELD-MAP.txt`; its first values are computed
+  from DGROUP fields and passed directly to the text writer (img 0x2C08..).
+  The load routine at img 0x7D80..0x85FF reads each text value and stores it
+  directly to its DGROUP destination, applying transforms in place (for
+  example mana at 0x7DCA..0x7DE5, level at 0x7DED..0x7E06, and energy at
+  0x7E98..0x7EBE). Removed the synthetic `PrzeniesStanZPliku` helper and
+  80-element `LongInt` staging arrays; `ZapiszPostac` now writes each mapped
+  expression in order, and `WczytajPostac` reads each value into its target
+  before applying the evidenced inverse transform.
+- FPC conformance passes 4/4; the synchronized native save/load scenario passes
+  all 13 steps. It saves the initial 30 coins, increases them to 5030, loads the
+  save, then verifies the displayed balance returns to 30. The generated
+  `pliki.tpu` contains 80 lines. Genuine-TP7 build succeeds and all three TPU
+  comparisons remain byte-identical. The EXE is 139,136 bytes with 5,154
+  relocations and a 118,480-byte load image; entry is 0000:BABF, and startup
+  System/CRT targets are paragraphs 0x1C10/0x1BAE. Strict comparison reports
+  131,274 differing byte positions, 2,393 fewer than finding (102). The direct
+  field I/O follows the original access pattern and improves layout metrics,
+  but strict EXE parity remains **OPEN**. Runtime evidence here is host-native
+  FPC, not original DOS or emulator validation.
