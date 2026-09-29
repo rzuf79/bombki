@@ -44,7 +44,16 @@ var
   StanPotwora16: Integer;   { invented label for BOMBKI DGROUP word 0x05E }
   StanPotwora17: Integer;   { invented label for BOMBKI DGROUP word 0x060 }
   Powracanie: Integer;      { invented label for unclaimed DGROUP word 0x078 }
-  ZwierzetaOgroda: array[0..9] of Integer; { invented DGROUP words 0x666..0x678 }
+  PokojJamnika: Integer;       { invented room tracker at DGROUP 0x666 }
+  PokojOwczarka: Integer;      { invented room tracker at DGROUP 0x668 }
+  PokojSpaniela: Integer;      { invented room tracker at DGROUP 0x66A }
+  PokojPudla: Integer;         { invented room tracker at DGROUP 0x66C }
+  PokojPieska: Integer;        { invented room tracker at DGROUP 0x66E }
+  PokojTaksowkarza: Integer;   { invented room tracker at DGROUP 0x670 }
+  PokojSprzedawcy: Integer;    { invented room tracker at DGROUP 0x672 }
+  PokojZamiatacza: Integer;    { invented room tracker at DGROUP 0x674 }
+  PokojPijaka: Integer;        { invented room tracker at DGROUP 0x676 }
+  PokojZebraka: Integer;       { invented room tracker at DGROUP 0x678 }
 
 procedure LosujPolozenia(Parametr: Integer);
 { img 0x12ACA..0x130A1: randomizes encounter, concert, garden-animal,
@@ -102,17 +111,17 @@ begin
   until (PRZEDM.GLADIATOR > 32) and (PRZEDM.WOJOWNIK > 32) and
         (PRZEDM.TRENER > 32);
 
-  { DGROUP words 0x666..0x678, in the disassembly's slot order. }
-  ZwierzetaOgroda[0] := Random(7) + 20;
-  ZwierzetaOgroda[1] := Random(7) + 20;
-  ZwierzetaOgroda[4] := Random(7) + 20;
-  ZwierzetaOgroda[2] := Random(7) + 20;
-  ZwierzetaOgroda[3] := Random(7) + 20;
-  ZwierzetaOgroda[5] := Random(7) + 20;
-  ZwierzetaOgroda[6] := Random(7) + 20;
-  ZwierzetaOgroda[7] := Random(7) + 20;
-  ZwierzetaOgroda[8] := Random(7) + 20;
-  ZwierzetaOgroda[9] := Random(7) + 20;
+  { Room ids for city dogs and NPCs, interleaved at DGROUP 0x666..0x678. }
+  PokojJamnika := Random(7) + 20;
+  PokojOwczarka := Random(7) + 20;
+  PokojPieska := Random(7) + 20;
+  PokojSpaniela := Random(7) + 20;
+  PokojPudla := Random(7) + 20;
+  PokojTaksowkarza := Random(7) + 20;
+  PokojSprzedawcy := Random(7) + 20;
+  PokojZamiatacza := Random(7) + 20;
+  PokojPijaka := Random(7) + 20;
+  PokojZebraka := Random(7) + 20;
 
   repeat
     PRZEDM.DZIECKO := Random(7) + 60;
@@ -165,6 +174,67 @@ begin
         (PRZEDM.KONICZYNKA < 84) and (PRZEDM.MLECZ < 84) and
         (PRZEDM.DMUCHAWIEC < 84) and (PRZEDM.ROZA < 84) and
         (PRZEDM.OSET < 84) and (PRZEDM.MALINA < 84);
+end;
+
+procedure UstawLimitNoszenia; forward;
+procedure WalkaMiasto; forward;
+
+procedure WalkaKoncert;
+{ img 0x4F53: shared room-NPC kill router; called only at the recovered
+  room call sites. Keep its independent command comparisons in EXE order. }
+begin
+  if (wpisz = 'ZABIJ DZIECKO') and (PRZEDM.DZIECKO = PRZEDM.MIECHO) then begin
+    PRZEDM.MNIEJSLABO;
+    if PRZEDM.WROGEN < 1 then PRZEDM.DZIECKO := 0;
+  end;
+  if (wpisz = 'ZABIJ DZIADEK') and (PRZEDM.DZIADEK = PRZEDM.MIECHO) then begin
+    PRZEDM.MNIEJSLABO;
+    if PRZEDM.WROGEN < 1 then begin
+      PRZEDM.DZIADEK := 0;
+      PRZEDM.CZY := Random(100);
+      if (PRZEDM.CZY < 5) and (PRZEDM.FAJKA = 0) then begin
+        WriteLn('WYCIAGASZ FAJKE Z UST DZIADKA ');
+        WriteLn('TEN PRZEDMIOT JEST UNIQE 5%');
+        PRZEDM.FAJKA := PRZEDM.FAJKA - 10;
+        PRZEDM.MAD := PRZEDM.MAD + 1;
+      end;
+    end;
+  end;
+  if (wpisz = 'ZABIJ WARIAT') and (PRZEDM.WARIAT = PRZEDM.MIECHO) then begin
+    PRZEDM.SREDNIO;
+    if PRZEDM.WROGEN < 1 then PRZEDM.WARIAT := 0;
+  end;
+  if (wpisz = 'ZABIJ SLUCHACZ') and (PRZEDM.SLUCHACZ = PRZEDM.MIECHO) then begin
+    PRZEDM.SREDNIO;
+    if PRZEDM.WROGEN < 1 then PRZEDM.SLUCHACZ := 0;
+  end;
+  if (wpisz = 'ZABIJ CZLOWIEK') and (PRZEDM.CZLOWIEK = PRZEDM.MIECHO) then begin
+    PRZEDM.SREDNIO;
+    if PRZEDM.WROGEN < 1 then PRZEDM.CZLOWIEK := 0;
+  end;
+  if (wpisz = 'ZABIJ FAN') and (PRZEDM.FAN = PRZEDM.MIECHO) then begin
+    PRZEDM.SREDNIO;
+    if PRZEDM.WROGEN < 1 then PRZEDM.FAN := 0;
+  end;
+  if (wpisz = 'ZABIJ REPORTER') and (PRZEDM.REPORTER = PRZEDM.MIECHO) then begin
+    PRZEDM.SREDNIO;
+    if PRZEDM.WROGEN < 1 then PRZEDM.REPORTER := 0;
+  end;
+  if (wpisz = 'ZABIJ POLICJANT') and (PRZEDM.POLICJANT = PRZEDM.MIECHO) then begin
+    PRZEDM.TRUDNO;
+    if PRZEDM.WROGEN < 1 then PRZEDM.POLICJANT := 0;
+  end;
+  if (wpisz = 'ZABIJ GORYL') and (PRZEDM.GORYL = PRZEDM.MIECHO) then begin
+    PRZEDM.TRUDNO;
+    if PRZEDM.WROGEN < 1 then PRZEDM.GORYL := 0;
+    PRZEDM.GARNITURZYSK;
+  end;
+  if (wpisz = 'ZABIJ OCHRONIARZ') and
+     (PRZEDM.OCHRONIARZ = PRZEDM.MIECHO) then begin
+    PRZEDM.TRUDNO;
+    if PRZEDM.WROGEN < 1 then PRZEDM.OCHRONIARZ := 0;
+    PRZEDM.GARNITURZYSK;
+  end;
 end;
 
 procedure WybierzRase;
@@ -717,6 +787,7 @@ begin
     if wpisz = 'POLNOC' then MIECHO := 21;
     if wpisz = 'ZACHOD' then MIECHO := 30;
     if wpisz = 'WSCHOD' then MIECHO := 75;
+    WalkaMiasto; { img 0x11C2A }
   until MIECHO <> 20;
 end;
 
@@ -1060,6 +1131,7 @@ begin
     if wpisz = 'POLNOC' then MIECHO := 22;
     if wpisz = 'WSCHOD' then MIECHO := 23;
     if wpisz = 'ZACHOD' then MIECHO := 24;
+    WalkaMiasto; { img 0x11C2A }
   until MIECHO <> 86;
 end;
 
@@ -1112,6 +1184,7 @@ begin
     if wpisz = 'POLNOC' then MIECHO := 101;
     if wpisz = 'WSCHOD' then MIECHO := 25;
     if wpisz = 'ZACHOD' then MIECHO := 26;
+    WalkaMiasto; { img 0x11C2A }
   until MIECHO <> 22;
 end;
 
@@ -1188,8 +1261,120 @@ begin
   until MIECHO <> 103;
 end;
 
+procedure WalkaMiasto;
+{ img 0x1C2A..0x1E97: room-gated dog/city-animal kill router }
+begin
+  if (wpisz = 'ZABIJ OWCZAREK') and (PokojOwczarka = MIECHO) then begin
+    PRZEDM.WALKAPIES;
+    PokojOwczarka := 0;
+  end;
+  if (wpisz = 'ZABIJ PIESEK') and (PokojPieska = MIECHO) then begin
+    PRZEDM.WALKAPIES;
+    PokojPieska := 0;
+  end;
+  if (wpisz = 'ZABIJ JAMNIK') and (PokojJamnika = MIECHO) then begin
+    PRZEDM.WALKAPIES;
+    PokojJamnika := 0;
+  end;
+  if (wpisz = 'ZABIJ SPANIEL') and (PokojSpaniela = MIECHO) then begin
+    PRZEDM.WALKAPIES;
+    PokojSpaniela := 0;
+    WriteLn('GDY NAGLE!!!! NIEBIOSA SIE OTWIERAJA');
+    WriteLn('A SPANIEL PRZEMAWIA DO CIEBIE LUDZKIM GLOSEM !!!!!');
+    WriteLn('HAU HAU CHAMIE PO CO MNIE ZABILES ??? ');
+  end;
+  if (wpisz = 'ZABIJ PUDEL') and (PokojPudla = MIECHO) then begin
+    PRZEDM.WALKAPIES;
+    PokojPudla := 0;
+  end;
+  if (wpisz = 'ZABIJ TAKSOWKARZ') and (PokojTaksowkarza = MIECHO) then begin
+    PRZEDM.VEASY;
+    PokojTaksowkarza := 0;
+    PRZEDM.GARNITURZYSK;
+  end;
+  if (wpisz = 'ZABIJ SPRZEDAWCA') and (PokojSprzedawcy = MIECHO) then begin
+    PRZEDM.VEASY;
+    PokojSprzedawcy := 0;
+    PRZEDM.GARNITURZYSK;
+  end;
+  if (wpisz = 'ZABIJ ZAMIATACZ') and (PokojZamiatacza = MIECHO) then begin
+    PRZEDM.VEASY;
+    PokojZamiatacza := 0;
+    PRZEDM.CZY := Random(100);
+    if (PRZEDM.CZY < 35) and (PRZEDM.KOMPLET = 0) then begin
+      WriteLn('ZYSKALES KOMPLET OBRABIAJAC ZAMIATACZA');
+      PRZEDM.KOMPLET := PRZEDM.KOMPLET - 10;
+    end;
+  end;
+  if (wpisz = 'ZABIJ PIJAK') and (PokojPijaka = MIECHO) then begin
+    PRZEDM.VEASY;
+    PokojPijaka := 0;
+  end;
+  if (wpisz = 'ZABIJ ZEBRAK') and (PokojZebraka = MIECHO) then begin
+    PRZEDM.VEASY;
+    if ENERGIA > 0 then begin
+      PRZEDM.CZY := Random(10);
+      Write('Z GRUBEGO PORTFELA ZEBRAKA WYCIAGASZ BONUS !!! ');
+      WriteLn(PRZEDM.CZY, ' MONET!');
+      PRZEDM.FORSA := PRZEDM.FORSA + PRZEDM.CZY;
+    end;
+    PokojZebraka := 0;
+  end;
+end;
+
+procedure ZakupyPiekarnia;
+{ img 0x139BE..0x13CEA: LISTA and KUP food commands }
+begin
+  if wpisz = 'LISTA' then begin
+    WriteLn('NAZWA         CENA');
+    WriteLn('PACZEK     :   8  ');
+    WriteLn('CIASTKO    :   12 ');
+    WriteLn('SUCHA RACJA:   15 ');
+    WriteLn('BULKA      :   19 ');
+    WriteLn('CHLEB      :   24 ');
+    WriteLn('WEKA       :   29 ');
+  end;
+  WalkaMiasto; { img 0x3AA0 -> helper at 0x1C2A }
+  if (wpisz = 'KUP PACZEK') and (PRZEDM.FORSA >= 8) then begin
+    PRZEDM.PRZED := PRZEDM.PRZED + 1;
+    PRZEDM.PACZEK := PRZEDM.PACZEK - 10;
+    PRZEDM.FORSA := PRZEDM.FORSA - 8;
+    WriteLn('KUPUJESZ PACZEK ZA 8 MONET');
+  end;
+  if (wpisz = 'KUP CIASTKO') and (PRZEDM.FORSA >= 12) then begin
+    PRZEDM.PRZED := PRZEDM.PRZED + 1;
+    PRZEDM.CIASTKO := PRZEDM.CIASTKO - 10;
+    PRZEDM.FORSA := PRZEDM.FORSA - 12;
+    WriteLn('KUPUJESZ CIASTKO ZA 12 MONET');
+  end;
+  if (wpisz = 'KUP SUCHA RACJA') and (PRZEDM.FORSA >= 15) then begin
+    PRZEDM.PRZED := PRZEDM.PRZED + 1;
+    PRZEDM.SUCHA := PRZEDM.SUCHA - 10;
+    PRZEDM.FORSA := PRZEDM.FORSA - 15;
+    WriteLn('KUPUJESZ SUCHA RACJE ZA 15 MONET');
+  end;
+  if (wpisz = 'KUP BULKA') and (PRZEDM.FORSA >= 19) then begin
+    PRZEDM.PRZED := PRZEDM.PRZED + 1;
+    PRZEDM.BULKA := PRZEDM.BULKA - 10;
+    PRZEDM.FORSA := PRZEDM.FORSA - 19;
+    WriteLn('KUPUJESZ BULKE ZA 19 MONET');
+  end;
+  if (wpisz = 'KUP CHLEB') and (PRZEDM.FORSA >= 24) then begin
+    PRZEDM.PRZED := PRZEDM.PRZED + 1;
+    PRZEDM.CHLEB := PRZEDM.CHLEB - 10;
+    PRZEDM.FORSA := PRZEDM.FORSA - 24;
+    WriteLn('KUPUJESZ CHLEB ZA 24 MONET');
+  end;
+  if (wpisz = 'KUP WEKA') and (PRZEDM.FORSA >= 29) then begin
+    PRZEDM.PRZED := PRZEDM.PRZED + 1;
+    PRZEDM.WEKA := PRZEDM.WEKA - 10;
+    PRZEDM.FORSA := PRZEDM.FORSA - 29;
+    WriteLn('KUPUJESZ WEKE ZA 29 MONET');
+  end;
+end;
+
 procedure Piekarnia;
-{ img 0xE0FE..0xE2A1: inline context 23; merchant subroutine unresolved }
+{ img 0xE0FE..0xE2A1: inline context 23 }
 begin
   WriteLn('JESTES W PIEKARNI , SKLEP PRZESIAKNIETY JEST PRZYJEMNYM ZAPACHEM CHLEBA ');
   WriteLn('PIEKARZ MILO SIE NA CIEBIE PATRZY WYCIERAJAC MAKE Z TWARZY');
@@ -1209,12 +1394,131 @@ begin
     end;
     if wpisz = 'WYJSCIE' then begin MIECHO := 193; Exit; end;
     if wpisz = 'ZACHOD' then MIECHO := 21;
-    { The inline shop transaction routine at img 0x139BE is not reconstructed. }
+    ZakupyPiekarnia;
   until MIECHO <> 23;
 end;
 
+procedure ZakupyZbrojownia;
+{ img 0x3E8E..0x40BB: weapon/armor store transaction body }
+begin
+  if wpisz = 'LISTA' then begin
+    WriteLn('NAZWA                        CENA');
+    if PRZEDM.MMIECZ = 0 then
+      WriteLn('!STARY! MIECZ           :   70  10%-50%');
+    if PRZEDM.MTARCZA = 0 then
+      WriteLn('!MALA! TARCZA           :   15  10%-50%');
+    WriteLn('DLUGI MIECZ GLADIATORA  : 3200  2%');
+  end;
+  WalkaMiasto; { img 0x3F2A -> helper at 0x1C2A }
+  if (wpisz = 'KUP STARY') and (PRZEDM.MMIECZ = 0) and
+     (PRZEDM.FORSA >= 70) then begin
+    PRZEDM.PRZED := PRZEDM.PRZED + 1;
+    PRZEDM.MMIECZ := -10;
+    PRZEDM.FORSA := PRZEDM.FORSA - 70;
+    WriteLn('KUPUJESZ ZWYKLY MALY !STARY! MIECZYK ZA 70 MONET');
+    PoleBOMBKI0066 := 500;
+  end;
+  if wpisz = 'SPRZEDAJ STARY' then begin
+    if PRZEDM.MMIECZ = -10 then begin
+      WriteLn('SPRZEDAWCA MOWI CI : WYPCHAJ SIE Z TYM MIECZEM');
+      WriteLn('ALBO DOBRA KUPIE GO OD CIEBIE ZA 30 MONET');
+      PRZEDM.FORSA := PRZEDM.FORSA + 30;
+      PRZEDM.MMIECZ := 0;
+      PRZEDM.PRZED := PRZEDM.PRZED - 1;
+    end;
+  end;
+  if (wpisz = 'KUP MALA') and (PRZEDM.MTARCZA = 0) and
+     (PRZEDM.FORSA >= 15) then begin
+    PRZEDM.PRZED := PRZEDM.PRZED + 1;
+    PRZEDM.MTARCZA := -10;
+    PRZEDM.FORSA := PRZEDM.FORSA - 15;
+    WriteLn('KUPUJESZ !MALA! TARCZA ZA 15 MONET');
+  end;
+  if wpisz = 'SPRZEDAJ MALA' then begin
+    WriteLn('TA TARCZA JEST BAJER,FRAJER KUPIE JA OD CIEBIE ZA 8 MONET');
+    PRZEDM.FORSA := PRZEDM.FORSA + 8;
+    PRZEDM.MTARCZA := 0;
+    PRZEDM.PRZED := PRZEDM.PRZED - 1;
+  end;
+end;
+
+procedure ZakupySklepWielobranzowy;
+{ img 0x43A5..0x47DB: general-store transaction body }
+begin
+  if wpisz = 'LISTA' then begin
+    WriteLn('NAZWA                        CENA');
+    if PRZEDM.FAJKA = 0 then WriteLn('FAJKA                      :  480');
+    if PRZEDM.KOMPLET = 0 then
+      WriteLn('!KOMPLET! UBRAN FIRMY "SYF":   35 ');
+    WriteLn('!KASETA! LIROYA            : 1999 4%');
+    WriteLn('GARNITUR Z KOLCAMI(3)      : 1000 2,5%');
+  end;
+  if wpisz = 'PATRZ POSTER' then
+    WriteLn('OKAZJA !!! PRZY ZAKUPIE GARNITURU KOMPLET UBRAN GRATIS !!!(ZART)');
+  if (wpisz = 'KUP FAJKA') and (PRZEDM.FAJKA = 0) and
+     (PRZEDM.FORSA >= 480) then begin
+    WriteLn('KUPUJESZ FAJKE ZA 480 MONET');
+    PRZEDM.FORSA := PRZEDM.FORSA - 480;
+    PRZEDM.FAJKA := PRZEDM.FAJKA - 10;
+    PRZEDM.PRZED := PRZEDM.PRZED + 1;
+    PRZEDM.MAD := PRZEDM.MAD + 1;
+  end;
+  if (wpisz = 'KUP KOMPLET') and (PRZEDM.KOMPLET = 0) and
+     (PRZEDM.FORSA >= 35) then begin
+    WriteLn('KUPUJESZ !KOMPLET! UBRAN FIRMY "SYF" ZA 35 MONET');
+    PRZEDM.FORSA := PRZEDM.FORSA - 35;
+    PRZEDM.KOMPLET := PRZEDM.KOMPLET - 10;
+    PRZEDM.PRZED := PRZEDM.PRZED + 1;
+  end;
+  if (wpisz = 'SPRZEDAJ KOMPLET') and (PRZEDM.KOMPLET <= -10) and
+     (PRZEDM.JAKIEUB <> 'SYF') then begin
+    WriteLn('SPRZEDAJESZ !KOMPLET! UBRAN FIRMY "SYF" ZA 15 MONET');
+    PRZEDM.FORSA := PRZEDM.FORSA + 15;
+    PRZEDM.KOMPLET := PRZEDM.KOMPLET + 10;
+    PRZEDM.PRZED := PRZEDM.PRZED - 1;
+  end;
+  if (wpisz = 'SPRZEDAJ FAJKA') and (PRZEDM.FAJKA = -10) then begin
+    WriteLn('SPRZEDAJESZ FAJKE ZA 120 MONET');
+    PRZEDM.FORSA := PRZEDM.FORSA + 120;
+    PRZEDM.FAJKA := PRZEDM.FAJKA + 10;
+    PRZEDM.PRZED := PRZEDM.PRZED - 1;
+    PRZEDM.MAD := PRZEDM.MAD - 1;
+  end;
+  if (wpisz = 'KUP KASETA') and (PRZEDM.FORSA >= 1999) then begin
+    WriteLn('KUPUJESZ KASETE LIROYA - L JAK LIROY ZA 1999 MONET');
+    PRZEDM.FORSA := PRZEDM.FORSA - 1999;
+    PRZEDM.kaseta := PRZEDM.kaseta - 10;
+    PRZEDM.PRO := PRZEDM.PRO - 8;
+    MONSTRA.MAXE := MONSTRA.MAXE + 5;
+    PRZEDM.ZRE := PRZEDM.ZRE + 1;
+    PRZEDM.PRZED := PRZEDM.PRZED + 1;
+  end;
+  if (wpisz = 'KUP GARNITUR') and (PRZEDM.FORSA >= 1000) then begin
+    WriteLn('KUPUJESZ GARNITUR Z KOLCAMI ZA JEDYNE 1000 $');
+    PRZEDM.FORSA := PRZEDM.FORSA - 1000;
+    PRZEDM.GARNITUR := PRZEDM.GARNITUR - 10;
+    PRZEDM.PRZED := PRZEDM.PRZED + 1;
+  end;
+  if (wpisz = 'SPRZEDAJ GARNITUR') and
+     (PRZEDM.JAKIEUB <> 'GARNITUR') then begin
+    WriteLn('SPRZEDAJESZ GARNITUR Z KOLCAMI ZA JEDYNE 500 $');
+    PRZEDM.FORSA := PRZEDM.FORSA + 500;
+    PRZEDM.GARNITUR := PRZEDM.GARNITUR + 10;
+    PRZEDM.PRZED := PRZEDM.PRZED - 1;
+  end;
+  if (wpisz = 'SPRZEDAJ KASETA') and (PRZEDM.kaseta < 0) then begin
+    WriteLn('SPRZEDAJESZ KASETE LIROYA - L JAK LIROY ZA 1000 MONET');
+    PRZEDM.FORSA := PRZEDM.FORSA + 1000;
+    PRZEDM.kaseta := PRZEDM.kaseta + 10;
+    PRZEDM.PRO := PRZEDM.PRO + 8;
+    MONSTRA.MAXE := MONSTRA.MAXE - 5;
+    PRZEDM.ZRE := PRZEDM.ZRE - 1;
+    PRZEDM.PRZED := PRZEDM.PRZED - 1;
+  end;
+end;
+
 procedure Zbrojownia;
-{ img 0xE2AB..0xE42B: inline context 24; shop mechanics unresolved }
+{ img 0xE2AB..0xE42B: inline context 24 }
 begin
   WriteLn('JESTES W ZBROJOWNI - SKLEP NIEDAWNO ZOSTAL OTWARTY');
   WriteLn('SPRZEDAWCA(BRZYDKA AURA) STARA SIE WCISNAC CI JAKIS TOWAR ');
@@ -1223,6 +1527,7 @@ begin
     Write(ENERGIA, '%.', KUNSZT, '>');
     ReadLn(wpisz);
     PRZEDM.KOMENDY;
+    ZakupyZbrojownia; { img 0x13E8E }
     if wpisz = 'MODE' then PRZEDM.MODE;
     if wpisz = 'PATRZ PLAKAT' then
       WriteLn('LISTA,KUP XXX I SPRZEDAJ XXX TO JEST DOSTEPNE W TYM SKLEPIE ');
@@ -1232,12 +1537,12 @@ begin
     end;
     if wpisz = 'WYJSCIE' then begin MIECHO := 193; Exit; end;
     if wpisz = 'WSCHOD' then MIECHO := 21;
-    { The shop transaction helper reached at img 0xE41E remains open. }
+    WalkaMiasto; { img 0x11C2A }
   until MIECHO <> 24;
 end;
 
 procedure SklepWielobranzowy;
-{ img 0xE435..0xE599: inline context 25; shop transaction helper unresolved }
+{ img 0xE435..0xE599: inline context 25 }
 begin
   WriteLn('WSZEDLES DO SKLEPU WIELOBRANZOWEGO,STWIERDZASZ OBECNOSC SPRZEDAWCY');
   WriteLn('NA DRZWIACH ZOSTALA WYWIESZONA WYWIESZKA');
@@ -1254,12 +1559,76 @@ begin
     if wpisz = 'PATRZ WYWIESZKA' then
       WriteLn('* SKLEP OTWARTY DO ODWOLANIA *');
     if wpisz = 'WYJSCIE' then begin MIECHO := 193; Exit; end;
-    { The transaction routine at img 0x143A5 is not reconstructed. }
+    WalkaMiasto; { img 0x11C2A }
+    ZakupySklepWielobranzowy; { img 0x143A5 }
   until MIECHO <> 25;
 end;
 
+procedure ZakupySklep;
+{ img 0x4ADD..0x4E8A: potion, lucky-leaf, pill, and scroll transactions }
+begin
+  if wpisz = 'LISTA' then begin
+    WriteLn('NAZWA                  CENA');
+    WriteLn('MALA BUTELKA MANY       :   20');
+    WriteLn('SREDNIA BUTELKA MANY    :   40');
+    WriteLn('SPORA BUTELKA MANY      :   80');
+    WriteLn('LISTEK SZCZESCIA        :  820 3%');
+    WriteLn('PIERSCIONEK ZARECZYNOWY : 1800 N/A');
+    WriteLn('PIGULKA TRANSPORTUJACA  :  235 ');
+    WriteLn('SCROLL POROWNYWANIE     :   40 ');
+  end;
+  if (wpisz = 'KUP MALA BUTELKA MANY') and (PRZEDM.FORSA >= 15) then begin
+    WriteLn('KUPUJESZ MALA BUTELKA MANY ZA 20 MONET ( AHHHH TA INFLACJA ) ');
+    PRZEDM.FORSA := PRZEDM.FORSA - 20;
+    PRZEDM.MBUTELKA := PRZEDM.MBUTELKA - 10;
+    PRZEDM.PRZED := PRZEDM.PRZED + 1;
+  end;
+  if (wpisz = 'KUP LISTEK') and (PRZEDM.FORSA >= 820) then begin
+    WriteLn('KUPUJESZ LISTEK KTORY PRZYNOSCI SZCZESCIE ZA 820 KESZU');
+    PRZEDM.FORSA := PRZEDM.FORSA - 830;
+    PRZEDM.LISTEK := PRZEDM.LISTEK - 10;
+    PRZEDM.PRZED := PRZEDM.PRZED + 1;
+    PRZEDM.MAXMANA := PRZEDM.MAXMANA + 40;
+  end;
+  if (wpisz = 'SPRZEDAJ LISTEK') and (PRZEDM.FORSA >= 820) then begin
+    WriteLn('SPRZEDAJESZ LISTEK ZA 400 !!! CIESZ SIE');
+    PRZEDM.FORSA := PRZEDM.FORSA + 400;
+    PRZEDM.LISTEK := PRZEDM.LISTEK + 10;
+    PRZEDM.PRZED := PRZEDM.PRZED - 1;
+    PRZEDM.MAXMANA := PRZEDM.MAXMANA - 40;
+  end;
+  if (wpisz = 'KUP PIGULKA TRANSPORTUJACA') and
+     (PRZEDM.FORSA >= 235) then begin
+    WriteLn('KUPUJESZ PIGULKE TRANSPORTUJACA ZA 235 MONET');
+    PRZEDM.FORSA := PRZEDM.FORSA - 235;
+    PRZEDM.PIGULKA := PRZEDM.PIGULKA - 10;
+    PRZEDM.PRZED := PRZEDM.PRZED + 1;
+  end;
+  if (wpisz = 'SPRZEDAJ PIGULKA TRANSPORTUJACA') and
+     (PRZEDM.PIGULKA <= 10) then begin
+    WriteLn('SPRZEDAWCA KUPUJE OD CIEBIE PIGULKE ZA 170 MONET');
+    PRZEDM.FORSA := PRZEDM.FORSA + 170;
+    PRZEDM.PIGULKA := PRZEDM.PIGULKA + 10;
+    PRZEDM.PRZED := PRZEDM.PRZED - 1;
+  end;
+  if (wpisz = 'KUP SCROLL POROWNYWANIE') and
+     (PRZEDM.FORSA > 39) then begin
+    WriteLn('SPRZEDAWCA SPRZEDAJE CI SCROLL ZA 40 MONET');
+    PRZEDM.FORSA := PRZEDM.FORSA - 40;
+    PRZEDM.SCROLLPOR := PRZEDM.SCROLLPOR - 10;
+    PRZEDM.PRZED := PRZEDM.PRZED + 1;
+  end;
+  if (wpisz = 'SPRZEDAJ SCROLL POROWNYWANIE') and
+     (PRZEDM.SCROLLPOR < 0) then begin
+    WriteLn('SPRZEDAWCA KUPUJE OD CIEBIE SCROLL ZA NEDZNE 18 MONET');
+    PRZEDM.FORSA := PRZEDM.FORSA + 18;
+    PRZEDM.SCROLLPOR := PRZEDM.SCROLLPOR + 10;
+    PRZEDM.PRZED := PRZEDM.PRZED - 1;
+  end;
+end;
+
 procedure SklepZamkniety;
-{ img 0xE5A3..0xE6EB: inline context 26; shop transaction helper unresolved }
+{ img 0xE5A3..0xE6EB: inline context 26; transaction at img 0x14ADD }
 begin
   WriteLn('WCHODZISZ DO SKLEPU ALE NICZEGO TU NIE MA POZA SPRZEDAWCA I JEGO TOWAREM');
   repeat
@@ -1275,7 +1644,8 @@ begin
     if wpisz = 'PATRZ PLAKAT' then
       WriteLn('* OTWARTE Z POWODU CHOROBY *');
     if wpisz = 'WYJSCIE' then begin MIECHO := 193; Exit; end;
-    { The shop transaction routine at img 0x14ADD is not reconstructed. }
+    ZakupySklep;
+    WalkaMiasto; { img 0x11C2A }
   until MIECHO <> 26;
 end;
 
@@ -1324,7 +1694,7 @@ begin
 end;
 
 procedure SalaKoncertowa;
-{ img 0x68D0..0x6AE6: inline context 61; kill dispatch remains open }
+{ img 0x68D0..0x6AE6: inline context 61 }
 begin
   WriteLn('KIEDY PODSZEDLES BLIZEJ ZBARANIALES - TO SALA KONCERTOWA !!!');
   WriteLn('WOKOLO TLUMY SLUCHAJA MUZYKI , DZIWNA TO MUZYKA - WLASCIWIE SAME SLOWA');
@@ -1344,44 +1714,46 @@ begin
       WriteLn(' NA PLAKACIE PISZE :');
       WriteLn('20 X 98 r KONCERT LIROYA - ZAPRASZAMY WSZYSTKICH  ');
     end;
+    WalkaKoncert; { img 0x6A20 }
     if wpisz = 'WYJSCIE' then begin MIECHO := 193; Exit; end;
     if wpisz = 'ZACHOD' then MIECHO := 60;
     if wpisz = 'POLNOC' then MIECHO := 66;
     if wpisz = 'POLODNIE' then MIECHO := 65;
     if wpisz = 'WSCHOD' then MIECHO := 64;
-    { KillDispatch at img 0x6A20 is not reconstructed yet. }
   until MIECHO <> 61;
 end;
 
 procedure BrzegTlumu;
-{ img 0x6AF0..0x6C40: inline context 62; kill dispatch remains open }
+{ img 0x6AF0..0x6C40: inline context 62 }
 begin
   WriteLn('NA BRZEGACH TLUM JEST MNIEJSZY , MIMO TO UCZUCIE SCISKU IRYTUJE CIE');
   PRZEDM.TLUM;
   repeat
     Write(ENERGIA, '%.', KUNSZT, '>');
     ReadLn(wpisz);
+    PRZEDM.KOMENDY; { img 0x6B71 }
     if wpisz = 'MODE' then PRZEDM.MODE;
     if wpisz = 'EXIT' then begin
       WriteLn('DOSTEPNE WYJSCIA:');
       WriteLn('POLNOC-TLUM');
       WriteLn('WSCHOD-TLUM');
     end;
+    WalkaKoncert; { img 0x6BF1 }
     if wpisz = 'WYJSCIE' then begin MIECHO := 193; Exit; end;
     if wpisz = 'POLNOC' then MIECHO := 61;
     if wpisz = 'WSCHOD' then MIECHO := 65;
-    { KillDispatch at img 0x6BF1 is not reconstructed yet. }
   until MIECHO <> 62;
 end;
 
 procedure RzadkiTlum;
-{ img 0x6C4A..0x6DCD: inline context 63; kill dispatch remains open }
+{ img 0x6C4A..0x6DCD: inline context 63 }
 begin
   WriteLn('NA BRZEGACH TLUM JEST RZADSZY , BOISZ SIE POMYSLEC CO SIE DZIEJE W SRODKU');
   PRZEDM.TLUM;
   repeat
     Write(ENERGIA, '%.', KUNSZT, '>');
     ReadLn(wpisz);
+    PRZEDM.KOMENDY; { img 0x6CCB }
     if wpisz = 'MODE' then PRZEDM.MODE;
     if wpisz = 'EXIT' then begin
       WriteLn('DOSTEPNE WYJSCIA:');
@@ -1389,24 +1761,24 @@ begin
       WriteLn('WSCHOD-TLUM');
       WriteLn('POLNOC-PIWIARNIA');
     end;
+    WalkaKoncert; { img 0x6D67 }
     if wpisz = 'WYJSCIE' then begin MIECHO := 193; Exit; end;
     if wpisz = 'POLODNIE' then MIECHO := 61;
     if wpisz = 'WSCHOD' then MIECHO := 66;
     if wpisz = 'POLNOC' then MIECHO := 67;
-    { KillDispatch at img 0x6D67 is not reconstructed yet. }
   until MIECHO <> 63;
 end;
 
 procedure SrodekTlumu;
-{ img 0x6DD2..0x6F76: inline context 64; kill dispatch remains open }
+{ img 0x6DD2..0x6F76: inline context 64 }
 begin
   WriteLn('JESTES W SRODKU TLUMU A DO TEGO PRZY BALUSTRADKACH-CO ZA TLOK');
   WriteLn('NIE MOZNA ODDYCHAC W TAKIM TLUMIE - LEPIEJ SZYBKO Z TAD IDZ');
   PRZEDM.TLUM;
-  { Additional room helper at img 0x6E74 is not identified yet. }
   repeat
     Write(ENERGIA, '%.', KUNSZT, '>');
     ReadLn(wpisz);
+    PRZEDM.KOMENDY; { img 0x6E74 }
     if wpisz = 'MODE' then PRZEDM.MODE;
     if wpisz = 'EXIT' then begin
       WriteLn('DOSTEPNE WYJSCIA:');
@@ -1414,60 +1786,60 @@ begin
       WriteLn('POLNOC-TLUM');
       WriteLn('POLODNIE-TLUM');
     end;
+    WalkaKoncert; { img 0x6F10 }
     if wpisz = 'WYJSCIE' then begin MIECHO := 193; Exit; end;
     if wpisz = 'ZACHOD' then MIECHO := 61;
     if wpisz = 'POLNOC' then MIECHO := 66;
     if wpisz = 'POLODNIE' then MIECHO := 65;
-    { KillDispatch at img 0x6F10 is not reconstructed yet. }
   until MIECHO <> 64;
 end;
 
 procedure BokTlumu;
-{ img 0x6F76..0x70EC: inline context 65; kill dispatch remains open }
+{ img 0x6F76..0x70EC: inline context 65 }
 begin
   WriteLn('JESTES Z BOKU ALE PRZY BALUSTRADKACH LUDZIE WPYCHAJA CIE NA TE BALUSTRADKI');
   WriteLn('NIE MOZNA ODDYCHAC W TAKIM TLUMIE - LEPIEJ SZYBKO Z TAD IDZ');
   PRZEDM.TLUM;
-  { Additional room helper at img 0x701D is not identified yet. }
   repeat
     Write(ENERGIA, '%.', KUNSZT, '>');
     ReadLn(wpisz);
+    PRZEDM.KOMENDY; { img 0x701D }
     if wpisz = 'MODE' then PRZEDM.MODE;
     if wpisz = 'EXIT' then begin
       WriteLn('DOSTEPNE WYJSCIA:');
       WriteLn('ZACHOD-TLUM');
       WriteLn('POLNOC-TLUM');
     end;
+    WalkaKoncert; { img 0x709D }
     if wpisz = 'WYJSCIE' then begin MIECHO := 193; Exit; end;
     if wpisz = 'POLNOC' then MIECHO := 64;
     if wpisz = 'ZACHOD' then MIECHO := 62;
-    { KillDispatch at img 0x709D is not reconstructed yet. }
   until MIECHO <> 65;
 end;
 
 procedure PrzyBalustradzie;
-{ img 0x70EC..0x723C: inline context 66; kill dispatch remains open }
+{ img 0x70EC..0x723C: inline context 66 }
 begin
   WriteLn('JESTES PRZY BALUSTRADKACH-NIE BEDE SIE ROZWODZIL JAK CI JEST CIASNO');
-  { The context-specific helper at img 0x7177 is not identified yet. }
   repeat
     Write(ENERGIA, '%.', KUNSZT, '>');
     ReadLn(wpisz);
+    PRZEDM.KOMENDY; { img 0x7177 }
     if wpisz = 'MODE' then PRZEDM.MODE;
     if wpisz = 'EXIT' then begin
       WriteLn('DOSTEPNE WYJSCIA:');
       WriteLn('ZACHOD-TLUM');
       WriteLn('POLODNIE-TLUM');
     end;
+    WalkaKoncert; { img 0x71F7 }
     if wpisz = 'WYJSCIE' then begin MIECHO := 193; Exit; end;
     if wpisz = 'ZACHOD' then MIECHO := 63;
     if wpisz = 'POLODNIE' then MIECHO := 64;
-    { KillDispatch at img 0x71F7 is not reconstructed yet. }
   until MIECHO <> 66;
 end;
 
 procedure Piwiarnia;
-{ img 0x7250..0x74FA: inline context 67; common kill dispatch remains open }
+{ img 0x7250..0x74FA: inline context 67 }
 begin
   WriteLn('JESTES W PIWIARNI - WOKOLO CIEBIE UNOSI SIE ZAPACH PIWA , TY NIE PIJASZ PIWA');
   WriteLn('TY PIJASZ JABOLA !!! , NIE REZYGNUJAC ZE SWYCH PRZYZWYCZAJEN ROZGLADASZ SIE:');
@@ -1479,12 +1851,14 @@ begin
   repeat
     Write(ENERGIA, '%.', KUNSZT, '>');
     ReadLn(wpisz);
+    PRZEDM.KOMENDY; { img 0x7333 }
     if wpisz = 'MODE' then PRZEDM.MODE;
     if wpisz = 'EXIT' then begin
       WriteLn('DOSTEPNE WYJSCIA:');
       WriteLn('WSCHOD-WEJSCIE NA ESTRADE');
       WriteLn('POLODNIE-TLUM');
     end;
+    WalkaKoncert; { img 0x73B3 }
     if (wpisz = 'ZABIJ MINI-BARMAN') and (PoleBOMBKI007A = 67) then begin
       WriteLn('---------------  ROUND ONE --------------------');
       WriteLn('----------------  FIGHT -----------------------');
@@ -1513,7 +1887,6 @@ begin
     if wpisz = 'WYJSCIE' then begin MIECHO := 193; Exit; end;
     if wpisz = 'POLODNIE' then MIECHO := 63;
     if wpisz = 'WSCHOD' then MIECHO := 68;
-    { KillDispatch at img 0x73B3 and helper at 0x7333 remain OPEN. }
   until MIECHO <> 67;
 end;
 
@@ -1523,10 +1896,10 @@ begin
   WriteLn('TO JEST WEJSCIE NA SCENE NA KTOREJ TANCZY LIROY - UWAZAJ');
   WriteLn('NA SCIANIE WISI !!!TABLICZKA!!!');
   PRZEDM.SCENA;
-  { Room command helper at img 0x75AB is not yet identified. }
   repeat
     Write(ENERGIA, '%.', KUNSZT, '>');
     ReadLn(wpisz);
+    PRZEDM.KOMENDY; { img 0x75AB }
     if wpisz = 'MODE' then PRZEDM.MODE;
     if wpisz = 'EXIT' then begin
       WriteLn('DOSTEPNE WYJSCIA:');
@@ -1534,12 +1907,12 @@ begin
       WriteLn('WSCHOD-SCENA');
       WriteLn('P.S-HEJ DZIECI JESLI CHCECIE ZOBACZYC TAMTEN SWIAT PODLACZCIE SIE DO 1000 WAT');
     end;
+    WalkaKoncert; { img 0x7647 }
     if wpisz = 'WYJSCIE' then begin MIECHO := 193; Exit; end;
     if wpisz = 'ZACHOD' then MIECHO := 67;
     if wpisz = 'WSCHOD' then MIECHO := 69;
     if wpisz = 'PATRZ TABLICZKA' then
       WriteLn('*** NIE UPOWAZNIONYM WSTEP WZBRONIONY *** ');
-    { KillDispatch at img 0x7647 is not reconstructed yet. }
   until MIECHO <> 68;
 end;
 
