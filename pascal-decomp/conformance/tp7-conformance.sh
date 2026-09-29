@@ -30,9 +30,11 @@ for c in dosbox-x xvfb-run find sed cp grep touch; do
   }
 done
 
-TPC="$(find /opt/tp7 -iname 'tpc.exe' 2>/dev/null | head -n1)"
+# Current images extract TP7 into /tools/tp7; earlier published images use
+# /opt/tp7. Search both so a still-cached `latest` image remains usable.
+TPC="$(find /tools/tp7 /opt/tp7 -iname 'tpc.exe' 2>/dev/null | head -n1)"
 if [ -z "$TPC" ]; then
-  echo "::error::TPC.EXE not found under /opt/tp7" >&2
+  echo "::error::TPC.EXE not found under /tools/tp7 or /opt/tp7" >&2
   exit 2
 fi
 TP7ROOT="$(dirname "$(dirname "$TPC")")"
