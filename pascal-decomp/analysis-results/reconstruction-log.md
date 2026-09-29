@@ -26,7 +26,7 @@ foreign `System.ofsXXXX` references; all far pointers resolved to
 `System`/`CRT`/unit-local, plus `string` = System.ofs00BA seed.
 
 The reconstruction is grounded in EXE/TPU evidence only. Any C-port comparisons
-preserved in this log or `C-PORT-DISCREPANCIES.md` are historical snapshots,
+preserved in this log or `c-port-discrepancies.md` are historical snapshots,
 not source evidence, requirements, or a compatibility target.
 
 ## 2. Save format (`PLIKI.TPU`)
@@ -149,7 +149,7 @@ are preliminary and are superseded by the load-side cross-check in finding (7):
 
 The initial stat-band interpretation was superseded by finding (7). The save
 map records 80 serialized fields; the sample at field 15 is anomalous and its
-interpretation remains OPEN (see `INTEGRATED-FIELD-MAP.md`).
+interpretation remains OPEN (see `integrated-field-map.md`).
 
 ### 2026-09-24 (7): load-side readback reconstruction integrated — corrections
 A second, independent load-side reconstruction (`PLIKI.TPU` readback + 616
@@ -183,7 +183,7 @@ At this finding date, Money vs 0x21A:0x21C longint pool was still open; finding
 0x257 = PIGULKA (saved byte, drop-count shortint); the old 0x74 "POTRAWKI
 chance" name is a separate CWICZ field, not a count — ambiguity resolved. Full
 merged record, including byte-flag cluster 0x255..0x262 and TPlayerMisc
-(0x664=EnergiaMax, 0x668+ monster trackers): `INTEGRATED-FIELD-MAP.md`. The
+(0x664=EnergiaMax, 0x668+ monster trackers): `integrated-field-map.md`. The
 earlier "proven MONSTRA band" claim is RETRACTED (see (8)).
 
 ### 2026-09-24 (8): KUNSZT = 0x1D4; death penalty decoded (level-based)
@@ -239,11 +239,11 @@ EXE proc paragraph 0x129D:0x44A6 = img 0x16E76..0x181C6 (the old "BODY-A
   carrying-capacity field. (The stat bumped by outfits +7 SYF/+10 GARNITUR and
   Kaseta's −8 are PRO [0x1C2].) 0x1B2 = combat margin/reward scratch.
 - The source-equivalent combat body is `reconstructed/PRZEDM.PAS`, procedure
-  `WALKA`; mechanics are also summarized in `INTEGRATED-FIELD-MAP.md`.
+  `WALKA`; mechanics are also summarized in `integrated-field-map.md`.
 
 ### 2026-09-24 (10): wczytaj() load engine + trening + level gates decoded
 The load routine is in the EXE at img 0x7D80..0x85FF; the save-field map is in
-`INTEGRATED-FIELD-MAP.md`:
+`integrated-field-map.md`:
 
 - **wczytaj() = img 0x7D80** (proc-init; ends ~0x85FF). RTL: `0x6C6`
   ReadLn(cmd), `0x2E6` Assign to cs:0x7D6B "pliki.tpu", `0x364` Reset, **`0x72D`
@@ -293,12 +293,12 @@ The 0x129D paragraph contains a whole second game layer beyond Walka:
   (34..36/8..11/10, loot 10..30) · **ZabijSredni 0x13A60** (50..54/10..14/13..14,
   loot 30..59) · **ZabijSilny 0x13B82** (60..65/12..14/15..17) · 4×
   **ZabijPotwor** 0x13CA9..0x1401B. Plus launcher 0x12A16 (10/10/5/R15 + 25%
-  Serce). Full tiers in (13) and INTEGRATED-FIELD-MAP.md §"Kill router".
+  Serce). Full tiers in (13) and integrated-field-map.md §"Kill router".
 - **PorownajDispatch @ 0x1491B..0x153E8** = the 67-entry fight/compare ladder
   (cmd strcmp 0x14A5F..0x153BB): animals, people, plants, dogs, BAKTERIA —
   grouped by a `[0x686]` skill threshold (Zrecznosc==0x13+9 / 0x14,0x15+10;
   Parowanie>0x4B/+1,>0x32/+1; Kopanie>0xA/+2,+2; gate ≥0x10). Full vocabulary
-  table in INTEGRATED-FIELD-MAP.md §"Room command vocabulary" (the doc's earlier
+  table in integrated-field-map.md §"Room command vocabulary" (the doc's earlier
   "compare params" note was wrong — the prompt string is the fight-menu header).
 - **GardenOgladaj @ 0x1362A** and **GardenZwierzaki @ 0x155F2** = the
   look-at-plant / look-at-animal flavortext procs.
@@ -341,7 +341,7 @@ The 0x129D paragraph contains a whole second game layer beyond Walka:
   0x25D = POR, the actual SkillPorownywanie counter. Item_ScrollPorownanie is at 0x230.
 - The drop procs are **DropListek (0x159E4)** / **DropScroll (0x15A91)**;
   field 0x686 = PowerLevel, 0x25D = SkillPorownywanie (0x230 already present).
-  INTEGRATED-FIELD-MAP.md updated (§ Kill drops / City square dispatch rows).
+  integrated-field-map.md updated (§ Kill drops / City square dispatch rows).
 
 ### 2026-09-24 (13): KillDispatch router + fight launcher tiers (+ monster tiers)
 
@@ -350,7 +350,7 @@ The 0x129D paragraph contains a whole second game layer beyond Walka:
   (NPC is present in the room; flag seeded by room/map-gen) → `lcall` tier
   launcher (para 0x129D offsets 0xf77/0x1090/0x11b2) → on `MonsterHP<1`
   clear the flag byte and roll the kill bonus. **Full command→flag mapping**
-  documented in INTEGRATED-FIELD-MAP.md §"Kill router": DZIECKO 0x24C, WARIAT
+  documented in integrated-field-map.md §"Kill router": DZIECKO 0x24C, WARIAT
   0x24D, SLUCHACZ 0x24E, FAN 0x24F, CZLOWIEK 0x250, POLICJANT 0x251,
   OCHRONIARZ 0x252, DZIADEK 0x253, GORYL 0x254, REPORTER 0x256. (The old
   annotate labels for 0x24D..0x256 were SHIFTED/incorrect — fixed.)
@@ -376,7 +376,7 @@ The 0x129D paragraph contains a whole second game layer beyond Walka:
   GRUBAS", "ZABIJ D.J", "ZABIJ POTWOR", "ZABIJ PEDAL/PARA/MACIEK", "ZABIJ
   DRZWI", "ZABIJ STARUCH" strings.
 - Full router/launcher tables + the "ZabijTrup → lcall 0x129D:0x44A6" Walka
-  reconciliation: INTEGRATED-FIELD-MAP.md.
+  reconciliation: integrated-field-map.md.
 
 ### 2026-09-24 (14): Item subsystem decoded (BIERZ/ODRZUC/UZYJ + outfits + time travel)
 
@@ -404,7 +404,7 @@ The 0x129D paragraph contains a whole second game layer beyond Walka:
   0x1C0F:0x27D with a user number.
 - Fields named StaryMiecz (0x17E), MalaTarcza (0x184), DyplomMudSzkoly (0x188),
   PRO (0x1C2), OutfitZrecznoscBonus (0x1C4), OutfitEquipped (0x218);
-  INTEGRATED-FIELD-MAP.md §"Item subsystem" added.
+  integrated-field-map.md §"Item subsystem" added.
 
 ### 2026-09-24 (15): Room-level ZABIJ handlers + launcher entry-point fixes + Kaseta decode
 
@@ -425,7 +425,7 @@ The 0x129D paragraph contains a whole second game layer beyond Walka:
   ZabijPotwor1..4 = 0x13CA4/0x13DD0/0x13EF3/0x14016 (the earlier keys were 1..5
   bytes past the prologue). Escalation chains confirmed from caller offsets:
   0xE69=Mrowka, 0x1400=Potwor2, 0x1523=Potwor3, 0x1646=Potwor4.
-- INTEGRATED-FIELD-MAP.md: new table §"Room-level ZABIJ handlers".
+- integrated-field-map.md: new table §"Room-level ZABIJ handlers".
 
 ### 2026-09-24 (16): ground truth cross-check vs the retained TPU units
 - **Launcher procs ARE the PRZEDM difficulty procedures** (matched via stat
@@ -472,7 +472,7 @@ The 0x129D paragraph contains a whole second game layer beyond Walka:
 
 ### 2026-09-24 (18): historical C-port comparison audit
 This dated audit produced the comparison register in
-`C-PORT-DISCREPANCIES.md`. It records the separate port at that time only; its
+`c-port-discrepancies.md`. It records the separate port at that time only; its
 comparisons and "1:1" labels are not evidence or requirements for the Pascal
 reconstruction. Original-side findings are grounded in the EXE/TPU.
 
@@ -1285,7 +1285,7 @@ reconstruction. Original-side findings are grounded in the EXE/TPU.
   applies `touch -t 199906121256.34` to the scratch SWIAT source after CRLF
   conversion, alongside the existing MONSTRA touch.
 - The layout evidence, the decoded record format, and the per-procedure table
-  are recorded in `analysis-results/SWIAT-LINE-LAYOUT.md`. The original's exact
+  are recorded in `analysis-results/swiat-line-layout.md`. The original's exact
   whitespace and comments remain **OPEN**.
 - **Verification:** local DOSBox-X/genuine TP7 compiled MONSTRA, PRZEDM, SWIAT
   and BOMBKI; direct full-file equality and SHA-256 comparison passed for
@@ -1310,7 +1310,7 @@ reconstruction. Original-side findings are grounded in the EXE/TPU.
   total attributes to the next line index (35 = 7+28, 42 = 14+28, 35 = 7+28),
   and the compound block closes with its own zero-byte `end;` line.
 - Method and the exact 5-line layout are recorded in
-  `analysis-results/LINE-PARTITION-METHOD.md`.
+  `analysis-results/line-partition-method.md`.
 
 ### 2026-09-28 (65): TP7 CI toolchain pinned in repository
 

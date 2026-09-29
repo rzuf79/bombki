@@ -107,7 +107,7 @@ Matches the rewards, pass grant (ITEM_QUEST_PASS++), Dyplom consumption,
 ### Comments
 
 **Non-actionable.** The `PRZED [0x182]` ±1 bumps are carried-item
-*counter* bookkeeping, not a stat effect: `[0x182]` (`PRZED`, `INTEGRATED-FIELD-MAP.md`
+*counter* bookkeeping, not a stat effect: `[0x182]` (`PRZED`, `integrated-field-map.md`
 0x45 / 0x321) is ±1 on **every** sentinel-slot acquisition/consume — type 1
 +1 tracks granting the Przepustka pass, type 3 −1 tracks consuming the Fajka.
 The real capacity ceiling is `MaxLoad [0x1C2]`, which these quests never touch.
