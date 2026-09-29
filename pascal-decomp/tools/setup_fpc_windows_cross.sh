@@ -168,10 +168,10 @@ if ((RUN_BUILD)); then
   BUILD_ARGS=(--fpc "$WRAPPER")
   [[ -z "$BUILD_OUTPUT_DIR" ]] || BUILD_ARGS+=(--output-dir "$BUILD_OUTPUT_DIR")
   FPC_WINDOWS_CROSS_PREFIX="$INSTALL_DIR/bin/x86_64-w64-mingw32-" \
-    python3 "$PROJECT_DIR/analysis-tools/build_fpc.py" "${BUILD_ARGS[@]}"
+    python3 "$PROJECT_DIR/tools/build_fpc.py" "${BUILD_ARGS[@]}"
 else
   printf '\nSetup complete. Verify/build both targets with:\n'
   printf 'FPC_WINDOWS_CROSS_PREFIX=%q python3 %q --fpc %q\n' \
     "$INSTALL_DIR/bin/x86_64-w64-mingw32-" \
-    "$PROJECT_DIR/analysis-tools/build_fpc.py" "$WRAPPER"
+    "$PROJECT_DIR/tools/build_fpc.py" "$WRAPPER"
 fi

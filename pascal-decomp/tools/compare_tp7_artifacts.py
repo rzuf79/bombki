@@ -3,13 +3,13 @@
 
 Compile every top-level Pascal source in SOURCE_DIR and check each TPU/EXE
 against the matching file in REFERENCE_DIR:
-  python3 analysis-tools/compare_tp7_artifacts.py --compile SOURCE_DIR REFERENCE_DIR
+  python3 tools/compare_tp7_artifacts.py --compile SOURCE_DIR REFERENCE_DIR
 
 Compile one Pascal source and compare its generated TPU/EXE:
-  python3 analysis-tools/compare_tp7_artifacts.py --compile SOURCE.PAS REFERENCE.TPU
+  python3 tools/compare_tp7_artifacts.py --compile SOURCE.PAS REFERENCE.TPU
 
 Compare two existing files (candidate first, reference second):
-  python3 analysis-tools/compare_tp7_artifacts.py -p POROWNANIE CANDIDATE.TPU REFERENCE.TPU
+  python3 tools/compare_tp7_artifacts.py -p POROWNANIE CANDIDATE.TPU REFERENCE.TPU
 
 TPUs are compared by compiler-attributed code-byte counts for each source line
 in every procedure by default. EXEs are compared byte-for-byte. Compile mode
