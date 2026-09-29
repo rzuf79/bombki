@@ -1448,3 +1448,32 @@ reconstruction. Original-side findings are grounded in the EXE/TPU.
   the legacy `/opt/tp7` root passed. Pulled the currently published GHCR image,
   found `TPC.EXE` under `/opt/tp7/BIN`, and ran the genuine TP7 container sweep
   with Podman; all six checks passed and all four build artifacts were produced.
+
+### 2026-09-29 (75): local FPC and TP7 build helpers
+
+- Added `analysis-tools/build_fpc.py` to build x86_64 Linux and Windows
+  executables on either host (the non-native target requires cross RTL units
+  and binutils), with optional host-native execution, and
+  `analysis-tools/build_tp7_dosbox.py` to compile through DOSBox-X, preserve
+  TP7 source timestamps, save the artifacts, and launch `BOMBKI.EXE` by default.
+- **Verification:** FPC 3.2.2 built the Linux executable (392032 bytes).
+  DOSBox-X 2026.01.02 with genuine TP7 built the program and all three units;
+  `compare_tpu.py` confirmed MONSTRA, PRZEDM, and SWIAT byte-identical. The
+  Linux-to-Windows build completed using the official FPC 3.2.2 Win64 RTL
+  distribution and MinGW-w64 cross-binutils staged under `/tmp/opencode`.
+  The generated binaries were identified as x86-64 ELF and PE32+ respectively.
+  System-wide package installation was unavailable because `sudo` requires
+  interactive authentication; the full default dual-target script was tested
+  with the staged tools and completed successfully.
+
+### 2026-09-29 (76): automated FPC Win64 cross-toolchain setup
+
+- Added `analysis-tools/setup_fpc_windows_cross.sh` for Debian/Ubuntu x86_64
+  Linux. It installs MinGW cross-binutils/import libraries through apt,
+  downloads the Win64 RTL matching the installed FPC version, creates a
+  target-specific compiler wrapper and linker prefix, and verifies both
+  executables by running `build_fpc.py`. `--no-build` supports setup-only use.
+- **Verification:** Bash syntax passed. Ran the complete setup and dual-target
+  build using the previously staged official FPC 3.2.2 archive and MinGW files;
+  Linux ELF and Windows PE32+ executables were produced. Package installation
+  itself was skipped because this environment has no interactive sudo access.
