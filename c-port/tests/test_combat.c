@@ -232,15 +232,65 @@ static void test_victory_finishes_the_same_atomic_turn(void)
         "WALCZYSZ - <<<<TWOJ WROG MA 1%>>>><<<< A TY MASZ 50% ENERGII>>>>>\n"
         "PRZECIWNIK CIE TYLKO DRASNA I TRACISZ 0% ENERGII\n"
         "MASZ PECHA : LEKKO POPCHNALES GO I STRACIL TYLKO 2% ENERGII\n"
-        "ZABILES GO ! ZYSKUJESZ ZA TO 21 KUNSZTU \n"
+        "ZABILES GO ! ZYSKUJESZ ZA TO 22 KUNSZTU \n"
         "WYCIAGASZ 1 MONET Z CIALA\n"
     ) == 0);
     assert(state.coins == 1);
-    assert(state.experience == 21);
+    assert(state.experience == 22);
     assert(state.world_actor_rooms[WORLD_ACTOR_KORNIK] == BOMBKI_ROOM_NOWHERE);
     assert(state.active_opponent_actor == BOMBKI_NO_ACTOR);
     assert(state.turn == 1);
     assert(game_state_is_valid(&state));
+}
+
+static void test_named_post_fight_handlers_clear_fled_actors(void)
+{
+    static const struct {
+        WorldActorId actor;
+        int room;
+        const char *name;
+    } cleared[] = {
+        {WORLD_ACTOR_TAKSOWKARZ, ROOM_CITY_THRESHOLD, "TAKSOWKARZ"},
+        {WORLD_ACTOR_SPRZEDAWCA_PRECELKOW, ROOM_CITY_THRESHOLD, "SPRZEDAWCA"},
+        {WORLD_ACTOR_PEDAL, ROOM_BAR, "PEDAL"},
+        {WORLD_ACTOR_PARA, ROOM_BAR, "PARA"},
+        {WORLD_ACTOR_MACIEK, ROOM_BAR, "MACIEK"}
+    };
+    size_t index;
+
+    for (index = 0; index < sizeof(cleared) / sizeof(cleared[0]); ++index) {
+        GameState state;
+        Capture capture = {{0}, 0};
+
+        prepare_enemy(&state, cleared[index].actor, cleared[index].room);
+        state.world_actor_rooms[cleared[index].actor] = cleared[index].room;
+        state.maximum_energy = 10000;
+        state.energy = 10000;
+        state.flee_skill = 100;
+        state.mana = 100;
+        assert(game_select_opponent(&state, cleared[index].name));
+        execute(&state, &capture, "ZWIEJ");
+        assert(!game_combat_is_active(&state));
+        assert(state.world_actor_rooms[cleared[index].actor]
+            == BOMBKI_ROOM_NOWHERE);
+        assert(game_state_is_valid(&state));
+    }
+
+    {
+        GameState state;
+        Capture capture = {{0}, 0};
+
+        prepare_enemy(&state, WORLD_ACTOR_DJ, ROOM_STAGE_BACK);
+        state.maximum_energy = 10000;
+        state.energy = 10000;
+        state.flee_skill = 100;
+        state.mana = 100;
+        assert(game_select_opponent(&state, "D.J"));
+        execute(&state, &capture, "ZWIEJ");
+        assert(!game_combat_is_active(&state));
+        assert(state.world_actor_rooms[WORLD_ACTOR_DJ] == ROOM_STAGE_BACK);
+        assert(game_state_is_valid(&state));
+    }
 }
 
 static void test_death_stops_the_current_combat(void)
@@ -709,7 +759,8 @@ static void test_automatic_parry_and_learning(void)
     ) == 0);
     assert(state.energy == 48);
     assert(state.parry_skill == 51);
-    assert(state.experience == 5);
+    assert(state.experience == 0);
+    assert(state.active_opponent_reward > 0);
     assert(state.turn == 1);
     assert(game_state_is_valid(&state));
 }
@@ -1090,6 +1141,7 @@ static void test_victory_kunszt_deductions(void)
     state.active_opponent_maximum_energy = 120;
     state.parry_skill = 100;
     state.kick_skill = 100;
+    game_recover_active_opponent_reward(&state);
 
     assert(game_resolve_active_opponent_victory(&state, output));
     assert(strncmp(capture.text,
@@ -1170,6 +1222,7 @@ int main(void)
     test_fuksroll_rerolls_weak_player_damage();
     test_fleeing_dog_still_pays_out_and_leaves();
     test_victory_finishes_the_same_atomic_turn();
+    test_named_post_fight_handlers_clear_fled_actors();
     test_death_stops_the_current_combat();
     test_simultaneous_victory_resolves_before_death();
     test_milestone_six_fixed_opponents();

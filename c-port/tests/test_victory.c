@@ -116,6 +116,23 @@ static uint32_t seed_for_trainer_unique_after_coins(void)
     return 0;
 }
 
+static uint32_t seed_for_dj_cassette_after_rewards(void)
+{
+    uint32_t seed;
+
+    for (seed = 0; seed < UINT32_C(1000000); ++seed) {
+        uint32_t coin = next_value(seed);
+        uint32_t heart = next_value(coin);
+        uint32_t loot = next_value(heart);
+
+        if (loot % 100 < 3) {
+            return seed;
+        }
+    }
+    assert(!"could not find deterministic D.J. loot seed");
+    return 0;
+}
+
 static void prepare_enemy(
     GameState *state,
     WorldActorId actor,
@@ -454,6 +471,7 @@ static void test_named_loot_follows_ordinary_rewards(void)
     state.active_opponent_strength = 15;
     state.active_opponent_dexterity = 12;
     state.active_opponent_energy = 0;
+    game_recover_active_opponent_reward(&state);
 
     assert(game_resolve_active_opponent_victory(&state, output));
     (void)snprintf(expected, sizeof(expected),
@@ -498,8 +516,62 @@ static void test_high_tier_rewards_require_surviving(void)
         assert(state.coins == 0);
         assert(state.item_quantities[ITEM_BLOODY_HEART] == 0);
         assert(capture.length == 0);
-        assert_victory_state(&state, opponents[index].actor);
+        if (opponents[index].actor == WORLD_ACTOR_LIROY
+            || opponents[index].actor == WORLD_ACTOR_ROZA) {
+            /* FIGHTSCENA and FIGHTBLUSZCZ retain these after a knockout. */
+            assert(state.world_actor_rooms[opponents[index].actor]
+                == opponents[index].room);
+            game_clear_active_opponent(&state);
+            assert(game_state_is_valid(&state));
+        } else {
+            assert_victory_state(&state, opponents[index].actor);
+        }
     }
+}
+
+static void test_dj_loot_runs_after_a_defeat(void)
+{
+    GameState state;
+    Capture capture = {{0}, 0};
+    GameOutput output = {capture_write, &capture};
+
+    prepare_enemy(&state, WORLD_ACTOR_DJ, ROOM_STAGE_BACK, "D.J");
+    state.energy = 0;
+    state.random_state = seed_for_dj_cassette_after_rewards();
+    state.active_opponent_energy = 0;
+
+    assert(game_resolve_active_opponent_victory(&state, output));
+    assert(state.world_actor_rooms[WORLD_ACTOR_DJ] == BOMBKI_ROOM_NOWHERE);
+    assert(state.item_quantities[ITEM_DRY_RATION] == 1);
+    assert(state.item_quantities[ITEM_LIROY_CASSETTE] == 1);
+    assert(strstr(capture.text, "WYCIAGASZ KASETE LIROYA Z CIALA D.J-a\n")
+        != NULL);
+    assert(game_state_is_valid(&state));
+}
+
+static void test_grass_has_four_fights_before_resting(void)
+{
+    GameState state;
+    Capture capture = {{0}, 0};
+    GameOutput output = {capture_write, &capture};
+    int wave;
+
+    prepare_enemy(&state, WORLD_ACTOR_TRAWA, ROOM_FOREST, "TRAWA");
+    for (wave = 0; wave < 4; ++wave) {
+        state.active_opponent_energy = 0;
+        assert(game_resolve_active_opponent_victory(&state, output));
+        assert(state.world_actor_rooms[WORLD_ACTOR_TRAWA] == ROOM_FOREST);
+        if (wave < 3) {
+            assert(state.active_opponent_actor == WORLD_ACTOR_TRAWA);
+            assert(state.grass_fight_waves == wave + 1);
+        }
+    }
+    assert(state.active_opponent_actor == BOMBKI_NO_ACTOR);
+    assert(state.grass_fight_waves == 0);
+    assert(strstr(capture.text,
+        "UFF STRUDZONY POSTANAWIASZ ODPOCZAC TYLU PRZECIWNIKOW DAWNO NIE WIDZIALES\n"
+    ) != NULL);
+    assert(game_state_is_valid(&state));
 }
 
 int main(void)
@@ -517,5 +589,7 @@ int main(void)
     test_school_completion_places_diploma_in_teleporter();
     test_named_loot_follows_ordinary_rewards();
     test_high_tier_rewards_require_surviving();
+    test_dj_loot_runs_after_a_defeat();
+    test_grass_has_four_fights_before_resting();
     return 0;
 }

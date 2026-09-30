@@ -48,9 +48,9 @@ The evidence generator and reports are documented in
 The player can now be created as any of the six recovered races. The parser
 recognizes the in-scope gameplay command vocabulary without a mode switch.
 Milestone 7 checked whether remaining commands have recoverable gameplay.
-Native save format version 16 preserves
+Native save format version 17 preserves
 all current player, world, inventory, equipment, combat, skill, and quest state,
-and versions 1–15 remain readable.
+and versions 1–16 remain readable.
 
 ## Milestone 3 — complete world (complete)
 
@@ -105,7 +105,7 @@ The recovered catalogue contains 23 carried item types. Carrying capacity is
 derived from current dexterity, the backpack adds four slots, and carrying too
 much applies the recovered energy loss after each successful turn-consuming
 action. The portable state uses ordinary nonnegative quantities and native save
-format version 16 serializes all of them plus equipped weapon, shield, and
+format version 17 serializes all of them plus equipped weapon, shield, and
 clothing state.
 
 Taking and dropping the five room objects, ordinary consumables, equipment,
@@ -143,7 +143,7 @@ fixed RNG seed, and entirely turn based.
 The shared enemy-stat and reward catalogue is implemented: every currently
 represented world actor maps to one of the eight recovered random profiles or
 to the fixed dog/cage values. `ZABIJ` rolls and retains a deterministic
-active-opponent snapshot, which is serialized in native save version 16 and
+active-opponent snapshot, which is serialized in native save version 17 and
 cleared on victory, death, escape, or regeneration. The combat-facing victory
 boundary now
 pays the exact profile-specific coin range, applies eligible heart and cage
@@ -175,8 +175,8 @@ uses the recovered chance, level-based damage, mana costs, success text, and
 miss text before escape and victory resolution. The original two-second delay
 is intentionally absent. In the combat loop, `KOP` is also a direct round
 choice which replaces the weapon hit and bypasses the automatic thresholds.
-Native save version 16 preserves level, kick, flee, comparison, parry, cooking,
-return, sleep, and poison state while importing versions 1–15.
+Native save version 17 preserves level, kick, flee, comparison, parry, cooking,
+return, sleep, poison, and deferred combat-reward state while importing versions 1–16.
 
 `CWICZ PAROWANIE` now trains the recovered skill. Automatic parrying runs after
 small-shield mitigation, uses the original 140-way chance, covers all three
@@ -229,8 +229,8 @@ the cave forces its recovered regenerating `POKRZYWA` fight, the 8-bit quest
 counter reaches the recovered turn-in value, and the exact reward conversation
 unlocks Duncan's hidden list. The forged pass and backpack purchases are wired;
 the advertised carrot remains unavailable because the retained dispatcher has
-no purchase branch for it. Native save version 16 preserves this quest and
-unlock state while versions 1–15 still import.
+no purchase branch for it. Native save version 17 preserves this quest and
+unlock state while versions 1–16 still import.
 
 Staruch's resource-driven fetch quest preserves its exact request and turn-in
 text, three-weka dead zone, four-weka/200-coin cost, beer, return-scroll and
@@ -303,18 +303,18 @@ well as the non-actionable original `PRZED` counter bookkeeping.
 - [x] Restore WALKAPIES post-fight behaviour after a flee: reward/heart roll,
       dog removal, and SPANIEL's three speech lines. (Direct source evidence
       shows no equivalent PUDEL speech.)
-- [ ] Restore FIGHTSCENA result handling: clear musicians and invoke cassette
+- [x] Restore FIGHTSCENA result handling: clear musicians and invoke cassette
       handling after the fight; gate Liroy's bonus, quest progress, cassette,
       and exact congratulation line on a clean surviving victory.
-- [ ] Restore non-stage post-fight unique-drop call timing for TAKSOWKARZ,
+- [x] Restore non-stage post-fight unique-drop call timing for TAKSOWKARZ,
       SPRZEDAWCA, PEDAL, MACIEK, and D.J.; retain each drop routine's original
       knockout guard or lack of one.
 - [x] Restore FIGHTBLUSZCZ's Duncan market: pre-quest `SECRET LISTA`, document
       purchase, and backpack access.
-- [ ] Restore FIGHTBLUSZCZ's original plant clear conditions and the repeatable,
+- [x] Restore FIGHTBLUSZCZ's original plant clear conditions and the repeatable,
       never-cleared TRAWA fight with its rest line.
 - [x] Fix POROWNANIE's basic/street advice band so score 22 prints no advice.
-- [ ] Reconcile recovered KOMENDY abbreviations (`W` east, `Z` west, `E` exits
+- [x] Reconcile recovered KOMENDY abbreviations (`W` east, `Z` west, `E` exits
       list, `M` MODE) with the user-approved case-insensitive `n`, `s`, `w`,
       `e`, `u`, and `d` movement aliases; preserve the latter and record/test
       the chosen handling for the conflicting `W` and `E` inputs.
@@ -323,9 +323,9 @@ well as the non-actionable original `PRZED` counter bookkeeping.
       the spiked suit's heavy-blow interaction.
 - [x] Regenerate encounters after using the transport pill.
 - [x] Restore WALKA's FUKSROLL heavy-blow reroll.
-- [ ] Restore WALKA's per-round and parry-learning kill-reward accrual and base
+- [x] Restore WALKA's per-round and parry-learning kill-reward accrual and base
       maximum-energy reward reductions.
-- [ ] Restore MINIARENA entry ceremony (one-shot `KTO` and status prompt), the
+- [x] Restore MINIARENA entry ceremony (one-shot `KTO` and status prompt), the
       `WYJSCIE` leave word, and original fled-monster clearing behaviour.
 
 

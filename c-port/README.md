@@ -29,7 +29,7 @@ The project is an immediately playable vertical slice. It currently provides:
   recovered mismatches between displayed percentages and actual thresholds;
 - recovered enemy-stat ranges and persistent, deterministic active-opponent
   snapshots selected by `ZABIJ`;
-- a version 16 native save file, with version 1 through 15 import support;
+- a version 17 native save file, with version 1 through 16 import support;
 - optional ANSI presentation with a plain-text fallback;
 - timer-free, blocking terminal interaction, with combat and sleep resolved in
   deterministic logical turns;

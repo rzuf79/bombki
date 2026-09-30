@@ -197,7 +197,8 @@ Command parser_parse(const char *input)
         command.verb = COMMAND_SECRET_LIST;
     } else if (strcmp(normalized, "POMOC") == 0 || strcmp(normalized, "HELP") == 0) {
         command.verb = COMMAND_HELP;
-    } else if (strcmp(normalized, "KONIEC") == 0 || strcmp(normalized, "QUIT") == 0) {
+    } else if (strcmp(normalized, "KONIEC") == 0 || strcmp(normalized, "QUIT") == 0
+        || strcmp(normalized, "WYJSCIE") == 0) {
         command.verb = COMMAND_QUIT;
     }
 

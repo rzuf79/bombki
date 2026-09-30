@@ -68,7 +68,7 @@ and a seed flag are not part of the remaining game-reconstruction work. Do not
 invent player-facing text or mechanics for unrecovered commands.
 
 - Complete: the 23-item table, dexterity/backpack carrying limits, native save
-  format version 16 with versions 1–15 import, the five room-object take/drop
+  format version 17 with versions 1–16 import, the five room-object take/drop
   actions, ordinary consumables, equipment, the transport pill, return scroll,
   and quest-pass
   inspection/destruction, all four ordinary stores and their economy, and the
@@ -154,7 +154,8 @@ invent player-facing text or mechanics for unrecovered commands.
   wake rolls and the long-sleep bonuses. Version 14 persists those fields plus
   Duncan's quest and market unlock; version 15 additionally persists the Quest
   Master type and counter. Version 16 drops the obsolete command-state flag;
-  versions 1–15 still import.
+  version 17 additionally preserves deferred combat rewards and grass-fight
+  progress; versions 1–16 still import.
 - The underground skill poster retains its exact text and independent stat
   gates. Its extra advertised commands have no handler, state, or combat branch
   in the retained executable and therefore remain silent no-ops.
@@ -179,6 +180,18 @@ invent player-facing text or mechanics for unrecovered commands.
   no available skills. At startup, an existing native save offers `WLACZ
   POSTAC` before character creation; interactive game prompts show current
   and maximum HP.
+- Milestone 10 restored `FIGHTSCENA`: fleeing or knocked-out Gitarzysta,
+  Perkusista, and Organista are cleared and run their cassette handler; Liroy
+  instead remains unless the player has a clean surviving victory, which alone
+  emits the recovered congratulations, grants 30 coins, handles his cassette,
+  advances the hard quest, and clears him. Plant outcome handling now retains
+  grass permanently and retains the source survival guards for Stokrotka,
+  Roza, Jeżyna, Oset, Agrest, and Malina. It restores TRAWA's four fights and
+  rest line, all recovered post-flee clears and drops, `MINIKUNSZT` accrual,
+  the miniarena arrival `KTO`/status ceremony, and `WYJSCIE` as the original
+  leave-game word. The command compatibility record preserves approved
+  case-insensitive `W` west and `E` east rather than the incompatible original
+  abbreviations.
 
 ## Useful recovered anchors
 

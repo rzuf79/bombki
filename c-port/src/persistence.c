@@ -25,6 +25,7 @@
 #define SAVE_HEADER_V14 "BOMBKI_PORT 14"
 #define SAVE_HEADER_V15 "BOMBKI_PORT 15"
 #define SAVE_HEADER_V16 "BOMBKI_PORT 16"
+#define SAVE_HEADER_V17 "BOMBKI_PORT 17"
 #define SAVE_LINE_CAPACITY 256
 
 static void set_error(char *error, size_t capacity, const char *message)
@@ -40,7 +41,7 @@ static bool write_state(FILE *file, const GameState *state)
 {
     size_t index;
 
-    if (!(fprintf(file, "%s\n", SAVE_HEADER_V16) >= 0
+    if (!(fprintf(file, "%s\n", SAVE_HEADER_V17) >= 0
         && fprintf(file, "room=%d\n", state->room_id) >= 0
         && fprintf(file, "turn=%" PRIu64 "\n", state->turn) >= 0
         && fprintf(file, "random_state=%u\n", state->random_state) >= 0
@@ -92,11 +93,15 @@ static bool write_state(FILE *file, const GameState *state)
             state->active_opponent_strength) >= 0
         && fprintf(file, "active_opponent_dexterity=%d\n",
             state->active_opponent_dexterity) >= 0
+        && fprintf(file, "active_opponent_reward=%d\n",
+            state->active_opponent_reward) >= 0
         && fprintf(file, "active_opponent_fireballs=%d\n",
             state->active_opponent_fireballs) >= 0
         && fprintf(file, "active_opponent_poison_casts=%d\n",
             state->active_opponent_poison_casts) >= 0
         && fprintf(file, "poison_turns=%d\n", state->poison_turns) >= 0
+        && fprintf(file, "grass_fight_waves=%d\n",
+            state->grass_fight_waves) >= 0
         && fprintf(file, "quest_passage_open=%d\n",
             state->quest_passage_open ? 1 : 0) >= 0
         && fprintf(file, "living_door_alive=%d\n",
@@ -232,7 +237,9 @@ bool persistence_load(
         return false;
     }
     trim_line_ending(line);
-    if (strcmp(line, SAVE_HEADER_V16) == 0) {
+    if (strcmp(line, SAVE_HEADER_V17) == 0) {
+        version = 17;
+    } else if (strcmp(line, SAVE_HEADER_V16) == 0) {
         version = 16;
     } else if (strcmp(line, SAVE_HEADER_V15) == 0) {
         version = 15;
@@ -410,6 +417,9 @@ bool persistence_load(
             && parse_integer(line + 26,
                 &candidate.active_opponent_dexterity)) {
             fields |= 1u << 26;
+        } else if (strncmp(line, "active_opponent_reward=", 23) == 0
+            && parse_integer(line + 23, &candidate.active_opponent_reward)) {
+            fields |= UINT64_C(1) << 45;
         } else if (strncmp(line, "active_opponent_fireballs=", 26) == 0
             && parse_integer(line + 26,
                 &candidate.active_opponent_fireballs)) {
@@ -421,6 +431,9 @@ bool persistence_load(
         } else if (strncmp(line, "poison_turns=", 13) == 0
             && parse_integer(line + 13, &candidate.poison_turns)) {
             fields |= UINT64_C(1) << 37;
+        } else if (strncmp(line, "grass_fight_waves=", 18) == 0
+            && parse_integer(line + 18, &candidate.grass_fight_waves)) {
+            fields |= UINT64_C(1) << 46;
         } else if (strncmp(line, "quest_passage_open=", 19) == 0
             && parse_integer(line + 19, &value)
             && (value == 0 || value == 1)) {
@@ -480,6 +493,9 @@ bool persistence_load(
             candidate.living_door_alive
                 ? ROOM_LIVING_DOOR
                 : BOMBKI_ROOM_NOWHERE;
+    }
+    if (version <= 16) {
+        game_recover_active_opponent_reward(&candidate);
     }
 
     if ((version == 1 && fields != (1u << 14) - 1)
@@ -545,6 +561,12 @@ bool persistence_load(
             || object_field_count != BOMBKI_WORLD_OBJECT_SLOTS
             || item_field_count != BOMBKI_ITEM_SLOTS))
         || (version == 16 && (fields != (((UINT64_C(1) << 45) - 1)
+                & ~(UINT64_C(1) << 1))
+            || world_fields != (1u << 3) - 1
+            || actor_field_count != BOMBKI_WORLD_ACTOR_SLOTS
+            || object_field_count != BOMBKI_WORLD_OBJECT_SLOTS
+            || item_field_count != BOMBKI_ITEM_SLOTS))
+        || (version == 17 && (fields != (((UINT64_C(1) << 47) - 1)
                 & ~(UINT64_C(1) << 1))
             || world_fields != (1u << 3) - 1
             || actor_field_count != BOMBKI_WORLD_ACTOR_SLOTS

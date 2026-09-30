@@ -188,7 +188,7 @@ later recovered progression rules require it.
 | Player setup | verified | Original prompts, six races, and recovered initial statistics are implemented. |
 | Parser vocabulary | intentional difference | Supported command words and argument forms are recognized without switching command state. Unsupported mechanics still show explicit port markers where applicable. |
 | Parser normalization | intentional extension | Accepts extra whitespace, mixed case, and `n/s/w/e/u/d`. |
-| Native save format | provisional | Version 16 omits the old command-state flag; versions 1–15 still import and ignore it. |
+| Native save format | provisional | Version 17 preserves deferred combat rewards and grass-fight progress; version 16 omits the old command-state flag; versions 1–16 still import. |
 
 ## Recovered inventory and carrying limits
 
@@ -289,6 +289,17 @@ dry ration, and below three yields both that ration and a cassette with the
 separate recovered 3% message. Loot resolution applies no extra turn because it
 will be part of the atomic combat turn.
 
+## Command abbreviation compatibility
+
+The recovered `KOMENDY` procedure recognizes `PN`, `PD`, `W`, `Z`, `G`, `D`,
+`E`, and `M`, with `W` meaning east and `E` meaning `EXIT`. The portable
+parser deliberately preserves its earlier, user-approved case-insensitive
+movement aliases: `n`, `s`, `w`, `e`, `u`, and `d`. Consequently `W` means
+west and `E` means east in the port; `Z`, `G`, `D`, `PN`, and `PD` retain their
+recovered movement meanings, `EXIT` and `WYJSCIA` list exits, `WYJSCIE`
+retains its original leave-game behavior, and the unimplemented original
+`M`/`MODE` remains silent.
+
 ## Current turn implementation
 
 The native game state contains a 64-bit logical turn counter. Successful
@@ -304,7 +315,7 @@ active-opponent snapshot, level, kick configuration, flee skill, and
 flee-energy threshold, comparison skill, parry skill, cooking skill, return
 skill, logical sleep hours, Duncan's quest byte and black-market unlock, and the
 Quest Master type and kill counter are serialized in native save format version
-15. Versions 1–14 remain readable;
+17. Versions 1–16 remain readable;
 absent newer fields receive their portable defaults. None of the formats
 contains elapsed-time gameplay state.
 
@@ -315,6 +326,10 @@ victory, death, escape, and monster regeneration clear them. The initial
 combat round and consume one logical turn: both
 dexterity-dependent dodge checks run first, the enemy attacks, the player
 attacks, and victory rewards are resolved before the prompt returns. The
+recovered pending `MINIKUNSZT` score starts from the combat comparison, gains
+one for each received attack and five for automatic parry learning, then gets
+its original maximum-energy, parry, and kick reductions only on a surviving
+kill. The
 original `Random(strength)` damage ranges, message tiers, overlapping dodge
 branches, and the small shield's inclusive 0-through-10 defense roll are
 retained. A surviving fight stays in its combat input loop; no wall-clock delay

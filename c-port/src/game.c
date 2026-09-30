@@ -76,6 +76,8 @@ static const int plant_spawn_rooms[] = {
     ROOM_FOREST_WEST
 };
 
+static int recovered_combat_chance(const GameState *state);
+
 _Static_assert(WORLD_ACTOR_COUNT <= BOMBKI_WORLD_ACTOR_SLOTS,
                "GameState needs a slot for every world actor");
 _Static_assert(WORLD_OBJECT_COUNT == BOMBKI_WORLD_OBJECT_SLOTS,
@@ -139,6 +141,7 @@ void game_clear_active_opponent(GameState *state)
     state->active_opponent_maximum_energy = 0;
     state->active_opponent_strength = 0;
     state->active_opponent_dexterity = 0;
+    state->active_opponent_reward = 0;
     state->active_opponent_fireballs = 0;
     state->active_opponent_poison_casts = 0;
 }
@@ -208,6 +211,7 @@ bool game_select_opponent(GameState *state, const char *target)
         );
         state->active_opponent_fireballs = profile->fireball_charges;
         state->active_opponent_poison_casts = profile->poison_charges;
+        state->active_opponent_reward = recovered_combat_chance(state);
         return true;
     }
 
@@ -288,6 +292,10 @@ void game_regenerate_encounters(GameState *state)
     state->world_actor_rooms[WORLD_ACTOR_STARUCH] = ROOM_ELF_HOUSE;
     state->world_actor_rooms[WORLD_ACTOR_QUEST_MASTER] = ROOM_JUNCTION;
     state->world_actor_rooms[WORLD_ACTOR_LIVING_DOOR] = ROOM_LIVING_DOOR;
+    state->world_actor_rooms[WORLD_ACTOR_PEDAL] = ROOM_BAR;
+    state->world_actor_rooms[WORLD_ACTOR_PARA] = ROOM_BAR;
+    state->world_actor_rooms[WORLD_ACTOR_MACIEK] = ROOM_BAR;
+    state->world_actor_rooms[WORLD_ACTOR_DJ] = ROOM_STAGE_BACK;
 
     state->living_door_alive = true;
     state->old_elf_present = true;
@@ -467,6 +475,8 @@ bool game_state_is_valid(const GameState *state)
         && state->cooking_skill >= 0
         && state->return_skill >= 0
         && state->sleep_hours >= 0
+        && state->grass_fight_waves >= 0
+        && state->grass_fight_waves < 4
         && state->duncan_quest >= 0
         && state->duncan_quest <= 255
         && state->quest_type >= 0
@@ -515,6 +525,7 @@ bool game_state_is_valid(const GameState *state)
             || state->active_opponent_maximum_energy != 0
             || state->active_opponent_strength != 0
             || state->active_opponent_dexterity != 0
+            || state->active_opponent_reward != 0
             || state->active_opponent_fireballs != 0
             || state->active_opponent_poison_casts != 0) {
             return false;
@@ -541,6 +552,7 @@ bool game_state_is_valid(const GameState *state)
             || state->active_opponent_strength > profile->strength.maximum
             || state->active_opponent_dexterity < profile->dexterity.minimum
             || state->active_opponent_dexterity > profile->dexterity.maximum
+            || state->active_opponent_reward < 0
             || state->active_opponent_fireballs < 0
             || state->active_opponent_poison_casts < 0) {
             return false;
@@ -935,6 +947,11 @@ static void describe_arena_actors(const GameState *state, GameOutput output)
             emit(output, "\n");
         }
     }
+}
+
+static bool is_miniarena_room(int room_id)
+{
+    return room_id >= ROOM_ARENA_33 && room_id <= ROOM_ARENA_57;
 }
 
 static void describe_skill_poster(const GameState *state, GameOutput output)
@@ -1748,6 +1765,9 @@ static bool loot_source_for_actor(
     case WORLD_ACTOR_SPRZEDAWCA_PRECELKOW:
         *source = GAME_LOOT_SPRZEDAWCA;
         return true;
+    case WORLD_ACTOR_PEDAL:
+        *source = GAME_LOOT_PEDAL;
+        return true;
     case WORLD_ACTOR_GORYL:
         *source = GAME_LOOT_GORYL;
         return true;
@@ -1778,6 +1798,10 @@ static bool loot_source_for_actor(
     case WORLD_ACTOR_ORGANISTA:
         *source = GAME_LOOT_ORGANISTA;
         return true;
+    case WORLD_ACTOR_DJ:
+        *source = GAME_LOOT_DJ;
+        return true;
+
     default:
         return false;
     }
@@ -1915,11 +1939,61 @@ static bool ordinary_rewards_require_surviving(EnemyProfileId profile)
         || profile == ENEMY_PROFILE_NEASY;
 }
 
-static int recovered_combat_chance(const GameState *state);
+static bool is_plant(WorldActorId actor)
+{
+    return actor >= WORLD_ACTOR_SZCZAW && actor <= WORLD_ACTOR_TRAWA;
+}
+
+static void resolve_unconditional_post_fight(
+    GameState *state,
+    WorldActorId actor,
+    GameOutput output
+)
+{
+    GameLootSource source;
+
+    if (actor != WORLD_ACTOR_BAKTERIA
+        && (actor < WORLD_ACTOR_KARALUCH || actor > WORLD_ACTOR_TRENER)
+        && (actor < WORLD_ACTOR_TAKSOWKARZ || actor > WORLD_ACTOR_ZEBRAK)
+        && actor != WORLD_ACTOR_PEDAL
+        && actor != WORLD_ACTOR_PARA
+        && actor != WORLD_ACTOR_MACIEK) {
+        return;
+    }
+
+    state->world_actor_rooms[actor] = BOMBKI_ROOM_NOWHERE;
+    if (loot_source_for_actor(actor, &source)) {
+        (void)game_resolve_enemy_loot(state, source, output);
+    }
+}
+
+static bool plant_clears_after_fight(WorldActorId actor, bool survived)
+{
+    switch (actor) {
+    case WORLD_ACTOR_TRAWA:
+        return false;
+    case WORLD_ACTOR_STOKROTKA:
+    case WORLD_ACTOR_ROZA:
+    case WORLD_ACTOR_JEZYNA:
+    case WORLD_ACTOR_OSET:
+    case WORLD_ACTOR_AGREST:
+    case WORLD_ACTOR_MALINA:
+        return survived;
+    default:
+        return true;
+    }
+}
+
+static bool is_stage_musician(WorldActorId actor)
+{
+    return actor == WORLD_ACTOR_GITARZYSTA
+        || actor == WORLD_ACTOR_PERKUSISTA
+        || actor == WORLD_ACTOR_ORGANISTA;
+}
 
 static void resolve_victory_kunszt(GameState *state, GameOutput output)
 {
-    int reward = recovered_combat_chance(state);
+    int reward = state->active_opponent_reward;
 
     if (state->active_opponent_maximum_energy > 75) {
         reward -= 2;
@@ -1999,6 +2073,7 @@ bool game_resolve_active_opponent_victory(
     WorldActorId actor;
     const EnemyProfile *profile;
     GameLootSource loot_source;
+    bool continue_grass_fight = false;
 
     if (state == NULL
         || state->active_opponent_actor < 0
@@ -2025,18 +2100,49 @@ bool game_resolve_active_opponent_victory(
     if (state->energy > 0) {
         try_cook_defeated_enemy(state, output);
     }
-    state->world_actor_rooms[actor] = BOMBKI_ROOM_NOWHERE;
-    if (loot_source_for_actor(actor, &loot_source)) {
-        (void)game_resolve_enemy_loot(state, loot_source, output);
+
+    if (actor == WORLD_ACTOR_LIROY) {
+        if (state->energy > 0) {
+            emit(output,
+                "GRATULACJE !!! ZABILES LIROYA DOSTAJESZ ZA DARMO 30 KASY\n"
+            );
+            state->coins = add_wrapped_long(state->coins, 30);
+            if (state->quest_type > 1) {
+                add_clamped(&state->quest_progress, -150);
+            }
+            state->world_actor_rooms[actor] = BOMBKI_ROOM_NOWHERE;
+            (void)game_resolve_enemy_loot(state, GAME_LOOT_LIROY, output);
+        }
+    } else if (is_stage_musician(actor)) {
+        state->world_actor_rooms[actor] = BOMBKI_ROOM_NOWHERE;
+        (void)game_resolve_enemy_loot(state, (GameLootSource)(
+            actor == WORLD_ACTOR_GITARZYSTA ? GAME_LOOT_GITARZYSTA
+            : actor == WORLD_ACTOR_PERKUSISTA ? GAME_LOOT_PERKUSISTA
+            : GAME_LOOT_ORGANISTA
+        ), output);
+    } else if (actor == WORLD_ACTOR_TRAWA) {
+        if (state->energy > 0) {
+            ++state->grass_fight_waves;
+            if (state->grass_fight_waves < 4) {
+                continue_grass_fight = true;
+            } else {
+                emit(output,
+                    "UFF STRUDZONY POSTANAWIASZ ODPOCZAC TYLU PRZECIWNIKOW DAWNO NIE WIDZIALES\n"
+                );
+                state->grass_fight_waves = 0;
+            }
+        }
+    } else if (!is_plant(actor) || plant_clears_after_fight(actor, state->energy > 0)) {
+        state->world_actor_rooms[actor] = BOMBKI_ROOM_NOWHERE;
+        if (loot_source_for_actor(actor, &loot_source)) {
+            (void)game_resolve_enemy_loot(state, loot_source, output);
+        }
     }
     if (actor == WORLD_ACTOR_SPANIEL) {
         emit_spaniel_speech(output);
     }
     if (state->quest_type > 0) {
         add_clamped(&state->quest_progress, -1);
-    }
-    if (actor == WORLD_ACTOR_LIROY && state->quest_type > 1) {
-        add_clamped(&state->quest_progress, -150);
     }
     if (actor == WORLD_ACTOR_POKRZYWA && state->duncan_quest != 0) {
         state->duncan_quest = (state->duncan_quest - 50) & 0xff;
@@ -2061,7 +2167,18 @@ bool game_resolve_active_opponent_victory(
         resolve_staruch_consequence(state, output);
     }
     game_clear_active_opponent(state);
+    if (continue_grass_fight) {
+        (void)game_select_opponent(state, "TRAWA");
+    }
     return true;
+}
+
+void game_recover_active_opponent_reward(GameState *state)
+{
+    if (state == NULL || state->active_opponent_actor == BOMBKI_NO_ACTOR) {
+        return;
+    }
+    state->active_opponent_reward = recovered_combat_chance(state);
 }
 
 static size_t recovered_dodge_roll(
@@ -2464,9 +2581,7 @@ static int apply_automatic_parry(
             "*************** UCZYSZ SIE ZDOLNOSCI PAROWANIE !!!!! ***************\n"
         );
         ++state->parry_skill;
-        state->experience = state->experience > INT_MAX - 5
-            ? INT_MAX
-            : state->experience + 5;
+        add_clamped(&state->active_opponent_reward, 5);
     }
     return damage;
 }
@@ -2567,6 +2682,10 @@ static bool resolve_basic_combat_round(
     }
     opponent = (WorldActorId)state->active_opponent_actor;
 
+    if (opponent == WORLD_ACTOR_TRAWA && state->grass_fight_waves == 0) {
+        emit(output, "HA HA HA WOLAJA SETKI LISCI TRAWY - TO BEDZIE WALKA\n");
+    }
+
     emit_formatted(output,
         "WALCZYSZ - <<<<TWOJ WROG MA %d%%>>>><<<< A TY MASZ %d%% ENERGII>>>>>\n",
         state->active_opponent_energy,
@@ -2609,6 +2728,7 @@ static bool resolve_basic_combat_round(
         damage = apply_automatic_parry(state, damage, output);
         state->energy = damage >= state->energy ? 0 : state->energy - damage;
         apply_enemy_magic(state, output);
+        add_clamped(&state->active_opponent_reward, 1);
     }
 
     if (action == COMBAT_ACTION_BASIC && !opponent_dodged) {
@@ -2637,6 +2757,21 @@ static bool resolve_basic_combat_round(
     }
     if (try_flee(state, action == COMBAT_ACTION_FLEE, output)) {
         resolve_fled_dog_post_fight(state, opponent, output);
+        if (is_stage_musician(opponent)) {
+            state->world_actor_rooms[opponent] = BOMBKI_ROOM_NOWHERE;
+            (void)game_resolve_enemy_loot(state, (GameLootSource)(
+                opponent == WORLD_ACTOR_GITARZYSTA ? GAME_LOOT_GITARZYSTA
+                : opponent == WORLD_ACTOR_PERKUSISTA ? GAME_LOOT_PERKUSISTA
+                : GAME_LOOT_ORGANISTA
+            ), output);
+        } else if (is_plant(opponent)
+            && plant_clears_after_fight(opponent, state->energy > 0)) {
+            state->world_actor_rooms[opponent] = BOMBKI_ROOM_NOWHERE;
+        }
+        resolve_unconditional_post_fight(state, opponent, output);
+        if (opponent == WORLD_ACTOR_TRAWA) {
+            state->grass_fight_waves = 0;
+        }
         if (opponent == WORLD_ACTOR_STARUCH) {
             resolve_staruch_consequence(state, output);
         }
@@ -2646,6 +2781,7 @@ static bool resolve_basic_combat_round(
     if (state->energy == 0) {
         emit(output, "!!!!!!!!!!!ZOSTALES ZABITY!!!!!!!!!!!!\n");
         resolve_player_death(state, output);
+        state->grass_fight_waves = 0;
         if (opponent == WORLD_ACTOR_STARUCH) {
             resolve_staruch_consequence(state, output);
         }
@@ -3762,6 +3898,7 @@ static bool move_player(GameState *state, Direction direction, GameOutput output
     }
 
     game_clear_active_opponent(state);
+    state->grass_fight_waves = 0;
     state->room_id = destination_id;
     if (state->room_id == ROOM_TELEPORT
         && state->world_actor_rooms[WORLD_ACTOR_CAGE_WEAK]
@@ -3778,6 +3915,10 @@ static bool move_player(GameState *state, Direction direction, GameOutput output
             = ROOM_TELEPORT;
     }
     game_describe_current_room(state, output);
+    if (is_miniarena_room(state->room_id)) {
+        describe_arena_actors(state, output);
+        emit_formatted(output, "%d.%d>", state->energy, state->experience);
+    }
     destination = world_find_room(state->room_id);
     if (destination != NULL && destination->redirects_on_arrival) {
         state->room_id = destination->arrival_destination;

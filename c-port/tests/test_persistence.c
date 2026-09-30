@@ -47,9 +47,13 @@ static void write_previous_save_from_current(const char *path, int version)
     assert(source != NULL);
     assert(destination != NULL);
     assert(fgets(line, sizeof(line), source) != NULL);
-    assert(strcmp(line, "BOMBKI_PORT 16\n") == 0);
+    assert(strcmp(line, "BOMBKI_PORT 17\n") == 0);
     assert(fprintf(destination, "BOMBKI_PORT %d\n", version) >= 0);
     while (fgets(line, sizeof(line), source) != NULL) {
+        if (version <= 16 && (strncmp(line, "active_opponent_reward=", 23) == 0
+            || strncmp(line, "grass_fight_waves=", 18) == 0)) {
+            continue;
+        }
         if (version == 14 && (strncmp(line, "quest_type=", 11) == 0
             || strncmp(line, "quest_progress=", 15) == 0)) {
             continue;
@@ -104,6 +108,8 @@ int main(void)
     state.active_opponent_fireballs = 7;
     state.active_opponent_poison_casts = 4;
     state.poison_turns = 6;
+    state.active_opponent_reward = 37;
+    state.grass_fight_waves = 2;
 
     assert(persistence_save(SAVE_PATH, &state, error, sizeof(error)));
     memset(&loaded, 0, sizeof(loaded));
@@ -149,9 +155,11 @@ int main(void)
     assert(loaded.active_opponent_maximum_energy == 1);
     assert(loaded.active_opponent_strength == 2);
     assert(loaded.active_opponent_dexterity == 1);
+    assert(loaded.active_opponent_reward == 37);
     assert(loaded.active_opponent_fireballs == 7);
     assert(loaded.active_opponent_poison_casts == 4);
     assert(loaded.poison_turns == 6);
+    assert(loaded.grass_fight_waves == 2);
 
     write_previous_save_from_current(VERSION_15_PATH, 15);
     memset(&loaded, 0, sizeof(loaded));

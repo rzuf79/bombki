@@ -95,6 +95,11 @@ int main(void)
 
     command = parser_parse("EXIT");
     assert(command.verb == COMMAND_EXITS);
+    assert(parser_parse("WYJSCIE").verb == COMMAND_QUIT);
+    /* The approved case-insensitive W/E movement aliases win over Pascal's
+       incompatible W=WSCHOD and E=EXIT abbreviations. */
+    assert(parser_parse("W").direction == DIRECTION_WEST);
+    assert(parser_parse("E").direction == DIRECTION_EAST);
 
     command = parser_parse("wlacz postac");
     assert(command.verb == COMMAND_LOAD);

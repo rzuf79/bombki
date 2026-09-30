@@ -408,6 +408,21 @@ int main(void)
     (void)game_execute(&state, &command, output);
     assert(capture.length == 0);
 
+    clear_world_contents(&state);
+    state.room_id = ROOM_ARENA_ENTRANCE;
+    state.world_actor_rooms[WORLD_ACTOR_KORNIK] = ROOM_ARENA_33;
+    clear_capture(&capture);
+    command = parser_parse("POLNOC");
+    (void)game_execute(&state, &command, output);
+    assert(state.room_id == ROOM_ARENA_33);
+    assert(strstr(capture.text,
+        "JESTES NA ARENIE I CZUJESZ POTRZEBE ZABIJANIA"
+    ) != NULL);
+    assert(strstr(capture.text,
+        "KORNIK SZUKA JAKIEGOS DRZEWA ABY COS PRZEKASIC\n"
+    ) != NULL);
+    assert(capture.length > 0 && capture.text[capture.length - 1] == '>');
+
     state.room_id = ROOM_BRUSZCZ_SOUTH;
     state.random_state = 1u;
     state.coins = 0;
