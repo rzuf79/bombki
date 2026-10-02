@@ -41,8 +41,8 @@
       "name": "System",
       "candidate_name": "System",
       "reference_start": "0x1C710",
-      "reference_size": "0x00D67",
-      "evidence": "Original System far-call paragraph 0x1C71; code extent from retained TP7 MAP."
+      "reference_size": "0x00D7B",
+      "evidence": "Original System far-call paragraph 0x1C71; extent 0xD7B matches the candidate TP7 MAP and the 22 trailing bytes (F8 C3 BSS-clear epilogue plus two zero pad bytes) are byte-identical in both images at the same segment-relative offset, ending at img 0x1D48B with three zero pad bytes before DGROUP at 0x1D490."
     },
     {
       "name": "DGROUP",

@@ -3284,3 +3284,19 @@ reconstruction. Original-side findings are grounded in the EXE/TPU.
 - Added regression tests for the relocation-only and non-relocation verdicts;
   both confirm the strict whole-EXE comparison still fails. All 14 comparator
   tests pass. Strict EXE parity remains **OPEN**. No behavior tests were run.
+
+### 2026-10-02 (108): System delta was a short reference extent, now fixed
+
+- Root cause: the reference layout estimated the System extent as 0xD67,
+  cutting off the segment's 22 trailing bytes (`F8 C3` plus the 18-byte
+  BSS-clear epilogue `MOV DI,0052 ... REP STOSW RET` and two zero pad bytes).
+  Those bytes are present and byte-identical in both images at the same
+  segment-relative offset (+0xD67, ref img 0x1D477, candidate img 0x1D619);
+  no code difference existed. The reference DGROUP starts at img 0x1D490,
+  leaving exactly three zero pad bytes after the epilogue.
+- Fix: corrected the System `reference_size` to 0xD7B in
+  `exe_reports/reference-linked-layout.json`, matching the genuine TP7 MAP
+  length. Local `--region-report` rerun confirms System is now 7/7
+  relocation-word diffs (`differ only in relocation data`); the summary is 1
+  exact, 5 relocation-only, 1 differ (BOMBKI). Only the BOMBKI region still
+  needs source work. No behavior tests were run.
