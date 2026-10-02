@@ -23,7 +23,8 @@ from compare_tp7_artifacts import find_tpc
 
 PROJECT = Path(__file__).resolve().parents[1]
 SOURCES = PROJECT / "reconstructed"
-ARTIFACTS = ("MONSTRA.TPU", "PRZEDM.TPU", "SWIAT.TPU", "BOMBKI.EXE")
+TEMP_ROOT = PROJECT / "build" / "tmp"
+ARTIFACTS = ("MONSTRA.TPU", "PRZEDM.TPU", "SWIAT.TPU", "BOMBKI.EXE", "BOMBKI.MAP")
 SOURCE_TIMES = {
     "MONSTRA.PAS": (1999, 5, 27, 18, 44, 22),
     "SWIAT.PAS": (1999, 6, 12, 12, 56, 34),
@@ -42,10 +43,10 @@ def build_config(tp7_root: Path, tpc: Path, build_dir: Path) -> str:
     compiler_relative = tpc.relative_to(tp7_root).as_posix().replace("/", "\\")
     compiler_dos = f"c:\\{compiler_relative}"
     commands = [
-        f'{compiler_dos} monstra.pas > d:\\tp7-build.log',
-        f'{compiler_dos} przedm.pas >> d:\\tp7-build.log',
-        f'{compiler_dos} swiat.pas >> d:\\tp7-build.log',
-        f'{compiler_dos} bombki.pas >> d:\\tp7-build.log',
+        f'{compiler_dos} /GD monstra.pas > d:\\tp7-build.log',
+        f'{compiler_dos} /GD przedm.pas >> d:\\tp7-build.log',
+        f'{compiler_dos} /GD swiat.pas >> d:\\tp7-build.log',
+        f'{compiler_dos} /GD bombki.pas >> d:\\tp7-build.log',
     ]
     lines = [
         "[dosbox]", "machine=svga_bridge", "memsize=32", "",
@@ -90,10 +91,11 @@ def main() -> int:
         tp7_root, tpc = find_tpc(args.tp7_root)
         output_dir = args.output_dir.expanduser().resolve()
         output_dir.mkdir(parents=True, exist_ok=True)
+        TEMP_ROOT.mkdir(parents=True, exist_ok=True)
         print(f"TPC: {tpc}")
         print(f"TP7 root: {tp7_root}")
 
-        with tempfile.TemporaryDirectory(prefix="bombki-tp7-") as temporary:
+        with tempfile.TemporaryDirectory(prefix="bombki-tp7-", dir=TEMP_ROOT) as temporary:
             build_dir = Path(temporary).resolve()
             for source_name in ("MONSTRA.PAS", "PRZEDM.PAS", "SWIAT.PAS", "BOMBKI.PAS"):
                 source = SOURCES / source_name

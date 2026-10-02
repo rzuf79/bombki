@@ -20,15 +20,16 @@ apologizing.
 
 ## Task-start sequence
 
-1. Read `CONTRIBUTING.md` in full to learn the project conventions and scope.
-2. Establish the working baseline by checking the branch and worktree status,
+1. Read `README.md` for the project overview and documented build/test commands.
+2. Read `CONTRIBUTING.md` in full to learn the project conventions and scope.
+3. Establish the working baseline by checking the branch and worktree status,
    then identify the files and behavior relevant to the task.
-3. Read `TODO.md` for the active work queue and the latest relevant findings in
+4. Read `TODO.md` for the active work queue and the latest relevant findings in
    `analysis-results/reconstruction-log.md`.
-4. Consult the relevant sections of `analysis-results/integrated-field-map.md`
+5. Consult the relevant sections of `analysis-results/integrated-field-map.md`
    and inspect specific EXE/TPU evidence under `analysis-results/` before
    making claims.
-5. Refresh your view of any in-scope document changed during the task before
+6. Refresh your view of any in-scope document changed during the task before
    relying on its updated contents.
 
 ## Scope boundaries
@@ -71,6 +72,9 @@ independently.
 Research layout: tooling under `tools\` (binary dissection) and
 `conformance\` (reconstruction verification); machine evidence (disasm
 listings, TPU/EXE reports, raw dumps) under `analysis-results\`.
+
+Temporary build and analysis files belong under the project-local
+`build/tmp/` directory. Do not use a shared/global `/tmp` location.
 
 ## Installing software
 

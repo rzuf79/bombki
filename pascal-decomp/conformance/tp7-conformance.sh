@@ -19,8 +19,10 @@
 set -u
 
 WORK=/workspace
+PROJECT="$WORK/pascal-decomp"
 REC="$WORK/pascal-decomp/reconstructed"
-BUILD="$(mktemp -d)"
+mkdir -p "$PROJECT/build/tmp"
+BUILD="$(mktemp -d "$PROJECT/build/tmp/tp7-conformance.XXXXXX")"
 trap 'rm -rf "$BUILD"' EXIT
 
 for c in dosbox-x xvfb-run find sed cp grep touch; do
@@ -90,10 +92,10 @@ ver=7.0
 mount c $TP7ROOT
 mount d $BUILD
 d:
-c:\\$TPCDIR\\tpc.exe monstra.pas > d:\\tp7-build.log
-c:\\$TPCDIR\\tpc.exe przedm.pas >> d:\\tp7-build.log
-c:\\$TPCDIR\\tpc.exe swiat.pas >> d:\\tp7-build.log
-c:\\$TPCDIR\\tpc.exe bombki.pas >> d:\\tp7-build.log
+c:\\$TPCDIR\\tpc.exe /GD monstra.pas > d:\\tp7-build.log
+c:\\$TPCDIR\\tpc.exe /GD przedm.pas >> d:\\tp7-build.log
+c:\\$TPCDIR\\tpc.exe /GD swiat.pas >> d:\\tp7-build.log
+c:\\$TPCDIR\\tpc.exe /GD bombki.pas >> d:\\tp7-build.log
 exit
 EOF
 
@@ -126,7 +128,7 @@ else
   passed=$((passed + 1))
 fi
 
-for name in MONSTRA.TPU PRZEDM.TPU SWIAT.TPU BOMBKI.EXE; do
+for name in MONSTRA.TPU PRZEDM.TPU SWIAT.TPU BOMBKI.EXE BOMBKI.MAP; do
   if find "$BUILD" -maxdepth 1 -iname "$name" -size +0c | grep -q .; then
     echo "PASS  $name produced"
     passed=$((passed + 1))
@@ -140,7 +142,7 @@ done
 # sweep verdict is about the TPC compile, not artifact plumbing.
 if [ -n "${CONF_ARTIFACTS:-}" ]; then
   mkdir -p "$CONF_ARTIFACTS"
-  for name in MONSTRA.TPU PRZEDM.TPU SWIAT.TPU BOMBKI.EXE; do
+  for name in MONSTRA.TPU PRZEDM.TPU SWIAT.TPU BOMBKI.EXE BOMBKI.MAP; do
     found="$(find "$BUILD" -maxdepth 1 -iname "$name" -size +0c | head -n1)"
     if [ -n "$found" ]; then
       cp "$found" "$CONF_ARTIFACTS"/ && echo "artifact: $(basename "$found") -> $CONF_ARTIFACTS"

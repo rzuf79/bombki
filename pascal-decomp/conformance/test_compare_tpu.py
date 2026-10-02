@@ -8,6 +8,8 @@ from pathlib import Path
 from compare_tpu import Tpu, code_block_deltas, relocation_block_deltas, sections
 
 ROOT = Path(__file__).resolve().parents[2]
+TEMP_ROOT = ROOT / 'build' / 'tmp'
+TEMP_ROOT.mkdir(parents=True, exist_ok=True)
 
 
 class TpuLayoutTests(unittest.TestCase):
@@ -56,7 +58,7 @@ class TpuLayoutTests(unittest.TestCase):
         unit = Tpu(str(original))
         data = bytearray(unit.data)
         data[unit.ofs_reloc + 2] ^= 8  # change the first runtime entry reference
-        with tempfile.TemporaryDirectory() as directory:
+        with tempfile.TemporaryDirectory(dir=TEMP_ROOT) as directory:
             rebuilt = Path(directory) / 'SWIAT.TPU'
             rebuilt.write_bytes(data)
             self.assertEqual(code_block_deltas(original, rebuilt)[0], [])
@@ -69,7 +71,7 @@ class TpuLayoutTests(unittest.TestCase):
         last = unit.ofs_code + unit.h.code_size - 1
         self.assertEqual(data[last], 0xCB)  # final RETF, omitted by old parser
         data[last] ^= 1
-        with tempfile.TemporaryDirectory() as directory:
+        with tempfile.TemporaryDirectory(dir=TEMP_ROOT) as directory:
             rebuilt = Path(directory) / 'SWIAT.TPU'
             rebuilt.write_bytes(data)
             deltas, _, _, _ = code_block_deltas(original, rebuilt)

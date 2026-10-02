@@ -4,6 +4,8 @@
 
 set -euo pipefail
 
+PROJECT="$(cd "$(dirname "$0")/.." && pwd)"
+TEMP_ROOT="$PROJECT/build/tmp"
 FPC_NAME="${FPC:-fpc}"
 INSTALL_DIR=""
 INSTALL_DIR_SET=0
@@ -162,7 +164,8 @@ LD_PATH="$(command -v x86_64-w64-mingw32-ld || command -v x86_64-w64-mingw32-ld.
 [[ -n "$AS_PATH" ]] || fail 'x86_64-w64-mingw32-as not found; install binutils-mingw-w64-x86-64'
 [[ -n "$LD_PATH" ]] || fail 'x86_64-w64-mingw32-ld(.bfd) not found; install binutils-mingw-w64-x86-64'
 
-TEMP_DIR="$(mktemp -d "${TMPDIR:-/tmp}/fpc-cross-smoke.XXXXXX")"
+mkdir -p "$TEMP_ROOT"
+TEMP_DIR="$(mktemp -d "$TEMP_ROOT/fpc-cross-smoke.XXXXXX")"
 cleanup() {
   [[ -z "$TEMP_DIR" ]] || rm -rf "$TEMP_DIR"
   [[ -z "$DOWNLOAD_ARCHIVE" ]] || rm -f "$DOWNLOAD_ARCHIVE"
@@ -172,7 +175,7 @@ trap cleanup EXIT
 if ! rtl_installed; then
   if [[ -z "$ARCHIVE" ]]; then
     command -v curl >/dev/null 2>&1 || fail 'curl is required to download the FPC Win64 RTL archive'
-    ARCHIVE="$(mktemp "${TMPDIR:-/tmp}/fpc-win64-${FPC_VERSION}.XXXXXX.tar")"
+    ARCHIVE="$(mktemp "$TEMP_ROOT/fpc-win64-${FPC_VERSION}.XXXXXX.tar")"
     DOWNLOAD_ARCHIVE="$ARCHIVE"
     URL="https://downloads.freepascal.org/fpc/dist/${FPC_VERSION}/x86_64-win64/fpc-${FPC_VERSION}.x86_64-win64.tar"
     printf 'Downloading FPC %s Win64 RTL from %s\n' "$FPC_VERSION" "$URL"

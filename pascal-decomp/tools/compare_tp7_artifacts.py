@@ -30,6 +30,8 @@ from pathlib import Path
 from tpuq import Tpu
 
 VERSION = "1.2"
+PROJECT = Path(__file__).resolve().parents[1]
+TEMP_ROOT = PROJECT / "build" / "tmp"
 BUILDABLE_EXTENSIONS = {".pas"}
 
 
@@ -339,7 +341,8 @@ def find_tpc(explicit_root: Path | None) -> tuple[Path, Path]:
         candidates.append(explicit_root)
     if os.environ.get("TP7_ROOT"):
         candidates.append(Path(os.environ["TP7_ROOT"]))
-    candidates.extend((Path("/tmp/opencode/tp7"), Path("/opt/tp7"), Path("/tools/tp7")))
+    candidates.extend((PROJECT / "build" / "tmp" / "tp7",
+                       Path("/opt/tp7"), Path("/tools/tp7")))
     seen = set()
     for candidate in candidates:
         candidate = candidate.expanduser().resolve()
@@ -387,7 +390,7 @@ def compile_sources(source_dir: Path, build_dir: Path, tp7_root: Path,
     for index, source in enumerate(sources):
         redirect = ">" if index == 0 else ">>"
         compile_commands.append(
-            f'{tpc_dos} "{source["path"].name}" {redirect} d:\\tp7-build.log'
+            f'{tpc_dos} /GD "{source["path"].name}" {redirect} d:\\tp7-build.log'
         )
     config = [
         "[dosbox]", "machine=svga_bridge", "memsize=32", "",
@@ -565,8 +568,10 @@ EXEs are compared byte-for-byte.
             if not dosbox:
                 raise FileNotFoundError("dosbox-x not found in PATH; pass --dosbox-x")
             tp7_root, tpc = find_tpc(args.tp7_root)
+            TEMP_ROOT.mkdir(parents=True, exist_ok=True)
             if args.keep_build:
-                build_dir = Path(tempfile.mkdtemp(prefix="tp7-line-bytes-"))
+                build_dir = Path(tempfile.mkdtemp(prefix="tp7-line-bytes-",
+                                                  dir=TEMP_ROOT))
                 if single_file_mode:
                     result = compare_single_source(
                         args.candidate, args.reference, build_dir,
@@ -583,7 +588,8 @@ EXEs are compared byte-for-byte.
                     )
                 print(f"Build artifacts kept at: {build_dir}")
                 return result
-            with tempfile.TemporaryDirectory(prefix="tp7-line-bytes-") as temp_dir:
+            with tempfile.TemporaryDirectory(prefix="tp7-line-bytes-",
+                                             dir=TEMP_ROOT) as temp_dir:
                 if single_file_mode:
                     return compare_single_source(
                         args.candidate, args.reference, Path(temp_dir),
