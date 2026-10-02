@@ -47,7 +47,12 @@ authoritative.
     instructions. Rooms 77-79 match their 471-/315-/315-byte bodies and all
     187/126/126 normalized instructions. Room 80 matches its 779-byte body
     and all 306 normalized instructions; rooms 81 and 82 match their 315-byte
-    bodies and all 126 normalized instructions each.
+    bodies and all 126 normalized instructions each. Room 84 matches its 473-
+    byte body and all 188 normalized instructions; room 87 matches its 445-
+    byte body and all 178 normalized instructions. The EXE comparator now
+    reports raw differences per linked segment and separates relocation-word
+    bytes, relocation-site placement, other bytes, and stored-length deltas;
+    whole-file byte identity remains the acceptance test.
     EXE parity remains open until strict TP7 byte identity with the retained
     original.
 

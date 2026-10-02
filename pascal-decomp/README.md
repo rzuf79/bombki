@@ -70,7 +70,10 @@ python3 tools/compare_tp7_artifacts.py \
 
 `compare_tpu.py` requires all three TPUs to be byte-identical. The EXE
 comparison is also byte-for-byte; it reports the differing byte count and
-returns nonzero when the rebuilt executable does not match.
+returns nonzero when the rebuilt executable does not match. For a linked-region
+diagnostic alongside the strict result, add `--region-report`; this compares
+raw bytes at each region's own image offset and does not normalize relocations
+or relax whole-EXE identity.
 
 Run the TP7 executable in DOSEMU2's terminal frontend without opening a window:
 
