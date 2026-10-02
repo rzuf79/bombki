@@ -3239,3 +3239,48 @@ reconstruction. Original-side findings are grounded in the EXE/TPU.
 - Eleven comparator tests pass, including checks for relocation-value,
   relocation-site-layout, and non-relocation classifications. Strict EXE
   parity remains **OPEN**. No behavior tests were run.
+
+### 2026-10-02 (104): add verified TP7.01 runtime extraction
+
+- **RESOLVED:** the supplied `tools/tp701.all/` installation data is a genuine
+  TP7.01 distribution. `Disk10/TPC.ZIP` contains `TPC.EXE` (75,432 bytes,
+  SHA-256 `72211facc2159c758fd6db2a6076517568d82654f1a6b92539745af50274e3f0`)
+  and `Disk8/RTPL.ZIP` contains `TURBO.TPL` (48,464 bytes, SHA-256
+  `025cf348b34b737f7db84e98b77041d25c7d62e6210e2c410e660f5149c05896`).
+  Both source ZIPs pass `unzip -t`; their payload timestamps are from March
+  1993, matching the TP7.01 release data.
+- Added `tools/extract_tp701.sh`, which validates those payload hashes and
+  extracts the required files to `BIN/TPC.EXE` and `BIN/TURBO.TPL` under the
+  default `build/tp701/` root, or a caller-selected output root. The archive
+  itself remains user-provided working-tree data and is not staged by this
+  change.
+- **Verification:** the extractor passed shell syntax, payload verification,
+  and output-layout checks. A genuine DOSBox-X build using only the extracted
+  files compiled all four Pascal targets; `compare_tpu.py` reported MONSTRA,
+  PRZEDM, and SWIAT byte-identical. The rebuilt EXE contains the original
+  TP7.01 `LongShr`/`LongShl` sequences (`66 C1 ...`), with no `SHRD`/`SHLD`;
+  its remaining size/layout gap is unrelated to runtime-variant selection.
+
+### 2026-10-02 (105): report non-relocation TPU code differences
+
+- Updated `conformance/compare_tpu.py` so each changed code block now reports
+  both its raw byte-difference count and its `real` count after masking the
+  relocation patch cells. Two-byte offset/segment/relative fixups and four-byte
+  pointer fixups are masked using the TPU relocation records; relocation-only
+  changes therefore no longer appear as real procedure-code differences.
+- Added a regression test covering a mutated relocation slot and retained the
+  existing non-relocation mutation test. The comparator still reports raw code
+  and relocation-group diagnostics separately, and whole-file identity remains
+  the CI acceptance criterion.
+
+### 2026-10-02 (106): highlight relocation-only EXE region verdicts
+
+- Extended the `--region-report` verdict so each linked region reports one of
+  three states: `relative bytes exact`, `relative bytes differ only in
+  relocation data` (all stored-byte differences are covered by MZ relocation
+  cells on either side and mapped extents match), or `relative bytes differ`.
+  A trailing `linked-region summary` line counts regions in each state, so CI
+  logs show at a glance which regions need no further source work.
+- Added regression tests for the relocation-only and non-relocation verdicts;
+  both confirm the strict whole-EXE comparison still fails. All 14 comparator
+  tests pass. Strict EXE parity remains **OPEN**. No behavior tests were run.

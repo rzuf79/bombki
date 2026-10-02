@@ -76,8 +76,23 @@ class TpuLayoutTests(unittest.TestCase):
             rebuilt.write_bytes(data)
             deltas, _, _, _ = code_block_deltas(original, rebuilt)
         self.assertEqual(len(deltas), 1)
-        self.assertTrue(deltas[0].startswith('POKOJ100: 1,'))
+        self.assertTrue(deltas[0].startswith('POKOJ100: raw 1, real 1,'))
         self.assertIn('post-entry 1 (1459->1459)', deltas[0])
+
+    def test_relocation_slot_is_not_counted_as_real_code_difference(self):
+        original = ROOT / 'og/MONSTRA.TPU'
+        unit = Tpu(str(original))
+        relocation = unit.relocs[0]
+        patch_offset = relocation[4]
+        data = bytearray(unit.data)
+        for offset in range(4):
+            data[unit.ofs_code + patch_offset + offset] ^= 1
+        with tempfile.TemporaryDirectory() as directory:
+            rebuilt = Path(directory) / 'MONSTRA.TPU'
+            rebuilt.write_bytes(data)
+            deltas, _, _, _ = code_block_deltas(original, rebuilt)
+        self.assertEqual(len(deltas), 1)
+        self.assertTrue(deltas[0].startswith('WSTEP: raw 4, real 0,'))
 
 
 if __name__ == '__main__':

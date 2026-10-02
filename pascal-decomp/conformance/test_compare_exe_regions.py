@@ -91,6 +91,56 @@ class ExeRegionTests(unittest.TestCase):
         self.assertEqual(metadata["relocation_cells"], [4])
         self.assertEqual(image, bytes(data[32:]))
 
+    def make_single_region_pair(self, root, mutate_file_offsets):
+        candidate = root / "candidate.EXE"
+        reference = root / "reference.EXE"
+        candidate_map = root / "candidate.MAP"
+        layout = root / "reference-layout.json"
+        candidate_bytes = self.make_mz(relocation_count=1)
+        for offset in mutate_file_offsets:
+            candidate_bytes[offset] ^= 0xFF
+        candidate.write_bytes(candidate_bytes)
+        reference.write_bytes(self.make_mz(relocation_count=1))
+        candidate_map.write_text(
+            "  Start  Stop   Length Name               Class\n"
+            "  00000H 001DFH 001E0H BOMBKI             CODE\n",
+            encoding="ascii",
+        )
+        layout.write_text(json.dumps({
+            "format": "tp7-exe-region-layout-v1",
+            "regions": [{
+                "name": "BOMBKI",
+                "reference_start": "0x0",
+                "reference_size": "0x1E0",
+            }],
+        }), encoding="utf-8")
+        return candidate, reference, candidate_map, layout
+
+    def test_relocation_only_region_difference_is_highlighted(self):
+        with tempfile.TemporaryDirectory(dir=TEMP_ROOT) as directory:
+            files = self.make_single_region_pair(
+                Path(directory), [0x20 + 4, 0x20 + 5])
+            output = io.StringIO()
+            with contextlib.redirect_stdout(output):
+                result = compare_exes(*files[:2], True, *files[2:])
+        self.assertEqual(result, 1)
+        self.assertIn("relative bytes differ only in relocation data",
+                      output.getvalue())
+        self.assertIn("0 exact, 1 differ only in relocation data, 0 differ",
+                      output.getvalue())
+
+    def test_non_relocation_region_difference_is_highlighted(self):
+        with tempfile.TemporaryDirectory(dir=TEMP_ROOT) as directory:
+            files = self.make_single_region_pair(
+                Path(directory), [0x20 + 10])
+            output = io.StringIO()
+            with contextlib.redirect_stdout(output):
+                result = compare_exes(*files[:2], True, *files[2:])
+        self.assertEqual(result, 1)
+        self.assertIn("; relative bytes differ\n", output.getvalue())
+        self.assertIn("0 exact, 0 differ only in relocation data, 1 differ",
+                      output.getvalue())
+
     def test_region_match_does_not_turn_strict_exe_mismatch_into_success(self):
         with tempfile.TemporaryDirectory(dir=TEMP_ROOT) as directory:
             root = Path(directory)

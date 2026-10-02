@@ -426,6 +426,9 @@ def print_exe_region_report(candidate: Path, reference: Path,
           f"candidate={candidate_meta['image_bytes']:#x} bytes; "
           f"relocations={reference_meta['relocations']}/"
           f"{candidate_meta['relocations']}")
+    exact_count = 0
+    relocation_only_count = 0
+    differing_count = 0
     for region in regions:
         name = region.get("name")
         candidate_name = str(region.get("candidate_name", name)).casefold()
@@ -447,8 +450,17 @@ def print_exe_region_report(candidate: Path, reference: Path,
         ref_extent = reference_size
         cand_extent = candidate_region["length"]
         extent_delta = abs(ref_extent - cand_extent)
-        exact = result["differing"] == 0 and extent_delta == 0
-        state = "relative bytes exact" if exact else "differs"
+        if result["differing"] == 0 and extent_delta == 0:
+            state = "relative bytes exact"
+            exact_count += 1
+        elif (result["non_relocation_differences"] == 0
+                and result["unpaired_stored_bytes"] == 0
+                and extent_delta == 0):
+            state = "relative bytes differ only in relocation data"
+            relocation_only_count += 1
+        else:
+            state = "relative bytes differ"
+            differing_count += 1
         if result["first_relative"] is None:
             first = "none"
         else:
@@ -466,6 +478,11 @@ def print_exe_region_report(candidate: Path, reference: Path,
             f"{result['relocation_sites_candidate']}, "
             f"extent delta={extent_delta}; first relative difference={first}; {state}"
         )
+    print(
+        f"  linked-region summary: {exact_count} exact, "
+        f"{relocation_only_count} differ only in relocation data, "
+        f"{differing_count} differ (of {len(regions)} regions)"
+    )
 
 
 def compare_files(candidate: Path, reference: Path,
