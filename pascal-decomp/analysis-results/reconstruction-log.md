@@ -1938,3 +1938,1246 @@ reconstruction. Original-side findings are grounded in the EXE/TPU.
   field I/O follows the original access pattern and improves layout metrics,
   but strict EXE parity remains **OPEN**. Runtime evidence here is host-native
   FPC, not original DOS or emulator validation.
+
+### 2026-09-30 (104): inline MODE in the main dispatcher
+
+- The EXE listing places the context-1000 MODE command body inside the main
+  dispatch flow at img 0xEAF8..0xF584, between the BAZAR branch and the
+  dispatcher tail (see `disasm/annotated-BOMBKI.asm` and
+  `disasm/BOMBKI-main-dispatch.asm`). The reconstruction emitted the same
+  transcribed body as a separate `StanPodswiadomosci` procedure and called it
+  from the end of the loop. Moved the body into the `MIECHO = 1000` main-block
+  arm and replaced its procedure-level `Exit` with the evidenced termination
+  context assignment; subsequent dispatcher cleanup then runs in order.
+- Ran the documented TP7 conformance workflow in the cached
+  `bombki-dosbox-tp7` image. All six build checks passed, and all three TPUs
+  remain byte-identical. The rebuilt EXE is 139,072 bytes with 5,153
+  relocations and a 118,432-byte load image; its entry is 0000:AF78, and the
+  startup System/CRT targets are paragraphs 0x1C0D/0x1BAB. Strict comparison
+  reports 130,389 differing byte positions, 885 fewer than finding (103), but
+  the `cmp` gate still fails and strict EXE parity remains **OPEN**.
+- FPC conformance passes 4/4. The host-native synchronized MODE, save/load,
+  and SPIJ scenarios pass all 12, 13, and 11 steps respectively. These are
+  host-native tests, not original-DOS runtime evidence.
+
+### 2026-09-30 (105): restore the concert/crowd dispatcher call shape
+
+- Main dispatch calls one routine at img 0xE860 -> 0x68BC after the context-60
+  handler and before context 32. The called routine checks contexts 61..72 in
+  order (img 0x68C6..0x7C2A); when a handled room changes context, its branch
+  returns at img 0x7D69..0x7D6A instead of falling through to another room.
+  Replaced the twelve separately guarded main-dispatch calls with one invented
+  `PokojeKoncertowe` dispatcher using an ordered `else if` chain at the
+  evidenced call site. Added a synchronized host-native route test from
+  contexts 1 -> 20 -> 30 -> 31 -> 60 -> 61 -> 64.
+- FPC conformance passes 4/4. The MODE, save/load, sleep, and concert-dispatch
+  PTY scenarios pass 12, 13, 11, and 11 steps. The TP7 build succeeds and all
+  three TPUs remain byte-identical. The rebuilt EXE is 138,144 bytes with 5,142
+  relocations and a 117,536-byte load image; entry is 0000:AC64. Strict
+  comparison reports 131,498 differing byte positions, 1,109 more than finding
+  (104), so the source-shape correction is evidence-based but strict EXE parity
+  remains **OPEN**. Runtime evidence here is host-native FPC, not original DOS.
+
+### 2026-09-30 (106): restore the garden-room dispatch chain
+
+- The original main loop contains six independent garden handlers, contexts
+  77..82, at img `0xC20C..0xCC0C`. Replaced the reconstructed range guard and
+  `case` with six ordered inline `if` arms. This restores the repeated context
+  tests after each room body; the original tests occur at img `0xC202/0xC3D9`,
+  `0xC3E3/0xC51E`, `0xC528/0xC663`, `0xC66D/0xC978`,
+  `0xC982/0xCABD`, and `0xCAC7/0xCC02`. The garden `WYJSCIE` paths jump directly
+  to the program termination at img `0xF5C2` (room branches at
+  `0xC37A`, `0xC504`, `0xC649`, `0xC801`, `0xCAA3`, and `0xCBE8`); added a
+  shared source label after the main loop to preserve that exit path.
+- The genuine-TP7 build's 76 context comparisons across the main-loop dispatch
+  now match the original's context values and order exactly. FPC conformance
+  passes 4/4, the synchronized native garden route scenario passes all 12 steps,
+  and all three TPUs remain byte-identical. The TP7 EXE is 139,472 bytes with
+  5,237 relocations and a 118,496-byte load image; entry is `0000:AC64`. Strict
+  comparison reports 130,790 differing byte positions, 708 fewer than finding
+  (105), but byte-for-byte parity remains **OPEN**. Runtime testing was
+   host-native FPC, not original DOS.
+
+### 2026-09-30 (107): preserve training-room CP437 strings
+
+- The original context-2 string data uses CP437 bytes at img `0x54BF`,
+  `0x559A`, `0x55F2`, and `0x560E`. Replaced ASCII transliterations in the
+  source with Pascal numeric character constants for the observed bytes,
+  including `0xA8`, `0xA4`, `0xE0`, `0xBD`, `0x8F`, `0xE3`, and `0xA9`.
+  Verified that all four resulting byte strings occur in both the original and
+  rebuilt EXE images.
+- FPC conformance passes 4/4, and all three TPUs remain byte-identical. The
+  TP7 EXE remains 139,472 bytes with 5,237 relocations and a 118,496-byte load
+  image, entry `0000:AC64`; strict comparison reports 130,744 differing byte
+  positions, 46 fewer than finding (106). The exact string bytes are restored,
+  but strict EXE parity remains **OPEN**. The garden route scenario still passes
+  all 12 steps against host-native FPC; no original-DOS runtime test was made.
+
+### 2026-09-30 (108): restore garden-room string bytes
+
+- The original context-79 strings at img `0xC537` and `0xC553` contain
+  `POKRZYWE` (not `POKRZYWKE`) and end `ZGINA` (not `ZGINAL`). Restored both
+  literals. Restored the embedded `0x02` bytes in the context-80 `PATRZ NAPIS`
+  output at img `0xC876`, CP437 `0xA4` in `WYCIAGASZ` at `0xC8B3`, CP437
+  `0x9D` in the context-81 `PORZYCZY` at `0xC9AD`, and CP437 `0xA4` in
+  context-82 `ID` at `0xCAF2`. Each complete string was verified byte-for-byte
+  in both EXE images.
+- FPC conformance passes 4/4, the expanded synchronized garden route scenario
+  passes all 18 steps, and all three TPUs remain byte-identical. The TP7 EXE is
+  139,472 bytes with 5,237 relocations and a 118,496-byte load image; entry is
+  `0000:AC68`. Strict comparison reports 130,687 differing byte positions,
+  57 fewer than finding (107). Exact garden strings are restored, but strict
+  EXE parity remains **OPEN**. Runtime testing was host-native FPC, not original
+  DOS.
+
+### 2026-09-30 (109): restore status, combat, and cave strings
+
+- In the character-sheet helper at img `0x09E7..0x0AE2`, removed four
+  source-only trailing spaces after `SMACZNY POLANY LIKIEREM PACZEK`,
+  `PYSZNY BIGOS Z KAPUSTA Z WROGA`, `OZEWIAJACE PIWSKO Z KONKRETNYM KLIMATEM`,
+  and `DELIKATNY CHOC SZORSTKI LISTEK`. The original string pool has no such
+  spaces at offsets `0x61`, `0xE2`, `0x101`, and `0x185`. Restored CP437 `0xE0`
+  in the level-6 string at img `0x0F2A` (`SZ\xE0STYM`).
+- Combat room strings at img `0x0B553` and `0x0B81A` are respectively
+  `POWOLNY ACZ ODPORNY NA BOL POTWOR SPOKOJNIE LEZY POD SCIANA` and
+  `OGROMNY POTWOR WIDZAC MIESO RZUCA SIE NA CIEBIE`; both replace unsupported
+  source phrases. Their dead-state text at `0x0B576` and `0x0B83D` is
+  `PAROJACE WNETRZNOSCI POTWORA SA ROZWLECZONE DOOKOLA`. Context 17 is not a
+  fourth combat room: at img `0x0BAAB` it displays
+  `JESTES W POKOJU W KTORYM !JEST! !PLAKAT (SMIERDZI TU) `, exits through
+  `DOL-KLATKI PELNE GAJDY`, and accepts `DOL`; replaced the unsupported combat
+  handler with this poster room. Also corrected context 84 `DALES` at img
+  `0x0CC5F` and context 88 `POKRZYWA` at img `0x0CFD1`.
+- FPC conformance passes 4/4, the synchronized garden route scenario passes all
+  18 steps, and all three TPUs remain byte-identical. The TP7 EXE is 139,312
+  bytes with 5,223 relocations and a 118,384-byte load image; entry is
+  `0000:ACD3`. Strict comparison reports 130,776 differing byte positions,
+  89 more than finding (108). The source matches the recovered strings and
+  context-17 behavior, but this source-shape correction worsens byte distance;
+  strict EXE parity remains **OPEN**. Runtime testing was host-native FPC, not
+  original DOS.
+
+### 2026-09-30 (110): correct arena combat stat triples
+
+- The original context-14 launcher stores HP/dexterity/damage as `20/30/3` at
+  img `0x0B3CE`; context 15 stores `40/3/3` at `0x0B695`; and context 16 stores
+  `40/11/10` at `0x0B85E`. The source launchers had different values. Corrected
+  `WROGEN`/`WROGZRE`/`WROGSIL` for all three contexts to match those stores.
+- FPC conformance passes 4/4, the synchronized garden route scenario passes all
+  18 steps, and all three TPUs remain byte-identical. TP7 EXE size/layout and
+  strict count remain unchanged from finding (109): 139,312 bytes, 5,223
+  relocations, 118,384-byte load image, entry `0000:ACD3`, and 130,776 differing
+  byte positions. The corrected immediates are machine-verified; strict EXE
+  parity remains **OPEN**. Runtime testing was host-native FPC, not original DOS.
+
+### 2026-09-30 (111): restore the complete level-up effects
+
+- At img `0x8882..0x88C6`, PRAKTYK gains depend on MAD thresholds `<11`,
+  `11..15`, `16..22`, and `>22`, yielding `+3/+4/+5/+6`; replaced the
+  source's POZIOM-based awards. Restored the `PRAKTYK` label at `0x88E9`,
+  `MAXIMUM ENERGI` output at `0x896C`, and maximum-MANA increase by `MAD+2`
+  with its `MANY` output at `0x8971..0x89C3`. The routine clears DGROUP `0x6C`
+  at `0x89D0`, restored as `EtapPunktuKontrolnego := 0`.
+- On reaching level 12, img `0x89DF..0x8BA2` prints the max-parameter message,
+  raises max SIL/ZRE/MAD according to their current/max comparisons and
+  balancing sequence, then prints each maximum with the original 14 embedded
+  `0x02` prefix/suffix bytes. Restored the full body using the matching program
+  and TPU-owned variables.
+- FPC conformance passes 4/4, the synchronized garden route scenario passes all
+  18 steps, and all three TPUs remain byte-identical. The TP7 EXE is 140,176
+  bytes with 5,246 relocations and a 119,152-byte load image; entry is
+  `0000:AFD7`. Strict comparison reports 129,719 differing byte positions,
+  1,057 fewer than finding (110). Exact recovered output strings occur in both
+  EXE images, but strict EXE parity remains **OPEN**. Runtime testing was
+  host-native FPC, not original DOS.
+
+### 2026-09-30 (112): assert level-up text in the startup scenario
+
+- Strengthened `garden-dispatch-smoke.json` so its synchronized starting-room
+  step requires the level-up PRAKTYK, MAXIMUM ENERGI, and MANY outputs before
+  `TU ZACZYNA SIE GRE`. This exercises the ordinary startup level-up path.
+- The host-native FPC PTY scenario passes all 18 steps, including the new
+  level-up assertions. This is not original-DOS runtime evidence. No Pascal
+  source or TP7 artifact changed; strict EXE parity remains **OPEN**.
+
+### 2026-09-30 (113): correct checkpoint strength boundaries
+
+- The final two checkpoint branches compare strength to 7 and 13 at img
+  `0x52C1..0x5344`; the original accepts only `7 < SIL < 13`. Changed the
+  source's inclusive `SIL >= 7` / `SIL <= 13` gates to strict comparisons.
+- FPC conformance passes 4/4, the 18-step host-native garden/startup scenario
+  passes, and all three TPUs remain byte-identical. TP7 size/layout and strict
+  count are unchanged from finding (112): 140,176 bytes, 5,246 relocations,
+  119,152-byte load image, entry `0000:AFD7`, and 129,719 differing byte
+  positions. Strict EXE parity remains **OPEN**; runtime testing was host-native
+  FPC, not original DOS.
+
+### 2026-09-30 (114): restore the complete poster-room flow
+
+- The context-17 handler at img `0x0BAB..0x0BC9D` prints the poster text
+  `SORRY ZE NIE UMYLEM POKOJU...`, `JEZELI BYLES AKTYWNY...`, and
+  `SPRAWDZ CZY LEZY TU COS...`; on `PATRZ PLAKAT` it places the diploma at
+  context 17 only when the five monster-state words and the diploma word at
+  DGROUP `0x188` are all zero (`0x0BC26..0x0BC50`). Restored that guarded
+  assignment as `DYPLOM := 17`.
+- Corrected `EXIT` to list `GORA-KLATKI PELNE GAJDY` and `DOL-TELEPORT!!!`.
+  Context 17's `GORA` returns to context 11; `DOL` sets context 18, whose
+  one-shot teleport output immediately sets context 1 (`0x0BC6A..0x0BD1F`).
+- Added `poster-reward-smoke.json`: its synchronized native PTY run reaches
+  context 17, checks the poster text and exits, follows `DOL` through the
+  teleport output, and confirms return to context 1 (11 steps). The smoke path
+  does not satisfy the diploma's monster-state guards, so it does not claim to
+  verify a successful pickup. The existing garden route scenario also passes
+  all 18 steps.
+- FPC conformance passes 4/4 and all three TPUs remain byte-identical. The TP7
+  EXE is 140,672 bytes with 5,263 relocations and a 119,584-byte load image;
+  entry is `0000:B0A3`. Strict comparison reports 128,882 differing byte
+  positions, 837 fewer than finding (113). The poster text and exits are present
+  byte-for-byte in both images; strict EXE parity remains **OPEN**. Runtime
+  testing was host-native FPC, not original DOS.
+
+### 2026-09-30 (115): restore the opening bar dialogue
+
+- Context 76 at img `0x0BF31..0x0BF97` prints four introductory lines before
+  the conditional bartender/patrons. Restored the exact strings, including
+  CP437 `0xBE` in `ju\xBE wiesz`; the original uses that byte before a space.
+- Added `bar-intro-smoke.json`, which follows the starting room through the
+  city center and dark street to context 76, then checks all four lines. The
+  synchronized host-native FPC PTY scenario passes all 8 steps.
+- FPC conformance passes 4/4 and all three TPUs remain byte-identical. The TP7
+  EXE is 141,072 bytes with 5,275 relocations and a 119,936-byte load image;
+  entry is `0000:B194`. Strict comparison reports 128,519 differing byte
+  positions, 363 fewer than finding (114). All four strings occur byte-for-byte
+  in both EXE images. Strict EXE parity remains **OPEN**; runtime testing was
+  host-native FPC, not original DOS.
+
+### 2026-09-30 (116): restore road and dialogue trailing spaces
+
+- Restored the original terminal spaces omitted by six source literals:
+  the staruch request at img `0x0D586`, context-21 street at `0x0D7FF`,
+  context-22 street at `0x0D9D9`, context-101 road at `0x0DBB3`, context-102
+  road at `0x0DDB7`, and context-103 road at `0x0DF5B`. The exact endings are
+  one space for the staruch/request and context-101/102/103 strings, and two
+  spaces for contexts 21 and 22.
+- FPC conformance passes 4/4; the 18-step garden, 11-step poster/teleport, and
+  8-step bar-intro host-native PTY scenarios pass. All three TPUs remain
+  byte-identical. The TP7 EXE is 141,088 bytes with 5,275 relocations and a
+  119,952-byte load image; entry is `0000:B19C`. Strict comparison reports
+  128,672 differing byte positions, 153 more than finding (115), despite the
+  restored literals. The byte-exact output evidence takes precedence; strict EXE
+  parity remains **OPEN**. Runtime testing was host-native FPC, not original DOS.
+
+### 2026-09-30 (117): restore MODE room-item descriptions
+
+- At img `0x0EA3F..0x0EAF3`, the context-1000 loop compares the five room-item
+  positions at DGROUP `0x17E`, `0x184`, `0x186`, `0x188`, and `0x18A` with
+  previous-room context `0x180`; matching sword, shield, heart, diploma, and
+  pipe items print their room descriptions before the next prompt. Added those
+  five gates in the same order, using the existing PRZEDM declarations.
+- FPC conformance passes 4/4. Host-native MODE smoke and save/load scenarios
+  pass 12 and 13 steps, respectively; the sleep scenario passes 11 steps.
+  Garden, poster/teleport, and bar-intro scenarios pass 18, 11, and 8 steps.
+  All three TPUs remain byte-identical. The TP7 EXE is 141,520 bytes with
+  5,290 relocations and a 120,320-byte load image; entry is `0000:B25D`.
+  Strict comparison reports 128,040 differing byte positions, 632 fewer than
+  finding (116). All five original strings are present in both EXE images, but
+  strict parity remains **OPEN**. Runtime tests were host-native FPC, not
+  original DOS.
+
+### 2026-09-30 (118): restore MODE attribute output
+
+- At img `0x11C4..0x126A`, the character-sheet routine writes current/max
+  strength, dexterity, and wisdom as `current/max` pairs. At `0x126F..0x12BD`
+  it prints S.Z as `PRO + 10 * word[0x1C4]`, then the heavy-blow threshold
+  (`FUKSROLL`). Restored both output lines and the adjacent-word read; the word
+  at DGROUP `0x1C4` is the outfit dexterity bonus, immediately after PRZEDM.PRO
+  at `0x1C2`.
+- Strengthened `mode-smoke.json` to assert all three attribute pairs and the
+  S.Z/FUKSROLL line. The synchronized host-native FPC scenario passes all 12
+  steps. The save/load, sleep, garden, poster/teleport, and bar-intro scenarios
+  pass 13, 11, 18, 11, and 8 steps. FPC conformance passes 4/4; all three TPUs
+  remain byte-identical.
+- The TP7 EXE is 142,032 bytes with 5,315 relocations and a 120,736-byte load
+  image; entry is `0000:B3F0`. Strict comparison reports 130,628 differing byte
+  positions, 2,588 more than finding (117), despite all recovered output labels
+  being present in both images. The source uses the TP7 DGROUP-relative read;
+  the host-native FPC branch returns zero for that TP7-only absolute field, so
+  its runtime output is not evidence for the outfit bonus. Strict EXE parity
+  remains **OPEN**, and no original-DOS runtime test was performed.
+
+### 2026-09-30 (119): restore the FATALITY skill gate
+
+- The training-poster branch at img `0x259E..0x25C8` prints
+  `FATALITY - SAMOCZYNNIE ` only when `SilaCur > 29` and `MadroscCur > 14`.
+  Added the exact strict comparisons and output to the training-skill listing.
+- Added `training-poster-smoke.json`; its synchronized host-native FPC run
+  reaches the underground training room, reads the poster, and checks the full
+  poster response in all 7 steps. FPC conformance passes 4/4, and the three
+  TPUs remain byte-identical.
+- The TP7 EXE is 142,112 bytes with 5,318 relocations and a 120,800-byte load
+  image; entry is `0000:B432`. Strict comparison reports 130,647 differing byte
+  positions, 19 more than finding (118), while the exact FATALITY literal is
+  present in both images. This change is evidence-led despite the worse byte
+  metric; strict EXE parity remains **OPEN**. Runtime testing was host-native
+  FPC, not original DOS.
+
+### 2026-09-30 (120): exercise MODE under DOSEMU2/FreeDOS
+
+- This was exploratory runtime work performed before the validation order was
+  clarified. Its observations below are historical only, do not establish
+  conformance, and do not close any behavior-validation item. Do not repeat
+  behavioral tests until strict TP7 EXE byte parity is achieved.
+- Ran the retained original EXE and the latest TP7 build under local DOSEMU2
+  with the FreeDOS environment, using `expect_pty.py --pyte` and prompt-driven
+  input. Each executable ran from a separate fresh directory. The original
+  requires an additional keypress after the player-name prompt to continue past
+  its introductory instructions; the candidate does not, so the two smoke
+  sequences have 13 and 12 steps respectively.
+- The original and candidate MODE smoke sequences both completed. They cover
+  `MODE`, `JA` status (including attribute/S.Z output), `ZDOLNOSCI`, `ZMIEN
+  KOLOR`, and `UNMODE`. The output state was not equivalent: the original
+  reported level 1, 10 practices, 80/80 mana, 45/45 energy, and `50%.0`, while
+  the candidate reported level 2, 13 practices, 80/90 mana, 50/56 energy, and
+  `50%.-725`. The cause remains OPEN; this runtime evidence does not establish
+  strict behavior parity.
+- Separate synchronized sleep and save/load runs completed against both
+  executables under DOSEMU2. The sleep checks observed the first-hour marker and
+  wake-up report. The save/load checks saved, changed coins, loaded, and
+  verified the restored 30-coin status. The save confirmation is immediately
+  erased by the game's screen clear in these DOS runs. Updated
+  `mode-save-load-smoke.json` to synchronize on the post-save character sheet;
+  the native FPC and DOSEMU2 candidate runs then passed all 13 scenario steps.
+  The original's adapted save/load run passed 12 steps through the restored
+  30-coin status. Original/candidate sleep runs completed 12/11 steps. PTY
+  transcripts are under `build/pty-dosemu/` with `original-clean-*` and
+  `candidate-clean-*` names; the final candidate save/load transcript is
+  `candidate-clean-save-load-updated.jsonl`.
+- A test-only 80-field save fixture set all five item positions and the saved
+  previous-room value to one context. Under the candidate, loading it from
+  MODE emitted all five room-item descriptions. The equivalent original test
+  did not emit them and timed out at that assertion, including when the save
+  was loaded before entering MODE. This setup has not yet demonstrated an
+  equivalent original/candidate item-output comparison; item-output runtime
+  validation remains OPEN. No test fixture or save data was added to the repo.
+- These are DOSEMU2/FreeDOS results, not original-DOS or DOSBox-X behavior
+  evidence. The harness terminated each emulator after scenario completion;
+  no DOSBox-X instance was used for these behavior checks. The independent
+  native FPC MODE smoke and sleep scenarios also passed 12 and 11 steps after
+  the rebuild. Strict TP7 EXE byte parity remains OPEN.
+
+### 2026-09-30 (121): defer behavior checks until strict EXE parity
+
+- Reordered active work around the acceptance criterion: byte-for-byte TP7 EXE
+  identity comes first and is pursued through EXE/TPU evidence, disassembly,
+  assembly output, and compiler-layout analysis. Behavioral-conformance runs
+  are deferred until that identity is achieved.
+- Finding (120) remains only an exploratory record of the earlier DOSEMU2
+  session. Its runtime output is not an acceptance basis. No further runtime
+  behavior checks were run for this priority change.
+
+### 2026-10-01 (122): align save and shared-global ownership
+
+- The original save routine repeatedly passes DS:0x007E as the TextRec at img
+  `0x2BEA..0x2BF4` (`annotated-BOMBKI.asm`); the main command paths and
+  `PRZEDM.KOMENDY` use the shared input string at DS:0x0564, including img
+  `0x1BB11`. The TPUs already own the shared fields used by the main program:
+  `PRZEDM.TEST1`, `ARENA`, `CIALO`, and `DUNCAN`, plus MONSTRA room trackers,
+  `DRZWI`, `STARUCH`, `OGOL`, and `SILNY`.
+- Moved the save-file TextRec declaration to BOMBKI and removed duplicate
+  program-level declarations for these unit-owned fields. A genuine TP7 `/GD`
+  build MAP places `plik` at `0x007E`, `PRZEDM.MIECHO2` at `0x0180`,
+  `PRZEDM.MIECHO` at `0x01D6`, `PRZEDM.wpisz` at `0x0564`, `MONSTRA.MAXE` at
+  `0x0664`, and the room trackers at `0x0666..0x0678`, matching the original
+  DGROUP references.
+- TP7 compilation succeeded and all three TPUs remain byte-identical. The
+  candidate EXE is 142,112 bytes with 5,318 relocations and a 120,800-byte load
+  image; strict comparison reports 130,634 differing byte positions. EXE
+  parity remains **OPEN**. This was static/layout work only; no behavior tests
+  were run. Scratch build and analysis files now use project-local `build/tmp/`.
+
+### 2026-10-01 (123): align the low DGROUP globals
+
+- Static references in the original disassembly identify the fields at
+  DGROUP `0x52..0x7C`: saved words at `0x52/0x54/0x56`, status words at
+  `0x58..0x60`, CarryLimit at `0x62`, room values at `0x66/0x68/0x6A`, the
+  checkpoint at `0x6C`, the SPIJ counter at `0x70`, and saved state at
+  `0x74..0x7C` (including `0x78` Powracanie). The direct stores/loads include
+  img `0x0196D..0x01985`, `0x03F92`, `0x051D5..0x0533E`, and
+  `0x0EEFF..0x0F053`. The prior declaration order placed several of these
+  symbols at the wrong DGROUP offsets.
+- Reordered BOMBKI globals to those evidenced offsets, retained explicit
+  unclassified placeholders at `0x64` and `0x72`, changed the saved `0x74`
+  field to a word, and overlaid the outfit-removal flag on the first byte of
+  `PRZEDM.JAKIEUB` at `0x264`. Reused the TPU-owned `PRZEDM.PLECAK` and
+  `PRZEDM.DUNQ` fields at `0x255` and `0x262` instead of allocating duplicate
+  program globals.
+- The genuine TP7 `/GD` MAP confirms the intended addresses from `0x52` through
+  `0x7E`, `PRZEDM.MIECHO2=0x180`, `PRZEDM.wpisz=0x564`, `MONSTRA.MAXE=0x664`,
+  the room tracker block at `0x666..0x678`, and the flag overlay at `0x264`.
+  The three TPUs remain byte-identical. Strict EXE comparison reports 130,722
+  differing byte positions (candidate 142,096 bytes, 5,318 relocations,
+  120,784-byte load image); the byte-count metric worsened, but these offsets
+  match the original's direct DGROUP operands. Words `0x64` and `0x72` remain
+  **OPEN** in meaning. No behavior tests were run; strict EXE parity remains
+  **OPEN**.
+
+### 2026-10-01 (124): call the TPU-backed room generator
+
+- BOMBKI had a separate `LosujPolozenia` routine duplicating world-generation
+  work already implemented by `PRZEDM.POTWORY`. The retained call at img
+  `0x12ACA` targets segment:offset `129D:00FA`; the PRZEDM TPU declares
+  `POTWORY` at entry `0008:0000`, and its generated TP7 MAP links that same
+  entry at `1273:00FA`. Replaced all eight calls to the synthetic main-program
+  generator with calls to `PRZEDM.POTWORY` and removed the duplicate routine.
+- Genuine TP7 compilation succeeds; all three TPUs remain byte-identical. The
+  EXE shrank from 142,096 to 140,432 bytes, with 5,261 relocations and a
+  119,360-byte load image. Strict comparison improved from 130,722 to 129,736
+  differing byte positions, but parity remains **OPEN**. No behavior tests
+  were run.
+
+### 2026-10-01 (125): restore recovered BOMBKI procedure order
+
+- Reordered the main-program procedure bodies using the available annotated-EXE
+  anchors, including `PokazPostac` `0x073C`, `WybierzRase` `0x16EF`, checkpoint
+  `0x51C3`, concert dispatch `0x68BC`, and level-up `0x872E`. Added forward
+  declarations to preserve Pascal references across the reordered bodies.
+  The tentative `Trening` anchor at `0x2395` is not a valid procedure entry:
+  original bytes there are part of a string, so it is excluded from the
+  procedure-order evidence until its actual start is resolved.
+- Genuine TP7 compilation succeeds and all three TPUs remain byte-identical.
+  This ordering probe reduced strict EXE differences from 129,736 to 128,678.
+  The EXE is still 140,432 bytes with 5,261 relocations and a 119,360-byte load
+  image; parity remains **OPEN**. The MAP addresses are still hundreds of bytes
+  before multiple original anchors, so source/order evidence is incomplete.
+- The MAP gives BOMBKI CODE length `0xF322`, then SWIAT at `0xF330` and PRZEDM
+  at paragraph `0x1273`. The original far calls target PRZEDM paragraph
+  `0x129D` (for example img `0x0199F`), a 42-paragraph / 672-byte displacement.
+  The large unit code bodies remain identical at TPU level and long byte
+  windows in the EXE align at this `-672` offset. Continue tracing the preceding
+  BOMBKI segment shape; this placement difference is the next concrete lead.
+  No behavior tests were run.
+
+### 2026-10-01 (126): quantify the status-body length gap
+
+- The original `PokazPostac`/status body begins at img `0x073C` and returns at
+  `0x1405` (`annotated-BOMBKI.asm`); the current TP7 MAP puts it at `0x0709`,
+  and the candidate returns at `0x1274`. The respective machine-body lengths
+  are 3,274 and 2,924 bytes, a 350-byte shortfall in the candidate. The next
+  original procedure's intro string and entry at `0x1406` and `0x16EF` align
+  with candidate positions `0x1275` and `0x155E` (both `-0x191`), localizing
+  this deficit before the race-selection body.
+- This range result does not identify the missing statements or prove all
+  bytes are executable code; source-level cause remains **OPEN**. Strict EXE
+  parity remains **OPEN**, with the current build at 128,678 differing byte
+  positions. No behavior tests were run.
+
+### 2026-10-01 (127): restore the startup CRT key read
+
+- At img `0xB0EB`, the original calls `1C0F:031A` immediately after
+  `WybierzRase`, then calls the checkpoint at `0xB0F0`. The current source had
+  only a comment at this point. A temporary TP7 source probe inserting
+  `ReadKey;` emitted `lcall 1BE5:031A` at the corresponding startup location;
+  the segment differs because the candidate CRT segment starts 42 paragraphs
+  earlier, while the internal offset matches exactly. The target bytes in the
+  original are a keyboard-read routine (`annotated-BOMBKI.asm` at img
+  `0x1C40A..0x1C42B`), not TextRec initialization.
+- Added the ignored-result `ReadKey` call to the main block. The probe compiled
+  under TP7 and all three TPUs remained byte-identical. The EXE was 140,448
+  bytes; strict comparison reported 128,766 differing byte positions, which is
+  worse as a raw count and not a semantic metric. Startup call shape now
+  matches; strict parity remains **OPEN**. No behavior tests were run.
+
+### 2026-10-01 (128): restore per-level status output shape
+
+- The original status routine at img `0x073C..0x1405` tests each character
+  level independently and emits the level label, computed threshold, and
+  ` KUNSZTU` in one `WriteLn` call (annotated EXE img `0x0DC4..0x11BF`). The
+  reconstruction had used a `case` with a shared output statement. Restored
+  the independent level tests and per-level `WriteLn` calls, and ordered
+  arithmetic as `(735 - KUNSZT) + POZIOM` / `(735 - KUNSZT) + 2 * POZIOM` to
+  reproduce the original generated instruction order. Corrected the CarryLimit
+  test from `ZRE < 26` to `< 25`; the original compares against `0x19` at img
+  `0x07AA`.
+- This closes the earlier 350-byte body-length shortfall (finding 126). The
+  original body returns at `0x1404..0x1405`; the current TP7 body returns at
+  `0x13C8..0x13C9`. Including each return, the body lengths are 3,274 and 3,265
+  bytes, respectively. The race string and `WybierzRase` entry both align at
+  an offset delta of `-0x3C`, so the residual 9-byte body difference is
+  localized before the following strings. Exact body identity remains OPEN.
+- TP7 compilation succeeds, and all three TPUs remain byte-identical. The EXE
+  is 140,880 bytes with 5,286 relocations and a 119,696-byte load image;
+  strict comparison reports 126,271 differing byte positions. The MAP places
+  PRZEDM at paragraph `0x1288`, 21 paragraphs / 336 bytes before the original
+  call target paragraph `0x129D` (img `0x0199F`). Strict EXE parity remains
+  **OPEN**. No behavior tests were run.
+- The current image's main startup block begins at img `0xAFE6` (System
+  bootstrap), versus original img `0xB0CF`; the candidate BOMBKI CODE MAP ends
+  at `0xF47C`, while the original main block's final runtime call ends at
+  `0xF5CA`. These boundaries leave the candidate entry-to-end span 101 bytes
+  shorter, with most of the 336-byte linked-segment displacement already
+  present before the main block. This partitions the remaining size gap but
+  does not identify its source-level causes.
+
+### 2026-10-01 (129): restore the saved outfit-name field
+
+- The save routine writes the string buffer at DGROUP `0x264` as its final
+  text field (original EXE img `0x03542..0x03559`); the load routine reads the
+  corresponding string into the same buffer and prints the literal
+  `suckemall:` followed by it (img `0x0857D..0x085A1`). Added
+  `PRZEDM.JAKIEUB` to the save/load lists and restored this load-time output.
+  The field address and outfit-name role are corroborated by the integrated
+  field map (`0x264`, `JAKIEUB`) and EXE accesses at img `0x0C9F`, `0x0EC2E`,
+  and `0x194E9..0x197AF`.
+- In the same source-shape pass, reordered the giant-race energy effects to
+  update `MAXE` before current `ENERGIA`, matching the original instruction
+  order at img `0x1831..0x1840`.
+- Genuine TP7 compilation succeeds and all three TPUs remain byte-identical.
+  The candidate EXE is 141,024 bytes with 5,296 relocations and a 119,808-byte
+  load image; strict comparison reports 124,647 differing byte positions
+  (down from 126,271 in finding 128). The latest MAP puts PRZEDM at linear
+  address `0x128F0`, 14 paragraphs / 224 bytes before the original segment
+  target `0x129D0`. EXE parity remains **OPEN**. No behavior tests were run.
+
+### 2026-10-01 (130): restore Bazar's input-line drain
+
+- The original Bazar code assigns `PAMIETAJ` to `wpisz` and then performs an
+  additional operation before saving: img `0x03832..0x03840` loads `DS:0x6A2`
+  and calls System offsets `0x59D` and `0x291`. A temporary genuine-TP7 probe
+  with a bare `ReadLn;` emitted the exact corresponding 15-byte sequence at
+  candidate img `0x37ED..0x37FB` (only the relocated System segment differs).
+  Added this statement to `Bazar`. The original and candidate Bazar bodies
+  now return at `0x3845` and `0x3800`, respectively, matching the entry delta
+  of `-0x45` byte-for-byte through the save call.
+- Genuine TP7 compilation succeeds and all three TPUs remain byte-identical.
+  The candidate is 141,056 bytes with 5,298 relocations and a 119,824-byte
+  load image; strict comparison reports 125,559 differing byte positions.
+  This raw count increased from finding 129, but does not measure the local
+  body match. The latest MAP places PRZEDM at `0x12900`, 13 paragraphs / 208
+  bytes before original target `0x129D0`. EXE parity remains **OPEN**. No
+  behavior tests were run.
+
+### 2026-10-01 (131): match the bakery menu header literal
+
+- The bakery menu header is an embedded Pascal short string at original img
+  `0x3CF2`: its length byte is `0x12`, and the bytes spell `NAZWA`, nine
+  spaces, then `CENA`. The reconstructed header had 24 spaces, producing a
+  33-byte literal. Reduced it to the machine-evidenced 18-byte value. The
+  candidate now contains the exact original byte sequence
+  `12 4E 41 5A 57 41 20 20 20 20 20 20 20 20 20 43 45 4E 41`.
+- The bakery and following procedure entries now keep the same `-0x45` delta
+  from their original anchors; the 15-byte constant-pool displacement is
+  removed. TP7 compilation succeeds and all three TPUs remain byte-identical.
+  The candidate EXE is 141,040 bytes with 5,298 relocations and a 119,808-byte
+  load image; strict comparison reports 123,406 differing byte positions.
+  PRZEDM is again at `0x128F0`, 14 paragraphs / 224 bytes before `0x129D0`.
+  EXE parity remains **OPEN**. No behavior tests were run.
+
+### 2026-10-01 (132): restore race initialization stores
+
+- The original `WybierzRase` continuation stores `12`, `13`, `14`, `15`, and
+  `16` respectively to DGROUP `0x58`, `MONSTRA.SILNY` at `0x68C`, and DGROUP
+  `0x5A`, `0x5C`, and `0x5E` (EXE img `0x196D..0x198A`). The source already
+  initialized `MONSTRA.SILNY` but omitted the four surrounding program-owned
+  words. Added the missing assignments using the existing invented global
+  names `StanPotwora12/14/15/16`.
+- The candidate `WybierzRase` return and following `WalkaMiasto` entry now
+  align at a constant `-0x3C` delta from original (`0x1A80` vs `0x1ABC`, and
+  `0x1BEE` vs `0x1C2A`), closing its prior 24-byte body-size deficit. TP7
+  compilation succeeds and all three TPUs remain byte-identical. The EXE is
+  141,072 bytes with 5,298 relocations and a 119,840-byte load image; strict
+  comparison reports 123,253 differing byte positions. PRZEDM is at
+  `0x12910`, 12 paragraphs / 192 bytes before original target `0x129D0`.
+  EXE parity remains **OPEN**. No behavior tests were run.
+
+### 2026-10-01 (133): restore status output operands and widths
+
+- Restored the empty-string line write after carry-limit calculation; original
+  img `0x07D4..0x07EB` passes an empty code-segment string to `WriteLn` before
+  the sword and shield checks. The generated TP7 sequence has the same write
+  call shape.
+- The original status body passes the raw item value and width 10 to the
+  integer writer at img `0x0895..0x089F`, `0x08C7..0x08D1`,
+  `0x08F9..0x0903`, `0x092B..0x0935`, `0x095D..0x0967`, and
+  `0x098F..0x0999`. Replaced the reconstructed `/ 10` expressions for PACZEK,
+  CIASTKO, SUCHA, BULKA, CHLEB, WEKA, and BIGOS with `:10` formatting. PIWO
+  remains explicitly divided by 10, matching the original `idiv` at
+  img `0x09F4..0x0A03`.
+- Restored the integer operands after the Fajka, Komplet, and mana-bottle labels:
+  the original loads DGROUP `0x18A`, `0x216`, and `0x192` at img `0x0A2B`,
+  `0x0A5C`, and `0x0ABE`, respectively. Replaced the nested TP7 speed-bonus
+  accessor with a zero-storage record overlay on `PRZEDM.PRO`: generated TP7
+  code reads the bonus via DGROUP `0x1C4`, as the original does at img
+  `0x1272..0x127A`; the FPC-only accessor remains zero to avoid assuming the
+  TP7 DGROUP layout in native builds.
+- TP7 compilation succeeds and all three TPUs remain byte-identical. The
+  candidate EXE is 141,072 bytes with 5,303 relocations and a 119,824-byte load
+  image; strict comparison reports 126,412 differing byte positions. This
+  raw metric worsened while correcting local instruction shapes. The status
+  procedure body measures 3,298 bytes versus the original 3,274, so its
+  remaining overall source/helper shape is still OPEN. PRZEDM is at `0x12900`,
+  13 paragraphs / 208 bytes before `0x129D0`. Parity remains **OPEN**; no
+  behavior tests were run.
+
+### 2026-10-01 (134): match status output statement boundaries
+
+- The original groups the attributes and S.Z/FUKSROLL text into two `WriteLn`
+  statements. The reconstruction used `Write` followed by a separate blank
+  `WriteLn` for each line, generating a redundant empty-string output call
+  after each. Grouped each output as one `WriteLn` and stored the S.Z value in
+  the existing program global at DGROUP `0x6E` before emitting its label,
+  matching original compute/store/print order at img `0x0126F..0x0129D`.
+- The rebuilt `PokazPostac` body is now 3,274 bytes, equal to original
+  `0x073C..0x1405`; the next race-menu literal begins at the matching `-0x56`
+  offset. A normalized instruction comparison finds only two remaining
+  differences within this body: original calls System `0x1C71:0x09D7` at img
+  `0x0CCC` and `0x0CF9`, while the candidate calls `0x1C63:0x09C3` at
+  `0x0C76` and `0x0CA3`, respectively. Their string-compare helper identity
+  remains **OPEN**; no helper substitution is inferred.
+- TP7 compilation succeeds and all three TPUs remain byte-identical. The
+  candidate EXE is 141,040 bytes with 5,299 relocations and a 119,808-byte
+  load image; strict comparison reports 123,804 differing byte positions.
+  The latest MAP places PRZEDM at `0x128F0`, 14 paragraphs / 224 bytes before
+  original target `0x129D0`. EXE parity remains **OPEN**. No behavior tests
+  were run.
+
+### 2026-10-01 (135): group the Zebra reward output
+
+- Original `WalkaMiasto` emits the Zebra reward label, random amount, and
+  `MONET!` using one output sequence, with the I/O check only after all three
+  values (img `0x01E4C..0x01E79`). The reconstructed `Write` plus `WriteLn`
+  checked I/O between the label and amount. Merged them into one `WriteLn`;
+  this removes the extra intermediate output/check sequence from the TP7 code.
+- In the candidate, `WalkaMiasto` now returns at `0x1E42`, exactly `-0x56`
+  from original return `0x1E98`. Its following `Trening` MAP entry is
+  `0x2340` versus original `0x2395` (delta `-0x55`), leaving a one-byte
+  boundary discrepancy to investigate. Other normalized differences in the
+  procedure include original System `Random` target `0x1C71:0x0BE4` versus
+  candidate `0x1C62:0x0BD0`, and original scratch accesses at DGROUP `0x19E`
+  versus candidate `PRZEDM.CZY` at `0x212`; the scratch ownership/layout is
+  **OPEN** and was not changed.
+- TP7 compilation succeeds and all three TPUs remain byte-identical. The
+  candidate EXE is 141,008 bytes with 5,297 relocations and a 119,792-byte
+  load image; strict comparison reports 125,372 differing byte positions.
+  The raw difference count rose despite the smaller code image. The latest MAP
+  places PRZEDM at `0x128E0`, 15 paragraphs / 240 bytes before original target
+  `0x129D0`. EXE parity remains **OPEN**. No behavior tests were run.
+
+### 2026-10-01 (136): correct the training skill threshold
+
+- Original `Trening` compares current wisdom at DGROUP `0x18C` against `0x1D`
+  and skips the fire-starting skill text when the value is `<= 29` (EXE img
+  `0x2749..0x274E`). The source used `MAD > 28`, compiling to compare against
+  `0x1C`; corrected it to `MAD > 29`. The latest TP7 disassembly now emits the
+  original immediate and conditional branch at candidate img `0x26F3..0x26F8`.
+- Genuine TP7 compilation succeeds and all three TPUs remain byte-identical.
+  The EXE remains 141,008 bytes with 5,297 relocations and a 119,792-byte load
+  image; strict comparison reports 125,372 differing byte positions. The MAP
+  places PRZEDM at `0x128E0`, 15 paragraphs / 240 bytes before `0x129D0`.
+  EXE parity remains **OPEN**. No behavior tests were run.
+
+### 2026-10-01 (137): restore nested escape-training guards
+
+- Original `Trening` checks wisdom `>10` and dexterity `>10` as nested guards;
+  failing either jumps directly past the practice/error block. Only then does
+  it test practice points and the current escape skill, printing the failure
+  message for those latter failures (EXE img `0x2872..0x2900`). Replaced the
+  reconstructed four-part `and` condition, whose `else` also printed when
+  wisdom or dexterity was too low, with the nested guards.
+- The candidate now matches the original `Trening` body length of 2,015 bytes
+  and its `-0x56` placement: prologue `0x2396` / candidate `0x2340`, return
+  `0x2B73` / `0x2B1D`, and following save entry `0x2BA1` / `0x2B4B`. A
+  normalized instruction comparison leaves only seven string-compare helper
+  call targets (`0x1C71:0x09D7` original vs `0x1C62:0x09C3` candidate).
+- TP7 compilation succeeds and all three TPUs remain byte-identical. The
+  candidate EXE is 141,008 bytes with 5,297 relocations and a 119,792-byte
+  load image; strict comparison reports 125,099 differing byte positions.
+  PRZEDM remains at `0x128E0`, 15 paragraphs / 240 bytes before original
+  target `0x129D0`. EXE parity remains **OPEN**. No behavior tests were run.
+
+### 2026-10-01 (138): restore save-field order
+
+- The original save routine writes field 41 from the byte at DGROUP `0x258`
+  (img `0x30B8..0x30C0`) and field 42 from the word at `0x74` (img
+  `0x30D6..0x30E4`). The source had these two expressions reversed. Swapped
+  `POTRAWKI` and `PoleBOMBKI0074` in the write list; the candidate now emits
+  the same byte/word reads in the original order at img `0x3062..0x306C` and
+  `0x3080..0x3089`.
+- The save body remains 2,510 bytes with 1,037 decoded instructions, matching
+  the original body length; normalized comparison leaves only the leading
+  string-assignment helper target (`0x1C71:0x0900` original vs
+  `0x1C62:0x08EC` candidate). TP7 compilation succeeds and all three TPUs
+  remain byte-identical. The EXE is 141,008 bytes with 5,297 relocations and a
+  119,792-byte load image; strict comparison reports 125,099 differing byte
+  positions. PRZEDM remains at `0x128E0`, 15 paragraphs / 240 bytes before
+  `0x129D0`. Parity remains **OPEN**. No behavior tests were run.
+
+### 2026-10-01 (139): align concert-room exits and destinations
+
+- In original `PokojeKoncertowe` (`0x68BC..0x7D6A`), no store of `193` to
+  `MIECHO` occurs; `WYJSCIE` branches leave the routine. The candidate had
+  twelve `MIECHO := 193` stores before `Exit`. Removed only those stores in
+  this procedure. The rebuilt body contains no `C7 06 D6 01 C1 00` stores,
+  matching the original scan of that range.
+- The original room-61 navigation stores context ids `0x3C`, `0x3F`, `0x3E`,
+  and `0x40` (img `0x6A48`, `0x6A5F`, `0x6A76`, `0x6A8D`); corrected the
+  reconstructed north/south destinations to `63`/`62`. Reordered the
+  room-64 west/north actions and room-66 south/west actions to match original
+  store order (img `0x6F38`, `0x6F4F`, `0x721F`, `0x7236`).
+- The candidate `PokojeKoncertowe` returns at `0x7D4B` from entry `0x6880`,
+  a 5,323-byte body, versus original return `0x7D69` from entry `0x68BC`,
+  a 5,295-byte body. The remaining 28-byte body gap is **OPEN**. The latest
+  TP7 build is 140,928 bytes with 5,297 relocations and a 119,712-byte load
+  image; all three TPUs remain byte-identical, while strict EXE comparison
+  reports 125,992 differing byte positions. The MAP places PRZEDM at
+  `0x12890`, 20 paragraphs / 320 bytes before original target `0x129D0`.
+  EXE parity remains **OPEN**. No behavior tests were run.
+
+### 2026-10-01 (140): restore sequential concert-context tests
+
+- Original `PokojeKoncertowe` checks each subsequent context after the prior
+  room loop (for example, compare `[0x1D6]` to `0x3D` at img `0x6ADC`), rather
+  than branching around all later context checks as an `else if` chain does.
+  Changed contexts 62..72 to independent `if` blocks. This removed the extra
+  unconditional jump emitted after each candidate room block.
+- The candidate procedure now returns at `0x7D2A` from entry `0x6880` (body
+  1,194 bytes), versus original return `0x7D69` from entry `0x68BC`; decoded body
+  lengths are 1,194 and 1,199 bytes, respectively. The remaining five-byte
+  difference is **OPEN**. Twelve unsupported stores on `WYJSCIE` remain
+  removed; room-61 destinations and room-64/66 store ordering remain corrected.
+- TP7 compilation succeeds and all three TPUs remain byte-identical. The
+  candidate EXE is 140,896 bytes with 5,297 relocations and a 119,680-byte
+  load image; strict comparison reports 126,269 differing byte positions.
+  The MAP places PRZEDM at `0x12870`, 22 paragraphs / 352 bytes before original
+  target `0x129D0`. EXE parity remains **OPEN**. No behavior tests were run.
+
+### 2026-10-01 (141): restore the sixth-room crowd call
+
+- Original context 66 calls `PRZEDM.TLUM` after its room description and before
+  the input loop (EXE img `0x7112`, target `PRZEDM:0x3467`). The reconstructed
+  context omitted this call. Restored it. `PokojeKoncertowe` now has the same
+  1,199-byte body length as original: candidate entry/return `0x6880..0x7D2F`,
+  original `0x68BC..0x7D6A`.
+- TP7 compilation succeeds and all three TPUs remain byte-identical. The
+  candidate EXE is 140,928 bytes with 5,298 relocations and a 119,696-byte
+  load image; strict comparison reports 125,418 differing byte positions.
+  The MAP places PRZEDM at `0x12880`, 21 paragraphs / 336 bytes before original
+  target `0x129D0`. Equal procedure length is not full instruction identity;
+  EXE parity remains **OPEN**. No behavior tests were run.
+
+### 2026-10-01 (142): use unit-owned arena trackers
+
+- The original arena checks and clears `MINIBARMAN` and `GRUBAS` at DGROUP
+  `0x67A` and `0x67C` (img `0x7288`, `0x72AB`, `0x73CA`, `0x741A`, `0x746D`,
+  `0x7482`). TPU symbol report `tpu_reports/MONSTRA.symbols.csv` identifies
+  these as `MONSTRA.MINIBARMAN` and `MONSTRA.GRUBAS`; the TP7 MAP places the
+  matching candidate symbols at `1D33:067A` and `1D33:067C`. Replaced only
+  those arena-tracker references
+  with unit-owned globals. Kept the separate beer-item decrements on program
+  word `0x7C`, as shown by original accesses at img `0x7435..0x7452` and
+  `0x7469..0x74AE`; save/load uses of the low words remain unchanged.
+- TP7 compilation succeeds and all three TPUs remain byte-identical. The
+  candidate EXE is 140,928 bytes with 5,298 relocations and a 119,696-byte
+  load image; strict comparison reports 125,418 differing byte positions.
+  `PokojeKoncertowe` retains the original 1,199-byte body length. Its
+  remaining normalized differences include the random-scratch access at
+  original DGROUP `0x19E` versus candidate `PRZEDM.CZY` at `0x212`, plus
+  call-target/layout differences; these remain **OPEN**. PRZEDM remains at
+  `0x12880`, 21 paragraphs / 336 bytes before `0x129D0`. No behavior tests
+  were run.
+
+### 2026-10-01 (143): restore load input drain and field order
+
+- Original `WczytajPostac` performs `ReadLn(wpisz)` before opening the save
+  file (EXE img `0x7D8A..0x7DA2`); restored the input drain. The original
+  reads saved field 41 from byte `[0x258]` before field 42 from word `[0x74]`
+  (img `0x81C3` and `0x81DA`); swapped the corresponding `POTRAWKI` and
+  `PoleBOMBKI0074` reads. The inverse energy conversion also stores the
+  quotient before subtracting `0x28`, matching original instructions at img
+  `0x7EAA..0x7EBC`.
+- `WczytajPostac` now has a 2,088-byte body in both builds: original
+  `0x7D80..0x85A7`, candidate `0x7D44..0x856B`. After abstracting relocation
+  call targets, branches, and string addresses, the decoded instruction
+  sequence matches. Segment/call relocation identity is not established.
+- TP7 compilation succeeds and all three TPUs remain byte-identical. The
+  candidate EXE is 140,960 bytes with 5,301 relocations and a 119,728-byte
+  load image; strict comparison reports 126,372 differing byte positions.
+  The MAP places PRZEDM at `0x128A0`, 19 paragraphs / 304 bytes before original
+  target `0x129D0`. EXE parity remains **OPEN**. No behavior tests were run.
+
+### 2026-10-01 (144): restore level-one experience gate
+
+- Original `ZdobadzPoziom` requires both KUNSZT `>=700` and POZIOM `=1`
+  before reaching the level-up body (EXE img `0x8738..0x8745`). The source
+  previously let every level-one character level up regardless of KUNSZT;
+  restored the 700-point gate. Rewrote the level 4-8 and level 9+ deductions
+  to preserve the original arithmetic order (`KUNSZT-735-POZIOM` and
+  `KUNSZT-2*POZIOM-735`), supported by original instructions at
+  `0x8850..0x885E` and `0x8868..0x8878`.
+- The candidate body is 1,151 bytes (`0x86F2..0x8B70`) versus the original
+  1,142 bytes (`0x872E..0x8BA3`). A normalized instruction comparison leaves
+  branch-shape differences in threshold gates; the body remains nine bytes
+  longer. This layout discrepancy is **OPEN**.
+- TP7 compilation succeeds and all three TPUs remain byte-identical. The
+  candidate EXE is 140,976 bytes with 5,301 relocations and a 119,744-byte
+  load image; strict comparison reports 125,698 differing byte positions.
+  The MAP places PRZEDM at `0x128B0`, 18 paragraphs / 288 bytes before original
+  target `0x129D0`. EXE parity remains **OPEN**. No behavior tests were run.
+
+### 2026-10-01 (145): align four small-room procedures
+
+- EXE context guards establish that `Pokoj2`, `Pokoj3`, and `Pokoj12` test
+  `MIECHO` at entry (img `0x5494`, `0x5728`, `0x5C40`); `Pokoj9` begins
+  directly with its description and has no context guard (img `0x5923`).
+  Removed the unsupported guard from `Pokoj9`.
+- Original room procedures contain no `PRZEDM.KOMENDY` call or `MIECHO := 193`
+  store (img ranges `0x548A..0x5651`, `0x571E..0x5861`, `0x5923..0x5A8C`,
+  `0x5C36..0x5F08`); removed those candidate additions. Room 3 only recognizes
+  `GORA` as destination context 1; the original source evidence at img
+  `0x583C..0x5853` confirms this, so removed unsupported `DOL -> 5` and
+  corrected `GORA` from 11 to 1.
+- `Pokoj2`, `Pokoj3`, and `Pokoj9` now match original body lengths (456, 324,
+  and 362 bytes) and normalized instruction sequences, abstracting strings,
+  branches, and calls. `Pokoj12` also matches its 723-byte body and instruction
+  sequence except the three random-drop scratch accesses: original uses
+  DGROUP `0x19E` (img `0x5E40..0x5EC7`), while candidate uses `0x212`. The
+  candidate MAP resolves `1D33:0212` as `CZY`, also present in
+  `tpu_reports/PRZEDM.symbols.csv`; ownership/layout reconciliation remains
+  **OPEN**.
+- TP7 compilation succeeds and all three TPUs remain byte-identical. The
+  candidate EXE is 140,928 bytes with 5,296 relocations and a 119,712-byte
+  load image; strict comparison reports 125,867 differing byte positions.
+  The MAP places PRZEDM at `0x12890`, 20 paragraphs / 320 bytes before original
+  target `0x129D0`. EXE parity remains **OPEN**. No behavior tests were run.
+
+### 2026-10-01 (146): correct level-up gains and output value
+
+- The original level-up code updates MAXMANA by MAD+2, then prints MAD+2 as
+  the gain (img `0x8983..0x89B1`). The reconstruction printed the resulting
+  MAXMANA instead; changed the output expression to MAD+2.
+- In the equal-stat tie branch, original increments MAXZRE, MAXMAD, then
+  MAXSIL (img `0x8AC7..0x8AD9`); reordered the source to match. In the
+  `MAXZRE > MAXMAD` and `MAXZRE = MAXSIL` branch, original adds two to MAXSIL
+  and one to MAXZRE (img `0x8AEE..0x8AFA`); corrected the MAXZRE increment.
+- The remaining normalized differences in `ZdobadzPoziom` are threshold
+  branch shapes, not these stat updates. Candidate body is 1,152 bytes
+  (`0x86D8..0x8B57`) versus original 1,142 bytes (`0x872E..0x8BA3`); this
+  ten-byte gap remains **OPEN**.
+- TP7 compilation succeeds and all three TPUs remain byte-identical. The
+  candidate EXE is 140,928 bytes with 5,296 relocations and a 119,712-byte
+  load image; strict comparison reports 125,877 differing byte positions.
+  The MAP places PRZEDM at `0x12890`, 20 paragraphs / 320 bytes before original
+  target `0x129D0`. EXE parity remains **OPEN**. No behavior tests were run.
+
+### 2026-10-01 (147): match overload-gate branch direction
+
+- Original main code compares `PRZED` and `CarryLimit` at img `0xB0F6`,
+  branches on `JG` to the overload output at `0xB102`, and otherwise uses a
+  near jump to the bleed loop at `0xB193`. The reconstructed positive `if`
+  emitted the inverse branch around its output block. Rewrote it as an early
+  `goto` when `PRZED <= CarryLimit`; the candidate now emits `JG` over a jump
+  to the bleed loop, matching the original control-flow direction.
+- The candidate branch uses a short jump to `0xB0A4`, while the original needs
+  a near jump to `0xB193`. Candidate overload-output-to-loop span is 124 bytes
+  (`0xB028..0xB0A4`), versus 145 bytes original (`0xB102..0xB193`); the
+  remaining 21-byte span and instruction differences are **OPEN**.
+- TP7 compilation succeeds and all three TPUs remain byte-identical. The
+  candidate EXE is 140,928 bytes with 5,296 relocations and a 119,712-byte
+  load image; strict comparison reports 125,883 differing byte positions.
+  The MAP places PRZEDM at `0x12890`, 20 paragraphs / 320 bytes before original
+  target `0x129D0`. EXE parity remains **OPEN**. No behavior tests were run.
+
+### 2026-10-01 (148): restore complete overload output block
+
+- Original overload output contains one grouped `Write` for the overweight
+  warning, numeric excess, and `ZA DUZO`, followed by a separate `Write` of
+  `TRACISZ `, `(PRZED-CarryLimit)*10`, and `% ENERGI` (img `0xB102..0xB178`);
+  the energy reduction follows at `0xB17D..0xB193`. Grouped the first source
+  output arguments and restored the missing `TRACISZ` output. The original
+  `JG` plus near-jump gate from finding (147) is retained.
+- Original and candidate output-to-loop blocks are both 145 bytes (original
+  `0xB102..0xB193`, candidate `0xB032..0xB0C3`). After abstracting calls,
+  branches, and string addresses, all 60 decoded instructions match in order.
+- TP7 compilation succeeds and all three TPUs remain byte-identical. The
+  candidate EXE is 140,960 bytes with 5,296 relocations and a 119,744-byte
+  load image; strict comparison reports 126,056 differing byte positions.
+  The MAP places PRZEDM at `0x128B0`, 18 paragraphs / 288 bytes before original
+  target `0x129D0`. EXE parity remains **OPEN**. No behavior tests were run.
+
+### 2026-10-01 (149): restore bleed-tick random scratch store
+
+- The original main-loop bleed tick stores `Random(5)` to DGROUP `0x19E`
+  before output and reloads it for printing (img `0xB19A..0xB1C1`). Changed
+  the reconstructed inline random expression to assign/use `CZY`; the TP7
+  candidate now has the same 82-byte body and normalized 34-instruction
+  sequence, abstracting call targets, branches, and strings.
+- The only normalized differences are the original store/load at `[0x19E]`
+  versus candidate `[0x212]`. Candidate MAP identifies `CZY` at `1D34:0212`;
+  the owner/layout discrepancy remains **OPEN** and is shared with the
+  `Pokoj12` loot-roll accesses in finding (145).
+- TP7 compilation succeeds and all three TPUs remain byte-identical. The
+  candidate EXE is 140,976 bytes with 5,296 relocations and a 119,760-byte
+  load image; strict comparison reports 125,230 differing byte positions.
+  The MAP places PRZEDM at `0x128C0`, 17 paragraphs / 272 bytes before original
+  target `0x129D0`. EXE parity remains **OPEN**. No behavior tests were run.
+
+### 2026-10-01 (150): bind random scratch to FUKS
+
+- The prior `CZY` mapping at DGROUP `0x19E` was wrong. `PRZEDM.symbols.csv`
+  identifies TPU `FUKS` (block `0008`, offset `0008`) and `CZY` (block `0030`,
+  offset `000C`); the `/GD` MAP places them at `1D37:019E` and `1D37:0212`.
+  Original bleed and room-12 drop code accesses `0x19E` (img `0xB1A3..0xB1B8`,
+  `0x5E40..0x5EC7`), while room-12 loot-money accesses `0x212` (img
+  `0x5DDA..0x5DE3`). Replaced only the four former unqualified `CZY` accesses
+  with `PRZEDM.FUKS`; retained `CZY` for the loot-money roll. Corrected the
+  integrated field map accordingly.
+- Both affected procedures now match original body length and normalized
+  instruction sequence exactly: bleed 82 bytes / 34 instructions and
+  `Pokoj12` 723 bytes / 271 instructions, abstracting calls, branches, and
+  string addresses. This resolves the scratch-owner discrepancy from findings
+  (145) and (149).
+- TP7 compilation succeeds and all three TPUs remain byte-identical. The
+  candidate EXE is 140,976 bytes with 5,296 relocations and a 119,760-byte
+  load image; strict comparison reports 125,230 differing byte positions.
+  The MAP places PRZEDM at `0x128C0`, 17 paragraphs / 272 bytes before original
+  target `0x129D0`. EXE parity remains **OPEN**. No behavior tests were run.
+
+### 2026-10-01 (151): bind remaining random rolls to FUKS
+
+- Original city-animal router code uses DGROUP `0x19E` for the Zamiatacz
+  chance and Zebrak coin roll (img `0x1DB6..0x1DC3`, `0x1E3E..0x1E8A`). The
+  concert-room handlers use the same slot for the Dziadek pipe roll and the
+  Mini-Barman beer roll, then test that saved roll for Grubas (img
+  `0x4FC1..0x4FC4`, `0x7426..0x7485`). Replaced the remaining source accesses
+  to `PRZEDM.CZY` in these handlers with `PRZEDM.FUKS`. The only remaining
+  `PRZEDM.CZY` references in `BOMBKI.PAS` are its save/load fields.
+- `PRZEDM.symbols.csv` identifies `FUKS` as a TPU variable (block `0008`,
+  offset `0008`) and `CZY` as a different TPU variable (block `0030`, offset
+  `000C`); the latest `/GD` MAP resolves them at DGROUP `0x19E` and `0x212`.
+  This confirms the source ownership distinction. The integrated field map
+  now lists the additional original scratch-use sites.
+- TP7 compilation succeeds and all three TPUs remain byte-identical. The
+  candidate EXE is 140,976 bytes with 5,296 relocations and a 119,760-byte
+  load image; strict comparison reports 125,231 differing byte positions.
+  The MAP places PRZEDM at `0x128C0`, 17 paragraphs / 272 bytes before original
+  target `0x129D0`. EXE parity remains **OPEN**. No behavior tests were run.
+
+### 2026-10-01 (152): bind well and command rolls to FUKS
+
+- The original well reward and its immediate hazard chance both store/load
+  DGROUP `0x19E` (img `0xC8A1..0xC90B`); the poisonous-passage hazard does the
+  same (img `0xCE3D..0xCE4E`). In the main command handler, `POROWNAJ` and both
+  `POWROT` portal rolls, including the later `UZYJ SCROLL POWROT` overwrite,
+  use `0x19E` (img `0xF0AA..0xF0BA`, `0xF1F4..0xF2A5`). Changed these source
+  scratch accesses from imported `CZY` to `PRZEDM.FUKS`.
+- The nearby inline room-12 and rooms-14..16 coin-roll paths access `0x212`
+  as `LootMoney` (img `0x5DDA..0x5DE3`, `0xB3FD..0xB437`, `0xB6C4..0xB6FE`,
+  `0xB88D..0xB8C7`); their `CZY` references remain unchanged. Expanded the
+  integrated field map to record these distinct scratch owners and use sites.
+- TP7 compilation succeeds and all three TPUs remain byte-identical. The
+  candidate EXE is 140,976 bytes with 5,296 relocations and a 119,760-byte
+  load image; strict comparison reports 125,231 differing byte positions.
+  The MAP places PRZEDM at `0x128C0`, 17 paragraphs / 272 bytes before original
+  target `0x129D0`. EXE parity remains **OPEN**. No behavior tests were run.
+
+### 2026-10-01 (153): match level-up threshold gate
+
+- Rewrote the level-up gate so each unmet threshold nests the remaining
+  checks, and only exits when none qualifies. This removes the intermediate
+  `goto` lowering that emitted an extra unconditional jump after each
+  successful level-one through level-three test. The original gate uses direct
+  conditional branches to the shared level-up body (img `0x8738..0x87A2`);
+  the candidate now has the same normalized instruction sequence.
+- `ZdobadzPoziom` now matches original body length exactly: 1,142 bytes
+  (original img `0x872E..0x8BA3`, candidate `0x86D8..0x8B4D`). All 435 decoded
+  instructions match after abstracting call targets, branches, and string
+  addresses. The body-length/threshold mismatch noted in earlier findings is
+  resolved.
+- TP7 compilation succeeds and all three TPUs remain byte-identical. The
+  candidate EXE is 140,960 bytes with 5,296 relocations and a 119,744-byte
+  load image; strict comparison reports 126,097 differing byte positions.
+  The MAP places PRZEDM at `0x128B0`, 18 paragraphs / 288 bytes before original
+  target `0x129D0`. EXE parity remains **OPEN**. No behavior tests were run.
+
+### 2026-10-01 (154): verify Bazar and checkpoint bodies
+
+- Static comparison of original and TP7 candidate code confirms `Bazar` is
+  338 bytes in both images (original img `0x36F4..0x3845`, candidate
+  `0x369E..0x37EF`), and `PunktKontrolny` is 392 bytes in both (original
+  `0x51C3..0x534A`, candidate `0x516D..0x52F4`). Their 133 and 124 decoded
+  instruction sequences respectively match after abstracting calls, branches,
+  and string addresses.
+- These two procedure bodies have no remaining normalized instruction
+  differences. This updates the active parity inventory; strict EXE identity
+  and other program-local procedures remain **OPEN**.
+- TP7 compilation succeeds and all three TPUs remain byte-identical. The
+  candidate EXE is 140,960 bytes with 5,296 relocations and a 119,744-byte
+  load image; strict comparison reports 126,097 differing byte positions.
+  The MAP places PRZEDM at `0x128B0`, 18 paragraphs / 288 bytes before original
+  target `0x129D0`. No behavior tests were run.
+
+### 2026-10-01 (155): match race-selection update order
+
+- The original `CZAROMIL` branch applies `MAD := 16`, increases `MAXMANA` by
+  150, then assigns `MAXSIL`, `MAXZRE`, and `MAXMAD` (img `0x1892..0x18BF`).
+  Reordered the source assignments to match the original sequence.
+- `WybierzRase` now matches original body length exactly: 1,339 bytes
+  (original img `0x16EF..0x1C29`, candidate `0x1699..0x1BD3`). All 599 decoded
+  instructions match after abstracting call targets, branches, and string
+  addresses.
+- TP7 compilation succeeds and all three TPUs remain byte-identical. The
+  candidate EXE is 140,960 bytes with 5,296 relocations and a 119,744-byte
+  load image; strict comparison reports 126,106 differing byte positions.
+  EXE parity remains **OPEN**. No behavior tests were run.
+
+### 2026-10-01 (156): resolve city-router boundary discrepancy
+
+- The one-byte `Trening` boundary discrepancy reported in finding (135) was
+  caused by treating the final literal byte at original img `0x2395` as the
+  procedure entry. The actual original prologue begins at `0x2396`; candidate
+  prologue begins at `0x2340`, preserving the `-0x56` offset. The 1,278-byte
+  literal pools from original `0x1E98` and candidate `0x1E42` are byte-identical.
+- `WalkaMiasto` code is 622 bytes in each image (original `0x1C2A..0x1E97`,
+  candidate `0x1BD4..0x1E41`); all 239 decoded instructions match after
+  abstracting call targets, branches, and string addresses. Random scratch
+  accesses use `PRZEDM.FUKS` at DGROUP `0x19E`, as verified in finding (151).
+  The boundary issue is resolved; helper targets and global segment layout
+  remain part of the broader EXE parity work.
+- TP7 compilation succeeds and all three TPUs remain byte-identical. The
+  candidate EXE is 140,960 bytes with 5,296 relocations and a 119,744-byte
+  load image; strict comparison reports 126,106 differing byte positions.
+  The MAP places PRZEDM at `0x128B0`, 18 paragraphs / 288 bytes before original
+  target `0x129D0`. EXE parity remains **OPEN**. No behavior tests were run.
+
+### 2026-10-01 (157): verify shop procedure bodies
+
+- Compared all four program-local shop procedures against the original. Their
+  code bodies have matching lengths and normalized instruction sequences,
+  abstracting calls, branches, and string addresses: `ZakupyPiekarnia` 1,232
+  bytes (original `0x39BE..0x3E8D`, candidate `0x3968..0x3E37`),
+  `ZakupyZbrojownia` 1,303 bytes (`0x3E8E..0x43A4`, `0x3E38..0x434E`),
+  `ZakupySklepWielobranzowy` 1,848 bytes (`0x43A5..0x4ADC`,
+  `0x434F..0x4A86`), and `ZakupySklep` 1,142 bytes (`0x4ADD..0x4F52`,
+  `0x4A87..0x4EFC`). All are placed at the same `-0x56` shift.
+- The post-return literal pools are byte-identical after that shift: lengths
+  are 419, 745, 769, and 200 bytes respectively. These four shop procedures
+  have no remaining body or literal-pool differences in this comparison.
+- TP7 compilation succeeds and all three TPUs remain byte-identical. The
+  candidate EXE is 140,960 bytes with 5,296 relocations and a 119,744-byte
+  load image; strict comparison reports 126,106 differing byte positions.
+  The MAP places PRZEDM at `0x128B0`, 18 paragraphs / 288 bytes before original
+  target `0x129D0`. EXE parity remains **OPEN**. No behavior tests were run.
+
+### 2026-10-01 (158): verify save and concert-router bodies
+
+- `WalkaKoncert` matches in size (624 bytes: original img `0x4F53..0x51C2`,
+  candidate `0x4EFD..0x516C`) and all 239 normalized instructions. Its 61-byte
+  post-return literal pool is byte-identical after the `-0x56` shift.
+- `ZapiszPostac` matches in size (2,899 bytes: original img `0x2BA1..0x36F3`,
+  candidate `0x2B4B..0x369D`) and all 1,305 normalized instructions. Its
+  389-byte post-return literal pool is also byte-identical after the same
+  shift. Both comparisons abstract call targets, branches, and string
+  addresses in code while comparing literal-pool bytes directly.
+- TP7 compilation succeeds and all three TPUs remain byte-identical. The
+  candidate EXE is 140,960 bytes with 5,296 relocations and a 119,744-byte
+  load image; strict comparison reports 126,106 differing byte positions.
+  The MAP places PRZEDM at `0x128B0`, 18 paragraphs / 288 bytes before original
+  target `0x129D0`. EXE parity remains **OPEN**. No behavior tests were run.
+
+### 2026-10-01 (159): correct concert-dispatch body measurement
+
+- Rechecked the complete `PokojeKoncertowe` routine boundaries. The original
+  prologue is img `0x68BC`, its `pop bp; ret` is `0x7D69..0x7D6A`, and the
+  candidate prologue/return are `0x6866` and `0x7D13..0x7D14`; each code body
+  is 5,295 bytes. This corrects the decimal 1,199-byte body-length claims in
+  findings (141), (142), and the prior TODO summary; those measurements were
+  inconsistent with their recorded entry/return addresses.
+- The bodies each decode to 2,100 instructions after abstracting calls,
+  branches, and string addresses. Sequence comparison has four remaining
+  difference blocks; they are **OPEN**. The 22-byte post-return literal pools
+  (original `0x7D6B..0x7D80`, candidate `0x7D15..0x7D2A`) are byte-identical
+  after the `-0x56` shift.
+- TP7 compilation succeeds and all three TPUs remain byte-identical. The
+  candidate EXE is 140,960 bytes with 5,296 relocations and a 119,744-byte
+  load image; strict comparison reports 126,106 differing byte positions.
+  The MAP places PRZEDM at `0x128B0`, 18 paragraphs / 288 bytes before original
+  target `0x129D0`. EXE parity remains **OPEN**. No behavior tests were run.
+
+### 2026-10-01 (160): match concert scene-helper call sites
+
+- Original context 68 invokes `PRZEDM.TLUM` at img `0x7546` (TPU entry
+  `PRZEDM:0x3467`), not `PRZEDM.SCENA`; corrected the source call. The
+  original has no `SCENA` call in context 69, so removed the reconstructed
+  context-69 call and placed it in context 72, matching original img `0x7C6C`
+  (`PRZEDM:0x31FF`). Original and candidate now each contain eight `TLUM`
+  and three `SCENA` calls in this routine; the other original scene calls are
+  at img `0x7986` and `0x7AF9`. Also moved context-61 poster inspection after
+  the `WalkaKoncert` call, matching the original order at img `0x6A20` and its
+  following command/exit checks.
+- `PokojeKoncertowe` now matches original body length (5,295 bytes), all 2,100
+  decoded instructions after abstracting relocated calls, branches, and string
+  addresses, and its 22-byte following literal pool (byte-identical after the
+  `-0x56` shift). This resolves the four normalized instruction difference
+  blocks reported in finding (159). Procedure entries/returns are original
+  `0x68BC`/`0x7D69` and candidate `0x6866`/`0x7D13`.
+- TP7 compilation succeeds and all three TPUs remain byte-identical. The
+  candidate EXE is 140,960 bytes with 5,296 relocations and a 119,744-byte
+  load image; strict comparison reports 126,082 differing byte positions.
+  The MAP places PRZEDM at `0x128B0`, 18 paragraphs / 288 bytes before original
+  target `0x129D0`. EXE parity remains **OPEN**. No behavior tests were run.
+
+### 2026-10-01 (161): restore inline-room monster drops
+
+- Restored the post-victory drops for inline rooms 14, 15, and 16 from the
+  original EXE: room 14/15 coin amounts are `Random(15)` with sword and shield
+  rolls `Random(20)<7` and heart `Random(20)<6` (img `0xB3E5..0xB50A`,
+  `0xB6AC..0xB7D1`); room 16 uses `Random(30)`, sword/shield rolls
+  `Random(20)<10`, and heart `Random(20)<6` (img `0xB875..0xB99A`). Item
+  context values and the 500/300/50 stores match the original. Flee handling
+  also follows the machine code: rooms 14/15 clear the flee flag and retain
+  context, while room 16 clears the flag and sets context 11 (img
+  `0xB9A2..0xB9AD`). These are program-owned DGROUP words; field mapping is
+  documented at `integrated-field-map.md` lines 311-316 and 629-632.
+- Keeping all three drop sequences inline exceeded TP7's statement-part limit
+  (`Error 124` at the end of the main program). Moved only room 16's drop
+  sequence to `Room16ItemDrops`, retaining the same data accesses and ordering;
+  the genuine TP7 build now succeeds. This helper changes generated code
+  layout, so its instruction-level parity remains **OPEN**.
+- All three TPUs remain byte-identical. The EXE is 142,000 bytes with 5,333
+  relocations and a 120,640-byte load image; strict comparison reports 126,273
+  differing byte positions. The MAP places PRZEDM at `0x12C30`, 38 paragraphs
+  / 608 bytes after original target `0x129D0`. EXE parity remains **OPEN**. No
+  behavior tests were run.
+
+### 2026-10-01 (162): align room 14 and 15 command sequences
+
+- The original room-14 and room-15 input handlers compare `EXIT` before
+  `MODE` (img `0xB326..0xB380` and `0xB5ED..0xB647`) and go directly to the
+  common termination epilogue on `WYJSCIE` (img `0xB396` and `0xB65D`). They
+  do not call `PRZEDM.KOMENDY` between `ReadLn` and these comparisons
+  (img `0xB309..0xB330`, `0xB5D0..0xB5F7`). Applied the same evidence-backed
+  order and direct exit path to rooms 14-17 and removed those extra unit calls.
+- `Pokoje` 14 and 15 now each match the original 701-byte code span and all
+  262 normalized instructions (call targets, branch destinations, and literal
+  addresses abstracted). This closes the prior local differences in input
+  dispatch and monster victory drops. Room 16's item-drop logic remains split
+  into `Room16ItemDrops`: moving it back inline still triggers TP7 Error 124
+  (`Statement part too large` at the end of the program); full instruction
+  parity for that handler remains **OPEN**.
+- Genuine TP7 compilation succeeds and all three TPUs remain byte-identical.
+  The EXE is 141,936 bytes with 5,329 relocations and a 120,592-byte load
+  image; strict comparison reports 127,404 differing byte positions. The MAP
+  places PRZEDM at `0x12C00`, 35 paragraphs / 560 bytes after original target
+  `0x129D0`. EXE parity remains **OPEN**. No behavior tests were run.
+
+### 2026-10-01 (163): verify the extracted room-16 drop block
+
+- The extracted `Room16ItemDrops` code is exactly 198 bytes, matching original
+  img `0xB8DA..0xB99F`; both decode to 66 instructions after abstracting call
+  targets, branch destinations, and string addresses. Candidate code is at img
+  `0x8BE3..0x8CA8`, behind the procedure entry at `0x8BD9`. The room-16 main
+  handler invokes it via a near call; its in-place instruction layout and
+  enclosing handler remain **OPEN**.
+- The supporting current TP7 build is the one recorded in finding (162): all
+  three TPUs byte-identical; EXE 141,936 bytes / 5,329 relocations / 120,592
+  image bytes; 127,404 differing positions; PRZEDM MAP address `0x12C00`.
+  Strict EXE parity remains **OPEN**. No behavior tests were run.
+
+### 2026-10-01 (164): restore automatic room-16 encounter
+
+- The original room-16 handler starts combat automatically on entry when
+  DGROUP `0x5E == 16`, after its flavor text and before the energy prompt
+  (img `0xB854..0xB875`). The reconstruction incorrectly waited for
+  `ZABIJ POTWOR`. Moved the fight and victory/flee handling before the prompt;
+  the original flee path clears the flag and sets context 11 (img
+  `0xB9A2..0xB9AD`).
+- Compared original img `0xB7F2..0xBAA0` with the candidate room-16 main block
+  `0xB900..0xBAEA` plus the extracted drop body at `0x8BE3..0x8CA8`. Expanding
+  the helper call in the candidate instruction stream gives all 254 original
+  instructions in the same normalized order (calls, branches, and literal
+  addresses abstracted). The code spans differ by three bytes; actual EXE
+  identity for the split call/layout remains **OPEN**.
+- Genuine TP7 compilation succeeds and all three TPUs remain byte-identical.
+  The EXE is 141,920 bytes with 5,328 relocations and a 120,576-byte load
+  image; strict comparison reports 127,466 differing byte positions. The MAP
+  places PRZEDM at `0x12BF0`, 34 paragraphs / 544 bytes after original target
+  `0x129D0`. EXE parity remains **OPEN**. No behavior tests were run.
+
+### 2026-10-01 (165): align poster and city-center room handlers
+
+- In context 17, the original checks `MODE` before displaying `EXIT` choices,
+  performs `PATRZ PLAKAT`, then checks `WYJSCIE` before the `GORA`/`DOL`
+  destinations (img `0xBAAB..0xBCA1`). Reordered the reconstructed checks to
+  match. The room-17 body is now 503 bytes, with all 198 normalized
+  instructions matching. Context 18's one-shot teleport body also matches all
+  47 normalized instructions and its 125-byte length (img `0xBCA2..0xBD1E`).
+- Context 20's original `WYJSC0IE` comparison branches directly to the shared
+  termination epilogue without storing sentinel 193 (img `0xBE8D..0xBEA1`).
+  Removed the unsupported assignment/local-label route and targeted the shared
+  exit label. The city-center body now matches the original 481-byte span and
+  all 194 normalized instructions (original img `0xBD29..0xBF09`).
+- Genuine TP7 compilation succeeds and all three TPUs remain byte-identical.
+  The EXE is 141,920 bytes with 5,328 relocations and a 120,576-byte load
+  image; strict comparison reports 127,433 differing byte positions. The MAP
+  places PRZEDM at `0x12BF0`, 34 paragraphs / 544 bytes after original target
+  `0x129D0`. EXE parity remains **OPEN**. No behavior tests were run.
+
+### 2026-10-01 (166): align bar-room actor checks and exits
+
+- Context 76's first conditional bar description refers to `MACIEK`, not
+  `PEDAL`; the original reads the MACIEK room tracker at DGROUP `0x684` before
+  printing its bartender text (img `0xBF9C..0xBFA1`). The TPU symbol report
+  identifies `PEDAL` at block `0008` offset `000A` and `MACIEK` at offset
+  `000E`; the TP7 MAP resolves these to `0x680` and `0x684`. Corrected the
+  source reference to `MONSTRA.MACIEK`.
+- The original context-76 prompt proceeds from `ReadLn` directly to `MODE`
+  comparison (img `0xC048..0xC076`); it has no `PRZEDM.KOMENDY` call. Removed
+  that extra call. Its `WYJSCIE` comparison jumps to the common termination
+  epilogue without storing sentinel 193 (img `0xC0C8..0xC0D8`); replaced the
+  local sentinel/label sequence with a direct jump (img `0xC0C4..0xC0D8`).
+- The candidate context-76 body now matches the original 716-byte range
+  `0xBF2C..0xC1F7`, all 287 decoded instructions after abstracting call targets,
+  branches, and string addresses.
+- Genuine TP7 compilation succeeds and all three TPUs remain byte-identical.
+  The EXE is 141,904 bytes with 5,327 relocations and a 120,560-byte load
+  image; strict comparison reports 127,211 differing byte positions. The MAP
+  places PRZEDM at `0x12BE0`, 33 paragraphs / 528 bytes after original target
+  `0x129D0`. EXE parity remains **OPEN**. No behavior tests were run.
+
+### 2026-10-01 (167): match garden rooms 77-79 exit paths
+
+- Context 77's `WYJSCIE` comparison branches directly to the common termination
+  epilogue at img `0xC372..0xC37A`, without writing sentinel 193. Removed that
+  unsupported store. The handler now matches the original 471-byte span
+  `0xC20C..0xC3E2` and all 187 normalized instructions.
+- Contexts 78 and 79 likewise jump directly to the epilogue from their
+  `WYJSCIE` checks (img `0xC4FC..0xC504` and `0xC641..0xC649`). Removed their
+  sentinel stores. Both handlers now match their original 315-byte spans
+  (`0xC3ED..0xC527` and `0xC532..0xC66C`) and all 126 normalized instructions
+  apiece.
+- Genuine TP7 compilation succeeds and all three TPUs remain byte-identical.
+  The EXE is 141,888 bytes with 5,327 relocations and a 120,544-byte load
+  image; strict comparison reports 127,413 differing byte positions. The MAP
+  places PRZEDM at `0x12BD0`, 32 paragraphs / 512 bytes after original target
+  `0x129D0`. EXE parity remains **OPEN**. No behavior tests were run.
+
+### 2026-10-01 (168): match well and garden room code
+
+- Context 80's well hazard stores `Random(100)` in PRZEDM.FUKS at DGROUP
+  `0x19E` and compares it against 10 (img `0xC8F8..0xC909`). The source instead
+  compared an unstored random result against 40 and added a separate damage
+  message/effect absent from the EXE. Restored the scratch store, threshold,
+  and original consequence block; the `FUKS` ownership binding is recorded in
+  `integrated-field-map.md` line 629. Removed the unsupported sentinel store on
+  the room's `WYJSCIE` path (original direct branch at img `0xC7FA..0xC804`).
+- Rooms 80, 81, and 82 now match original spans `0xC677..0xC981`,
+  `0xC98C..0xCAC6`, and `0xCAD1..0xCC0B`: 779/315/315 bytes and 306/126/126
+  normalized instructions, respectively. Rooms 81 and 82 also had unsupported
+  sentinel stores on `WYJSCIE`; the original branches directly to termination
+  (img `0xCA9B..0xCAA6`, `0xCBE0..0xCBEB`).
+- Genuine TP7 compilation succeeds and all three TPUs remain byte-identical.
+  The EXE is 141,776 bytes with 5,322 relocations and a 120,448-byte load
+  image; strict comparison reports 127,850 differing byte positions. The MAP
+  places PRZEDM at `0x12B70`, 26 paragraphs / 416 bytes after original target
+  `0x129D0`. This overall count is not monotonic as header, relocation, and
+  linked-segment layouts change; EXE parity remains **OPEN**. No behavior tests
+  were run.

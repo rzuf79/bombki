@@ -626,7 +626,8 @@ record only; it does not corroborate or constrain any claim below.
 | PRAKTYK | practice counter (school/CWICZ currency) | [0x194] |
 | PRZED | carried-load counter | [0x182] |
 | WROGEN / WROGSIL / WROGZRE | enemy HP / dmg / dex | [0x1B0] / [0x1B6] / [0x1B8] |
-| CZY | random scratch | [0x19E] (=RandomScratch) |
+| FUKS | luck/random scratch word | [0x19E]; used by city-animal drops (img 0x1DB6..0x1E8D), concert-room drops (img 0x4FBA..0x4FE1, 0x7420..0x7491), room-12 drops (img 0x5E3A..0x5EC7), main-loop `POROWNAJ` and portal rolls (img 0xF0AA..0xF2D5), well and cave hazard rolls (img 0xC8A1..0xC90B, 0xCE3D..0xCE4E), and the bleed tick (img 0xB19A..0xB1C1) |
+| CZY | loot/random scratch | [0x212]; room-12 and inline rooms 14-16 money rolls (img 0x5DDA..0x5DE3, 0xB3F8..0xB437, 0xB6BF..0xB6FE, 0xB889..0xB8C7) |
 | PASZOL | fled flag | [0x1D2] |
 | MMIECZ, MTARCZA, SERCE, DYPLOM, FAJKA, MBUTELKA | sword/shield/heart/diploma/pipe/mana-bottle | [0x17E]/[0x184]/[0x186]/[0x188]/[0x18A]/[0x192 count] |
 | PACZEK, CIASTKO, SUCHA, CHLEB, BULKA, WEKA | six foods | [0x1A0]/[0x1A2]/[0x1A4]/[0x1A6]/[0x1A8]/[0x1AA] |

@@ -32,7 +32,7 @@
     },
     {
       "label": "character-sheet response",
-      "expect": "W SUMIE MASZ[\\s\\S]*?[0-9]+%\\.-?[0-9]+>",
+      "expect": "W SUMIE MASZ[\\s\\S]*?TWOJE PARAMETRY : SILA - [0-9]+/[0-9]+ ZRECZNOSC - [0-9]+/[0-9]+ MADROSC - [0-9]+/[0-9]+[\\s\\S]*?S\\.Z-[0-9]+ +FUKSROLL-[0-9]+[\\s\\S]*?[0-9]+%\\.-?[0-9]+>",
       "send": "ZDOLNOSCI"
     },
     {
