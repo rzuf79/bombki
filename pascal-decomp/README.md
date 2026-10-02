@@ -32,6 +32,12 @@ directory.
 
 ## Common commands
 
+Behavioral-conformance tests are deferred until the TP7-built EXE is byte-for-
+byte identical to the retained original. Until then, use static EXE/TPU,
+disassembly, and compiler-layout analysis. Once parity is achieved, DOSEMU2 is
+the runtime for behavior checks; DOSBox-X is for TP7 compilation and top-level
+testing.
+
 Build the native Linux executable:
 
 ```sh
@@ -51,6 +57,20 @@ Compile with genuine TP7 in DOSBox-X, without starting the game:
 ```sh
 python3 tools/build_tp7_dosbox.py --no-run
 ```
+
+Check the rebuilt TPUs and EXE against the retained originals (from this
+directory, after building):
+
+```sh
+python3 conformance/compare_tpu.py \
+  --original-dir ../og --rebuilt-dir build/tp7
+python3 tools/compare_tp7_artifacts.py \
+  build/tp7/BOMBKI.EXE ../og/BOMBKI.EXE
+```
+
+`compare_tpu.py` requires all three TPUs to be byte-identical. The EXE
+comparison is also byte-for-byte; it reports the differing byte count and
+returns nonzero when the rebuilt executable does not match.
 
 Run the TP7 executable in DOSEMU2's terminal frontend without opening a window:
 

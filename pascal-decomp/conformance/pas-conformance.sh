@@ -14,9 +14,11 @@
 set -u
 
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+PROJECT="$ROOT/pascal-decomp"
 RECON="$ROOT/pascal-decomp/reconstructed"
 FPC="${FPC:-fpc}"
-TMP="$(mktemp -d)"
+mkdir -p "$PROJECT/build/tmp"
+TMP="$(mktemp -d "$PROJECT/build/tmp/pas-conformance.XXXXXX")"
 trap 'rm -rf "$TMP"' EXIT
 
 if ! command -v "$FPC" >/dev/null 2>&1; then

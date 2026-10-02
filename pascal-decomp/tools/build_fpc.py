@@ -19,6 +19,7 @@ from pathlib import Path
 
 PROJECT = Path(__file__).resolve().parents[1]
 SOURCES = PROJECT / "reconstructed"
+TEMP_ROOT = PROJECT / "build" / "tmp"
 UNIT_NAMES = ("MONSTRA", "PRZEDM", "SWIAT")
 PROGRAM_NAME = "BOMBKI"
 
@@ -96,11 +97,13 @@ def main() -> int:
         fpc = resolve_executable(args.fpc)
         output_dir = args.output_dir.expanduser().resolve()
         output_dir.mkdir(parents=True, exist_ok=True)
+        TEMP_ROOT.mkdir(parents=True, exist_ok=True)
         print(f"FPC: {subprocess.check_output([fpc, '-iV'], text=True).strip()}")
         built: dict[str, Path] = {}
         for target in targets:
             prefix = cross_prefix(target, host, args)
-            with tempfile.TemporaryDirectory(prefix=f"bombki-fpc-{target}-") as temporary:
+            with tempfile.TemporaryDirectory(prefix=f"bombki-fpc-{target}-",
+                                             dir=TEMP_ROOT) as temporary:
                 build_dir = Path(temporary)
                 target_options = list(TARGET_FLAGS[target])
                 if prefix:
