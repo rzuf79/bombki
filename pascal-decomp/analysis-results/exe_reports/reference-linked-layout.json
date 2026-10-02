@@ -1,0 +1,55 @@
+{
+  "format": "tp7-exe-region-layout-v1",
+  "description": "Reference BOMBKI.EXE load-image regions. Offsets are relative to the first byte after the MZ header. Unit segment starts are recovered from original EXE far-call targets; unit extents use the retained byte-identical TPUs and TP7 code lengths.",
+  "regions": [
+    {
+      "name": "BOMBKI",
+      "candidate_name": "BOMBKI",
+      "reference_start": "0x00000",
+      "reference_size": "0x0F5D0",
+      "evidence": "MZ CS=0000 and SWIAT far-call segment 0x0F5D; main image ends at the next linked segment."
+    },
+    {
+      "name": "SWIAT",
+      "candidate_name": "SWIAT",
+      "reference_start": "0x0F5D0",
+      "reference_size": "0x033F7",
+      "evidence": "Original far-call paragraph 0x0F5D; same-build TPU/EXE region mapping in reconstruction-log.md finding 33."
+    },
+    {
+      "name": "PRZEDM",
+      "candidate_name": "PRZEDM",
+      "reference_start": "0x129D0",
+      "reference_size": "0x0926F",
+      "evidence": "Original far-call paragraph 0x129D; PRZEDM code extent from retained TPU/TP7 MAP."
+    },
+    {
+      "name": "MONSTRA",
+      "candidate_name": "MONSTRA",
+      "reference_start": "0x1BC40",
+      "reference_size": "0x004AB",
+      "evidence": "Original WSTEP far-call paragraph 0x1BC4 at img 0x16F9; code extent from retained TPU/TP7 MAP."
+    },
+    {
+      "name": "Crt",
+      "candidate_name": "Crt",
+      "reference_start": "0x1C0F0",
+      "reference_size": "0x0061F",
+      "evidence": "Original CRT far-call paragraph 0x1C0F; code extent from retained TP7 MAP."
+    },
+    {
+      "name": "System",
+      "candidate_name": "System",
+      "reference_start": "0x1C710",
+      "reference_size": "0x00D67",
+      "evidence": "Original System far-call paragraph 0x1C71; code extent from retained TP7 MAP."
+    },
+    {
+      "name": "DGROUP",
+      "candidate_name": "DATA",
+      "reference_start": "0x1D490",
+      "reference_size": "0x008EE",
+      "evidence": "System bootstrap at original img 0xB0CF sets DGROUP paragraph 0x1D49 and clears BSS through offset 0x08EE; candidate MAP names the corresponding region DATA."
+    }
+  ]
+}

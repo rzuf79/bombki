@@ -13,6 +13,9 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
+      - name: Test artifact comparison tools
+        run: python3 -m unittest discover -s pascal-decomp/conformance -p 'test_compare*py'
+
       - name: Run conformance sweep in FPC image
         run: |
           docker run --rm \
@@ -61,8 +64,11 @@ jobs:
             --original-dir og \
             --rebuilt-dir pascal-decomp/conformance/artifacts
 
-      - name: Compare rebuilt EXE byte-for-byte
-        run: cmp pascal-decomp/conformance/artifacts/BOMBKI.EXE og/BOMBKI.EXE
+      - name: Compare rebuilt EXE and report linked-region differences
+        run: |
+          python3 pascal-decomp/tools/compare_tp7_artifacts.py \
+            --region-report \
+            pascal-decomp/conformance/artifacts/BOMBKI.EXE og/BOMBKI.EXE
 
       - name: Upload sweep artifacts
         if: ${{ !cancelled() }}

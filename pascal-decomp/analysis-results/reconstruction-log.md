@@ -3181,3 +3181,61 @@ reconstruction. Original-side findings are grounded in the EXE/TPU.
   `0x129D0`. This overall count is not monotonic as header, relocation, and
   linked-segment layouts change; EXE parity remains **OPEN**. No behavior tests
   were run.
+
+### 2026-10-01 (169): report EXE differences by linked region
+
+- Added `--region-report` to `tools/compare_tp7_artifacts.py`. It retains the
+  strict complete-file byte comparison and its nonzero result, then compares
+  stored load-image bytes within each linked region using the original image
+  start from `analysis-results/exe_reports/reference-linked-layout.json` and
+  candidate starts/lengths from the TP7 MAP. This is raw segment-relative
+  comparison: it does not normalize relocation words, MZ headers, or addresses.
+  The report also shows mapped extents and stored-byte coverage. The checked-in
+  reference layout documents the evidence for each segment boundary.
+- The diagnostic separates shifted regions without pretending they are
+  byte-identical: with the latest candidate (`build/tmp/tp7-line-bytes-suo5fjkm`),
+  SWIAT differs at 742 positions, PRZEDM at 1,642, MONSTRA at 69, CRT at 4,
+  System at 1,183, and DGROUP's 96 stored bytes match. BOMBKI differs at 61,366
+  byte positions and has a 406-byte mapped-extent delta. The strict full-file
+  comparison remains 127,777 differing positions (reference 141,264 bytes,
+  candidate 141,776); EXE parity remains **OPEN**.
+- In the active room-handler pass, context 84 now includes the
+  `PRZEDM.BLUSZCZ` call and direct termination branch evidenced at img
+  `0xCC22..0xCDFB`, matching its 473-byte body and all 188 normalized
+  instructions. Context 87 stores the random roll in `PRZEDM.FUKS` at DGROUP
+  `0x19E`, compares against 40, and computes energy as `ENERGIA - 25 + ZRE`,
+  matching img `0xCE3D..0xCE93`; its 445-byte handler body
+  (`0xCE05..0xCFC2`) matches all 178 normalized instructions. FUKS ownership is
+  recorded in `integrated-field-map.md` line 629.
+- The EXE-region unit tests and existing TPU comparator tests pass. One
+  regression specifically confirms that a region match does not turn a
+  whole-EXE mismatch into success. No behavior tests were run.
+
+### 2026-10-01 (170): enable linked-region diagnostics in CI
+
+- Updated `.github/workflows/pascal-decomp.yml` to run the artifact-comparison
+  unit tests and invoke `compare_tp7_artifacts.py --region-report` for the TP7
+  EXE check. CI logs now include linked-region byte counts and boundaries by
+  default, while the command still returns failure unless complete EXE byte
+  identity is achieved. The TP7 conformance script already exports
+  `BOMBKI.MAP` beside the EXE for segment placement.
+
+### 2026-10-01 (171): classify relocation-covered EXE differences
+
+- Extended `--region-report` to parse MZ relocation cells and classify each
+  region's raw byte differences as changed bytes at matching relocation-word
+  sites, changed bytes at relocation sites present at different segment
+  offsets, other byte differences, and stored-length deltas. This is a
+  classification only; relocation values are not normalized and strict EXE
+  comparison remains unchanged. Removed the redundant "including unpaired
+  tails" wording.
+- In the latest TP7 image, SWIAT has 645 relocation-word bytes and 97 other
+  differing bytes; PRZEDM has 1,288 relocation-word bytes and 354 other;
+  MONSTRA's 69 differences and Crt's 4 are all relocation-word bytes. System
+  has 3 relocation-word bytes, 15 relocation-site-layout bytes, and 1,165
+  other differences. BOMBKI has 248 relocation-word bytes, 11,721 relocation-
+  site-layout bytes, 48,991 other bytes, and 406 bytes of stored-length delta.
+  These remaining non-relocation differences still require static analysis.
+- Eleven comparator tests pass, including checks for relocation-value,
+  relocation-site-layout, and non-relocation classifications. Strict EXE
+  parity remains **OPEN**. No behavior tests were run.

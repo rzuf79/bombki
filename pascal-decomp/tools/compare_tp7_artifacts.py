@@ -18,6 +18,7 @@ not whole-file metadata, and do not apply project-specific source timestamps.
 """
 
 import argparse
+import json
 import os
 import re
 import shutil
@@ -32,6 +33,7 @@ from tpuq import Tpu
 VERSION = "1.2"
 PROJECT = Path(__file__).resolve().parents[1]
 TEMP_ROOT = PROJECT / "build" / "tmp"
+REFERENCE_EXE_LAYOUT = PROJECT / "analysis-results" / "exe_reports" / "reference-linked-layout.json"
 BUILDABLE_EXTENSIONS = {".pas"}
 
 
@@ -228,8 +230,11 @@ def file_kind(path: Path) -> str:
     raise ValueError(f"{path} is neither a TPUQ unit nor an MZ executable")
 
 
-def compare_exes(candidate: Path, reference: Path) -> int:
-    """Compare the complete bytes of two DOS executables."""
+def compare_exes(candidate: Path, reference: Path,
+                 region_report: bool = False,
+                 candidate_map: Path | None = None,
+                 reference_layout: Path | None = None) -> int:
+    """Compare complete EXE bytes, optionally adding a segment-region report."""
     actual = candidate.read_bytes()
     expected = reference.read_bytes()
     differences = [(index, want, got) for index, (want, got) in enumerate(
@@ -239,24 +244,237 @@ def compare_exes(candidate: Path, reference: Path) -> int:
     if total == 0:
         line = f"EXE byte-identical: {len(actual)} bytes"
         print(styled(line, SOFT_GREEN))
-        return 0
-    first = differences[0][0] if differences else min(len(expected), len(actual))
-    exe_red = styled("EXE differs: ", SOFT_RED)
-    reference_green = styled(len(expected), SOFT_GREEN)
-    candidate_red = styled(len(actual), SOFT_RED)
-    print(exe_red + "reference=" + reference_green + " bytes, candidate=" + candidate_red + " bytes" )
-    line = [
-        f"{total} differing byte positions; ",
-        f"first at file offset 0x{first:X}"
-    ]
-    print(styled(line[0], SOFT_RED) + line[1])
-    return 1
+        strict_result = 0
+    else:
+        first = differences[0][0] if differences else min(len(expected), len(actual))
+        exe_red = styled("EXE differs: ", SOFT_RED)
+        reference_green = styled(len(expected), SOFT_GREEN)
+        candidate_red = styled(len(actual), SOFT_RED)
+        print(exe_red + "reference=" + reference_green + " bytes, candidate=" + candidate_red + " bytes")
+        line = [
+            f"{total} differing byte positions; ",
+            f"first at file offset 0x{first:X}"
+        ]
+        print(styled(line[0], SOFT_RED) + line[1])
+        strict_result = 1
+
+    if region_report:
+        if candidate_map is None:
+            candidate_map = find_candidate_map(candidate)
+        if reference_layout is None:
+            reference_layout = REFERENCE_EXE_LAYOUT
+        print_exe_region_report(candidate, reference, candidate_map, reference_layout)
+    return strict_result
+
+
+def mz_image(path: Path) -> tuple[dict, bytes]:
+    """Return MZ load-image metadata and bytes, excluding header/overlay."""
+    data = path.read_bytes()
+    if len(data) < 28 or data[:2] != b"MZ":
+        raise ValueError(f"{path} is not a complete MZ executable")
+    last_page = u16(data, 2)
+    pages = u16(data, 4)
+    relocation_count = u16(data, 6)
+    header_bytes = u16(data, 8) * 16
+    relocation_table = u16(data, 0x18)
+    image_end = (pages - 1) * 512 + last_page if last_page else pages * 512
+    if pages == 0 or image_end < header_bytes or image_end > len(data):
+        raise ValueError(f"invalid MZ image bounds in {path}")
+    relocation_end = relocation_table + relocation_count * 4
+    if relocation_table < 0x1C or relocation_end > header_bytes:
+        raise ValueError(f"invalid MZ relocation table bounds in {path}")
+    relocation_cells = []
+    for index in range(relocation_count):
+        offset, segment = struct.unpack_from("<HH", data,
+                                             relocation_table + index * 4)
+        relocation_cells.append(segment * 16 + offset)
+    image = data[header_bytes:image_end]
+    return {
+        "file_bytes": len(data),
+        "header_bytes": header_bytes,
+        "image_bytes": len(image),
+        "relocations": relocation_count,
+        "relocation_cells": relocation_cells,
+    }, image
+
+
+def find_candidate_map(exe: Path) -> Path:
+    """Find the TP7 MAP adjacent to a candidate EXE."""
+    expected = exe.with_suffix(".MAP").name.casefold()
+    for path in exe.parent.iterdir():
+        if path.is_file() and path.name.casefold() == expected:
+            return path
+    raise FileNotFoundError(
+        f"TP7 MAP not found next to {exe}; pass --candidate-map explicitly"
+    )
+
+
+MAP_SEGMENT_RE = re.compile(
+    r"^\s*([0-9A-F]+)H\s+([0-9A-F]+)H\s+([0-9A-F]+)H\s+(\S+)\s+(\S+)\s*$",
+    re.IGNORECASE,
+)
+
+
+def map_segments(path: Path) -> dict[str, dict[str, int]]:
+    """Read TP7 MAP segment start/length rows, keyed by segment name."""
+    segments = {}
+    for line in path.read_text(encoding="ascii", errors="replace").splitlines():
+        match = MAP_SEGMENT_RE.match(line)
+        if not match:
+            continue
+        start, _stop, length, name, segment_class = match.groups()
+        segments[name.casefold()] = {
+            "start": int(start, 16),
+            "length": int(length, 16),
+            "class": segment_class,
+        }
+    if not segments:
+        raise ValueError(f"no TP7 segment rows found in {path}")
+    return segments
+
+
+def parse_layout_number(value: object, field: str) -> int:
+    if isinstance(value, int):
+        return value
+    if isinstance(value, str):
+        try:
+            return int(value, 0)
+        except ValueError:
+            pass
+    raise ValueError(f"invalid {field} in reference EXE layout: {value!r}")
+
+
+def region_byte_delta(reference_image: bytes, candidate_image: bytes,
+                      reference_start: int, reference_size: int,
+                      candidate_start: int, candidate_size: int,
+                      reference_relocations: list[int] | tuple[int, ...] = (),
+                      candidate_relocations: list[int] | tuple[int, ...] = ()) -> dict[str, int | None]:
+    """Compare bytes and classify differences at MZ relocation cells."""
+    if min(reference_start, reference_size, candidate_start, candidate_size) < 0:
+        raise ValueError("region starts and sizes must be non-negative")
+    reference_stored = max(0, min(reference_size, len(reference_image) - reference_start))
+    candidate_stored = max(0, min(candidate_size, len(candidate_image) - candidate_start))
+    reference_bytes = reference_image[reference_start:reference_start + reference_stored]
+    candidate_bytes = candidate_image[candidate_start:candidate_start + candidate_stored]
+    common = min(len(reference_bytes), len(candidate_bytes))
+    mismatch_offsets = [index for index in range(common)
+                        if reference_bytes[index] != candidate_bytes[index]]
+
+    def relative_cells(cells: list[int] | tuple[int, ...], start: int,
+                       stored: int) -> set[int]:
+        return {cell - start for cell in cells
+                if cell < start + stored and cell + 2 > start}
+
+    reference_cells = relative_cells(reference_relocations, reference_start,
+                                     len(reference_bytes))
+    candidate_cells = relative_cells(candidate_relocations, candidate_start,
+                                     len(candidate_bytes))
+
+    def cell_bytes(cells: set[int], limit: int) -> set[int]:
+        return {byte for cell in cells for byte in (cell, cell + 1)
+                if 0 <= byte < limit}
+
+    reference_reloc_bytes = cell_bytes(reference_cells, common)
+    candidate_reloc_bytes = cell_bytes(candidate_cells, common)
+    matching_site_bytes = cell_bytes(reference_cells & candidate_cells, common)
+    mismatch_set = set(mismatch_offsets)
+    relocation_value_differences = mismatch_set & matching_site_bytes
+    relocation_site_differences = (
+        mismatch_set & (reference_reloc_bytes | candidate_reloc_bytes)
+    ) - matching_site_bytes
+    non_relocation_differences = mismatch_set - (
+        reference_reloc_bytes | candidate_reloc_bytes
+    )
+    unpaired_stored_bytes = abs(len(reference_bytes) - len(candidate_bytes))
+    differing = len(mismatch_offsets) + unpaired_stored_bytes
+    first = mismatch_offsets[0] if mismatch_offsets else (
+        common if len(reference_bytes) != len(candidate_bytes) else None
+    )
+    return {
+        "reference_stored": len(reference_bytes),
+        "candidate_stored": len(candidate_bytes),
+        "common_stored": common,
+        "differing": differing,
+        "first_relative": first,
+        "relocation_sites_reference": len(reference_cells),
+        "relocation_sites_candidate": len(candidate_cells),
+        "relocation_value_differences": len(relocation_value_differences),
+        "relocation_site_differences": len(relocation_site_differences),
+        "non_relocation_differences": len(non_relocation_differences),
+        "unpaired_stored_bytes": unpaired_stored_bytes,
+    }
+
+
+def print_exe_region_report(candidate: Path, reference: Path,
+                            candidate_map: Path,
+                            reference_layout: Path) -> None:
+    """Compare EXE load-image bytes by named, independently placed regions."""
+    candidate_meta, candidate_image = mz_image(candidate)
+    reference_meta, reference_image = mz_image(reference)
+    segments = map_segments(candidate_map)
+    layout = json.loads(reference_layout.read_text(encoding="utf-8"))
+    if layout.get("format") != "tp7-exe-region-layout-v1":
+        raise ValueError(f"unsupported reference EXE layout format: {reference_layout}")
+    regions = layout.get("regions")
+    if not isinstance(regions, list) or not regions:
+        raise ValueError(f"no reference regions defined in {reference_layout}")
+
+    print("Per-region raw-byte diagnostics (image-relative starts; segment-relative comparison):")
+    print("  Raw differences are classified by MZ relocation-word coverage; values are not normalized.")
+    print("  Categories: same-site relocation bytes, relocation-site-layout bytes, other bytes, stored-length delta.")
+    print(f"  load image: reference={reference_meta['image_bytes']:#x} bytes, "
+          f"candidate={candidate_meta['image_bytes']:#x} bytes; "
+          f"relocations={reference_meta['relocations']}/"
+          f"{candidate_meta['relocations']}")
+    for region in regions:
+        name = region.get("name")
+        candidate_name = str(region.get("candidate_name", name)).casefold()
+        candidate_region = segments.get(candidate_name)
+        if candidate_region is None:
+            raise ValueError(
+                f"candidate MAP {candidate_map} has no segment {candidate_name!r}"
+            )
+        reference_start = parse_layout_number(region.get("reference_start"),
+                                              f"{name}.reference_start")
+        reference_size = parse_layout_number(region.get("reference_size"),
+                                             f"{name}.reference_size")
+        result = region_byte_delta(
+            reference_image, candidate_image, reference_start, reference_size,
+            candidate_region["start"], candidate_region["length"],
+            reference_meta["relocation_cells"],
+            candidate_meta["relocation_cells"],
+        )
+        ref_extent = reference_size
+        cand_extent = candidate_region["length"]
+        extent_delta = abs(ref_extent - cand_extent)
+        exact = result["differing"] == 0 and extent_delta == 0
+        state = "relative bytes exact" if exact else "differs"
+        if result["first_relative"] is None:
+            first = "none"
+        else:
+            first = f"+0x{result['first_relative']:X}"
+        print(
+            f"  {name}: ref img[0x{reference_start:X},+0x{ref_extent:X}) "
+            f"candidate img[0x{candidate_region['start']:X},+0x{cand_extent:X}); "
+            f"stored={result['reference_stored']}/{result['candidate_stored']} "
+            f"bytes, differing={result['differing']} byte positions "
+            f"(relocation-word={result['relocation_value_differences']}, "
+            f"relocation-site-layout={result['relocation_site_differences']}, "
+            f"other={result['non_relocation_differences']}, "
+            f"stored-length delta={result['unpaired_stored_bytes']}), "
+            f"relocation sites={result['relocation_sites_reference']}/"
+            f"{result['relocation_sites_candidate']}, "
+            f"extent delta={extent_delta}; first relative difference={first}; {state}"
+        )
 
 
 def compare_files(candidate: Path, reference: Path,
                   procedure: str | None,
                   show_matches: bool = False, show_all: bool = False,
-                  source_file: Path | None = None) -> int:
+                  source_file: Path | None = None,
+                  region_report: bool = False,
+                  candidate_map: Path | None = None,
+                  reference_layout: Path | None = None) -> int:
     actual_kind = file_kind(candidate)
     expected_kind = file_kind(reference)
     if actual_kind != expected_kind:
@@ -267,11 +485,14 @@ def compare_files(candidate: Path, reference: Path,
           + " against reference " + styled(reference, SOFT_GREEN) + " "
           + styled(f"({actual_kind})", WHITE) + ".")
     if actual_kind == "TPU":
+        if region_report:
+            raise ValueError("--region-report applies only to EXE comparisons")
         return compare_tpus(candidate, reference, procedure, show_matches,
                             show_all, source_file)
     if procedure:
         raise ValueError("--procedure applies only when comparing TPU files")
-    return compare_exes(candidate, reference)
+    return compare_exes(candidate, reference, region_report,
+                        candidate_map, reference_layout)
 
 
 def remove_pascal_comments(source: str) -> str:
@@ -435,7 +656,9 @@ def compare_single_source(source_file: Path, reference_file: Path,
                           build_dir: Path, tp7_root: Path, tpc: Path,
                           dosbox: str, procedure: str | None,
                           show_matches: bool, show_all: bool,
-                          show_source: bool) -> int:
+                          show_source: bool, region_report: bool,
+                          candidate_map: Path | None,
+                          reference_layout: Path | None) -> int:
     """Compile only one Pascal source, then compare its output to one artifact."""
     if source_file.suffix.lower() != ".pas":
         raise ValueError(f"single-source compile requires a .pas file: {source_file}")
@@ -446,14 +669,17 @@ def compare_single_source(source_file: Path, reference_file: Path,
     )
     return compare_files(outputs[0], reference_file, procedure,
                          show_matches, show_all,
-                         source_file if show_source else None)
+                         source_file if show_source else None,
+                         region_report, candidate_map, reference_layout)
 
 
 def compare_directories(source_dir: Path, reference_dir: Path,
                         build_dir: Path, tp7_root: Path, tpc: Path,
                         dosbox: str, procedure: str | None,
                         show_matches: bool, show_all: bool,
-                        show_source: bool) -> int:
+                        show_source: bool, region_report: bool,
+                        candidate_map: Path | None,
+                        reference_layout: Path | None) -> int:
     outputs = compile_sources(source_dir, build_dir, tp7_root, tpc, dosbox)
     sources = ordered_sources(source_dir)
     failures = 0
@@ -465,9 +691,12 @@ def compare_directories(source_dir: Path, reference_dir: Path,
             continue
         try:
             selected_procedure = procedure if file_kind(output) == "TPU" else None
+            selected_region_report = region_report and file_kind(output) == "EXE"
             failures += compare_files(output, reference, selected_procedure,
                                       show_matches, show_all,
-                                      source["path"] if show_source else None)
+                                      source["path"] if show_source else None,
+                                      selected_region_report, candidate_map,
+                                      reference_layout)
         except ValueError as error:
             print(f"FAIL {output.name}: {error}")
             failures += 1
@@ -477,8 +706,9 @@ def compare_directories(source_dir: Path, reference_dir: Path,
 def check_option_order(argv: list[str], parser: argparse.ArgumentParser) -> None:
     """Require options before operands, except after POSIX's `--` marker."""
     value_options = {"-p", "--procedure", "-t", "--tp7-root", "-d", "--dosbox-x",
-                     "-C", "--color"}
-    long_value_options = {"--procedure", "--tp7-root", "--dosbox-x", "--color"}
+                     "-C", "--color", "--candidate-map", "--reference-layout"}
+    long_value_options = {"--procedure", "--tp7-root", "--dosbox-x", "--color",
+                          "--candidate-map", "--reference-layout"}
     operands_started = False
     skip_value = False
     for token in argv:
@@ -516,7 +746,9 @@ Compare two existing TPUs or EXEs (candidate first):
 
 TPUs are compared by per-source-line code-byte counts; by default, only
 mismatching rows are listed. Use -S/--show-all to list matching rows too.
-EXEs are compared byte-for-byte.
+EXEs are compared byte-for-byte. Add --region-report for segment-relative
+diagnostics; this does not relax the whole-EXE byte-identity result. The region
+report uses the candidate's adjacent TP7 MAP and a checked-in reference layout.
 """
     parser = argparse.ArgumentParser(
         description="Compare TP7 TPU source-line code-byte counts or complete EXE files.",
@@ -540,6 +772,12 @@ EXEs are compared byte-for-byte.
                         help="show matching and mismatching TPU line-count rows")
     parser.add_argument("-s", "--show-source", action="store_true",
                         help="print candidate source lines below TPU mismatches (compile mode)")
+    parser.add_argument("--region-report", action="store_true",
+                        help="also compare EXE load-image bytes by linked segment")
+    parser.add_argument("--candidate-map", type=Path, metavar="MAP",
+                        help="candidate TP7 MAP (default: matching MAP beside candidate EXE)")
+    parser.add_argument("--reference-layout", type=Path, metavar="JSON",
+                        help="reference region layout (default: project evidence manifest)")
     parser.add_argument("-C", "--color", choices=("auto", "always", "never"),
                         default="auto", metavar="WHEN",
                         help="colorize mismatch tables (default: auto; honors NO_COLOR)")
@@ -577,14 +815,16 @@ EXEs are compared byte-for-byte.
                         args.candidate, args.reference, build_dir,
                         tp7_root, tpc, dosbox, args.procedure,
                         args.show_matches, args.show_all,
-                        args.show_source,
+                        args.show_source, args.region_report,
+                        args.candidate_map, args.reference_layout,
                     )
                 else:
                     result = compare_directories(
                         args.candidate, args.reference, build_dir,
                         tp7_root, tpc, dosbox, args.procedure,
                         args.show_matches, args.show_all,
-                        args.show_source,
+                        args.show_source, args.region_report,
+                        args.candidate_map, args.reference_layout,
                     )
                 print(f"Build artifacts kept at: {build_dir}")
                 return result
@@ -595,21 +835,28 @@ EXEs are compared byte-for-byte.
                         args.candidate, args.reference, Path(temp_dir),
                         tp7_root, tpc, dosbox, args.procedure,
                         args.show_matches, args.show_all,
-                        args.show_source,
+                        args.show_source, args.region_report,
+                        args.candidate_map, args.reference_layout,
                     )
                 return compare_directories(
                     args.candidate, args.reference, Path(temp_dir),
                     tp7_root, tpc, dosbox, args.procedure,
                     args.show_matches, args.show_all,
-                    args.show_source,
+                    args.show_source, args.region_report,
+                    args.candidate_map, args.reference_layout,
                 )
 
         if args.keep_build or args.tp7_root or args.dosbox_x or args.show_source:
             parser.error("--keep-build, --tp7-root, --dosbox-x, and --show-source require --compile")
+        if (args.candidate_map or args.reference_layout) and not args.region_report:
+            parser.error("--candidate-map and --reference-layout require --region-report")
         if not args.candidate.is_file() or not args.reference.is_file():
             parser.error("without --compile, CANDIDATE and REFERENCE must be files")
         return compare_files(args.candidate, args.reference, args.procedure,
-                             args.show_matches, args.show_all)
+                             args.show_matches, args.show_all,
+                             region_report=args.region_report,
+                             candidate_map=args.candidate_map,
+                             reference_layout=args.reference_layout)
     except (OSError, RuntimeError, ValueError, struct.error,
             subprocess.TimeoutExpired) as error:
         parser.error(str(error))
