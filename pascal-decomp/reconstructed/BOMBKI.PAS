@@ -1734,11 +1734,11 @@ begin
     ReadLn(wpisz);
     if wpisz = 'EXIT' then begin
       WriteLn('DOSTEPNE WYJSCIA:');
-      WriteLn('WSCHOD-KLATKI PELNE GAJDY');
+      WriteLn('DOL-KLATKI PELNE GAJDY');
     end;
     if wpisz = 'MODE' then PRZEDM.MODE;
     if wpisz = 'WYJSCIE' then goto 1025;
-    if wpisz = 'WSCHOD' then MIECHO := 11;
+    if wpisz = 'DOL' then MIECHO := 11;
   until MIECHO <> 16;
 
     end;
@@ -1832,7 +1832,7 @@ begin
     ReadLn(wpisz);
     if wpisz = 'MODE' then PRZEDM.MODE;
     if wpisz = 'EXIT' then begin
-      WriteLn('DOSTEPNE WYJSCIE:');
+      WriteLn('DOSTEPNE WYJSCIA:');
       WriteLn('POLODNIE-ULICA CIEMNA');
     end;
     if wpisz = 'WYJSCIE' then goto 1025;
@@ -1951,7 +1951,7 @@ begin
       WriteLn('POLNOC-BLUSZCZ');
       WriteLn('WSCHOD-BLUSZCZ');
       WriteLn('ZACHOD-BLUSZCZ');
-      WriteLn('POLODNIE-WEJSCIE DO GROTY ');
+      WriteLn('POLODNIE-BLUSZCZ');
     end;
     if wpisz = 'WYJSCIE' then goto 1025;
     if wpisz = 'POLNOC' then MIECHO := 77;
@@ -2614,11 +2614,11 @@ begin
       Write((20 * Godzin) - Random(2 * Godzin), ' KUNSZTU');
       KUNSZT := KUNSZT + Random(2 * Godzin);
       if Godzin > 4 then begin
-        WriteLn('DLUGI SEN DODATKOWO POZWOLIL CI ODPOCZAC : ZYSKALES ', MAD, ' ENERGI');
+        WriteLn('DLUGI SEN DODATKOWO POZWOLIL CI ODPOCZAC : ZYSKALES ', MAD, 'ENERGI');
         ENERGIA := ENERGIA + MAD;
       end;
       if Godzin > 8 then begin
-        WriteLn('PELNOWARTOSCIOWY SEN SPOWODOWAL SUPER ZYSK : ', MAD * 2, ' ENERGI');
+        WriteLn('PELNOWARTOSCIOWY SEN SPOWODOWAL SUPER ZYSK : ', MAD * 2, 'ENERGI');
         ENERGIA := ENERGIA + (MAD * 2);
       end;
       if ENERGIA > MAXE then ENERGIA := MAXE;

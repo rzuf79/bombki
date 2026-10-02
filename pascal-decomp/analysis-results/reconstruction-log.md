@@ -3300,3 +3300,24 @@ reconstruction. Original-side findings are grounded in the EXE/TPU.
   relocation-word diffs (`differ only in relocation data`); the summary is 1
   exact, 5 relocation-only, 1 differ (BOMBKI). Only the BOMBKI region still
   needs source work. No behavior tests were run.
+
+### 2026-10-02 (110): room-16 exit, bar header, sleep message fixes
+
+- Room-16 EXIT is `DOSTEPNE WYJSCIA:` + `DOL-KLATKI PELNE GAJDY` with
+  `if wpisz = 'DOL' then MIECHO := 11` (ref img 0xBA3F/0xBA85); the
+  `WSCHOD-KLATKI` variant exists only in PRZEDM's segment, not BOMBKI's.
+- Bar-room EXIT header is plural `DOSTEPNE WYJSCIA:` (ref BOMBKI has no
+  singular entry; the one singular occurrence lives in PRZEDM's segment).
+- Sleep messages use bare `ENERGI`: `ZYSKALES ', MAD, 'ENERGI'` and
+  `SUPER ZYSK : ', MAD * 2, 'ENERGI'` (ref img 0xF016/0xF060 share one pool
+  entry, matching the deduplicated literal).
+- Main normalized instruction match rose 63.5% to 68.3%. Strict EXE parity
+  remains **OPEN**. No behavior tests were run.
+
+### 2026-10-02 (118): room-80 EXIT names POLODNIE-BLUSZCZ
+
+- Room-80's fourth EXIT line is `POLODNIE-BLUSZCZ`, not
+  `POLODNIE-WEJSCIE DO GROTY` (the latter first appears in room-84's EXIT at
+  ref img 0x98D4). Movement targets 77/81/82/83 confirmed unchanged. BOMBKI
+  `other` falls 6,059 to 5,329 positional bytes.
+- Strict EXE parity remains **OPEN**. No behavior tests were run.
