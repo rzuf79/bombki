@@ -3431,6 +3431,16 @@ reconstruction. Original-side findings are grounded in the EXE/TPU.
   form (verified with local TPC probe builds). Same semantics, 5-byte
   codegen gap; source form unknown. No behavior tests were run.
 
+### 2026-10-02 (120): POWROT jg-shape archaeology (OPEN)
+
+- Ref's POWROT check `cmp Powracanie,0; jg +0x1E (body)` has no matching TPC
+  7.01 shape: local TPC probes of `and`, nested-`if`, `and`+`goto`,
+  nested-`if`+`goto`, chained gotos, and empty-`then` all yield canonical
+  `[ne][jCC-false]` (plus explicit `jmp` for gotos), never lone-forward-`jg`.
+  Double-jump `[jCC-true][jmp]` appears only when the skip target is out of
+  short range (proven by UZYJ#1's far skip to 0xF2D9). The 5-byte gap is
+  semantically neutral; source form unknown.
+
 ### 2026-10-02 (121): rooms 22/101/102/103 lack KOMENDY
 
 - Ref rooms 22, 101, 102, and 103 call only ULSKLEPIKOWA/MODE-class PRZEDM
