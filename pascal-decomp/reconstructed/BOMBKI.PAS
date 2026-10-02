@@ -14,15 +14,6 @@ uses
     ds:0x0564  PRZEDM.wpisz / command buffer (PRZEDM.KOMENDY at img 0x1BB11)
   Other unit-owned globals live in the SWIAT/PRZEDM/MONSTRA interface vars. }
 
-type
-  TFlagaZdejmowania = record
-    Wartosc: Byte;
-  end;
-  TProPremiaOverlay = record
-    Pro: Integer;
-    Premia: Integer;
-  end;
-
 label
   1024, 1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008, 1009, 1010, 1011,
   1012, 1013, 1014, 1015, 1016, 1017, 1018, 1019, 1020, 1021, 1022, 1023,
@@ -42,7 +33,7 @@ var
   PoleBOMBKI0068: Integer; { invented label for DGROUP word 0x068 }
   PoleBOMBKI006A: Integer; { invented label for DGROUP word 0x06A }
   EtapPunktuKontrolnego: Integer; { invented label for DGROUP word 0x06C }
-  PoleBOMBKI006E: Integer; { invented label for DGROUP word 0x06E }
+  PoleBOMBKI006E: Integer; { S.Z. = PRO + 10 * PRZEDM.ILOSC }
   Godzin: Integer;         { invented label for SPIJ counter at DGROUP word 0x070 }
   PoleBOMBKI0072: Integer; { unclassified word at DGROUP 0x072 }
   PoleBOMBKI0074: Integer; { saved word at DGROUP 0x074 }
@@ -51,10 +42,6 @@ var
   PoleBOMBKI007A: Integer; { invented label for DGROUP word 0x07A }
   PoleBOMBKI007C: Integer; { invented label for DGROUP word 0x07C }
   plik: Text;              { main-program file record at DGROUP 0x007E }
-  FlagaZdejmowania: TFlagaZdejmowania absolute PRZEDM.JAKIEUB;
-  {$IFNDEF FPC}
-  PremiaPRO: TProPremiaOverlay absolute PRZEDM.PRO;
-  {$ENDIF}
 
 procedure WalkaKoncert; forward;
 procedure WybierzRase; forward;
@@ -79,12 +66,6 @@ procedure PokazPostac; forward;
 procedure PokazPostac;
 { Invented source name for the inventory/status portion of the JA helper at
   img 0x073C..0x1405 (called through the near-call at img 0xEC98). }
-{$IFDEF FPC}
-function PremiaSzybkosciUbrania: Integer;
-begin
-  PremiaSzybkosciUbrania := 0;
-end;
-{$ENDIF}
 begin
   { img 0x073C..0x07D4: carrying-capacity calculation in the JA handler. }
   if ZRE < 11 then CarryLimit := 10;
@@ -123,7 +104,7 @@ begin
   WriteLn('W SUMIE MASZ ', PRZED, '/', CarryLimit, ' PRZEDMIOTOW');
   if PoleBOMBKI0054 = 0 then WriteLn('BIJESZ SIE NA PIESCI');
   if StanPotwora17 = 0 then WriteLn('NIE MASZ ZADNEJ OCHRONY');
-  if FlagaZdejmowania.Wartosc = 0 then WriteLn('JESTES NAGI !!!!!!!!');
+  if PRZEDM.JAKIEUB = '' then WriteLn('JESTES NAGI !!!!!!!!');
   if PRZEDM.JAKIEUB = 'SYF' then WriteLn('MASZ NA SOBIE KOMPLET UBRAN FIRMY "SYF"');
   if PRZEDM.JAKIEUB = 'GARNITUR' then WriteLn('MASZ NA SOBIE GRANITUR Z KOLCAMI ');
   if (StanPotwora17 = 1) and (MTARCZA = -100) then
@@ -178,11 +159,11 @@ begin
          ' ZRECZNOSC - ', ZRE, '/', MAXZRE,
          ' MADROSC - ', MAD, '/', MAXMAD);
   {$IFDEF FPC}
-  PoleBOMBKI006E := PRZEDM.PRO + (10 * PremiaSzybkosciUbrania);
+  PoleBOMBKI006E := PRZEDM.PRO + 10 * PRZEDM.ILOSC;
   WriteLn('S.Z-', PoleBOMBKI006E,
          '                    FUKSROLL-', PRZEDM.FUKSROLL);
   {$ELSE}
-  PoleBOMBKI006E := 10 * PremiaPRO.Premia + PRZEDM.PRO;
+  PoleBOMBKI006E := 10 * PRZEDM.ILOSC + PRZEDM.PRO;
   WriteLn('S.Z-', PoleBOMBKI006E,
          '                    FUKSROLL-', PRZEDM.FUKSROLL);
   {$ENDIF}
@@ -2515,7 +2496,7 @@ begin
       PRZEDM.CIALO := 0;
       PoleBOMBKI0054 := 0;
       StanPotwora17 := 0; { DGROUP word 0x60, shield-equipped flag in this branch }
-      FlagaZdejmowania.Wartosc := 0;
+      PRZEDM.JAKIEUB := '';
       MMIECZ := -10;
       MTARCZA := -10;
       SIL := SIL - 1;

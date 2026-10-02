@@ -3525,3 +3525,24 @@ reconstruction. Original-side findings are grounded in the EXE/TPU.
   bytes through img 0xF5D8 are identical, both files are 141,264 bytes.
 - Strict EXE parity remains **OPEN** on the file-read helper gap, pending a
   compiler form that emits it. No behavior tests were run.
+
+### 2026-10-02 (129): PRZEDM.PRO overlay replaced with explicit ILOSC reference
+
+- The `TProPremiaOverlay` absolute record overlaying `PRZEDM.PRO` mapped
+  `Premia` to `PRZEDM.ILOSC` (equipped item count). The S.Z. display formula
+  `PRO + 10 × Premia` is now written directly as `PRO + 10 × PRZEDM.ILOSC`
+  in both FPC and TP7 branches, removing the overlay type, the absolute
+  variable `PremiaPRO`, and the FPC stub `PremiaSzybkosciUbrania`.
+  `PoleBOMBKI006E` comment updated to `S.Z. = PRO + 10 * PRZEDM.ILOSC`.
+  TP7 build verified byte-identical — overlay was purely a source-level
+  abstraction with zero codegen effect.
+
+### 2026-10-02 (130): TFlagaZdejmowania overlay removed
+
+- `TFlagaZdejmowania` (single `Byte` field `Wartosc`) overlaid the length
+  byte of `PRZEDM.JAKIEUB` (string). Two uses:
+  `FlagaZdejmowania.Wartosc = 0` (naked check) → `PRZEDM.JAKIEUB = ''`,
+  `FlagaZdejmowania.Wartosc := 0` (clear) → `PRZEDM.JAKIEUB := ''`.
+  Type, absolute variable, and both uses replaced with direct string
+  operations. Record type and overlay variable removed. TP7 build
+  byte-identical.
