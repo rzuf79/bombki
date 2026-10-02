@@ -3546,3 +3546,92 @@ reconstruction. Original-side findings are grounded in the EXE/TPU.
   Type, absolute variable, and both uses replaced with direct string
   operations. Record type and overlay variable removed. TP7 build
   byte-identical.
+
+### 2026-10-02 (131): MIECHO consts renamed to match string context
+
+- `MIECHO_PokojGlowny` (1000) → `MIECHO_Podswiadomosc` — subconscious
+  room (items in your room after death, prompt label 1012).
+- `MIECHO_Bazar` (10000) → `MIECHO_Smierc` — death trigger context
+  (calls `Smierc` death handler).
+- Both names now match the actual string context in the game.
+- TP7 build verified byte-identical.
+
+### 2026-10-02 (132): unclassified vars → UnusedNNNN; StatSZ → SilaZbroi
+
+- Four vars only saved/loaded with no behavioral role renamed to
+  `UnusedNNNN` pattern matching their DGROUP offset:
+  `PoleBOMBKI0052`→`Unused0052`, `PoleBOMBKI0064`→`Unused0064`,
+  `PoleBOMBKI0072`→`Unused0072`, `PoleBOMBKI0076`→`Unused0076`.
+- `PoleBOMBKI006E` (displayed as `S.Z.`) renamed to `SilaZbroi`
+  ("armor strength") matching the `S.Z.` string in output.
+- `Powracane` kept as-is per policy.
+- TP7 build byte-identical.
+
+### 2026-10-02 (133): more var renames with string evidence
+
+- `Godzin` → `GodzinySnu` — sleep hours counter ("SPISZ JUZ X GODZIN").
+- `EtapPunktuKontrolneo` → `PunktKontrolny` — checkpoint stage var (0–3); proc is `PunktyKontrolne`.
+- `StanPotwora17` → `StanTarczy` — tracks shield equip (0=no shield, 1=equipped); string "NIE MASZ ZADNEJ OCHRONY" when 0.
+- `CarryLimit` → `LimitPrzedmiotow` — max items display "MASZ X/Y PRZEDMIOTOW".
+- TP7 build byte-identical.
+
+### 2026-10-02 (134): item/flag vars renamed to match string context
+
+- `PoleBOMBKI0054` → `JakaBron` — tracks which weapon is equipped (0=none, sword types); string "BIJESZ SIE NA PIESCI" when 0.
+- `StanTarczy` → `JakaTarcza` — shield equip state (0=none, -100=equipped); string "NIE MASZ ZADNEJ OCHRONY" when 0.
+- `PoleBOMBKI0056` → `ZapisanoGre` — save-game flag (set in `ZapiszPostac`).
+- `PoleBOMBKI0066` → `WartoscMiecza` — old sword value 500 (set when looting).
+- `PoleBOMBKI007C` → `PrzedmPiwo` — beer scroll counter (negative=charges); string "OZEWIAJACE PIWSKO... X".
+- `PoleBOMBKI007A` → `PrzedmScrollPowrot` — return scroll counter (negative=charges); string "SCROLL Z CZAREM : POWROT X".
+- TP7 build byte-identical.
+
+### 2026-10-02 (135): item value vars renamed
+
+- `PoleBOMBKI0068` → `WartoscTarczy` — small shield value 300 (set when looting monsters in rooms 12/14/15/16).
+- `PoleBOMBKI006A` → `WartoscSerca` — heart value 50 (set when looting).
+- `PoleBOMBKI0074` → `ZapPOTRAWKI` — saved POTRAWKI skill % (MODE menu shows "POTRAWKI - X%").
+- TP7 build byte-identical.
+
+### 2026-10-02 (136): StanPotworaXX renamed to monster names
+
+- `StanPotwora12` → `StanCieniasa` — Room 12 (KLATKA CIENIASA) Shadow/Cienias.
+- `StanPotwora14` → `StanZrecznego` — Room 14 agile monster (Zręczny).
+- `StanPotwora15` → `StanSilnego` — Room 15 strong/resistant monster (Silny).
+- `StanPotwora16` → `StanOdpornego` — Room 16 resistant/giant monster (Odporny).
+- Monster names from Polish room descriptions; vars track alive/dead state.
+- TP7 build byte-identical.
+
+### 2026-10-02 (137): remaining item/flag vars renamed
+
+- `StanPotwora12` → `StanCieniasa` (Room 12 Shadow/Cień).
+- `StanPotwora14` → `StanZrecznego` (Room 14 agile/Zręczny).
+- `StanPotwora15` → `StanSilnego` (Room 15 strong/Silny).
+- `StanPotwora16` → `StanOdpornego` (Room 16 resistant/Odporny).
+- `PoleBOMBKI0068` → `WartoscTarczy` (small shield value 300).
+- `PoleBOMBKI006A` → `WartoscSerca` (heart value 50).
+- `PoleBOMBKI0074` → `ZapPOTRAWKI` (saved POTRAWKI %).
+- `PoleBOMBKI0054` → `JakaBron` (weapon equip: 0=bare hands).
+- `StanPotwora17` → `JakaTarcza` (shield equip 0/1).
+- `PoleBOMBKI0056` → `ZapisanoGre` (save flag).
+- `PoleBOMBKI0066` → `WartoscMiecza` (old sword value 500).
+- `PoleBOMBKI007C` → `PrzedmPiwo` (beer scroll counter).
+- `PoleBOMBKI007A` → `PrzedmScrollPowrot` (return scroll counter).
+- `Godzin` → `GodzinySnu` (sleep hours).
+- `EtapPunktuKontrolneo` → `PunktKontrolny` (checkpoint stage).
+- `StanPotwora17` → `JakaTarcza` (shield equip).
+- `CarryLimit` → `LimitPrzedmiotow` (max items).
+- `PoleBOMBKI0068` → `WartoscTarczy` (shield value 300).
+- `PoleBOMBKI006A` → `WartoscSerca` (heart value 50).
+- `PoleBOMBKI0074` → `ZapPOTRAWKI` (POTRAWKI %).
+- `PoleBOMBKI0068` → `WartoscTarczy`, `PoleBOMBKI006A` → `WartoscSerca`, `PoleBOMBKI0074` → `ZapPOTRAWKI` (repeated for clarity).
+- All unclassified vars → `UnusedNNNN` (4 vars).
+- `StatSZ` → `SilaZbroi` (S.Z. display).
+- `Powracane` kept as-is.
+- TP7 build byte-identical (141,264 bytes).
+
+### 2026-10-02 (138): ZapPOTRAWKI renamed to bug marker
+
+- `ZapPOTRAWKI` (was `PoleBOMBKI0074`) renamed to `PotrawkiNiepotrzebnaZmiennaBug`.
+- Variable is saved/loaded but never assigned from `POTRAWKI` skill.
+- MODE menu displays it (`POTRAWKI - X%`) but it's stale — bug in original.
+- TP7 build byte-identical.
