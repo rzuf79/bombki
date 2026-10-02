@@ -92,6 +92,40 @@ def main() -> int:
         os.set_blocking(master, False)
         selector.register(master, selectors.EVENT_READ)
         for index, step in enumerate(steps, 1):
+            label = step.get("label", f"step {index}")
+            if step.get("expect_exit"):
+                if "send" in step:
+                    raise ValueError(
+                        f"step {index} combines expect_exit with send")
+                deadline = time.monotonic() + args.timeout
+                while True:
+                    if process.poll() is not None:
+                        record("EXIT", step=index, label=label,
+                               returncode=process.returncode)
+                        break
+                    remaining = deadline - time.monotonic()
+                    if remaining <= 0:
+                        raise TimeoutError(
+                            f"step {index} ({label}) timed out waiting for exit"
+                        )
+                    ready = selector.select(remaining)
+                    if not ready:
+                        continue
+                    try:
+                        raw = os.read(master, 4096)
+                    except OSError as error:
+                        if error.errno == errno.EIO:
+                            raw = b""
+                        else:
+                            raise
+                    if not raw:
+                        record("EXIT", step=index, label=label,
+                               returncode=process.poll())
+                        break
+                    record("OUTPUT", step=index, label=label,
+                           text=raw.decode(encoding, errors="replace"),
+                           raw_hex=raw.hex())
+                continue
             pattern_text = step.get("expect")
             if not isinstance(pattern_text, str):
                 raise ValueError(f"step {index} is missing its expect regex")
