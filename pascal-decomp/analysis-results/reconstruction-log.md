@@ -3321,3 +3321,197 @@ reconstruction. Original-side findings are grounded in the EXE/TPU.
   ref img 0x98D4). Movement targets 77/81/82/83 confirmed unchanged. BOMBKI
   `other` falls 6,059 to 5,329 positional bytes.
 - Strict EXE parity remains **OPEN**. No behavior tests were run.
+
+### 2026-10-02 (109): align BOMBKI procedure pool and helpers; 124 ceiling noted
+
+- BOMBKI segment opens with PokazPostac's literal pool ([0, 0x73C)); each
+  procedure's literals are pooled immediately before its code. Pool sequence
+  comparison gave 9 source-text fixes, all in PokazPostac: `WriteLn('')` is
+  `WriteLn('NOSISZ ZE SOBA:')`; `MALA TARCZA` is `OKRAGLA MALA TARCZA`;
+  `CIASTKO`/`SUCHA RACJA`/`BULKA`/`CHLEB`/`WEKA` lines use the long forms
+  `SMACZNE CIASTKO`, `TWARDA SUCHA RACJE`, `OKRAGLA PACHNACA BULKA`,
+  `DUZY CIEPLY CHLEB`, `DLUGA I SMACZNA WEKE`; `GARNITUR Z KOLCAMI ` loses its
+  trailing space; level-3 message ends with bare `KUNSZTU` (dedup explains the
+  single extra pool entry). Pool is now byte-identical through 0x73C.
+- WybierzRase `until` disjunct order is UFOK, CZAROMIL, POL-ELF (if-chain order
+  unchanged). ZdobadzPoziom level-12 display uses `WriteLn`, not `Write`
+  (CRT 05DD+0291 ending, not 05FE).
+- With those fixes all procedures except Room16ItemDrops/main match at
+  identical offsets under normalized comparison. Ref has room-16 drops inline
+  in main (thresholds 10/10/6 confirmed); inlining ours is blocked for now:
+  TPC reports Error 124 past ~63.5KB segment size (+26B compiles, +185B
+  compiles at 63,605, +210B fails), so main must slim down first and the
+  inline lands last. Strict EXE parity remains **OPEN**. No behavior tests
+  were run.
+
+### 2026-10-02 (111): room-86 tail matches after restructure
+
+- Room-86's EXIT is two lines (`DOSTEPNE WYJSCIA:`, `WSCHOD-BUDYNEK`) with
+  `WYJSCIE -> goto 1025` and a single `WSCHOD -> MIECHO := 85` command; the
+  city-hub tail belonged to room 21. The intro uses two separate
+  STARUCH-guarded prints, not if/else. The sleep check is `FORSA > 199`, the
+  `PRZED` decrement runs last in its block, and `ROZMAWIAJ STARUCH` is three
+  separate outer ifs (one per sub-branch), all verified against ref
+  img 0xD41D..0xD7E6.
+- Room-86 now compares 377 vs 377 normalized instructions with zero
+  differences. Strict EXE parity remains **OPEN**. No behavior tests were run.
+
+### 2026-10-02 (112): all WYJSCIE exits are plain goto 1025
+
+- All 28 `wpisz = 'WYJSCIE'` sites in ref main jump to img 0xF5C2 (label
+  1025); ref main contains zero `MIECHO := 193` stores. All 13 reconstructed
+  `begin MIECHO := 193; goto 10xx; end;` forms (rooms 21, 85, 86 already plain)
+  are now plain `goto 1025`, including the goto-less shop assignment. This
+  also removes ~90 code bytes toward the 124 ceiling.
+- All 14 unit procedures now match at identical offsets (the four remaining
+  single-instruction sweep notes are one far-call segment word,
+  `lcall System:02CD`, covered by relocation cells). Main normalized match is
+  68.7% with near-equal lengths (6,899 vs 6,919 instructions). Strict EXE
+  parity remains **OPEN**. No behavior tests were run.
+
+### 2026-10-02 (113): room-15 drop thresholds are 10/10/6
+
+- Room-14's inline drops use FUKS bounds 7/7/6 but room-15's use 10/10/6
+  (ref img 0xB8DA vs 0xB44A); the reconstruction had 7/7 in both rooms.
+  Normalized comparison of the drop blocks now matches. Positional EXE counts
+  do not move for same-length immediate fixes until surrounding lengths
+  converge; procedure/main normalized diffs remain the acceptance signal.
+- Strict EXE parity remains **OPEN**. No behavior tests were run.
+
+### 2026-10-02 (114): room-24 PATRZ position fixed
+
+- Room-24's `PATRZ PLAKAT` handler sits after the `WSCHOD -> 21` command,
+  just before the trailing `WalkaMiasto` call (ref img 0xE3F1..0xE41E), not
+  after `MODE`. Per-room miss fell 30 to 2 (boundary noise).
+- Strict EXE parity remains **OPEN**. No behavior tests were run.
+
+### 2026-10-02 (115): correct room-15 bounds back to 7/7/6
+
+- Finding 113 misattributed room-16's inline drops (img 0xB8DA, bounds
+  10/10/6, matching the Room16ItemDrops procedure) to room 15. Room-15's own
+  drops at img 0xB711 use bounds 7/7/6, which the reconstruction already had;
+  the change is reverted. Lesson: same-shape drop blocks in adjacent rooms
+  must be attributed by handler address (dispatcher `je` targets), not by
+  literal text.
+- Strict EXE parity remains **OPEN**. No behavior tests were run.
+
+### 2026-10-02 (116): room-85 EXIT uses two separate ifs
+
+- Room-85's EXIT prints the conditional ZACHOD lines via two separate
+  `DRZWI` ifs (not if/else), the same author pattern as room-86's STARUCH
+  prints (ref img 0xD350..0xD396). Per-room miss is now 0.
+- Room status: all procedures and all main rooms except room-16 match at
+  0-2 normalized instructions of boundary noise. Room-16 still calls the
+  outlined Room16ItemDrops procedure (ref has the drops inline, bounds
+  10/10/6 confirmed); the inline stays blocked on the 124 ceiling until the
+  segment shrinks further (current extent delta 301).
+- Strict EXE parity remains **OPEN**. No behavior tests were run.
+
+### 2026-10-02 (117): room-16 drops inlined, ceiling beaten
+
+- With the segment slimmed by the room fixes (extent delta 301), the
+  Room16ItemDrops inline now compiles: segment 0xF6FD -> 0xF664 (-409 bytes),
+  EXE 141,632 -> 141,488. Room-16 matches; its inline bounds 10/10/6 and
+  order (MMIECZ, MTARCZA, SERCE) are confirmed against ref img 0xB8DA.
+- BOMBKI `other` falls 21,226 to 6,059 positional bytes; extent delta 148.
+  The earlier 124 failures were purely the ~63.5KB ceiling, not structure:
+  identical sources fail above it and pass below.
+- Strict EXE parity remains **OPEN**. No behavior tests were run.
+
+### 2026-10-02 (119): scroll POWROT/UZYJ restructured, one quirk open
+
+- POWROT's body is just `FUKS := Random(100)` (its portal branches live only
+  in the UZYJ block); the UZYJ block is two separate outer ifs (Random(100)
+  alone, then Random(1) plus the portal chain), and the portal chain is
+  `if FUKS <= Powracanie`, `else if Powracanie + 30 > FUKS`,
+  `else if Powracanie + 29 < FUKS`. BOMBKI extent delta falls to 23, EXE to
+  141,328 (48 over reference).
+- OPEN quirk: ref's POWROT check uses a lone forward `jg` to its body where
+  TPC 7.01 generates `jle`-skip for every probed `and`/nested/goto source
+  form (verified with local TPC probe builds). Same semantics, 5-byte
+  codegen gap; source form unknown. No behavior tests were run.
+
+### 2026-10-02 (121): rooms 22/101/102/103 lack KOMENDY
+
+- Ref rooms 22, 101, 102, and 103 call only ULSKLEPIKOWA/MODE-class PRZEDM
+  entries in their loops; the reconstructed `PRZEDM.KOMENDY;` after `ReadLn`
+  in all four has no counterpart (each showed as a 5-byte extra far call).
+  Deleted all four (also -20 segment bytes). Room lengths now match ref
+  within 0-1 bytes (22: 454/459 still +5 from the pending room-22 tail check;
+  101/102/103 exact).
+- Strict EXE parity remains **OPEN**. No behavior tests were run.
+
+### 2026-10-02 (122): MODE-menu reads DGROUP word and MAD>19
+
+- The MODE abilities menu prints DGROUP word `[0x74]` (PoleBOMBKI0074) for
+  the POTRAWKI line, not the `PRZEDM.POTRAWKI` byte, and gates the POWROT
+  line on `MAD > 19`, not 18 (six MAD thresholds in ref: 10/10/15/11/18/19).
+  BOMBKI extent delta falls to 2.
+- Strict EXE parity remains **OPEN**. No behavior tests were run.
+
+### 2026-10-02 (123): room-1000 tail uses open goto-back, unguarded UNMODE
+
+- Room-1000 has no `until`; after the UNMODE block it does
+  `if MIECHO = 1000 then goto <room prompt>` (ref img 0xF5A7), then
+  `PASZOL := 0`, then the shared `MIECHO = 193` Halt-or-dispatch check.
+  The UNMODE restore is unguarded (`(UNMODE) or (UM)`, no MIECHO=1000
+  prefix); the prompt Write carries reused label 1012 (orphan at old
+  room-86 tail removed). Tail compares clean.
+- Strict EXE parity remains **OPEN**. No behavior tests were run.
+
+### 2026-10-02 (124): all non-BOMBKI regions byte-exact
+
+- Restructured the UZYJ block: second UZYJ `if` drops its `007A` guard and
+  the portal chain runs sequentially after it (ref img 0xF205..0xF2D9).
+  BOMBKI extent delta falls to 8; paragraph alignment now places every
+  downstream segment identically, so SWIAT, PRZEDM, MONSTRA, Crt, System,
+  and DGROUP all compare byte-exact (differing=0). Remaining work is
+  BOMBKI-internal only: 5 relocation-word, 2,187 relocation-site-layout,
+  and 5,220 other bytes.
+- Strict EXE parity remains **OPEN**. No behavior tests were run.
+
+### 2026-10-02 (125): shop rooms gain ULSKLEPIKOWA, room-21 drops KOMENDY
+
+- Rooms 23-26 call `PRZEDM.ULSKLEPIKOWA` after their intro WriteLns (ref img
+  0xE15C etc.); the reconstruction lacked all four. Room-21's loop has no
+  `PRZEDM.KOMENDY` (its miss-1 was exactly that call). BOMBKI `other` falls
+  to 3,586 positional bytes.
+- Strict EXE parity remains **OPEN**. No behavior tests were run.
+
+### 2026-10-02 (126): SPIJ loop uses assignment, not Inc
+
+- Room-1000's sleep loop is `Godzin := Godzin + 1` (mov/inc/mov), not
+  `Inc(Godzin)` (single inc-mem). Last `Inc(`/`Dec(` in the main program.
+- Strict EXE parity remains **OPEN**. No behavior tests were run.
+
+### 2026-10-02 (127): room-1000 portal section inside or-body, misc orders
+
+- The POWROT/UZYJ `Random(100)` pair is one `or`-of-`and`s whose true branch
+  holds the second UZYJ `if` and the whole portal chain; false jumps to the
+  POROWNYWANIE check (ref img 0xF1C3..0xF2D9). The portal chain itself is
+  three separate fall-through `if`s, not `else-if` (ref img 0xF261.., the
+  middle test repeats `FUKS > Powracanie`). The `wpisz := 'ZDOLNOSCI'`
+  store after SAVE is an unconditional short-string assign via System:0x900,
+  not a comparison. Room-1000 head gains its `ENERGIA > MAXE` clamp
+  (ref img 0xEA25), UZYJ PIWO/STARY print before the stat increments, the
+  sleep `Write` is one 5-arg `WriteLn`, overload/STUDNIA/TOKSYCZNE lines are
+  `WriteLn`, WybierzRase repeats from its prompt WriteLn, ZEBRAK clears
+  inside its `ENERGIA > 0` block, and room-1000's `end` sits after its
+  `goto 1012` (skip lands on PASZOL at img 0xF5B2). BOMBKI `other` falls to
+  ~89 positional bytes; EXE sizes equal at 141,264.
+- Strict EXE parity remains **OPEN**. No behavior tests were run.
+
+### 2026-10-02 (128): loops start earlier; 80-byte file-read helper gap
+
+- Room-16 repeats from its fight gate, room-88 from `WROGEN := 200`, and
+  the main loop from `PunktKontrolny` (ref img 0xB854, 0xD091, 0xB0F0); the
+  ZEBRAK clear, overload/STUDNIA/TOKSYCZNE/SPIJ lines are `WriteLn`-ended.
+  Strict diff is now exactly 80 bytes: every one is the `ReadLn(plik, int)`
+  line skip, `lcall System:0x5fe` in ref vs `0x59d` in ours (read itself is
+  `0x72d` in ref vs `0x635` here). Twelve TPC probes (all integer types,
+  Char/string/subrange, Read vs ReadLn, {$R+}/{$O+}, units, placement,
+  unit-declared vars) never emit ref's pair for file reads; console reads
+  agree (`0x72d`). The 6-byte BOMBKI extent delta is MAP bookkeeping: tail
+  bytes through img 0xF5D8 are identical, both files are 141,264 bytes.
+- Strict EXE parity remains **OPEN** on the file-read helper gap, pending a
+  compiler form that emits it. No behavior tests were run.
