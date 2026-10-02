@@ -46,7 +46,7 @@ def code_block_deltas(
 
     def blocks(unit: Tpu) -> tuple[
         dict[str, bytes], dict[str, tuple[int, int, int]], bytes,
-        dict[int, tuple[int, int]],
+        dict[int, tuple[int, int]], dict[str, set[int]],
     ]:
         names_by_block = {}
         entries_by_name = {}
@@ -60,12 +60,24 @@ def code_block_deltas(
         result = {}
         block_bases = {}
         block_bounds = {}
+        relocation_offsets = {}
+        relocation_cursor = 0
         for block in unit.code_blocks:
             label = "/".join(sorted(names_by_block.get(block.ofs, []))) or f"block@{block.ofs:04X}"
             block_bases[block.ofs] = code_offset
             block_bounds[block.ofs] = (code_offset, block.size)
             code = unit.data[unit.ofs_code + code_offset:unit.ofs_code + code_offset + block.size]
             result[label] = code
+            offsets = set()
+            for _, relocation_type, _, _, patch_offset in unit.relocs[
+                relocation_cursor:relocation_cursor + block.relocbytes // 8
+            ]:
+                # Offset, segment, and relative fixups occupy one word;
+                # pointer fixups occupy an offset/segment pair.
+                width = 4 if ((relocation_type >> 4) & 3) == 3 else 2
+                offsets.update(range(patch_offset, patch_offset + width))
+            relocation_offsets[label] = offsets
+            relocation_cursor += block.relocbytes // 8
             code_offset += block.size
         for entry in unit.entries:
             name = proc_names.get(entry.ofs, f"entry@{entry.ofs:04X}")
@@ -75,10 +87,10 @@ def code_block_deltas(
                     block_bases[entry.code_block] + entry.offset,
                 )
         code = unit.data[unit.ofs_code:unit.ofs_code + unit.h.code_size]
-        return result, entries_by_name, code, block_bounds
+        return result, entries_by_name, code, block_bounds, relocation_offsets
 
-    old_blocks, old_entries, old_code, old_bounds = blocks(original)
-    new_blocks, new_entries, new_code, new_bounds = blocks(rebuilt)
+    old_blocks, old_entries, old_code, old_bounds, old_relocations = blocks(original)
+    new_blocks, new_entries, new_code, new_bounds, new_relocations = blocks(rebuilt)
     def procedure_window(
         code: bytes, entry: tuple[int, int, int],
         bounds: dict[int, tuple[int, int]],
@@ -103,6 +115,11 @@ def code_block_deltas(
         if old == new:
             continue
         mismatch_count = sum(a != b for a, b in zip(old, new)) + abs(len(old) - len(new))
+        relocation_offsets = old_relocations.get(label, set()) | new_relocations.get(label, set())
+        real_mismatch_count = sum(
+            a != b and offset not in relocation_offsets
+            for offset, (a, b) in enumerate(zip(old, new))
+        ) + abs(len(old) - len(new))
         first_difference = next(
             (i for i, (a, b) in enumerate(zip(old, new)) if a != b),
             min(len(old), len(new)),
@@ -143,7 +160,8 @@ def code_block_deltas(
                 f"{post_entry_first}"
             )
         deltas.append(
-            f"{label}: {mismatch_count}, {len(old)}->{len(new)} bytes, "
+            f"{label}: raw {mismatch_count}, real {real_mismatch_count}, "
+            f"{len(old)}->{len(new)} bytes, "
             f"first +0x{first_difference:04X} [{old_window}->{new_window}]; "
             + "; ".join(name_deltas)
         )
