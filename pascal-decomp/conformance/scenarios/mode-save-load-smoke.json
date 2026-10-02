@@ -31,8 +31,8 @@
       "send": "PAMIETAJ"
     },
     {
-      "label": "save confirmation",
-      "expect": "ALL RIGHT !!! GRA ZAPISANA! ;\\)",
+      "label": "post-save character-sheet response",
+      "expect": "W SUMIE MASZ[\\s\\S]*?TWOJE PARAMETRY : SILA - [0-9]+/[0-9]+[\\s\\S]*?FUKSROLL-[0-9]+[\\s\\S]*?[0-9]+%\\.-?[0-9]+>",
       "send": "DAWAJ KASE"
     },
     {
