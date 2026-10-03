@@ -6,8 +6,8 @@
       "name": "BOMBKI",
       "candidate_name": "BOMBKI",
       "reference_start": "0x00000",
-      "reference_size": "0x0F5D0",
-      "evidence": "MZ CS=0000 and SWIAT far-call segment 0x0F5D; main image ends at the next linked segment."
+      "reference_size": "0x0F5CA",
+      "evidence": "Code length 0xF5CA from candidate MAP; EXE byte-identical (cmp/md5), so original code length matches. Exit far-call ends at 0xF5C9; six zero paragraph-pad bytes to the SWIAT boundary at 0xF5D0 (footprint)."
     },
     {
       "name": "SWIAT",

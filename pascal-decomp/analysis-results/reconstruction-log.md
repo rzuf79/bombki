@@ -3635,3 +3635,100 @@ reconstruction. Original-side findings are grounded in the EXE/TPU.
 - Variable is saved/loaded but never assigned from `POTRAWKI` skill.
 - MODE menu displays it (`POTRAWKI - X%`) but it's stale — bug in original.
 - TP7 build byte-identical.
+
+### 2026-10-03 (139): last remaining mismatches documented
+
+**Status**: Two classes of mismatch remain, both fundamental TP7 codegen differences:
+
+1. **80 bytes of 0xFE vs 0x9D** (file read helper calls)
+   - Locations: 80 scattered sites in BOMBKI segment (0x7DD3, 0x7DF6, ... 0x8565)
+   - Pattern: `lcall 0x1c71:0x5fe` (ref) vs `lcall 0x1c71:0x59d` (candidate)
+   - Cause: File read helper for `ReadLn(plik, ...)` in save/load code
+   - Ref uses overlay-aware helper `0x5fe` (blind copy, no bounds check)
+   - Candidate uses standard helper `0x59d` (bounds-checked)
+   - Root cause: Ref compiled with `{$O+}` (overlay support) enabling overlay-aware file I/O; candidate lacks `{$O+}`
+   - Blocker: Main program too large for `{$O+}` (Error 124: "Statement part too large" - main statement block exceeds overlay segment limit)
+   - Not fixable at source level without splitting main program into overlays (would change binary structure)
+
+2. **6-byte tail padding difference** (extent delta 6)
+   - Ref has 6 zero bytes padding at end of BOMBKI segment (0xF5CA-0xF5CF) before next segment
+   - Candidate ends 6 bytes earlier (extent 0xF5CA vs 0xF5D0)
+   - Likely alignment/padding difference from compiler version or EXE header rounding
+   - File sizes identical (141,264 bytes) due to EXE header padding
+
+**Conclusion**: Both mismatches are fundamental TP7 codegen differences unresolvable at source level without:
+- Major restructuring (manual overlay splitting of 4700+ line main program)
+- Or different TP7 version/toolchain
+- All 6 non-BOMBKI regions are byte-exact; BOMBKI has 80 "other" byte diffs + 6 extent delta
+
+**Status**: **OPEN** - no source-level fix available with current toolchain.
+
+### 2026-10-03 (140): Read vs ReadLn mismatch resolved to 1 byte
+
+- Changed all 80 `ReadLn(plik, ...)` to `Read(plik, ...)` matching original source form.
+- Eliminated 79 of 80 `0xFE` vs `0x9D` mismatches (file read helper calls).
+- **1 byte remains** at offset 0x8548 (first `Read(plik, PrzedmPiwo)` in WczytajPostac):
+  - Ref uses standard helper `0x59D`, candidate uses overlay-aware `0x5FE`
+  - Cause: TP7 codegen quirk for first file read after certain context; unresolvable without exact original compiler options/version
+- **6-byte tail padding** difference persists (extent delta 6)
+- All 6 non-BOMBKI regions byte-exact
+- Status: **OPEN** - last 1 byte + 6 padding bytes irreducible without original compiler/toolchain
+
+### 2026-10-03 (141): strict TP7 EXE parity achieved (RESOLVED)
+
+- Change: `reconstructed/BOMBKI.PAS` line 1431 in `WczytajPostac`:
+  `Read(plik, PRZEDM.DUNCAN);` -> `ReadLn(plik, PRZEDM.DUNCAN);`.
+  (Finding (140) mislabeled the site as the `PrzedmPiwo` read; the
+  site is the DUNCAN read: DGROUP 0x261 = `PRZEDM` block 0058
+  offset 000B, Shortint, per `analysis-results/tpu_reports/PRZEDM.symbols.csv`
+  and `build/tp7/BOMBKI.MAP` entry `1D49:0261 DUNCAN`.)
+- Evidence: reference DUNCAN read site (img 0x853A-0x854C) is
+  `[mov di,0x7E][push ds][push di][lcall 0x1C71:0x72D]` (numeric
+  reader), `[mov byte ptr [0x261], al]` (store), `[lcall 0x1C71:0x59D]`
+  (post-helper), `[lcall 0x1C71:0x291]` (IOCHECK). The previous
+  candidate emitted the same reader and store but post-helper
+  `0x5FE` at img 0x8547 (file offset 0xD828: ref 0x9D vs cand 0xFE).
+- Why ReadLn: TP7 uses the same numeric reader for `Read(f, v)` and
+  `ReadLn(f, v)`; the statements differ only in the post-helper
+  (`System+0x5FE` for Read, `System+0x59D` for ReadLn). Verified
+  with the isolated TP7.01 probe `build/tmp/readln-probe/probe.pas`
+  (PROBE.EXE): `Read(f, b)`/`ReadLn(f, b)` (Shortint) and
+  `Read(f, w)`/`ReadLn(f, w)` (Integer) all share one reader and
+  differ only in the post-helper call.
+- Cross-program caution: System segment layout is not fixed across
+  programs. The numeric reader sits at `System+0x635` in the probe's
+  System but `System+0x72D` in BOMBKI's System (identical routine
+  code modulo relocations); System-relative offsets are comparable
+  only within a single build. The post-helpers `+0x5FE`/`+0x59D`
+  happen to sit at the same offsets in both builds.
+- The 6-byte "extent delta" (BOMBKI segment 0xF5CA vs 0xF5D0) was
+  MAP bookkeeping only: paragraph padding, zero bytes in both files,
+  no effect on EXE bytes.
+- Verification (machine): `conformance/compare_tpu.py` - all three
+  TPUs byte-identical (MONSTRA 3072, PRZEDM 80128, SWIAT 26000);
+  `tools/compare_tp7_artifacts.py` - "EXE byte-identical: 141264
+  bytes"; `cmp` clean; md5 of both files
+  `7e710a60bb27dc7421092fb0e415a51e`.
+- Status: RESOLVED. Strict TP7 EXE byte identity achieved; the
+  deferred behavioral-conformance tests are now unblocked (see
+  TODO.md).
+
+### 2026-10-03 (142): BOMBKI reference extent corrected to code length
+
+- The region report's BOMBKI "extent delta=6" was an artifact of
+  comparing two different quantities: the reference layout's
+  footprint (0xF5D0 = BOMBKI start to the SWIAT boundary) against
+  the candidate MAP's code length (0xF5CA).
+- No original BOMBKI.MAP is retained in `../og/`, so the reference
+  BOMBKI code length is established by inference: the EXE is
+  byte-identical (cmp/md5 machine evidence), the candidate MAP
+  records code length 0xF5CA ending with the exit far-call at
+  0xF5C9, and the six trailing bytes (img 0xF5CA-0xF5CF) are
+  zeros in both images - paragraph padding per the project
+  convention already applied to the System segment's trailing
+  pad bytes.
+- Corrected `analysis-results/exe_reports/reference-linked-layout.json`
+  BOMBKI reference_size 0xF5D0 -> 0xF5CA with the evidence note.
+- Region report now: 7/7 regions "relative bytes exact", extent
+  delta=0 for all; EXE still byte-identical (141,264 bytes).
+- Conformance unit tests: 14/14 pass.
