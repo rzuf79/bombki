@@ -19,7 +19,7 @@ label
   L1027_Ucieczka16, L1028_PoUcieczce16;
 const
   MIECHO_Podswiadomosc = 1000; { main command-room context }
-  MIECHO_Smierc = 10000; { bazaar context at img 0xEA22 }
+  MIECHO_Smierc = 10000; { smierc context at img 0xEA22 }
 var
   Unused0052: Integer; { effectively unused: only saved/loaded, no business code }
   JakaBron: Integer; { invented label for DGROUP word 0x054 }
@@ -243,7 +243,6 @@ begin
   WriteLn('ABY SIE PATRZEC UZYJ KOMENDY PATRZ RAZEM Z RZECZA KTORA CHCESZ OBEJRZECZ');
 end;
 
-
 procedure WalkaMiasto;
 { img 0x1C2A..0x1E97: room-gated dog/city-animal kill router }
 begin
@@ -304,7 +303,6 @@ begin
     end;
   end;
 end;
-
 
 procedure Trening;
 { Invented source name for the program-local routine at img 0x2395..0x2B74. }
@@ -395,7 +393,6 @@ begin
               '% MASZ ', PRA, ' PRAKTYK');
     end;
 end;
-
 
 procedure ZapiszPostac;
 begin
@@ -490,7 +487,6 @@ begin
   Close(plik);
 end;
 
-
 procedure Smierc;
 { Recovered death handler at img 0x36F4..0x3845; called for context 10000
   by the main loop at img 0xEA22. }
@@ -512,7 +508,6 @@ begin
   ReadLn; { lcall 0x1C71:0x59D and CheckIO at img 0x3832..0x383C }
   ZapiszPostac; { save routine at img 0x2BA1, called from img 0x3841 }
 end;
-
 
 procedure ZakupyPiekarnia;
 { img 0x139BE..0x13CEA: LISTA and KUP food commands }
@@ -565,9 +560,6 @@ begin
   end;
 end;
 
-
-
-
 procedure ZakupyZbrojownia;
 { img 0x3E8E..0x40BB: weapon/armor store transaction body }
 begin
@@ -611,7 +603,6 @@ begin
     PRZEDM.PRZED := PRZEDM.PRZED - 1;
   end;
 end;
-
 
 procedure ZakupySklepWielobranzowy;
 { img 0x43A5..0x47DB: general-store transaction body }
@@ -688,11 +679,6 @@ begin
   end;
 end;
 
-
-
-
-
-
 procedure ZakupySklepMagiczny;
 { img 0x4ADD..0x4E8A: potion, lucky-leaf, pill, and scroll transactions }
 begin
@@ -756,13 +742,6 @@ begin
   end;
 end;
 
-
-
-
-
-
-
-
 procedure WalkaKoncert;
 { img 0x4F53: shared room-NPC kill router; called only at the recovered
   room call sites. Keep its independent command comparisons in EXE order. }
@@ -821,7 +800,6 @@ begin
   end;
 end;
 
-
 procedure PunktyKontrolne;
 { img 0x51C3..0x534A: sequential checkpoint tests can cascade }
 begin
@@ -857,7 +835,6 @@ begin
   end;
 end;
 
-
 procedure Pokoj2;
 { img 0x548A: inline room 2 (context 2) - POKOJ TRENINGOWY 1 }
 begin
@@ -884,7 +861,6 @@ begin
   until MIECHO <> 2;
 end;
 
-
 procedure Pokoj3;
 { img 0x571E: inline room 3 (context 3) - PODDZIEMNY POKOJ TRENINGOWY(2) }
 begin
@@ -903,7 +879,6 @@ begin
     Trening; { img 0x5853 -> program-local routine img 0x2396 }
   until MIECHO <> 3;
 end;
-
 
 procedure Pokoj9;
 { img 0x5923: inline room 9 (context 9) }
@@ -924,7 +899,6 @@ begin
     if wpisz = 'GORA' then MIECHO := 11;
   until MIECHO <> 9;
 end;
-
 
 procedure Pokoj12;
 { img 0x5C36: inline room 12 (context 12) - KLATKA CIENIASA }
@@ -983,43 +957,6 @@ begin
     end;
   until MIECHO <> 12;
 end;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 procedure PokojeKoncertowe; { invented name for img 0x68BC..0x7D6A }
 { One ordered context dispatcher, matching the single EXE procedure. }
@@ -1336,7 +1273,6 @@ begin
   end;
 end;
 
-
 procedure WczytajPostac;
 begin
   ReadLn(wpisz);
@@ -1433,7 +1369,6 @@ begin
   Close(plik);
   WriteLn('suckemall:', PRZEDM.JAKIEUB);
 end;
-
 
 procedure ZdobadzPoziom;
 { img 0x872E..0x8BA2: level thresholds and stat gains }
