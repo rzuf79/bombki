@@ -31,10 +31,10 @@ coins; 0x1AC/0x1AE are mana fields, not monster HP.
    0x60   f39     1                   0x60               Field_0060
    0x62   f21     10  (=raw)          0x62  CarryLimit (used with PRZED; see img 0xB0F6..0xB102)
     0x6C   f15     anomalous sample   0x6c  Field_006C (meaning OPEN)
-    0x70   (not saved)                   SPIJ hour counter (`Godzin`, source label)
+    0x70   (not saved)                   SPIJ hour counter (`GodzinySnu`, current identifier)
                          <- DS word is zeroed/incremented/read at img 0xEEFF..0xEF24
                             and used through img 0xF053; the genuine-TP7 build
-                            emits these accesses at DS:0070 when `Godzin` follows
+                            emits these accesses at DS:0070 when `GodzinySnu` follows
                             the program-level DGROUP 0x076 declaration (finding 100)
     0x74   f42     0                   0x74 "Potrawki"   (chance) (conflict, see below)
    0x76   f43     0                   0x76               Field_0076

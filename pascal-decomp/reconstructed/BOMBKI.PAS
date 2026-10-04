@@ -11,14 +11,14 @@ uses
 
 { program-level DGROUP workspace:
     ds:0x007E  plik / save-file TextRec (img 0x2BEA..0x2BF4)
-    ds:0x0564  PRZEDM.wpisz / command buffer (PRZEDM.KOMENDY at img 0x1BB11)
+    ds:0x0564  PRZEDM.wpisz / command buffer (PRZEDM.KOMENDY at img 0x1BB07)
   Other unit-owned globals live in the SWIAT/PRZEDM/MONSTRA interface vars. }
 
 label
   L1012_ZachetaPodswiadomosc, L1025_Wyjscie, L1026_KoniecObladowania,
   L1027_Ucieczka16, L1028_PoUcieczce16;
 const
-  MIECHO_Podswiadomosc = 1000; { main command-room context }
+  MIECHO_Podswiadomosc = 1000; { subconscious (MODE) context }
   MIECHO_Smierc = 10000; { smierc context at img 0xEA22 }
 var
   Unused0052: Integer; { effectively unused: only saved/loaded, no business code }
@@ -26,8 +26,8 @@ var
   ZapisanoGre: Integer; { invented label for DGROUP word 0x056 }
   StanCieniasa: Integer;  { invented label for DGROUP word 0x058 }
   StanZrecznego: Integer;  { invented label for DGROUP word 0x05A }
-  StanSilnego: Integer;  { invented label for DGROUP word 0x05C }
-  StanOdpornego: Integer;  { invented label for DGROUP word 0x05E }
+  StanOdpornego: Integer;  { invented label for DGROUP word 0x05C }
+  StanOgromnego: Integer;  { invented label for DGROUP word 0x05E }
   JakaTarcza: Integer;  { invented label for DGROUP word 0x060 }
   LimitPrzedmiotow: Integer;     { invented label for DGROUP word 0x062 }
   Unused0064: Integer; { completely unused: no references }
@@ -48,7 +48,7 @@ var
 procedure WalkaKoncert; forward;
 procedure WybierzRase; forward;
 procedure PunktyKontrolne; forward;
-procedure ZdobadzPoziom; forward;
+procedure SprawdzCzyZdobylesLevel; forward;
 procedure Trening; forward;
 procedure Pokoj2; forward;
 procedure Pokoj3; forward;
@@ -224,8 +224,8 @@ begin
   { PunktKontrolny starts at zero in the cleared DGROUP (img 0x51D5). }
   MONSTRA.SILNY := 13; { img 0x1973 DGROUP $68C }
   StanZrecznego := 14; { img 0x1979, DGROUP 0x05A }
-  StanSilnego := 15; { img 0x197F, DGROUP 0x05C }
-  StanOdpornego := 16; { img 0x1985, DGROUP 0x05E }
+  StanOdpornego := 15; { img 0x197F, DGROUP 0x05C }
+  StanOgromnego := 16; { img 0x1985, DGROUP 0x05E }
   { Room-state initializers are in Room at img 0x12ACA. }
   POZIOM := 1;
   MAXMANA := MAXMANA + 100;
@@ -244,7 +244,7 @@ begin
 end;
 
 procedure WalkaMiasto;
-{ img 0x1C2A..0x1E97: room-gated dog/city-animal kill router }
+{ img 0x1C2A..0x1E97: room-gated dog/city-NPC kill router }
 begin
   if (wpisz = 'ZABIJ OWCZAREK') and (MONSTRA.OWCZAREK = MIECHO) then begin
     PRZEDM.WALKAPIES;
@@ -305,7 +305,7 @@ begin
 end;
 
 procedure Trening;
-{ Invented source name for the program-local routine at img 0x2395..0x2B74. }
+{ Invented source name for the program-local routine at img 0x2396..0x2B74. }
 begin
   if wpisz = 'PATRZ PLAKAT' then begin
     WriteLn('NA PLAKACIE PISZE:');
@@ -439,8 +439,8 @@ begin
   WriteLn(plik, StanCieniasa);
   WriteLn(plik, MONSTRA.SILNY);
   WriteLn(plik, StanZrecznego);
-  WriteLn(plik, StanSilnego);
   WriteLn(plik, StanOdpornego);
+  WriteLn(plik, StanOgromnego);
   WriteLn(plik, JakaTarcza);
   WriteLn(plik, SilaZbroi);
   WriteLn(plik, POTRAWKI);
@@ -510,7 +510,7 @@ begin
 end;
 
 procedure ZakupyPiekarnia;
-{ img 0x139BE..0x13CEA: LISTA and KUP food commands }
+{ img 0x39BE..0x3CEA: LISTA and KUP food commands }
 begin
   if wpisz = 'LISTA' then begin
     WriteLn('NAZWA         CENA');
@@ -1321,8 +1321,8 @@ begin
   Read(plik, StanCieniasa);
   Read(plik, MONSTRA.SILNY);
   Read(plik, StanZrecznego);
-  Read(plik, StanSilnego);
   Read(plik, StanOdpornego);
+  Read(plik, StanOgromnego);
   Read(plik, JakaTarcza);
   Read(plik, SilaZbroi);
   Read(plik, POTRAWKI);
@@ -1370,10 +1370,8 @@ begin
   WriteLn('suckemall:', PRZEDM.JAKIEUB);
 end;
 
-procedure ZdobadzPoziom;
+procedure SprawdzCzyZdobylesLevel;
 { img 0x872E..0x8BA2: level thresholds and stat gains }
-label
-  1;
 begin
   if (KUNSZT < 700) or (POZIOM <> 1) then
     if (KUNSZT < 725) or (POZIOM <> 2) then
@@ -1382,7 +1380,6 @@ begin
           if POZIOM <= 8 then Exit;
           if (735 + POZIOM + POZIOM) > KUNSZT then Exit;
         end;
-1:
   { Level up body at img 0x87A2 }
   WriteLn('<<<<<<<<<=+=+=+!!!#####ZDOBYLES LEVEL#####!!!+=+=+=<<<<<<<<<<<<<');
   WriteLn('<<<<<<<<<=+=+=+!!!#####ZDOBYLES LEVEL#####!!!+=+=+=<<<<<<<<<<<<<');
@@ -1454,7 +1451,7 @@ begin
   ReadKey; { ignored result; CRT lcall 1C0F:031A at img 0xB0EB }
   repeat
   PunktyKontrolne; { call 0x51C3 at img 0xB0F0 }
-  ZdobadzPoziom; { call 0x872E at img 0xB0F3 }
+  SprawdzCzyZdobylesLevel; { call 0x872E at img 0xB0F3 }
   { Overload gate: PRZED [0x182] > LimitPrzedmiotow [0x62] -> overload-print block }
   if PRZED <= LimitPrzedmiotow then goto L1026_KoniecObladowania;
   WriteLn('JESTES OBLADOWANY !!! MASZ O ', PRZED - LimitPrzedmiotow, ' ZA DUZO');
@@ -1537,13 +1534,13 @@ L1026_KoniecObladowania:
   until MIECHO <> 14;
 
     end;
-{ img 0xB52B..0xB7F1: inline room 15 (context 15) - silny potwor }
+{ img 0xB52B..0xB7F1: inline room 15 (context 15) - odporny potwor }
     if MIECHO = 15 then begin
 
   WriteLn('TEN POKOJ JEST CALY OBRYZGANY KRWIA NA SCIANACH FLAKI I MOZGI LODZKIE ');
-  if StanSilnego = 15 then
+  if StanOdpornego = 15 then
     WriteLn('POWOLNY ACZ ODPORNY NA BOL POTWOR SPOKOJNIE LEZY POD SCIANA');
-  if StanSilnego = 0 then
+  if StanOdpornego = 0 then
     WriteLn('PAROJACE WNETRZNOSCI POTWORA SA ROZWLECZONE DOOKOLA');
   repeat
     Write(ENERGIA, '%.', KUNSZT, '>');
@@ -1555,11 +1552,11 @@ L1026_KoniecObladowania:
     if wpisz = 'MODE' then PRZEDM.MODE;
     if wpisz = 'WYJSCIE' then goto L1025_Wyjscie;
     if wpisz = 'POLNOC' then MIECHO := 11;
-    if (wpisz = 'ZABIJ POTWOR') and (StanSilnego = 15) then begin
+    if (wpisz = 'ZABIJ POTWOR') and (StanOdpornego = 15) then begin
       WROGEN := 40; WROGZRE := 3; WROGSIL := 3;
       WALKA;
       if PASZOL = 0 then begin
-        StanSilnego := 0;
+        StanOdpornego := 0;
         CZY := Random(15);
         WriteLn('WYCIAGASZ ', CZY, ' MONET Z CIALA POTWORA');
         FORSA := FORSA + CZY;
@@ -1593,20 +1590,20 @@ L1026_KoniecObladowania:
   until MIECHO <> 15;
 
     end;
-{ img 0xB7F2..0xBAAB: inline room 16 (context 16) - odporny potwor }
+{ img 0xB7F2..0xBAAB: inline room 16 (context 16) - silny potwor }
     if MIECHO = 16 then begin
 
   WriteLn('TEN POKOJ JEST CALY OBRYZGANY KRWIA NA SCIANACH FLAKI I MOZGI LODZKIE ');
-  if StanOdpornego = 16 then
+  if StanOgromnego = 16 then
     WriteLn('OGROMNY POTWOR WIDZAC MIESO RZUCA SIE NA CIEBIE');
-  if StanOdpornego = 0 then
+  if StanOgromnego = 0 then
     WriteLn('PAROJACE WNETRZNOSCI POTWORA SA ROZWLECZONE DOOKOLA');
   repeat
-  if StanOdpornego = 16 then begin
+  if StanOgromnego = 16 then begin
     WROGEN := 40; WROGZRE := 11; WROGSIL := 10;
     WALKA;
     if PASZOL <> 0 then goto L1027_Ucieczka16;
-    StanOdpornego := 0;
+    StanOgromnego := 0;
     CZY := Random(30);
     WriteLn('WYCIAGASZ ', CZY, ' MONET Z CIALA POTWORA');
     FORSA := FORSA + CZY;
@@ -1671,8 +1668,8 @@ L1028_PoUcieczce16:
       WriteLn('JEZELI BYLES AKTYWNY TO POWINIENES LICZYC NA NAGRODE');
       WriteLn('SPRAWDZ CZY LEZY TU COS , POTEM MOZESZ ZEJZD DO TELEPORTU ');
       if (StanCieniasa = 0) and (StanZrecznego = 0) and
-         (MONSTRA.SILNY = 0) and (StanSilnego = 0) and
-         (StanOdpornego = 0) and (DYPLOM = 0) then
+         (MONSTRA.SILNY = 0) and (StanOdpornego = 0) and
+         (StanOgromnego = 0) and (DYPLOM = 0) then
         DYPLOM := 17;
     end;
     if wpisz = 'WYJSCIE' then goto L1025_Wyjscie;

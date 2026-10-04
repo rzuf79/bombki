@@ -3732,3 +3732,118 @@ reconstruction. Original-side findings are grounded in the EXE/TPU.
 - Region report now: 7/7 regions "relative bytes exact", extent
   delta=0 for all; EXE still byte-identical (141,264 bytes).
 - Conformance unit tests: 14/14 pass.
+
+### 2026-10-04 (143): comment glosses aligned, rooms 15/16 trackers swapped
+
+- Comment-only fixes in reconstructed/BOMBKI.PAS (commit
+  a320cd4): `MIECHO_Podswiadomosc` gloss "main command-room
+  context" -> "subconscious (MODE) context" (1000 = STAN
+  PODSWIADOMOSCI; the MODE block at img 0xEAF8..0xEB31
+  implements the subconscious command set; room-1 poster
+  string 'MODE - WPROWADZENIE W STAN PODSWIADOMOSCI');
+  `WalkaMiasto` gloss "dog/city-animal" -> "dog/city-NPC"
+  (five dog fields OWCZAREK/PIESEK/JAMNIK/SPANIEL/PUDEL via
+  PRZEDM.WALKAPIES; five human-NPC fields TAKSOWKARZ/
+  SPRZEDAWCA/ZAMIATACZ/PIJAK/ZEBRAK - real MONSTRA.TPU
+  symbols per tpu_reports/MONSTRA.symbols.csv - via
+  PRZEDM.VEASY; recovered strings treat them as people:
+  'TAKSOWKARZ WTARGNA TU ZE SWOJA BRYKA', 'ZYSKALES KOMPLET
+  OBRABIAJAC ZAMIATACZA', 'Z GRUBEGO PORTFELA ZEBRAKA
+  WYCIAGASZ BONUS'); `PRZEDM.KOMENDY` cited at img 0x1BB11
+  -> 0x1BB07 (0x1BB11 is a DS:0x0564 access site inside
+  KOMENDY, finding 122); `Trening` prologue 0x2395 -> 0x2396
+  (finding 156; 0x2395 is a string-literal byte);
+  `ZakupyPiekarnia` img 0x139BE..0x13CEA -> 0x39BE..0x3CEA
+  (disasm-verified prologue at 0x39BE, ret at 0x3CEA).
+- Rooms 15/16 invented tracker names swapped, correcting the
+  arbitrary assignment recorded in finding 136: room 15
+  (exit 'POLODNIE-KLATKA ODPORNEGO' in POKOJ11, room text
+  'POWOLNY ACZ ODPORNY NA BOL POTWOR', stats WROGEN 40 /
+  WROGZRE 3 / WROGSIL 3, DGROUP 0x05C, init img 0x197F) is
+  now tracked as `StanOdpornego`; room 16 (exit 'GORA-KLATKA
+  SILNEGO,ODPORNEGO I ZRECZNEGO', room text 'OGROMNY
+  POTWOR', stats 40/11/10, DGROUP 0x05E, init img 0x1985)
+  is now tracked as `StanOgromnego` (its room text reads
+  'OGROMNY POTWOR'). `StanOgromnego` rather than
+  `StanSilnego` because room 13's identity is already
+  owned by the TPU symbol `MONSTRA.SILNY`, so a second
+  "silny" tracker for room 16 read as a duplicate.
+  Invented names only: the
+  DGROUP words, init values, room gating, and save/load
+  order are unchanged.
+- `POKOJE` gloss in reconstructed/SWIAT.PAS: "four separate
+  guarded rooms" -> "four separate cramped rooms" (rooms
+  6/7/8/10 all print 'JESTES W DOSYC CIASNYM POKOJU I
+  NICZEGO TU NIEMA').
+- `PRZEDM.SMIERC` in reconstructed/PRZEDM.PAS commented as
+  dead and unfinished code, uncalled in the reconstruction;
+  the actual death handling is the reconstructed Smierc
+  function in BOMBKI.PAS. (SMIERC exists in PRZEDM.TPU at
+  0x0141..0x0277, stable entry 0x0110 - findings 27/1161 -
+  compiled in but never called.) The note is kept on the
+  single `procedure SMIERC;` line: a multi-line comment
+  here shifts every later line number in the unit and
+  breaks PRZEDM.TPU byte identity (see finding 147,
+  constraint 2 - this was caught by the CI byte-for-byte
+  TPU check, not by the local per-line comparison.)
+- integrated-field-map.md: DGROUP 0x70 label synced from
+  `Godzin` to the current identifier `GodzinySnu`.
+- Verification (machine): TP7 compile under DOSBox-X via
+  tools/compare_tp7_artifacts.py - MONSTRA/PRZEDM/SWIAT TPU
+  per-line code-byte counts: no mismatches (42/1460/415
+  entries); BOMBKI.EXE byte-identical to ../og/BOMBKI.EXE
+  (141264 bytes). FPC TP-mode conformance (conformance/
+  pas-conformance.sh): 4/4 PASS.
+- Status: RESOLVED (documentation and invented-identifier
+  naming only; behavior unchanged).
+
+### 2026-10-05 (144): unused numeric label 1 removed from ZdobadzPoziom
+
+- `ZdobadzPoziom` (reconstructed/BOMBKI.PAS, img
+  0x872E..0x8BA2) declared `label 1;` and defined `1:`
+  before the level-up body at img 0x87A2, but no
+  `goto 1` existed anywhere in the source (the only
+  numeric label; all 33 `goto` statements target the
+  five L-named labels).
+- Machine evidence: img 0x87A2 is a live jump target -
+  five conditional jumps land there (je at 0x8745,
+  je at 0x8754, je at 0x8763, jl at 0x877E, jle at
+  0x879D), emitted by TP7 as the merge point of the
+  nested threshold if-chain's false paths (threshold
+  tests at img 0x8738/0x8747/0x8756: KUNSZT 700/725/
+  730 vs POZIOM 1/2/3, then 735+POZIOM and
+  735+2*POZIOM). The label itself is a source-level
+  marker only, so removing it cannot change codegen.
+- Removed the `label` declaration and the `1:`
+  definition; kept the `{ Level up body at img 0x87A2 }`
+  comment.
+- Verification (machine): TP7 compile under DOSBox-X
+  via tools/compare_tp7_artifacts.py - MONSTRA/PRZEDM/
+  SWIAT TPU per-line code-byte counts: no mismatches;
+  BOMBKI.EXE byte-identical to ../og/BOMBKI.EXE
+  (141264 bytes). FPC TP-mode conformance: 4/4 PASS.
+- Status: RESOLVED (dead source marker removed;
+  compiled output unchanged).
+
+### 2026-10-05 (145): ZdobadzPoziom renamed to SprawdzCzyZdobylesLevel
+
+- Invented procedure name changed: `ZdobadzPoziom`
+  -> `SprawdzCzyZdobylesLevel` ("check whether you
+  gained a level"), matching the routine's role: it
+  tests the KUNSZT/POZIOM level thresholds and
+  awards the level-up. Sites: forward declaration,
+  definition (img 0x872E..0x8BA2), and the call in
+  the JA/inventory helper (img 0xB0F3).
+- The name is invented (main-program symbol; no TPU
+  owns it), so the rename is free. Historical log
+  entries keep the old name.
+- CONTRIBUTING.md naming-convention example updated
+  to the new name.
+- Verification (machine): TP7 compile under DOSBox-X
+  via tools/compare_tp7_artifacts.py - MONSTRA/
+  PRZEDM/SWIAT TPU per-line code-byte counts: no
+  mismatches; BOMBKI.EXE byte-identical to
+  ../og/BOMBKI.EXE (141264 bytes). FPC TP-mode
+  conformance: 4/4 PASS.
+- Status: RESOLVED (invented-identifier rename only;
+  compiled output unchanged).
