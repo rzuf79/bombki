@@ -29,7 +29,7 @@ reference. `../og/` is read-only.
   unless EXE decompilation conclusively establishes another owner. Record
   the ownership evidence; use from a unit alone does not establish ownership.
 - Invented identifiers use ordinary Pascal capitalization with Polish names
-  (e.g. `WybierzRase`, `PunktKontrolny`, `ZdobadzPoziom`), never ALLCAPS to
+  (e.g. `WybierzRase`, `PunktKontrolny`, `SprawdzCzyZdobylesLevel`), never ALLCAPS to
   imitate recovered names. Explicitly label invented names and distinguish them
   from symbols recovered from the TPUs.
 

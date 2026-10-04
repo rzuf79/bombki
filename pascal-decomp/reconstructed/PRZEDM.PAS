@@ -189,6 +189,9 @@ begin
 end;
 
 procedure SMIERC;
+{ Dead and unfinished code: uncalled in the reconstruction.
+  The actual implementation is the reconstructed Smierc function
+  in BOMBKI.PAS. }
 begin
   WriteLn('AJAJAJAJ TWOJA GLOWA NAWALA JAK TESCIOWA!!!');
   WriteLn('NIC NA TO NIE PORADZE , TRZEBA BYLO SIE STARAC');
