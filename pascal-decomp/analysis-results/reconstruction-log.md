@@ -3780,7 +3780,12 @@ reconstruction. Original-side findings are grounded in the EXE/TPU.
   the actual death handling is the reconstructed Smierc
   function in BOMBKI.PAS. (SMIERC exists in PRZEDM.TPU at
   0x0141..0x0277, stable entry 0x0110 - findings 27/1161 -
-  compiled in but never called.)
+  compiled in but never called.) The note is kept on the
+  single `procedure SMIERC;` line: a multi-line comment
+  here shifts every later line number in the unit and
+  breaks PRZEDM.TPU byte identity (see finding 147,
+  constraint 2 - this was caught by the CI byte-for-byte
+  TPU check, not by the local per-line comparison.)
 - integrated-field-map.md: DGROUP 0x70 label synced from
   `Godzin` to the current identifier `GodzinySnu`.
 - Verification (machine): TP7 compile under DOSBox-X via
