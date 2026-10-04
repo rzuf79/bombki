@@ -3842,3 +3842,21 @@ reconstruction. Original-side findings are grounded in the EXE/TPU.
   conformance: 4/4 PASS.
 - Status: RESOLVED (invented-identifier rename only;
   compiled output unchanged).
+
+### 2026-10-05 (146): leftover IFDEF FPC block dropped
+
+- Removed the `{$IFDEF FPC}` / `{$ELSE}` / `{$ENDIF}`
+  scaffolding in BOMBKI.PAS (`PokazPostac`, the S.Z-
+  display). Both branches computed the same value
+  (`PRO + 10 * ILOSC` vs `10 * ILOSC + PRO`); the
+  TP7-proven `{$ELSE}` form was kept. The current code is
+  FPC-compatible without the conditional, so it was dead
+  scaffolding.
+- Verification (machine): TP7 compile under DOSBox-X via
+  tools/compare_tp7_artifacts.py - MONSTRA/PRZEDM/SWIAT
+  TPU per-line code-byte counts: no mismatches (42/1460/
+  415 entries); BOMBKI.EXE byte-identical to
+  ../og/BOMBKI.EXE (141264 bytes). FPC TP-mode
+  conformance: 4/4 PASS.
+- Status: RESOLVED (dead scaffolding removed; compiled
+  output unchanged).

@@ -160,15 +160,9 @@ begin
   WriteLn('TWOJE PARAMETRY : SILA - ', SIL, '/', MAXSIL,
          ' ZRECZNOSC - ', ZRE, '/', MAXZRE,
          ' MADROSC - ', MAD, '/', MAXMAD);
-  {$IFDEF FPC}
-  SilaZbroi := PRZEDM.PRO + 10 * PRZEDM.ILOSC;
-  WriteLn('S.Z-', SilaZbroi,
-         '                    FUKSROLL-', PRZEDM.FUKSROLL);
-  {$ELSE}
   SilaZbroi := 10 * PRZEDM.ILOSC + PRZEDM.PRO;
   WriteLn('S.Z-', SilaZbroi,
          '                    FUKSROLL-', PRZEDM.FUKSROLL);
-  {$ENDIF}
   WriteLn('MASZ ', MANA, '/', MAXMANA, ' MANY');
   WriteLn('MASZ ', ENERGIA, '/', MAXE, ' ENERGII');
   if QUEST = 1 then WriteLn('TWOJ AKTUALNY QUEST - ZABIC MUSISZ JESZCZE ', QUESTWYK, ' POTWOROW');
