@@ -63,6 +63,17 @@ repeating broad inspection of the original binaries or the project docs.
 
 ## Current handoff
 
+The user-approved wisdom-spell extension (2026-10-05) adds `ISKRA`, `UZDROW`,
+`OSLONA`, `ZATRUJ`, and `FIREBALL`. All five require one-time `CWICZ <CZAR>`
+for one practice point, including ISKRA (never automatic). Wisdom gates are
+12/12/14/14/18, mana costs 10/20/15/16/25; FIREBALL also requires level 3.
+Spells replace the weapon attack, resolve before retaliation, and do not fizzle.
+Offensive spells can open combat with `<WROG>`; direct damage bypasses dodge.
+Shield and opponent poison last three rounds and refresh without stacking.
+Save version 20 persists learned spells and effects and imports versions 1–19
+with no spells learned. The formulas and permitted new feedback are at the
+start of `compatibility.md`. No new tests were added, per the user's request.
+
 The user-approved balance pass (2026-10-05) supersedes the recovered balance
 values in the historical milestone notes below. Next-level costs are
 200/350/500/650/750, victory XP is fixed by enemy tier, bare `SPIJ`/`SLEEP`
@@ -71,16 +82,20 @@ replenishes ordinary encounters. The hours argument is removed; the legacy
 `sleep_hours` save field is retained but ignored by gameplay.
 Death preserves quest progress and costs no XP at level one, then 5% capped
 at 50. Food scales with maximum HP and is usable in combat; escape is always
-available with 60–90% success and no mana/XP cost. Rats, partridges, and rabbits
+available with 30–90% success and no mana cost. Successful escapes cost 10 XP,
+floored at zero; failed attempts cost no XP. Training uses
+`min(90, 30 + 2 * flee_skill / 3)` (rounded down).
+Rats, partridges, and rabbits
 have a separate gentler profile. Save version 19 imports versions 1–18,
-clears XP debt, and migrates old small-animal fights. Only existing test
+clears XP debt, and migrates old small-animal fights (also retained in version 20). Only existing test
 expectations were updated; the user prohibited adding tests. The complete
 balance values and permitted message updates are recorded at the start of
 `compatibility.md`.
 
 Milestones 1 through 9 are complete. Legacy-save import, multi-OS verification,
 and a seed flag are not part of the remaining game-reconstruction work. Do not
-invent player-facing text or mechanics for unrecovered commands.
+invent player-facing text or mechanics for unrecovered commands except the
+explicitly approved spells above.
 
 - Complete: the 23-item table, dexterity/backpack carrying limits, native save
   format version 17 with versions 1–16 import, the five room-object take/drop
@@ -173,7 +188,8 @@ invent player-facing text or mechanics for unrecovered commands.
   deferred combat rewards and grass-fight progress; versions 1–16 still import.
 - The underground skill poster retains its exact text and independent stat
   gates. Its extra advertised commands have no handler, state, or combat branch
-  in the retained executable and therefore remain silent no-ops.
+  in the retained executable and therefore remain silent no-ops, except the
+  explicitly approved UZDROW extension above.
 - All three Quest Master variants implement recovered purchase and turn-in
   text, per-victory counters, Liroy bonus, death resets, diploma/pipe costs,
   kunszt and pass rewards, and status text. His fixed-stat fight also grants

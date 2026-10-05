@@ -54,6 +54,11 @@ typedef struct {
     int parry_skill;
     int cooking_skill;
     int return_skill;
+    int learned_spells; /* Bit mask: ISKRA, UZDROW, OSLONA, ZATRUJ, FIREBALL. */
+    int magic_shield_energy;
+    int magic_shield_turns;
+    int active_opponent_poison_damage;
+    int active_opponent_poison_turns;
     int sleep_hours; /* Legacy save field; unused by gameplay. */
     int duncan_quest;
     bool duncan_black_market_unlocked;

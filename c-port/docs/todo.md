@@ -43,9 +43,20 @@ The evidence generator and reports are documented in
 - [x] Remove XP debt, lighten defeat penalties, and preserve quest progress.
 - [x] Match next-level costs to thresholds and use fixed enemy-tier XP rewards.
 - [x] Strengthen and scale food, allow combat consumables, and enable escape
-      without training, mana, or XP penalties.
+      without training or mana; success now costs 10 XP (floored at zero)
+      and starts at a 30% chance, improving with practice up to 90%.
 - [x] Add a gentler small-animal profile and migrate existing saves to version 19.
 - [x] Update existing expectations without adding tests.
+
+## Wisdom spells — approved 2026-10-05 (complete)
+
+- [x] Add ISKRA, UZDROW, OSLONA, ZATRUJ, and FIREBALL with wisdom/level scaling.
+- [x] Require one practice point to learn each spell, including ISKRA.
+- [x] Resolve spells before retaliation, replacing the player's normal attack.
+- [x] Persist learned spells and three-turn shield/poison effects in save
+      version 20; import versions 1–19 without automatically granting spells.
+- [x] Expose spell commands in abilities, combat options, and help; update only
+      existing test expectations, with no new tests.
 
 ## Milestone 2 — player setup, commands, and state (complete)
 
@@ -220,8 +231,8 @@ maximum-stat adjustment and its original display quirks are retained.
 growth and portal rolls, mana costs, room changes, and exact displays. The
 underground skill poster retains all of its independent stat gates and original
 wording. Commands advertised there but absent from every executable command
-handler, state block, and combat branch remain silent no-ops instead of gaining
-invented mechanics.
+handler, state block, and combat branch remain silent no-ops, except UZDROW
+in the user-approved wisdom-spell extension above.
 
 The user-approved sleep simplification replaces the recovered hourly mechanics:
 bare `SPIJ` or `SLEEP` now fully restores energy and mana without an XP cost

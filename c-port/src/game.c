@@ -25,8 +25,34 @@ typedef enum {
     COMBAT_ACTION_BASIC = 0,
     COMBAT_ACTION_KICK,
     COMBAT_ACTION_FLEE,
-    COMBAT_ACTION_ITEM
+    COMBAT_ACTION_ITEM,
+    COMBAT_ACTION_SPELL
 } CombatAction;
+
+typedef enum {
+    SPELL_SPARK = 0,
+    SPELL_HEAL,
+    SPELL_SHIELD,
+    SPELL_POISON,
+    SPELL_FIREBALL,
+    SPELL_COUNT
+} SpellId;
+
+typedef struct {
+    CommandVerb command;
+    const char *name;
+    int wisdom;
+    int level;
+    int mana;
+} SpellDefinition;
+
+static const SpellDefinition spells[SPELL_COUNT] = {
+    {COMMAND_SPARK, "ISKRA", 12, 1, 10},
+    {COMMAND_HEAL, "UZDROW", 12, 1, 20},
+    {COMMAND_MAGIC_SHIELD, "OSLONA", 14, 1, 15},
+    {COMMAND_POISON, "ZATRUJ", 14, 1, 16},
+    {COMMAND_FIREBALL, "FIREBALL", 18, 3, 25}
+};
 
 static const char *const race_names[RACE_COUNT] = {
     "CZLOWIEK", "OLBRZYM", "NIMFA", "POL-ELF", "UFOK", "CZAROMIL"
@@ -157,6 +183,10 @@ void game_clear_active_opponent(GameState *state)
     state->active_opponent_reward = 0;
     state->active_opponent_fireballs = 0;
     state->active_opponent_poison_casts = 0;
+    state->magic_shield_energy = 0;
+    state->magic_shield_turns = 0;
+    state->active_opponent_poison_damage = 0;
+    state->active_opponent_poison_turns = 0;
 }
 
 bool game_combat_is_active(const GameState *state)
@@ -210,6 +240,7 @@ bool game_select_opponent(GameState *state, const char *target)
             return false;
         }
 
+        game_clear_active_opponent(state);
         state->active_opponent_actor = (int)actor->id;
         state->active_opponent_energy = roll_enemy_stat(state, profile->energy);
         state->active_opponent_maximum_energy = state->active_opponent_energy;
@@ -489,6 +520,8 @@ bool game_state_is_valid(const GameState *state)
         && state->parry_skill >= 0
         && state->cooking_skill >= 0
         && state->return_skill >= 0
+        && state->learned_spells >= 0
+        && state->learned_spells < (1 << SPELL_COUNT)
         && state->sleep_hours >= 0
         && state->grass_fight_waves >= 0
         && state->grass_fight_waves < 4
@@ -584,7 +617,18 @@ bool game_state_is_valid(const GameState *state)
         }
     }
 
-    if (state->poison_turns < 0) {
+    if (state->poison_turns < 0
+        || state->magic_shield_energy < 0
+        || state->magic_shield_turns < 0 || state->magic_shield_turns > 3
+        || ((state->magic_shield_energy == 0) != (state->magic_shield_turns == 0))
+        || state->active_opponent_poison_damage < 0
+        || state->active_opponent_poison_turns < 0
+        || state->active_opponent_poison_turns > 3
+        || ((state->active_opponent_poison_damage == 0)
+            != (state->active_opponent_poison_turns == 0))
+        || (!game_combat_is_active(state)
+            && (state->magic_shield_turns != 0
+                || state->active_opponent_poison_turns != 0))) {
         return false;
     }
 
@@ -900,6 +944,11 @@ CommandTurnPolicy game_command_turn_policy(CommandVerb verb)
     case COMMAND_COMPARE:
     case COMMAND_RETURN:
     case COMMAND_SLEEP:
+    case COMMAND_SPARK:
+    case COMMAND_HEAL:
+    case COMMAND_MAGIC_SHIELD:
+    case COMMAND_POISON:
+    case COMMAND_FIREBALL:
         return TURN_ON_SUCCESS;
     default:
         return TURN_NEVER;
@@ -2277,7 +2326,7 @@ static size_t recovered_dodge_roll(
 
 static int flee_success_chance(const GameState *state)
 {
-    return state->flee_skill >= 90 ? 90 : 60 + state->flee_skill / 3;
+    return state->flee_skill >= 90 ? 90 : 30 + state->flee_skill * 2 / 3;
 }
 
 static bool try_flee(GameState *state, bool forced, GameOutput output)
@@ -2289,7 +2338,11 @@ static bool try_flee(GameState *state, bool forced, GameOutput output)
     }
 
     if ((int)random_below(state, 100) < flee_success_chance(state)) {
+        int experience_loss = state->experience < 10 ? state->experience : 10;
+
         emit(output, "WSTYD !!! UCIEKLES Z POLA BITWY\n");
+        state->experience -= experience_loss;
+        emit_formatted(output, "TRACISZ %d KUNSZTU\n", experience_loss);
         game_clear_active_opponent(state);
         return true;
     }
@@ -2513,6 +2566,165 @@ static int apply_automatic_parry(
     return damage;
 }
 
+static SpellId spell_for_command(CommandVerb command)
+{
+    SpellId spell;
+
+    for (spell = SPELL_SPARK; spell < SPELL_COUNT; ++spell) {
+        if (spells[spell].command == command) {
+            return spell;
+        }
+    }
+    return SPELL_COUNT;
+}
+
+static bool spell_requirements_met(const GameState *state, SpellId spell)
+{
+    return state->wisdom >= spells[spell].wisdom
+        && state->level >= spells[spell].level;
+}
+
+static bool practice_spell(GameState *state, SpellId spell, GameOutput output)
+{
+    if ((state->learned_spells & (1 << spell)) != 0) {
+        emit_formatted(output, "JUZ ZNASZ CZAR %s!\n", spells[spell].name);
+        return false;
+    }
+    if (!spell_requirements_met(state, spell) || state->practices <= 0) {
+        emit_formatted(output,
+            "%s WYMAGA MADROSCI %d, LEVELU %d I 1 PRAKTYKI\n",
+            spells[spell].name, spells[spell].wisdom, spells[spell].level);
+        return false;
+    }
+    state->learned_spells |= 1 << spell;
+    --state->practices;
+    emit_formatted(output, "UCZYSZ SIE CZARU %s - MASZ %d PRAKTYK\n",
+        spells[spell].name, state->practices);
+    return true;
+}
+
+static bool cast_spell(
+    GameState *state,
+    SpellId spell,
+    const char *target,
+    GameOutput output
+)
+{
+    int64_t power;
+    int amount;
+
+    if (state->energy <= 0) {
+        emit(output, "NAJPIERW ODZYSKAJ ENERGIE!\n");
+        return false;
+    }
+    if ((state->learned_spells & (1 << spell)) == 0) {
+        emit_formatted(output, "NIE ZNASZ CZARU %s - CWICZ %s\n",
+            spells[spell].name, spells[spell].name);
+        return false;
+    }
+    if (!spell_requirements_met(state, spell)) {
+        emit_formatted(output, "%s WYMAGA MADROSCI %d I LEVELU %d\n",
+            spells[spell].name, spells[spell].wisdom, spells[spell].level);
+        return false;
+    }
+    if (state->mana < spells[spell].mana) {
+        emit_formatted(output, "ZA MALO MANY - %s KOSZTUJE %d MANY\n",
+            spells[spell].name, spells[spell].mana);
+        return false;
+    }
+    if (spell != SPELL_HEAL && !game_combat_is_active(state)) {
+        if (spell == SPELL_SHIELD) {
+            emit(output, "OSLONA JEST DOSTEPNA PODCZAS WALKI!\n");
+            return false;
+        }
+        if (target == NULL || target[0] == '\0') {
+            emit_formatted(output, "PODAJ WROGA: %s <WROG>\n", spells[spell].name);
+            return false;
+        }
+        if (!game_select_opponent(state, target)) {
+            emit(output, "NIE MA TU TAKIEGO WROGA!\n");
+            return false;
+        }
+    } else if (target != NULL && target[0] != '\0'
+        && (!game_combat_is_active(state)
+            || strcmp(target, world_actor_at(
+                (size_t)state->active_opponent_actor)->name) != 0)) {
+        emit(output, "TEN CZAR MUSISZ RZUCIC NA AKTUALNEGO WROGA!\n");
+        return false;
+    }
+
+    state->mana -= spells[spell].mana;
+    switch (spell) {
+    case SPELL_SPARK:
+    case SPELL_FIREBALL:
+        power = spell == SPELL_SPARK
+            ? (int64_t)state->wisdom / 2 + state->level + random_below(state, 4)
+            : (int64_t)state->wisdom + (int64_t)2 * state->level + random_below(state, 6);
+        amount = power >= state->active_opponent_energy
+            ? state->active_opponent_energy : (int)power;
+        state->active_opponent_energy -= amount;
+        emit_formatted(output, "%s TRAFIA WROGA - TRACI %d ENERGII\n",
+            spells[spell].name, amount);
+        break;
+    case SPELL_HEAL:
+        power = (int64_t)state->wisdom + (int64_t)2 * state->level;
+        amount = state->energy;
+        restore_energy(state, power > INT_MAX ? INT_MAX : (int)power);
+        emit_formatted(output, "UZDROW PRZYWRACA CI %d ENERGII\n",
+            state->energy - amount);
+        break;
+    case SPELL_SHIELD:
+        power = (int64_t)state->wisdom + (int64_t)3 * state->level;
+        state->magic_shield_energy = power > INT_MAX ? INT_MAX : (int)power;
+        state->magic_shield_turns = 3;
+        emit_formatted(output, "OSLONA POCHLONIE DO %d ENERGII PRZEZ 3 TURY WROGA\n",
+            state->magic_shield_energy);
+        break;
+    case SPELL_POISON:
+        state->active_opponent_poison_damage = state->wisdom / 2;
+        state->active_opponent_poison_turns = 3;
+        emit_formatted(output, "ZATRUWASZ WROGA - %d ENERGII CO TURE PRZEZ 3 TURY\n",
+            state->active_opponent_poison_damage);
+        break;
+    case SPELL_COUNT:
+        return false;
+    }
+    return true;
+}
+
+static int apply_magic_shield(GameState *state, int damage, GameOutput output)
+{
+    int absorbed;
+
+    if (state->magic_shield_turns == 0 || damage <= 0) {
+        return damage;
+    }
+    absorbed = damage < state->magic_shield_energy
+        ? damage : state->magic_shield_energy;
+    state->magic_shield_energy -= absorbed;
+    if (state->magic_shield_energy == 0) {
+        state->magic_shield_turns = 0;
+    }
+    emit_formatted(output, "MAGICZNA OSLONA POCHLANIA %d ENERGII\n", absorbed);
+    return damage - absorbed;
+}
+
+static void apply_opponent_poison(GameState *state, GameOutput output)
+{
+    int damage;
+
+    if (state->active_opponent_poison_turns == 0) {
+        return;
+    }
+    damage = state->active_opponent_poison_damage < state->active_opponent_energy
+        ? state->active_opponent_poison_damage : state->active_opponent_energy;
+    state->active_opponent_energy -= damage;
+    emit_formatted(output, "ZATRUTY WROG TRACI %d ENERGII\n", damage);
+    if (--state->active_opponent_poison_turns == 0) {
+        state->active_opponent_poison_damage = 0;
+    }
+}
+
 static void apply_enemy_magic(GameState *state, GameOutput output)
 {
     int damage;
@@ -2520,6 +2732,7 @@ static void apply_enemy_magic(GameState *state, GameOutput output)
     if (state->active_opponent_fireballs > 0
         && random_below(state, 100) < 10) {
         damage = (int)random_below(state, 20);
+        damage = apply_magic_shield(state, damage, output);
         emit_formatted(output,
             "PRZECIWNIK PUSZCZA FIREBALLA W TWYM KIERUNKU - TRACISZ %d%% ENERGII\n",
             damage
@@ -2539,6 +2752,7 @@ static void apply_enemy_magic(GameState *state, GameOutput output)
 
     if (state->poison_turns > 0) {
         damage = (int)random_below(state, 5);
+        damage = apply_magic_shield(state, damage, output);
         emit_formatted(output,
             "JESTES ZATRUTY - TRACISZ %d%% ENERGI\n",
             damage
@@ -2631,6 +2845,11 @@ static bool resolve_basic_combat_round(
         state->energy
     );
 
+    if (action == COMBAT_ACTION_SPELL && state->active_opponent_energy == 0) {
+        (void)game_resolve_active_opponent_victory(state, output);
+        return true;
+    }
+
     if (action == COMBAT_ACTION_FLEE && try_flee(state, true, output)) {
         resolve_escaped_combat(state, opponent, output);
         return true;
@@ -2645,15 +2864,15 @@ static bool resolve_basic_combat_round(
             );
         }
         opponent_dodged = recovered_dodge_roll(state, difference, false) < 10;
-        if (opponent_dodged && action != COMBAT_ACTION_ITEM
-            && action != COMBAT_ACTION_FLEE) {
+        if (opponent_dodged && (action == COMBAT_ACTION_BASIC
+                || action == COMBAT_ACTION_KICK)) {
             emit(output, "PRZECIWNIK UNIKA TWOJEGO LAMERSKIEGO ATAKU\n");
         }
     } else if (difference < 0) {
         difference = -difference;
         opponent_dodged = recovered_dodge_roll(state, difference, true) < 10;
-        if (opponent_dodged && action != COMBAT_ACTION_ITEM
-            && action != COMBAT_ACTION_FLEE) {
+        if (opponent_dodged && (action == COMBAT_ACTION_BASIC
+                || action == COMBAT_ACTION_KICK)) {
             emit(output, "PRZECIWNIK Z GRACJA UNIKA TWEGO CIOSU\n");
         }
         player_dodged = recovered_dodge_roll(state, difference, false) < 10;
@@ -2672,8 +2891,12 @@ static bool resolve_basic_combat_round(
         describe_enemy_damage(damage, output);
         damage = apply_combat_protection(state, damage, output);
         damage = apply_automatic_parry(state, damage, output);
+        damage = apply_magic_shield(state, damage, output);
         state->energy = damage >= state->energy ? 0 : state->energy - damage;
         apply_enemy_magic(state, output);
+    }
+    if (state->magic_shield_turns > 0 && --state->magic_shield_turns == 0) {
+        state->magic_shield_energy = 0;
     }
 
     if (action == COMBAT_ACTION_BASIC && !opponent_dodged) {
@@ -2700,6 +2923,7 @@ static bool resolve_basic_combat_round(
     } else if (action == COMBAT_ACTION_BASIC) {
         try_kick(state, false, output);
     }
+    apply_opponent_poison(state, output);
     if ((action == COMBAT_ACTION_BASIC || action == COMBAT_ACTION_KICK)
         && try_flee(state, false, output)) {
         resolve_escaped_combat(state, opponent, output);
@@ -2972,6 +3196,7 @@ static bool resolve_return(GameState *state, GameOutput output)
 
 static void describe_abilities(const GameState *state, GameOutput output)
 {
+    SpellId spell;
     bool kick_available = state->kick_skill > 0
         || (state->wisdom > 10 && state->strength > 11
             && state->practices > 0);
@@ -3011,6 +3236,15 @@ static void describe_abilities(const GameState *state, GameOutput output)
         emit_formatted(output, "POWROT        - %d%% (CWICZ POWROT)\n",
             state->return_skill);
     }
+    for (spell = SPELL_SPARK; spell < SPELL_COUNT; ++spell) {
+        if ((state->learned_spells & (1 << spell)) != 0) {
+            emit_formatted(output, "%s - ZNASZ CZAR, %d MANY\n",
+                spells[spell].name, spells[spell].mana);
+        } else if (spell_requirements_met(state, spell) && state->practices > 0) {
+            emit_formatted(output, "%s - CWICZ %s (1 PRAKTYKA), %d MANY\n",
+                spells[spell].name, spells[spell].name, spells[spell].mana);
+        }
+    }
 
     emit(output, "JESZCZE NIEDOSTEPNE:\n");
     if (!kick_available) {
@@ -3037,6 +3271,13 @@ static void describe_abilities(const GameState *state, GameOutput output)
         emit(output,
             "POWROT        - WYMAGA MADROSCI 18 I 1 PRAKTYKI\n"
         );
+    }
+    for (spell = SPELL_SPARK; spell < SPELL_COUNT; ++spell) {
+        if ((state->learned_spells & (1 << spell)) == 0
+            && (!spell_requirements_met(state, spell) || state->practices <= 0)) {
+            emit_formatted(output, "%s - WYMAGA MADROSCI %d, LEVELU %d I 1 PRAKTYKI\n",
+                spells[spell].name, spells[spell].wisdom, spells[spell].level);
+        }
     }
 }
 
@@ -3982,6 +4223,7 @@ static void describe_status(const GameState *state, GameOutput output)
 
 void game_describe_combat_options(const GameState *state, GameOutput output)
 {
+    SpellId spell;
     if (!game_combat_is_active(state)) {
         return;
     }
@@ -3991,6 +4233,13 @@ void game_describe_combat_options(const GameState *state, GameOutput output)
         emit(output, " | KOP");
     }
     emit(output, " | ZWIEJ | UZYJ <PRZEDMIOT>");
+    for (spell = SPELL_SPARK; spell < SPELL_COUNT; ++spell) {
+        if ((state->learned_spells & (1 << spell)) != 0
+            && spell_requirements_met(state, spell)
+            && state->mana >= spells[spell].mana) {
+            emit_formatted(output, " | %s", spells[spell].name);
+        }
+    }
     emit(output, "\n");
 }
 
@@ -4018,6 +4267,17 @@ GameAction game_execute(GameState *state, const Command *command, GameOutput out
         case COMMAND_FLEE:
             combat_action = COMBAT_ACTION_FLEE;
             resolve_round = true;
+            break;
+        case COMMAND_SPARK:
+        case COMMAND_HEAL:
+        case COMMAND_MAGIC_SHIELD:
+        case COMMAND_POISON:
+        case COMMAND_FIREBALL:
+            if (cast_spell(state, spell_for_command(command->verb),
+                    command->argument, output)) {
+                combat_action = COMBAT_ACTION_SPELL;
+                resolve_round = true;
+            }
             break;
         case COMMAND_USE: {
             const ItemDefinition *item = item_find(command->argument);
@@ -4179,6 +4439,17 @@ GameAction game_execute(GameState *state, const Command *command, GameOutput out
         } else if (strcmp(command->argument, "POWROT") == 0
             && practice_returning(state, output)) {
             advance_turn(state, output);
+        } else {
+            SpellId spell;
+
+            for (spell = SPELL_SPARK; spell < SPELL_COUNT; ++spell) {
+                if (strcmp(command->argument, spells[spell].name) == 0) {
+                    if (practice_spell(state, spell, output)) {
+                        advance_turn(state, output);
+                    }
+                    break;
+                }
+            }
         }
         break;
     case COMMAND_ATTACK:
@@ -4224,8 +4495,20 @@ GameAction game_execute(GameState *state, const Command *command, GameOutput out
     case COMMAND_SECRET_LIST:
         list_duncan_market(state, output);
         break;
-    case COMMAND_HANDS:
+    case COMMAND_SPARK:
     case COMMAND_HEAL:
+    case COMMAND_MAGIC_SHIELD:
+    case COMMAND_POISON:
+    case COMMAND_FIREBALL:
+        if (cast_spell(state, spell_for_command(command->verb),
+                command->argument, output)) {
+            if (game_combat_is_active(state)) {
+                (void)resolve_basic_combat_round(state, NULL, COMBAT_ACTION_SPELL, output);
+            }
+            advance_turn(state, output);
+        }
+        break;
+    case COMMAND_HANDS:
     case COMMAND_BLIND:
     case COMMAND_RAGE:
     case COMMAND_NET:
@@ -4247,6 +4530,8 @@ GameAction game_execute(GameState *state, const Command *command, GameOutput out
             "N, S, W, E, U, D, JA, KTO (NA ARENIE), BIERZ, ODRZUC, UZYJ, ODLOZ, ZABIJ\n"
             "ROZMAWIAJ, KUP, SPRZEDAJ, LISTA, CWICZ, TRENUJ, POROWNAJ, KOP, ZWIEJ\n"
             "POWROT, ZDOLNOSCI, SPIJ, PAMIETAJ, WLACZ POSTAC, KONIEC.\n"
+            "CZARY: CWICZ ISKRA, UZDROW, OSLONA, ZATRUJ LUB FIREBALL (1 PRAKTYKA).\n"
+            "ISKRA/ZATRUJ/FIREBALL <WROG> ZACZYNA WALKE; W WALCE WYSTARCZY NAZWA CZARU.\n"
             "RESZTE ODKRYJ SAM !!\n");
         break;
     case COMMAND_QUIT:

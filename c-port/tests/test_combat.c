@@ -199,6 +199,7 @@ static void test_fleeing_dog_still_pays_out_and_leaves(void)
     assert(strcmp(capture.text,
         "WALCZYSZ - <<<<TWOJ WROG MA 10%>>>><<<< A TY MASZ 50% ENERGII>>>>>\n"
         "WSTYD !!! UCIEKLES Z POLA BITWY\n"
+        "TRACISZ 0 KUNSZTU\n"
         "WYCIAGASZ 7 MONET Z CIALA PSA\n"
         "WYCIAGASZ ZAKRWAWIONE SERCE Z CIALA PSA\n"
         "GDY NAGLE!!!! NIEBIOSA SIE OTWIERAJA\n"
@@ -437,7 +438,7 @@ static void test_flee_practice_and_threshold_prompt(void)
 
     execute(&state, &capture, "CWICZ UCIEKAC");
     assert(strcmp(capture.text,
-        "CWICZYSZ UCIEKANIE - PRAWDOPODOBIENSTWO JEST TERAZ 67% MASZ 9 PRAKTYK\n"
+        "CWICZYSZ UCIEKANIE - PRAWDOPODOBIENSTWO JEST TERAZ 44% MASZ 9 PRAKTYK\n"
     ) == 0);
     assert(state.flee_skill == 21);
     assert(state.practices == 9);
@@ -569,6 +570,7 @@ static void test_successful_automatic_flee(void)
     state.flee_skill = 21;
     state.flee_energy_threshold = 60;
     state.random_state = 9u;
+    state.experience = 25;
 
     execute(&state, &capture, "ZABIJ POTWOR");
 
@@ -577,10 +579,11 @@ static void test_successful_automatic_flee(void)
         "PRZECIWNIK CIE TYLKO DRASNA I TRACISZ 1% ENERGII\n"
         "MASZ PECHA : LEKKO POPCHNALES GO I STRACIL TYLKO 4% ENERGII\n"
         "WSTYD !!! UCIEKLES Z POLA BITWY\n"
+        "TRACISZ 10 KUNSZTU\n"
     ) == 0);
     assert(state.energy == 49);
     assert(state.mana == 100);
-    assert(state.experience == 0);
+    assert(state.experience == 15);
     assert(state.active_opponent_actor == BOMBKI_NO_ACTOR);
     assert(state.world_actor_rooms[WORLD_ACTOR_CAGE_WEAK] == ROOM_CAGE_WEAK);
     assert(state.turn == 1);
@@ -625,7 +628,7 @@ static void test_flee_low_mana(void)
     state.flee_skill = 20;
     state.mana = 15;
     state.maximum_mana = 15;
-    state.random_state = 1u;
+    state.random_state = 4u;
     assert(game_select_opponent(&state, "POTWOR"));
 
     memset(&capture, 0, sizeof(capture));
@@ -634,6 +637,7 @@ static void test_flee_low_mana(void)
     assert(strcmp(capture.text,
         "WALCZYSZ - <<<<TWOJ WROG MA 20%>>>><<<< A TY MASZ 50% ENERGII>>>>>\n"
         "WSTYD !!! UCIEKLES Z POLA BITWY\n"
+        "TRACISZ 0 KUNSZTU\n"
     ) == 0);
     assert(state.mana == 15);
     assert(!game_combat_is_active(&state));
@@ -1091,7 +1095,7 @@ static void test_sleep_fully_restores_resources(void)
 static void test_dormant_poster_commands_are_silent(void)
 {
     static const char *const commands[] = {
-        "RECE", "UZDROW", "OSLEP", "SZAL", "SIATKA", "CIOS W PLECY",
+        "RECE", "OSLEP", "SZAL", "SIATKA", "CIOS W PLECY",
         "ROZPAL", "SPEED", "PIECZ COS"
     };
     GameState state;

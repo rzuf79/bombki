@@ -30,6 +30,7 @@
 #define SAVE_HEADER_V17 "BOMBKI_PORT 17"
 #define SAVE_HEADER_V18 "BOMBKI_PORT 18"
 #define SAVE_HEADER_V19 "BOMBKI_PORT 19"
+#define SAVE_HEADER_V20 "BOMBKI_PORT 20"
 #define SAVE_LINE_CAPACITY 256
 
 static void set_error(char *error, size_t capacity, const char *message)
@@ -45,7 +46,7 @@ static bool write_state(FILE *file, const GameState *state)
 {
     size_t index;
 
-    if (!(fprintf(file, "%s\n", SAVE_HEADER_V19) >= 0
+    if (!(fprintf(file, "%s\n", SAVE_HEADER_V20) >= 0
         && fprintf(file, "room=%d\n", state->room_id) >= 0
         && fprintf(file, "turn=%" PRIu64 "\n", state->turn) >= 0
         && fprintf(file, "random_state=%u\n", state->random_state) >= 0
@@ -78,6 +79,13 @@ static bool write_state(FILE *file, const GameState *state)
         && fprintf(file, "parry_skill=%d\n", state->parry_skill) >= 0
         && fprintf(file, "cooking_skill=%d\n", state->cooking_skill) >= 0
         && fprintf(file, "return_skill=%d\n", state->return_skill) >= 0
+        && fprintf(file, "learned_spells=%d\n", state->learned_spells) >= 0
+        && fprintf(file, "magic_shield_energy=%d\n", state->magic_shield_energy) >= 0
+        && fprintf(file, "magic_shield_turns=%d\n", state->magic_shield_turns) >= 0
+        && fprintf(file, "active_opponent_poison_damage=%d\n",
+            state->active_opponent_poison_damage) >= 0
+        && fprintf(file, "active_opponent_poison_turns=%d\n",
+            state->active_opponent_poison_turns) >= 0
         && fprintf(file, "sleep_hours=%d\n", state->sleep_hours) >= 0
         && fprintf(file, "duncan_quest=%d\n", state->duncan_quest) >= 0
         && fprintf(file, "duncan_black_market_unlocked=%d\n",
@@ -243,7 +251,9 @@ bool persistence_load(
         return false;
     }
     trim_line_ending(line);
-    if (strcmp(line, SAVE_HEADER_V19) == 0) {
+    if (strcmp(line, SAVE_HEADER_V20) == 0) {
+        version = 20;
+    } else if (strcmp(line, SAVE_HEADER_V19) == 0) {
         version = 19;
     } else if (strcmp(line, SAVE_HEADER_V18) == 0) {
         version = 18;
@@ -384,6 +394,21 @@ bool persistence_load(
         } else if (strncmp(line, "return_skill=", 13) == 0
             && parse_integer(line + 13, &candidate.return_skill)) {
             fields |= UINT64_C(1) << 39;
+        } else if (strncmp(line, "learned_spells=", 15) == 0
+            && parse_integer(line + 15, &candidate.learned_spells)) {
+            fields |= UINT64_C(1) << 48;
+        } else if (strncmp(line, "magic_shield_energy=", 20) == 0
+            && parse_integer(line + 20, &candidate.magic_shield_energy)) {
+            fields |= UINT64_C(1) << 49;
+        } else if (strncmp(line, "magic_shield_turns=", 19) == 0
+            && parse_integer(line + 19, &candidate.magic_shield_turns)) {
+            fields |= UINT64_C(1) << 50;
+        } else if (strncmp(line, "active_opponent_poison_damage=", 30) == 0
+            && parse_integer(line + 30, &candidate.active_opponent_poison_damage)) {
+            fields |= UINT64_C(1) << 51;
+        } else if (strncmp(line, "active_opponent_poison_turns=", 29) == 0
+            && parse_integer(line + 29, &candidate.active_opponent_poison_turns)) {
+            fields |= UINT64_C(1) << 52;
         } else if (strncmp(line, "sleep_hours=", 12) == 0
             && parse_integer(line + 12, &candidate.sleep_hours)) {
             fields |= UINT64_C(1) << 40;
@@ -632,7 +657,13 @@ bool persistence_load(
             || actor_field_count != BOMBKI_WORLD_ACTOR_SLOTS
             || object_field_count != BOMBKI_WORLD_OBJECT_SLOTS
             || item_field_count != BOMBKI_ITEM_SLOTS))
-        || (version >= 18 && (fields != (((UINT64_C(1) << 48) - 1)
+        || (version >= 18 && version <= 19 && (fields != (((UINT64_C(1) << 48) - 1)
+                & ~(UINT64_C(1) << 1))
+            || world_fields != (1u << 3) - 1
+            || actor_field_count != BOMBKI_WORLD_ACTOR_SLOTS
+            || object_field_count != BOMBKI_WORLD_OBJECT_SLOTS
+            || item_field_count != BOMBKI_ITEM_SLOTS))
+        || (version == 20 && (fields != (((UINT64_C(1) << 53) - 1)
                 & ~(UINT64_C(1) << 1))
             || world_fields != (1u << 3) - 1
             || actor_field_count != BOMBKI_WORLD_ACTOR_SLOTS

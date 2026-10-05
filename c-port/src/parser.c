@@ -149,6 +149,9 @@ Command parser_parse(const char *input)
         || parse_argument_command(normalized, "SPRZEDAJ", COMMAND_SELL, &command)
         || parse_argument_command(normalized, "CWICZ", COMMAND_PRACTICE, &command)
         || parse_argument_command(normalized, "TRENUJ", COMMAND_TRAIN, &command)
+        || parse_argument_command(normalized, "ISKRA", COMMAND_SPARK, &command)
+        || parse_argument_command(normalized, "ZATRUJ", COMMAND_POISON, &command)
+        || parse_argument_command(normalized, "FIREBALL", COMMAND_FIREBALL, &command)
         || parse_argument_command(normalized, "CIOS W", COMMAND_BACKSTAB, &command)
         || parse_argument_command(normalized, "PIECZ", COMMAND_COOK, &command)) {
         return command;
@@ -179,6 +182,8 @@ Command parser_parse(const char *input)
         command.verb = COMMAND_HANDS;
     } else if (strcmp(normalized, "UZDROW") == 0) {
         command.verb = COMMAND_HEAL;
+    } else if (strcmp(normalized, "OSLONA") == 0) {
+        command.verb = COMMAND_MAGIC_SHIELD;
     } else if (strcmp(normalized, "OSLEP") == 0) {
         command.verb = COMMAND_BLIND;
     } else if (strcmp(normalized, "SZAL") == 0) {
@@ -233,7 +238,8 @@ const char *parser_command_name(CommandVerb verb)
         "ROZMAWIAJ", "KUP", "SPRZEDAJ", "LISTA", "CWICZ", "TRENUJ", "KTO",
         "POROWNAJ", "KOP", "ZWIEJ", "POWROT", "RECE", "UZDROW", "OSLEP",
         "SZAL", "SIATKA", "CIOS W", "ROZPAL", "SPEED", "PIECZ", "ZDOLNOSCI",
-        "SPIJ", "SCAN", "SECRET LISTA", "POMOC", "KONIEC", "?"
+        "SPIJ", "SCAN", "SECRET LISTA", "POMOC", "KONIEC",
+        "ISKRA", "OSLONA", "ZATRUJ", "FIREBALL", "?"
     };
 
     _Static_assert(

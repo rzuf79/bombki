@@ -37,16 +37,53 @@ below; the original artifacts remain unchanged.
 - During combat, food, beer, and mana bottles consume one round, restore
   resources before the enemy response, and replace the player's attack.
   Rejected item use consumes neither an item nor a turn.
-- Escape needs no training or mana and costs no experience. Its chance is
-  `min(90, 60 + flee_skill / 3)` percent. Explicit successful escape precedes
+- Escape needs no training or mana. Its chance is
+  `min(90, 30 + 2 * flee_skill / 3)` percent, rounded down. Successful escape
+  deducts 10 experience, stopping at zero; failed attempts cost no experience.
+  The loss is displayed. Explicit successful escape precedes
   the enemy's attack; failed escape gives up the player's attack for that turn.
   Optional automatic escape still uses the configured energy threshold.
 - Rats, partridges, and rabbits use 20–28 energy, 6–8 strength, and 6–9 dexterity;
   larger animals retain their recovered profiles.
-- Native saves now use version 19. Versions 1–18 remain readable, with existing
+- This balance pass introduced save version 19. Versions 1–18 remain readable, with existing
   small-animal fights migrated to the new profile while preserving the
   proportion of remaining health. Existing test expectations were updated;
   no tests were added.
+
+## User-approved wisdom spells (2026-10-05)
+
+This extension intentionally adds gameplay and player-facing spell feedback,
+without changing the recovered enemy spells or other dormant commands.
+Every spell, including `ISKRA`, must be learned once with `CWICZ <CZAR>` for
+one practice point. Learning requires only wisdom and level, never strength or
+dexterity; repeating practice does not spend another point or turn.
+
+| Command | Wisdom | Level | Mana | Effect |
+| --- | ---: | ---: | ---: | --- |
+| `ISKRA` | 12 | 1 | 10 | `wisdom / 2 + level + random(0–3)` damage |
+| `UZDROW` | 12 | 1 | 20 | Heal `wisdom + 2 * level`, capped at maximum energy |
+| `OSLONA` | 14 | 1 | 15 | Absorb a total of `wisdom + 3 * level` damage over three enemy turns |
+| `ZATRUJ` | 14 | 1 | 16 | `wisdom / 2` damage at the end of each of three rounds |
+| `FIREBALL` | 18 | 3 | 25 | `wisdom + 2 * level + random(0–5)` damage |
+
+Division rounds down. A valid cast always succeeds and costs one logical turn;
+in combat it replaces the normal attack and resolves before the enemy response.
+Direct magical damage bypasses physical dodge, and a spell kill prevents
+retaliation. Invalid targets, unlearned spells, unmet requirements, and
+insufficient mana consume no resources or turns.
+
+`ISKRA <WROG>`, `ZATRUJ <WROG>`, and `FIREBALL <WROG>` can start a fight.
+During combat the bare spell command targets the current enemy. `UZDROW` also
+works outside combat; `OSLONA` requires an active fight. Shields cover physical
+damage after existing defenses, enemy fireballs, and enemy poison damage.
+The cast turn counts as the first enemy turn; dodged enemy turns also count.
+Recasting shield or poison refreshes its amount and three-turn duration,
+without stacking. Both effects clear when the opponent changes or combat ends.
+
+`ZDOLNOSCI`, combat options, and help expose the new spells and their costs or
+learning requirements. Save version 20 persists learned spells and active
+shield/poison effects; versions 1–19 load with no spells automatically learned.
+Only existing test expectations were updated; no tests were added.
 
 ## Verified artifact facts
 
@@ -427,13 +464,15 @@ for ten mana. Mana is clamped at zero to keep portable state valid. Original
 room numbers are translated to native IDs; unrepresented dispatcher gaps fall
 back to the starting room instead of creating invalid native state.
 
-At the user's request, `ZDOLNOSCI` lists all six skills: first those the player
+At the user's request, `ZDOLNOSCI` lists the six recovered skills and the five
+approved spells: first those the player
 can already use or train, including their exact `CWICZ` command, then the
 remaining skills with their training requirements. This replaces the recovered
 display-only stat gates, which could show an untrainable 0% skill. The
 underground poster also preserves every independent gate and exact line. Its
 additional advertised direct and automatic abilities have no executable
-handler, state, or combat branch, so those command words are silent no-ops.
+handler, state, or combat branch, so those command words are silent no-ops,
+except `UZDROW`, implemented by the approved wisdom-spell extension above.
 
 `KTO` follows `PRZEDM.KTO`: it lists only the recovered arena roster from
 `KORNIK` through `TRENER` that shares the current room, in that order. `SCAN`

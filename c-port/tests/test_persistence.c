@@ -47,9 +47,16 @@ static void write_previous_save_from_current(const char *path, int version)
     assert(source != NULL);
     assert(destination != NULL);
     assert(fgets(line, sizeof(line), source) != NULL);
-    assert(strcmp(line, "BOMBKI_PORT 19\n") == 0);
+    assert(strcmp(line, "BOMBKI_PORT 20\n") == 0);
     assert(fprintf(destination, "BOMBKI_PORT %d\n", version) >= 0);
     while (fgets(line, sizeof(line), source) != NULL) {
+        if (version <= 19 && (strncmp(line, "learned_spells=", 15) == 0
+            || strncmp(line, "magic_shield_energy=", 20) == 0
+            || strncmp(line, "magic_shield_turns=", 19) == 0
+            || strncmp(line, "active_opponent_poison_damage=", 30) == 0
+            || strncmp(line, "active_opponent_poison_turns=", 29) == 0)) {
+            continue;
+        }
         if (version <= 16 && (strncmp(line, "active_opponent_reward=", 23) == 0
             || strncmp(line, "grass_fight_waves=", 18) == 0)) {
             continue;
