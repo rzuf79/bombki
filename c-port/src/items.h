@@ -28,6 +28,7 @@ typedef enum {
     ITEM_COMPARISON_SCROLL,
     ITEM_RETURN_SCROLL,
     ITEM_BACKPACK,
+    ITEM_SKILL_BOOK,
     ITEM_COUNT
 } ItemId;
 

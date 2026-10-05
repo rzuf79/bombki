@@ -54,6 +54,9 @@ static const SpellDefinition spells[SPELL_COUNT] = {
     {COMMAND_FIREBALL, "FIREBALL", 18, 3, 25}
 };
 
+_Static_assert(SPELL_COUNT == BOMBKI_SPELL_SLOTS,
+               "GameState needs a training value for every spell");
+
 static const char *const race_names[RACE_COUNT] = {
     "CZLOWIEK", "OLBRZYM", "NIMFA", "POL-ELF", "UFOK", "CZAROMIL"
 };
@@ -520,8 +523,6 @@ bool game_state_is_valid(const GameState *state)
         && state->parry_skill >= 0
         && state->cooking_skill >= 0
         && state->return_skill >= 0
-        && state->learned_spells >= 0
-        && state->learned_spells < (1 << SPELL_COUNT)
         && state->sleep_hours >= 0
         && state->grass_fight_waves >= 0
         && state->grass_fight_waves < 4
@@ -613,6 +614,12 @@ bool game_state_is_valid(const GameState *state)
             || state->active_opponent_reward < 0
             || state->active_opponent_fireballs < 0
             || state->active_opponent_poison_casts < 0) {
+            return false;
+        }
+    }
+
+    for (index = 0; index < BOMBKI_SPELL_SLOTS; ++index) {
+        if (state->spell_skills[index] < 0 || state->spell_skills[index] > 90) {
             return false;
         }
     }
@@ -1077,12 +1084,51 @@ static void describe_skill_poster(const GameState *state, GameOutput output)
     );
 }
 
+static bool read_skill_book(const GameState *state, GameOutput output)
+{
+    if (state->item_quantities[ITEM_SKILL_BOOK] == 0) {
+        emit(output, "NIE MASZ KSIAZKI !! SAMYCH OKLADEK SIE NIE CZYTA\n");
+        return false;
+    }
+
+    emit(output,
+        "<<<<< JAK NIE DOSTAC W GAJDE >>>>>\n"
+        "KARTKI LEPIA SIE OD PIWA , ALE WIEDZA TEZ POTRAFI PRZYLEPIC SIE DO GLOWY !!\n"
+        "CWICZ <ZDOLNOSC> - 1 PRAKTYKA. WYMAGANIA SPRAWDZ PRZEZ ZDOLNOSCI.\n"
+        "CWICZ WIELE RAZY , CZARY TEZ !! PROCENTY TO MOC , NIE SZANSA TRAFIENIA.\n"
+        "KOP (CWICZ KOPAC) - BUT W GAJDE ZAMIAST BRONI. 2-8 MANY , MOZE CHYBIC.\n"
+        "ZWIEJ (CWICZ UCIEKAC) - 30-90% SZANS , SUKCES KOSZTUJE 10 KUNSZTU.\n"
+        "PAROWANIE - SAMO ZMNIEJSZA CIOSY WROGA , MANY NIE BIERZE.\n"
+        "POROWNAJ (CWICZ POROWNANIE) - POZA WALKA OCEN WROGA. 5-10 MANY.\n"
+        "POTRAWKI - SAMO ROBI BIGOS PO WYGRANEJ. UZYJ BIGOS I NIE MARUDZ !!\n"
+        "POWROT - PORTAL POZA WALKA. 15 MANY ; WTOPA 5 LUB 10 I ZLY ADRES.\n"
+        "\n"
+        "CZAR ZASTEPUJE ATAK. SLABA WPRAWA TO SLABY EFEKT , NIE WTOPA !!\n"
+        "ISKRA - MAGICZNY PSTRYCZEK , MOC ROSNIE Z MADROSCIA I LEVELEM. 10 MANY.\n"
+        "UZDROW - SKLEJA CIE DO KUPY , TEZ POZA WALKA. 20 MANY.\n"
+        "OSLONA - POCHLANIA CIOSY I MAGIE PRZEZ 3 TURY WROGA. 15 MANY.\n"
+        "ZATRUJ - PODTRUWA WROGA PRZEZ 3 TURY. SMACZNEGO !! 16 MANY.\n"
+        "FIREBALL - MOCNIEJSZY MAGICZNY SYF , NIE OGNISKO DO BIGOSU. 25 MANY.\n"
+        "ISKRA/ZATRUJ/FIREBALL <WROG> ZACZYNA WALKE. W WALCE SAMA NAZWA.\n"
+        "OSLONA I ZATRUJ ODNAWIAJA SIE , NIE SUMUJA. NIE ROB STU BABELKOW !!\n"
+        "RESZTA ZE STARYCH PLAKATOW NIE DZIALA. AUTOR JESZCZE NIE WROCIL Z BULKAMI.\n"
+        "ZAMYKASZ KSIAZKE. TERAZ JUZ WIESZ JAK ZGINAC PROFESJONALNIE :)\n"
+    );
+    return true;
+}
+
 static void look_at(GameState *state, const char *target, GameOutput output)
 {
     const Room *room = world_find_room(state->room_id);
+    const ItemDefinition *item = item_find(target);
 
     if (target[0] == '\0') {
         game_describe_current_room(state, output);
+        return;
+    }
+
+    if (item != NULL && item->id == ITEM_SKILL_BOOK) {
+        (void)read_skill_book(state, output);
         return;
     }
 
@@ -1147,7 +1193,8 @@ static void look_at(GameState *state, const char *target, GameOutput output)
 typedef enum {
     ITEM_ACTION_FAILED = 0,
     ITEM_ACTION_SUCCEEDED,
-    ITEM_ACTION_DEFERRED
+    ITEM_ACTION_DEFERRED,
+    ITEM_ACTION_INFORMATION
 } ItemActionResult;
 
 static bool is_protected_food(ItemId item)
@@ -1535,6 +1582,9 @@ static ItemActionResult use_item(
     case ITEM_BACKPACK:
     case ITEM_COUNT:
         return ITEM_ACTION_FAILED;
+    case ITEM_SKILL_BOOK:
+        return read_skill_book(state, output)
+            ? ITEM_ACTION_INFORMATION : ITEM_ACTION_FAILED;
     }
     return ITEM_ACTION_FAILED;
 }
@@ -1653,6 +1703,9 @@ static const ShopOffer shop_offers[] = {
     {ROOM_GENERAL_STORE, ITEM_SPIKED_SUIT, 1000, 1000, 500, false,
      "KUPUJESZ GARNITUR Z KOLCAMI ZA JEDYNE 1000 $\n",
      "SPRZEDAJESZ GARNITUR Z KOLCAMI ZA JEDYNE 500 $\n"},
+    {ROOM_GENERAL_STORE, ITEM_SKILL_BOOK, 30, 30, 0, false,
+     "KUPUJESZ KSIAZKE ZDOLNOSCI ZA 30 MONET - TERAZ PRZYNAJMNIEJ BEDZIESZ WIEDZIAL CZEMU GINIESZ\n"
+     "PATRZ KSIAZKA LUB UZYJ KSIAZKA ZEBY POCZYTAC\n", NULL},
     {ROOM_MAGIC_STORE, ITEM_SMALL_MANA_BOTTLE, 15, 20, 0, false,
      "KUPUJESZ MALA BUTELKA MANY ZA 20 MONET ( AHHHH TA INFLACJA ) \n",
      NULL},
@@ -2586,8 +2639,10 @@ static bool spell_requirements_met(const GameState *state, SpellId spell)
 
 static bool practice_spell(GameState *state, SpellId spell, GameOutput output)
 {
-    if ((state->learned_spells & (1 << spell)) != 0) {
-        emit_formatted(output, "JUZ ZNASZ CZAR %s!\n", spells[spell].name);
+    int64_t improved;
+
+    if (state->spell_skills[spell] >= 90) {
+        emit_formatted(output, "%s MASZ JUZ WYTRENOWANY NA 90%% !!\n", spells[spell].name);
         return false;
     }
     if (!spell_requirements_met(state, spell) || state->practices <= 0) {
@@ -2596,11 +2651,20 @@ static bool practice_spell(GameState *state, SpellId spell, GameOutput output)
             spells[spell].name, spells[spell].wisdom, spells[spell].level);
         return false;
     }
-    state->learned_spells |= 1 << spell;
+    improved = (int64_t)state->spell_skills[spell] + 2 * (int64_t)state->wisdom;
+    state->spell_skills[spell] = improved >= 90 ? 90 : (int)improved;
     --state->practices;
-    emit_formatted(output, "UCZYSZ SIE CZARU %s - MASZ %d PRAKTYK\n",
-        spells[spell].name, state->practices);
+    emit_formatted(output,
+        "CWICZYSZ %s - SKUTECZNOSC JEST TERAZ %d%% MASZ %d PRAKTYK\n",
+        spells[spell].name, state->spell_skills[spell], state->practices);
     return true;
+}
+
+static int scaled_spell_power(const GameState *state, SpellId spell, int64_t power)
+{
+    int64_t scaled = power * state->spell_skills[spell] / 100;
+
+    return scaled < 1 ? 1 : scaled > INT_MAX ? INT_MAX : (int)scaled;
 }
 
 static bool cast_spell(
@@ -2617,7 +2681,7 @@ static bool cast_spell(
         emit(output, "NAJPIERW ODZYSKAJ ENERGIE!\n");
         return false;
     }
-    if ((state->learned_spells & (1 << spell)) == 0) {
+    if (state->spell_skills[spell] == 0) {
         emit_formatted(output, "NIE ZNASZ CZARU %s - CWICZ %s\n",
             spells[spell].name, spells[spell].name);
         return false;
@@ -2660,8 +2724,10 @@ static bool cast_spell(
         power = spell == SPELL_SPARK
             ? (int64_t)state->wisdom / 2 + state->level + random_below(state, 4)
             : (int64_t)state->wisdom + (int64_t)2 * state->level + random_below(state, 6);
-        amount = power >= state->active_opponent_energy
-            ? state->active_opponent_energy : (int)power;
+        amount = scaled_spell_power(state, spell, power);
+        if (amount > state->active_opponent_energy) {
+            amount = state->active_opponent_energy;
+        }
         state->active_opponent_energy -= amount;
         emit_formatted(output, "%s TRAFIA WROGA - TRACI %d ENERGII\n",
             spells[spell].name, amount);
@@ -2669,19 +2735,20 @@ static bool cast_spell(
     case SPELL_HEAL:
         power = (int64_t)state->wisdom + (int64_t)2 * state->level;
         amount = state->energy;
-        restore_energy(state, power > INT_MAX ? INT_MAX : (int)power);
+        restore_energy(state, scaled_spell_power(state, spell, power));
         emit_formatted(output, "UZDROW PRZYWRACA CI %d ENERGII\n",
             state->energy - amount);
         break;
     case SPELL_SHIELD:
         power = (int64_t)state->wisdom + (int64_t)3 * state->level;
-        state->magic_shield_energy = power > INT_MAX ? INT_MAX : (int)power;
+        state->magic_shield_energy = scaled_spell_power(state, spell, power);
         state->magic_shield_turns = 3;
         emit_formatted(output, "OSLONA POCHLONIE DO %d ENERGII PRZEZ 3 TURY WROGA\n",
             state->magic_shield_energy);
         break;
     case SPELL_POISON:
-        state->active_opponent_poison_damage = state->wisdom / 2;
+        state->active_opponent_poison_damage = scaled_spell_power(
+            state, spell, state->wisdom / 2);
         state->active_opponent_poison_turns = 3;
         emit_formatted(output, "ZATRUWASZ WROGA - %d ENERGII CO TURE PRZEZ 3 TURY\n",
             state->active_opponent_poison_damage);
@@ -3237,12 +3304,11 @@ static void describe_abilities(const GameState *state, GameOutput output)
             state->return_skill);
     }
     for (spell = SPELL_SPARK; spell < SPELL_COUNT; ++spell) {
-        if ((state->learned_spells & (1 << spell)) != 0) {
-            emit_formatted(output, "%s - ZNASZ CZAR, %d MANY\n",
+        if (state->spell_skills[spell] > 0
+            || (spell_requirements_met(state, spell) && state->practices > 0)) {
+            emit_formatted(output, "%s - %d%% MOCY (CWICZ %s), %d MANY\n",
+                spells[spell].name, state->spell_skills[spell],
                 spells[spell].name, spells[spell].mana);
-        } else if (spell_requirements_met(state, spell) && state->practices > 0) {
-            emit_formatted(output, "%s - CWICZ %s (1 PRAKTYKA), %d MANY\n",
-                spells[spell].name, spells[spell].name, spells[spell].mana);
         }
     }
 
@@ -3273,7 +3339,7 @@ static void describe_abilities(const GameState *state, GameOutput output)
         );
     }
     for (spell = SPELL_SPARK; spell < SPELL_COUNT; ++spell) {
-        if ((state->learned_spells & (1 << spell)) == 0
+        if (state->spell_skills[spell] == 0
             && (!spell_requirements_met(state, spell) || state->practices <= 0)) {
             emit_formatted(output, "%s - WYMAGA MADROSCI %d, LEVELU %d I 1 PRAKTYKI\n",
                 spells[spell].name, spells[spell].wisdom, spells[spell].level);
@@ -4018,6 +4084,7 @@ static void list_shop(const GameState *state, GameOutput output)
         emit(output,
             "!KASETA! LIROYA            : 1999 4%\n"
             "GARNITUR Z KOLCAMI(3)      : 1000 2,5%\n"
+            "KSIAZKA ZDOLNOSCI          :   30\n"
         );
         break;
     case ROOM_MAGIC_STORE:
@@ -4113,7 +4180,8 @@ static void describe_status(const GameState *state, GameOutput output)
         ITEM_ROLL, ITEM_BREAD, ITEM_WEKA, ITEM_BIGOS, ITEM_BEER,
         ITEM_PIPE, ITEM_CLOTHES, ITEM_SPIKED_SUIT, ITEM_SMALL_MANA_BOTTLE,
         ITEM_LUCKY_LEAF, ITEM_LIROY_CASSETTE, ITEM_TRANSPORT_PILL,
-        ITEM_QUEST_PASS, ITEM_COMPARISON_SCROLL, ITEM_RETURN_SCROLL
+        ITEM_QUEST_PASS, ITEM_COMPARISON_SCROLL, ITEM_RETURN_SCROLL,
+        ITEM_SKILL_BOOK
     };
     static const char *const level_lines[] = {
         "JESTES NA PIERWSZYM LEVELU A DO NASTEPNEGO BRAKUJE CI ",
@@ -4234,7 +4302,7 @@ void game_describe_combat_options(const GameState *state, GameOutput output)
     }
     emit(output, " | ZWIEJ | UZYJ <PRZEDMIOT>");
     for (spell = SPELL_SPARK; spell < SPELL_COUNT; ++spell) {
-        if ((state->learned_spells & (1 << spell)) != 0
+        if (state->spell_skills[spell] > 0
             && spell_requirements_met(state, spell)
             && state->mana >= spells[spell].mana) {
             emit_formatted(output, " | %s", spells[spell].name);

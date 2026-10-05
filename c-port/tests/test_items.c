@@ -80,7 +80,9 @@ int main(void)
         {ITEM_RETURN_SCROLL, "SCROLL POWROT", NULL,
          "SCROLL Z CZAREM : POWROT ", ITEM_STORAGE_QUANTITY, true},
         {ITEM_BACKPACK, "PLECAK", NULL, NULL, ITEM_STORAGE_CAPACITY_UPGRADE,
-         false}
+         false},
+        {ITEM_SKILL_BOOK, "KSIAZKA", "KSIAZKA ZDOLNOSCI",
+         "KSIAZKA ZDOLNOSCI : JAK NIE DOSTAC W GAJDE", ITEM_STORAGE_QUANTITY, true}
     };
     static const struct {
         int dexterity;

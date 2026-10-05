@@ -10,7 +10,8 @@
 #define BOMBKI_PLAYER_NAME_CAPACITY 32
 #define BOMBKI_WORLD_ACTOR_SLOTS 80
 #define BOMBKI_WORLD_OBJECT_SLOTS 5
-#define BOMBKI_ITEM_SLOTS 23
+#define BOMBKI_ITEM_SLOTS 24
+#define BOMBKI_SPELL_SLOTS 5
 #define BOMBKI_ROOM_NOWHERE (-1)
 #define BOMBKI_NO_ACTOR (-1)
 #define BOMBKI_NO_ITEM (-1)
@@ -54,7 +55,7 @@ typedef struct {
     int parry_skill;
     int cooking_skill;
     int return_skill;
-    int learned_spells; /* Bit mask: ISKRA, UZDROW, OSLONA, ZATRUJ, FIREBALL. */
+    int spell_skills[BOMBKI_SPELL_SLOTS]; /* ISKRA, UZDROW, OSLONA, ZATRUJ, FIREBALL. */
     int magic_shield_energy;
     int magic_shield_turns;
     int active_opponent_poison_damage;

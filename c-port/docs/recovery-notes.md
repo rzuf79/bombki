@@ -63,15 +63,35 @@ repeating broad inspection of the original binaries or the project docs.
 
 ## Current handoff
 
+The user-approved skill book (2026-10-05), `JAK NIE DOSTAC W GAJDE`, is sold
+for 30 coins in the general store (`KUP KSIAZKA`). `PATRZ KSIAZKA` and
+`UZYJ KSIAZKA` read it outside combat without consuming it or spending a turn.
+Its original uppercase Polish prose explains all 11 usable skills and flags
+dormant poster commands in 21 lines under 80 columns. Requirements are in
+`ZDOLNOSCI`; the shop entry shows only the name and price. It teaches nothing
+automatically. Item ID 23 is
+appended; there are now 24 item slots. Save version 22 imports versions 1–21;
+versions 1–20 have no book. No tests were added, only existing catalogue/header expectations
+updated. Existing recovered text remains unchanged.
+
 The user-approved wisdom-spell extension (2026-10-05) adds `ISKRA`, `UZDROW`,
-`OSLONA`, `ZATRUJ`, and `FIREBALL`. All five require one-time `CWICZ <CZAR>`
-for one practice point, including ISKRA (never automatic). Wisdom gates are
+`OSLONA`, `ZATRUJ`, and `FIREBALL`. All five start at 0% and support repeated
+`CWICZ <CZAR>` for one practice point per session, including ISKRA (never
+automatic). Each session adds twice MAD to effectiveness, capped at 90%.
+Wisdom gates are
 12/12/14/14/18, mana costs 10/20/15/16/25; FIREBALL also requires level 3.
-Spells replace the weapon attack, resolve before retaliation, and do not fizzle.
+Spells replace the weapon attack and resolve before retaliation. Valid casts
+always work and cost full mana and one turn: there are no fumble rolls.
+Damage, healing, shield absorption, and poison damage per round scale as
+`max(1, base_effect * spell_skill / 100)` (rounded down); durations stay three turns.
 Offensive spells can open combat with `<WROG>`; direct damage bypasses dodge.
 Shield and opponent poison last three rounds and refresh without stacking.
-Save version 20 persists learned spells and effects and imports versions 1–19
-with no spells learned. The formulas and permitted new feedback are at the
+Save version 22 persists training percentages and effects. Versions 20–21
+convert learned spells to one session's worth of training (1–90%); versions
+1–19 import with no spells trained. The book now says to practice repeatedly
+and explains percentages as power rather than hit chance, still in 21 lines
+under 80 columns.
+The formulas and permitted new feedback are at the
 start of `compatibility.md`. No new tests were added, per the user's request.
 
 The user-approved balance pass (2026-10-05) supersedes the recovered balance
@@ -95,7 +115,7 @@ balance values and permitted message updates are recorded at the start of
 Milestones 1 through 9 are complete. Legacy-save import, multi-OS verification,
 and a seed flag are not part of the remaining game-reconstruction work. Do not
 invent player-facing text or mechanics for unrecovered commands except the
-explicitly approved spells above.
+explicitly approved spells and book above.
 
 - Complete: the 23-item table, dexterity/backpack carrying limits, native save
   format version 17 with versions 1–16 import, the five room-object take/drop

@@ -51,12 +51,25 @@ The evidence generator and reports are documented in
 ## Wisdom spells — approved 2026-10-05 (complete)
 
 - [x] Add ISKRA, UZDROW, OSLONA, ZATRUJ, and FIREBALL with wisdom/level scaling.
-- [x] Require one practice point to learn each spell, including ISKRA.
+- [x] Require practice for each spell, including ISKRA; repeated sessions cost
+      one point and add twice MAD to effectiveness, capped at 90%.
 - [x] Resolve spells before retaliation, replacing the player's normal attack.
-- [x] Persist learned spells and three-turn shield/poison effects in save
-      version 20; import versions 1–19 without automatically granting spells.
+- [x] Make trained casts reliable; percentages scale damage, healing, shield,
+      and poison effects (rounded down, minimum 1), with full mana cost.
+- [x] Persist spell percentages and three-turn shield/poison effects in save
+      version 22; import versions 1–21, migrating old learned spells to training.
 - [x] Expose spell commands in abilities, combat options, and help; update only
       existing test expectations, with no new tests.
+
+## Skill book — approved 2026-10-05 (complete)
+
+- [x] Sell KSIAZKA in the general store for 30 coins and list it in the shop.
+- [x] Explain all 11 usable skills, their commands, and costs in game-style
+      prose fitting 80x24; leave requirements to ZDOLNOSCI and omit usage
+      instructions from the shop list. Warn about dormant poster commands.
+- [x] Allow repeatable PATRZ/UZYJ reading without consuming the book or a turn.
+- [x] Append the book item and preserve versions 1–20 import in save version 21.
+- [x] Update existing catalogue/header expectations without adding tests.
 
 ## Milestone 2 — player setup, commands, and state (complete)
 

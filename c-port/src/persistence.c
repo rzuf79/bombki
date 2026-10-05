@@ -31,6 +31,8 @@
 #define SAVE_HEADER_V18 "BOMBKI_PORT 18"
 #define SAVE_HEADER_V19 "BOMBKI_PORT 19"
 #define SAVE_HEADER_V20 "BOMBKI_PORT 20"
+#define SAVE_HEADER_V21 "BOMBKI_PORT 21"
+#define SAVE_HEADER_V22 "BOMBKI_PORT 22"
 #define SAVE_LINE_CAPACITY 256
 
 static void set_error(char *error, size_t capacity, const char *message)
@@ -46,7 +48,7 @@ static bool write_state(FILE *file, const GameState *state)
 {
     size_t index;
 
-    if (!(fprintf(file, "%s\n", SAVE_HEADER_V20) >= 0
+    if (!(fprintf(file, "%s\n", SAVE_HEADER_V22) >= 0
         && fprintf(file, "room=%d\n", state->room_id) >= 0
         && fprintf(file, "turn=%" PRIu64 "\n", state->turn) >= 0
         && fprintf(file, "random_state=%u\n", state->random_state) >= 0
@@ -79,7 +81,6 @@ static bool write_state(FILE *file, const GameState *state)
         && fprintf(file, "parry_skill=%d\n", state->parry_skill) >= 0
         && fprintf(file, "cooking_skill=%d\n", state->cooking_skill) >= 0
         && fprintf(file, "return_skill=%d\n", state->return_skill) >= 0
-        && fprintf(file, "learned_spells=%d\n", state->learned_spells) >= 0
         && fprintf(file, "magic_shield_energy=%d\n", state->magic_shield_energy) >= 0
         && fprintf(file, "magic_shield_turns=%d\n", state->magic_shield_turns) >= 0
         && fprintf(file, "active_opponent_poison_damage=%d\n",
@@ -134,6 +135,12 @@ static bool write_state(FILE *file, const GameState *state)
     for (index = 0; index < BOMBKI_WORLD_OBJECT_SLOTS; ++index) {
         if (fprintf(file, "object_%zu=%d\n", index,
                 state->world_object_rooms[index]) < 0) {
+            return false;
+        }
+    }
+    for (index = 0; index < BOMBKI_SPELL_SLOTS; ++index) {
+        if (fprintf(file, "spell_%zu=%d\n", index,
+                state->spell_skills[index]) < 0) {
             return false;
         }
     }
@@ -229,9 +236,13 @@ bool persistence_load(
     bool actor_fields[BOMBKI_WORLD_ACTOR_SLOTS] = {false};
     bool object_fields[BOMBKI_WORLD_OBJECT_SLOTS] = {false};
     bool item_fields[BOMBKI_ITEM_SLOTS] = {false};
+    bool spell_fields[BOMBKI_SPELL_SLOTS] = {false};
     size_t actor_field_count = 0;
     size_t object_field_count = 0;
     size_t item_field_count = 0;
+    size_t expected_item_count;
+    size_t spell_field_count = 0;
+    int learned_spells = 0;
     unsigned version;
 
     if (path == NULL || state == NULL) {
@@ -251,7 +262,11 @@ bool persistence_load(
         return false;
     }
     trim_line_ending(line);
-    if (strcmp(line, SAVE_HEADER_V20) == 0) {
+    if (strcmp(line, SAVE_HEADER_V22) == 0) {
+        version = 22;
+    } else if (strcmp(line, SAVE_HEADER_V21) == 0) {
+        version = 21;
+    } else if (strcmp(line, SAVE_HEADER_V20) == 0) {
         version = 20;
     } else if (strcmp(line, SAVE_HEADER_V19) == 0) {
         version = 19;
@@ -297,6 +312,7 @@ bool persistence_load(
         return false;
     }
 
+    expected_item_count = version <= 20 ? (size_t)ITEM_SKILL_BOOK : BOMBKI_ITEM_SLOTS;
     game_initialize(&candidate);
     while (fgets(line, sizeof(line), file) != NULL) {
         int value;
@@ -395,7 +411,7 @@ bool persistence_load(
             && parse_integer(line + 13, &candidate.return_skill)) {
             fields |= UINT64_C(1) << 39;
         } else if (strncmp(line, "learned_spells=", 15) == 0
-            && parse_integer(line + 15, &candidate.learned_spells)) {
+            && version <= 21 && parse_integer(line + 15, &learned_spells)) {
             fields |= UINT64_C(1) << 48;
         } else if (strncmp(line, "magic_shield_energy=", 20) == 0
             && parse_integer(line + 20, &candidate.magic_shield_energy)) {
@@ -508,9 +524,18 @@ bool persistence_load(
                     object_fields[index] = true;
                     ++object_field_count;
                 }
+            } else if (version >= 22
+                && sscanf(line, "spell_%u=%d%c", &index, &value, &trailing) == 2
+                && index < BOMBKI_SPELL_SLOTS) {
+                candidate.spell_skills[index] = value;
+                fields |= UINT64_C(1) << 48;
+                if (!spell_fields[index]) {
+                    spell_fields[index] = true;
+                    ++spell_field_count;
+                }
             } else if (sscanf(line, "item_%u=%d%c", &index, &value,
                     &trailing) == 2
-                && index < BOMBKI_ITEM_SLOTS) {
+                && index < expected_item_count) {
                 candidate.item_quantities[index] = value;
                 if (!item_fields[index]) {
                     item_fields[index] = true;
@@ -525,6 +550,18 @@ bool persistence_load(
         return false;
     }
 
+    if (version <= 21 && learned_spells >= 0
+        && learned_spells < (1 << BOMBKI_SPELL_SLOTS)) {
+        size_t index;
+        int initial_skill = candidate.wisdom >= 45 ? 90
+            : candidate.wisdom > 0 ? candidate.wisdom * 2 : 1;
+
+        for (index = 0; index < BOMBKI_SPELL_SLOTS; ++index) {
+            if ((learned_spells & (1 << index)) != 0) {
+                candidate.spell_skills[index] = initial_skill;
+            }
+        }
+    }
     if (version <= 14) {
         candidate.world_actor_rooms[WORLD_ACTOR_STARUCH] =
             candidate.old_elf_present ? ROOM_ELF_HOUSE : BOMBKI_ROOM_NOWHERE;
@@ -594,81 +631,84 @@ bool persistence_load(
             || world_fields != (1u << 3) - 1
             || actor_field_count != BOMBKI_WORLD_ACTOR_SLOTS
             || object_field_count != BOMBKI_WORLD_OBJECT_SLOTS
-            || item_field_count != BOMBKI_ITEM_SLOTS))
+            || item_field_count != expected_item_count))
         || (version == 6 && (fields != (1u << 22) - 1
             || world_fields != (1u << 3) - 1
             || actor_field_count != BOMBKI_WORLD_ACTOR_SLOTS
             || object_field_count != BOMBKI_WORLD_OBJECT_SLOTS
-            || item_field_count != BOMBKI_ITEM_SLOTS))
+            || item_field_count != expected_item_count))
         || (version == 7 && (fields != (1u << 27) - 1
             || world_fields != (1u << 3) - 1
             || actor_field_count != BOMBKI_WORLD_ACTOR_SLOTS
             || object_field_count != BOMBKI_WORLD_OBJECT_SLOTS
-            || item_field_count != BOMBKI_ITEM_SLOTS))
+            || item_field_count != expected_item_count))
         || (version == 8 && (fields != (1u << 29) - 1
             || world_fields != (1u << 3) - 1
             || actor_field_count != BOMBKI_WORLD_ACTOR_SLOTS
             || object_field_count != BOMBKI_WORLD_OBJECT_SLOTS
-            || item_field_count != BOMBKI_ITEM_SLOTS))
+            || item_field_count != expected_item_count))
         || (version == 9 && (fields != (UINT64_C(1) << 33) - 1
             || world_fields != (1u << 3) - 1
             || actor_field_count != BOMBKI_WORLD_ACTOR_SLOTS
             || object_field_count != BOMBKI_WORLD_OBJECT_SLOTS
-            || item_field_count != BOMBKI_ITEM_SLOTS))
+            || item_field_count != expected_item_count))
         || (version == 10 && (fields != (UINT64_C(1) << 35) - 1
             || world_fields != (1u << 3) - 1
             || actor_field_count != BOMBKI_WORLD_ACTOR_SLOTS
             || object_field_count != BOMBKI_WORLD_OBJECT_SLOTS
-            || item_field_count != BOMBKI_ITEM_SLOTS))
+            || item_field_count != expected_item_count))
         || (version == 11 && (fields != (UINT64_C(1) << 38) - 1
             || world_fields != (1u << 3) - 1
             || actor_field_count != BOMBKI_WORLD_ACTOR_SLOTS
             || object_field_count != BOMBKI_WORLD_OBJECT_SLOTS
-            || item_field_count != BOMBKI_ITEM_SLOTS))
+            || item_field_count != expected_item_count))
         || (version == 12 && (fields != (UINT64_C(1) << 39) - 1
             || world_fields != (1u << 3) - 1
             || actor_field_count != BOMBKI_WORLD_ACTOR_SLOTS
             || object_field_count != BOMBKI_WORLD_OBJECT_SLOTS
-            || item_field_count != BOMBKI_ITEM_SLOTS))
+            || item_field_count != expected_item_count))
         || (version == 13 && (fields != (UINT64_C(1) << 41) - 1
             || world_fields != (1u << 3) - 1
             || actor_field_count != BOMBKI_WORLD_ACTOR_SLOTS
             || object_field_count != BOMBKI_WORLD_OBJECT_SLOTS
-            || item_field_count != BOMBKI_ITEM_SLOTS))
+            || item_field_count != expected_item_count))
         || (version == 14 && (fields != (UINT64_C(1) << 43) - 1
             || world_fields != (1u << 3) - 1
             || actor_field_count != BOMBKI_WORLD_ACTOR_SLOTS
             || object_field_count != BOMBKI_WORLD_OBJECT_SLOTS
-            || item_field_count != BOMBKI_ITEM_SLOTS))
+            || item_field_count != expected_item_count))
         || (version == 15 && (fields != (UINT64_C(1) << 45) - 1
             || world_fields != (1u << 3) - 1
             || actor_field_count != BOMBKI_WORLD_ACTOR_SLOTS
             || object_field_count != BOMBKI_WORLD_OBJECT_SLOTS
-            || item_field_count != BOMBKI_ITEM_SLOTS))
+            || item_field_count != expected_item_count))
         || (version == 16 && (fields != (((UINT64_C(1) << 45) - 1)
                 & ~(UINT64_C(1) << 1))
             || world_fields != (1u << 3) - 1
             || actor_field_count != BOMBKI_WORLD_ACTOR_SLOTS
             || object_field_count != BOMBKI_WORLD_OBJECT_SLOTS
-            || item_field_count != BOMBKI_ITEM_SLOTS))
+            || item_field_count != expected_item_count))
         || (version == 17 && (fields != (((UINT64_C(1) << 47) - 1)
                 & ~(UINT64_C(1) << 1))
             || world_fields != (1u << 3) - 1
             || actor_field_count != BOMBKI_WORLD_ACTOR_SLOTS
             || object_field_count != BOMBKI_WORLD_OBJECT_SLOTS
-            || item_field_count != BOMBKI_ITEM_SLOTS))
+            || item_field_count != expected_item_count))
         || (version >= 18 && version <= 19 && (fields != (((UINT64_C(1) << 48) - 1)
                 & ~(UINT64_C(1) << 1))
             || world_fields != (1u << 3) - 1
             || actor_field_count != BOMBKI_WORLD_ACTOR_SLOTS
             || object_field_count != BOMBKI_WORLD_OBJECT_SLOTS
-            || item_field_count != BOMBKI_ITEM_SLOTS))
-        || (version == 20 && (fields != (((UINT64_C(1) << 53) - 1)
+            || item_field_count != expected_item_count))
+        || (version >= 20 && (fields != (((UINT64_C(1) << 53) - 1)
                 & ~(UINT64_C(1) << 1))
             || world_fields != (1u << 3) - 1
             || actor_field_count != BOMBKI_WORLD_ACTOR_SLOTS
             || object_field_count != BOMBKI_WORLD_OBJECT_SLOTS
-            || item_field_count != BOMBKI_ITEM_SLOTS))
+            || item_field_count != expected_item_count))
+        || (version <= 21 && (learned_spells < 0
+            || learned_spells >= (1 << BOMBKI_SPELL_SLOTS)))
+        || (version >= 22 && spell_field_count != BOMBKI_SPELL_SLOTS)
         || !game_state_is_valid(&candidate)) {
         set_error(error, error_capacity, "save file is incomplete or invalid");
         return false;

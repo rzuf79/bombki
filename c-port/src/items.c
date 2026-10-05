@@ -5,6 +5,7 @@
 /*
  * Command names and inventory text are copied from BOMBKI.EXE. Preserve their
  * wording, capitalization, punctuation, spacing, grammar, and oddities.
+ * The skill book is a user-approved addition, not a recovered item.
  */
 static const ItemDefinition items[] = {
     {ITEM_OLD_SWORD, "STARY", NULL, "STARY ZARDZEWIALY MIECZ",
@@ -52,7 +53,9 @@ static const ItemDefinition items[] = {
      "SCROLL Z CZAREM : POROWNYWANIE ", ITEM_STORAGE_QUANTITY, true},
     {ITEM_RETURN_SCROLL, "SCROLL POWROT", NULL,
      "SCROLL Z CZAREM : POWROT ", ITEM_STORAGE_QUANTITY, true},
-    {ITEM_BACKPACK, "PLECAK", NULL, NULL, ITEM_STORAGE_CAPACITY_UPGRADE, false}
+    {ITEM_BACKPACK, "PLECAK", NULL, NULL, ITEM_STORAGE_CAPACITY_UPGRADE, false},
+    {ITEM_SKILL_BOOK, "KSIAZKA", "KSIAZKA ZDOLNOSCI",
+     "KSIAZKA ZDOLNOSCI : JAK NIE DOSTAC W GAJDE", ITEM_STORAGE_QUANTITY, true}
 };
 
 _Static_assert(sizeof(items) / sizeof(items[0]) == ITEM_COUNT,

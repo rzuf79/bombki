@@ -54,9 +54,11 @@ below; the original artifacts remain unchanged.
 
 This extension intentionally adds gameplay and player-facing spell feedback,
 without changing the recovered enemy spells or other dormant commands.
-Every spell, including `ISKRA`, must be learned once with `CWICZ <CZAR>` for
-one practice point. Learning requires only wisdom and level, never strength or
-dexterity; repeating practice does not spend another point or turn.
+Every spell, including `ISKRA`, starts at 0% and is trained with
+`CWICZ <CZAR>`. Each practice costs one point and one turn and adds twice the
+current wisdom to that spell's effectiveness, capped at 90%. Further practice
+at the cap is rejected without a cost. Training requires only wisdom and level,
+never strength or dexterity.
 
 | Command | Wisdom | Level | Mana | Effect |
 | --- | ---: | ---: | ---: | --- |
@@ -66,24 +68,53 @@ dexterity; repeating practice does not spend another point or turn.
 | `ZATRUJ` | 14 | 1 | 16 | `wisdom / 2` damage at the end of each of three rounds |
 | `FIREBALL` | 18 | 3 | 25 | `wisdom + 2 * level + random(0–5)` damage |
 
-Division rounds down. A valid cast always succeeds and costs one logical turn;
-in combat it replaces the normal attack and resolves before the enemy response.
-Direct magical damage bypasses physical dodge, and a spell kill prevents
-retaliation. Invalid targets, unlearned spells, unmet requirements, and
-insufficient mana consume no resources or turns.
+Division rounds down. A trained spell's effect is
+`max(1, base_effect * spell_skill / 100)`: training scales direct damage,
+healing, shield absorption, and poison damage per round. Shield and poison
+duration remain three turns. A valid cast always works and spends the listed
+mana and one logical turn; there are no fumble rolls or reduced-cost failures.
+In combat it replaces the normal attack and resolves before the enemy response.
+Direct magical damage bypasses physical dodge, and a spell kill prevents retaliation.
+Invalid targets, untrained spells, unmet requirements, and insufficient mana
+consume no resources or turns.
 
 `ISKRA <WROG>`, `ZATRUJ <WROG>`, and `FIREBALL <WROG>` can start a fight.
 During combat the bare spell command targets the current enemy. `UZDROW` also
 works outside combat; `OSLONA` requires an active fight. Shields cover physical
 damage after existing defenses, enemy fireballs, and enemy poison damage.
 The cast turn counts as the first enemy turn; dodged enemy turns also count.
-Recasting shield or poison refreshes its amount and three-turn duration,
+Successfully recasting shield or poison refreshes its amount and three-turn duration,
 without stacking. Both effects clear when the opponent changes or combat ends.
 
 `ZDOLNOSCI`, combat options, and help expose the new spells and their costs or
-learning requirements. Save version 20 persists learned spells and active
-shield/poison effects; versions 1–19 load with no spells automatically learned.
+learning requirements. Abilities label the trained percentages as power and show
+practice commands. Save version 22 persists all five training percentages and
+active shield/poison effects; versions 20–21 convert each learned spell to one
+practice session's worth of training (minimum 1%, maximum 90%). Versions 1–19
+load with no spells automatically learned.
 Only existing test expectations were updated; no tests were added.
+
+## User-approved skill book (2026-10-05)
+
+The general store sells `KSIAZKA` (alias `KSIAZKA ZDOLNOSCI`) for 30 coins.
+Its title is `JAK NIE DOSTAC W GAJDE`. `PATRZ KSIAZKA` and `UZYJ KSIAZKA`
+read the owned book outside combat without consuming it, spending a turn,
+changing stats, or teaching skills. It is a normal, countable inventory item
+and occupies one carrying slot per copy; it has no resale offer.
+
+The deliberately new prose follows the game's uppercase Polish, exaggerated
+punctuation, taunts, and school-poster humor. It explains all six implemented
+ordinary skills and five spells in 21 lines under 80 columns, including
+commands, mana/XP costs, effects, and automatic versus explicit behavior.
+Requirements are left to `ZDOLNOSCI`; the shop lists only the name and price.
+It also warns that
+the dormant commands advertised on the old posters do not work. Existing
+recovered text is unchanged; the shop list only gains the new book entry.
+
+Item ID 23 is appended without renumbering existing items. Native save version
+21 introduced 24 item quantities, retained in version 22; versions 1–20 import
+with no book. Existing test
+catalogue/header expectations were updated; no new tests were added.
 
 ## Verified artifact facts
 

@@ -20,20 +20,22 @@ The project is an immediately playable vertical slice. It currently provides:
 - one command state, with no command-state switching;
 - the original `EXIT` behavior (show available exits, rather than quit);
 - save/load and character commands available alongside exploration commands;
-- the recovered 23-item catalogue and dexterity/backpack carrying limits;
+- the recovered 23-item catalogue plus a readable skill book sold for 30 coins
+  in the general store, with dexterity/backpack carrying limits;
 - recovered taking, dropping, equipment, and comparison-scroll
   actions;
 - rebalanced progression, recovery, scaling food usable in combat, untrained
   escape, and weaker rats, partridges, and rabbits;
-- five wisdom-based spells learned with `CWICZ`: `ISKRA`, `UZDROW`, `OSLONA`,
-  `ZATRUJ`, and `FIREBALL` (none are granted automatically);
+- five wisdom-based spells trained with `CWICZ`: `ISKRA`, `UZDROW`, `OSLONA`,
+  `ZATRUJ`, and `FIREBALL` (none are granted automatically; practice improves
+  spell effectiveness up to 90%, without random cast failures);
 - the recovered bakery, armory, general-store, and magic-store catalogues,
   purchase rules, item modifiers, and resale values;
 - deterministic combat-integrated unique-loot rules, including the
   recovered mismatches between displayed percentages and actual thresholds;
 - recovered enemy-stat ranges and persistent, deterministic active-opponent
   snapshots selected by `ZABIJ`;
-- a version 20 native save file, with version 1 through 19 import support;
+- a version 22 native save file, with version 1 through 21 import support;
 - optional ANSI presentation with a plain-text fallback;
 - timer-free, blocking terminal interaction, with combat and sleep resolved in
   deterministic logical turns;
