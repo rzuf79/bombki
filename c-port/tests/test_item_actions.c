@@ -154,21 +154,21 @@ static void test_consumables(void)
         int energy;
     } food[] = {
         {ITEM_BLOODY_HEART, "UZYJ SERCE",
-         "ZJADASZ ZAKRWAWIONE SERCE I ODZYSKUJESZ 5% ENERGII\n", 6},
+         "ZJADASZ ZAKRWAWIONE SERCE I ODZYSKUJESZ 15 ENERGII\n", 16},
         {ITEM_DOUGHNUT, "UZYJ PACZEK",
-         "ZJADASZ PACZKA I TYJESZ 1 KILO (DOSTAJESZ 8%ENERGII)\n", 9},
+         "ZJADASZ PACZKA I TYJESZ 1 KILO (DOSTAJESZ 18 ENERGII)\n", 19},
         {ITEM_CAKE, "UZYJ CIASTKO",
-         "ZJADASZ CIASTKO I TYJESZ 2 KILO (DOSTAJESZ 12% ENERGII)\n", 13},
+         "ZJADASZ CIASTKO I TYJESZ 2 KILO (DOSTAJESZ 24 ENERGII)\n", 25},
         {ITEM_DRY_RATION, "UZYJ SUCHA RACJA",
-         "ZJADASZ SUCHA RACJE I CHUDNIESZ 3 KILO (DOSTAJESZ 16% ENERGII)\n", 17},
+         "ZJADASZ SUCHA RACJE I CHUDNIESZ 3 KILO (DOSTAJESZ 23 ENERGII)\n", 24},
         {ITEM_ROLL, "UZYJ BULKA",
-         "ZJADASZ BULKE I STWIERDZASZ ZE ZYSKALES 20%\n", 21},
+         "ZJADASZ BULKE I STWIERDZASZ ZE ZYSKALES 25 ENERGII\n", 26},
         {ITEM_BREAD, "UZYJ CHLEB",
-         "ZJADASZ DUZY CIEPLY CHLEB I JESTES PELEN (ZYSKUJESZ 26%)\n", 27},
+         "ZJADASZ DUZY CIEPLY CHLEB I JESTES PELEN (ZYSKUJESZ 30 ENERGII)\n", 31},
         {ITEM_WEKA, "UZYJ WEKA",
-         "ZJADASZ DLUGASNA WEKE I TYJAC 15 KILO ZYSKUJESZ 34%\n", 35},
+         "ZJADASZ DLUGASNA WEKE I TYJAC 15 KILO ZYSKUJESZ 35 ENERGII\n", 36},
         {ITEM_BIGOS, "UZYJ BIGOS",
-         "ZJADASZ BIGOS Z WROGA I ODZYSKUJESZ 20% ENERGI\n", 21}
+         "ZJADASZ BIGOS Z WROGA I ODZYSKUJESZ 30 ENERGI\n", 31}
     };
     size_t index;
 
@@ -291,7 +291,7 @@ static void test_pill_and_return_scroll(void)
         "ZNACZNIE OPADLES Z SIL I STALES SIE BARDZO ZMECZONY\n") == 0);
     assert(state.maximum_energy == 49);
     assert(state.energy == 1);
-    assert(state.experience == -50);
+    assert(state.experience == 0);
     assert(state.world_actor_rooms[WORLD_ACTOR_KORNIK] >= ROOM_ARENA_33);
     assert(state.world_actor_rooms[WORLD_ACTOR_KORNIK] <= ROOM_ARENA_57);
 
@@ -306,7 +306,7 @@ static void test_pill_and_return_scroll(void)
         "MASZ PEWNE OBYCIE W MAGICZNYCH PRZEDMIOTACH ALE MIMO WSZYSTKO\n"
         "OPADLES Z SIL I STALES SIE ZMECZONY\n") == 0);
     assert(state.energy == 10);
-    assert(state.experience == -30);
+    assert(state.experience == 0);
 
     game_initialize(&state);
     state.wisdom = 16;

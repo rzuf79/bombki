@@ -54,7 +54,7 @@ typedef struct {
     int parry_skill;
     int cooking_skill;
     int return_skill;
-    int sleep_hours;
+    int sleep_hours; /* Legacy save field; unused by gameplay. */
     int duncan_quest;
     bool duncan_black_market_unlocked;
     int quest_type;

@@ -150,12 +150,12 @@ Command parser_parse(const char *input)
         || parse_argument_command(normalized, "CWICZ", COMMAND_PRACTICE, &command)
         || parse_argument_command(normalized, "TRENUJ", COMMAND_TRAIN, &command)
         || parse_argument_command(normalized, "CIOS W", COMMAND_BACKSTAB, &command)
-        || parse_argument_command(normalized, "PIECZ", COMMAND_COOK, &command)
-        || parse_argument_command(normalized, "SPIJ", COMMAND_SLEEP, &command)
-        || parse_argument_command(normalized, "SLEEP", COMMAND_SLEEP, &command)) {
+        || parse_argument_command(normalized, "PIECZ", COMMAND_COOK, &command)) {
         return command;
     }
-    if (strcmp(normalized, "EXIT") == 0 || strcmp(normalized, "WYJSCIA") == 0) {
+    if (strcmp(normalized, "SPIJ") == 0 || strcmp(normalized, "SLEEP") == 0) {
+        command.verb = COMMAND_SLEEP;
+    } else if (strcmp(normalized, "EXIT") == 0 || strcmp(normalized, "WYJSCIA") == 0) {
         command.verb = COMMAND_EXITS;
     } else if (strcmp(normalized, "JA") == 0) {
         command.verb = COMMAND_STATUS;

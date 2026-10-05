@@ -36,6 +36,17 @@ The evidence generator and reports are documented in
 [`../evidence/README.md`](../evidence/README.md). The exact turn rules are in
 [`turn-based-design.md`](turn-based-design.md).
 
+## Balance pass — approved 2026-10-05 (complete)
+
+- [x] Remove sleep XP loss, restore mana, and replenish ordinary encounters
+      after town rest while preserving completed tutorial/quest encounters.
+- [x] Remove XP debt, lighten defeat penalties, and preserve quest progress.
+- [x] Match next-level costs to thresholds and use fixed enemy-tier XP rewards.
+- [x] Strengthen and scale food, allow combat consumables, and enable escape
+      without training, mana, or XP penalties.
+- [x] Add a gentler small-animal profile and migrate existing saves to version 19.
+- [x] Update existing expectations without adding tests.
+
 ## Milestone 2 — player setup, commands, and state (complete)
 
 - [x] Implement name and race selection using the recovered prompts.
@@ -212,12 +223,10 @@ wording. Commands advertised there but absent from every executable command
 handler, state block, and combat branch remain silent no-ops instead of gaining
 invented mechanics.
 
-`SPIJ <liczba godzin>` retains the recovered per-hour healing, kunszt loss,
-two independent wake rolls, long-sleep bonuses, maximum-energy clamp, and
-exact output. Each requested hour advances one logical turn, then the command
-wakes the player automatically. Bare `SPIJ` or `SLEEP` prints the syntax, and
-`SLEEP <liczba godzin>` is accepted as an alias. The five-second delay and
-keyboard polling are discarded.
+The user-approved sleep simplification replaces the recovered hourly mechanics:
+bare `SPIJ` or `SLEEP` now fully restores energy and mana without an XP cost
+in one logical turn. Town rest replenishes ordinary encounters. The legacy
+sleep counter remains in the save format for compatibility.
 
 ## Milestone 6 — conversations, quests, and ending (complete)
 

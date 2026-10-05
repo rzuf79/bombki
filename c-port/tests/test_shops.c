@@ -444,6 +444,7 @@ static void test_quest_master_paths(void)
 
     game_initialize(&state);
     state.room_id = ROOM_JUNCTION;
+    state.level = 4;
     state.coins = 350;
 
     execute(&state, &capture, "LISTA");
@@ -543,7 +544,7 @@ static void test_quest_master_paths(void)
         "QUEST-MASTER NIE CHCE JESZCZE TWOJEGO QUESTA\n") == 0);
     assert(state.quest_type == 3);
     state.practices = 2;
-    state.experience = -1000;
+    state.experience = 0;
     clear_capture(&capture);
     execute(&state, &capture, "SPRZEDAJ QUEST");
     assert(strcmp(capture.text,

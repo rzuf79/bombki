@@ -8,6 +8,7 @@
 #include <string.h>
 
 #include "items.h"
+#include "enemies.h"
 #include "world.h"
 
 #define SAVE_HEADER_V1 "BOMBKI_PORT 1"
@@ -28,6 +29,7 @@
 #define SAVE_HEADER_V16 "BOMBKI_PORT 16"
 #define SAVE_HEADER_V17 "BOMBKI_PORT 17"
 #define SAVE_HEADER_V18 "BOMBKI_PORT 18"
+#define SAVE_HEADER_V19 "BOMBKI_PORT 19"
 #define SAVE_LINE_CAPACITY 256
 
 static void set_error(char *error, size_t capacity, const char *message)
@@ -43,7 +45,7 @@ static bool write_state(FILE *file, const GameState *state)
 {
     size_t index;
 
-    if (!(fprintf(file, "%s\n", SAVE_HEADER_V18) >= 0
+    if (!(fprintf(file, "%s\n", SAVE_HEADER_V19) >= 0
         && fprintf(file, "room=%d\n", state->room_id) >= 0
         && fprintf(file, "turn=%" PRIu64 "\n", state->turn) >= 0
         && fprintf(file, "random_state=%u\n", state->random_state) >= 0
@@ -241,7 +243,9 @@ bool persistence_load(
         return false;
     }
     trim_line_ending(line);
-    if (strcmp(line, SAVE_HEADER_V18) == 0) {
+    if (strcmp(line, SAVE_HEADER_V19) == 0) {
+        version = 19;
+    } else if (strcmp(line, SAVE_HEADER_V18) == 0) {
         version = 18;
     } else if (strcmp(line, SAVE_HEADER_V17) == 0) {
         version = 17;
@@ -505,7 +509,29 @@ bool persistence_load(
                 ? ROOM_LIVING_DOOR
                 : BOMBKI_ROOM_NOWHERE;
     }
-    if (version <= 16) {
+    if (candidate.experience < 0) {
+        candidate.experience = 0;
+    }
+    if (version <= 18 && candidate.active_opponent_actor >= 0
+        && candidate.active_opponent_actor < WORLD_ACTOR_COUNT
+        && enemy_profile_for_world_actor((WorldActorId)candidate.active_opponent_actor)
+            == ENEMY_PROFILE_SMALL_ANIMAL
+        && candidate.active_opponent_maximum_energy >= 34
+        && candidate.active_opponent_maximum_energy <= 36
+        && candidate.active_opponent_strength == 10
+        && candidate.active_opponent_dexterity >= 8
+        && candidate.active_opponent_dexterity <= 11
+        && candidate.active_opponent_energy >= 0
+        && candidate.active_opponent_energy <= candidate.active_opponent_maximum_energy) {
+        int maximum = candidate.active_opponent_maximum_energy;
+
+        candidate.active_opponent_maximum_energy = 24;
+        candidate.active_opponent_energy =
+            (candidate.active_opponent_energy * 24 + maximum - 1) / maximum;
+        candidate.active_opponent_strength = 7;
+        candidate.active_opponent_dexterity = 8;
+    }
+    if (version <= 18) {
         game_recover_active_opponent_reward(&candidate);
     }
     if (version <= 17) {
@@ -606,7 +632,7 @@ bool persistence_load(
             || actor_field_count != BOMBKI_WORLD_ACTOR_SLOTS
             || object_field_count != BOMBKI_WORLD_OBJECT_SLOTS
             || item_field_count != BOMBKI_ITEM_SLOTS))
-        || (version == 18 && (fields != (((UINT64_C(1) << 48) - 1)
+        || (version >= 18 && (fields != (((UINT64_C(1) << 48) - 1)
                 & ~(UINT64_C(1) << 1))
             || world_fields != (1u << 3) - 1
             || actor_field_count != BOMBKI_WORLD_ACTOR_SLOTS

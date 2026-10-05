@@ -23,6 +23,7 @@ typedef enum {
     ENEMY_PROFILE_CAGE_RESISTANT,
     ENEMY_PROFILE_CAGE_STRONG,
     ENEMY_PROFILE_CAGE_ALL,
+    ENEMY_PROFILE_SMALL_ANIMAL,
     ENEMY_PROFILE_COUNT
 } EnemyProfileId;
 
@@ -66,5 +67,6 @@ size_t enemy_profile_count(void);
 const EnemyProfile *enemy_profile_at(size_t index);
 const EnemyProfile *enemy_profile_find(EnemyProfileId id);
 EnemyProfileId enemy_profile_for_world_actor(WorldActorId actor);
+int enemy_profile_experience(EnemyProfileId id);
 
 #endif

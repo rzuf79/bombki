@@ -21,15 +21,17 @@ The project is an immediately playable vertical slice. It currently provides:
 - the original `EXIT` behavior (show available exits, rather than quit);
 - save/load and character commands available alongside exploration commands;
 - the recovered 23-item catalogue and dexterity/backpack carrying limits;
-- recovered taking, dropping, consumable, equipment, and comparison-scroll
+- recovered taking, dropping, equipment, and comparison-scroll
   actions;
+- rebalanced progression, recovery, scaling food usable in combat, untrained
+  escape, and weaker rats, partridges, and rabbits;
 - the recovered bakery, armory, general-store, and magic-store catalogues,
   purchase rules, item modifiers, and resale values;
 - deterministic combat-integrated unique-loot rules, including the
   recovered mismatches between displayed percentages and actual thresholds;
 - recovered enemy-stat ranges and persistent, deterministic active-opponent
   snapshots selected by `ZABIJ`;
-- a version 17 native save file, with version 1 through 16 import support;
+- a version 19 native save file, with version 1 through 18 import support;
 - optional ANSI presentation with a plain-text fallback;
 - timer-free, blocking terminal interaction, with combat and sleep resolved in
   deterministic logical turns;

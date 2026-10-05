@@ -47,7 +47,7 @@ static void write_previous_save_from_current(const char *path, int version)
     assert(source != NULL);
     assert(destination != NULL);
     assert(fgets(line, sizeof(line), source) != NULL);
-    assert(strcmp(line, "BOMBKI_PORT 18\n") == 0);
+    assert(strcmp(line, "BOMBKI_PORT 19\n") == 0);
     assert(fprintf(destination, "BOMBKI_PORT %d\n", version) >= 0);
     while (fgets(line, sizeof(line), source) != NULL) {
         if (version <= 16 && (strncmp(line, "active_opponent_reward=", 23) == 0

@@ -40,10 +40,14 @@ No combat state changes between input lines.
 
 After `ZABIJ` starts a fight, the terminal remains in a combat input loop until
 victory, death, or escape. An empty line (or `ZABIJ`) chooses the normal combat
-exchange. Learned `KOP` and `ZWIEJ` skills are also direct round choices; the
-former replaces the player's weapon hit and the latter gives up that hit to
-attempt escape. Movement and other world actions cannot silently abandon an
-active fight. The terminal lists the choices after every surviving round.
+exchange. Learned `KOP` replaces the player's weapon hit. `ZWIEJ` is available
+without training and attempts escape before an enemy response; a failed escape
+gives up the player's hit. `UZYJ <PRZEDMIOT>` accepts food, beer, and mana bottles,
+restoring their resources before the enemy response and replacing the player's
+hit. Successful consumable use and every escape attempt consume one logical
+turn; rejected use consumes none. Movement and other world actions cannot
+silently abandon an active fight. The terminal lists the choices after every
+surviving round. These changes are part of the user-approved balance pass.
 
 The recovered `ZWIEJ` energy threshold is evaluated only while completing a
 normal atomic combat round. The explicit `ZWIEJ` round choice attempts escape

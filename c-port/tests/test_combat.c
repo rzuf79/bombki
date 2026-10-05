@@ -191,23 +191,22 @@ static void test_fleeing_dog_still_pays_out_and_leaves(void)
 
     prepare_enemy(&state, WORLD_ACTOR_SPANIEL, ROOM_SHOP_STREET);
     state.flee_skill = 100;
-    state.random_state = 0u;
+    state.random_state = 58u;
     assert(game_select_opponent(&state, "SPANIEL"));
 
     execute(&state, &capture, "ZWIEJ");
 
     assert(strcmp(capture.text,
         "WALCZYSZ - <<<<TWOJ WROG MA 10%>>>><<<< A TY MASZ 50% ENERGII>>>>>\n"
-        "PRZECIWNIK CIE TYLKO DRASNA I TRACISZ 3% ENERGII\n"
-        "WSTYD !!! UCIEKLES Z POLA BITWY TRACISZ 20 KUNSZTU\n"
+        "WSTYD !!! UCIEKLES Z POLA BITWY\n"
         "WYCIAGASZ 7 MONET Z CIALA PSA\n"
         "WYCIAGASZ ZAKRWAWIONE SERCE Z CIALA PSA\n"
         "GDY NAGLE!!!! NIEBIOSA SIE OTWIERAJA\n"
         "A SPANIEL PRZEMAWIA DO CIEBIE LUDZKIM GLOSEM !!!!!\n"
         "HAU HAU CHAMIE PO CO MNIE ZABILES ??? \n"
     ) == 0);
-    assert(state.energy == 47);
-    assert(state.mana == 82);
+    assert(state.energy == 50);
+    assert(state.mana == 100);
     assert(state.coins == 7);
     assert(!game_combat_is_active(&state));
     assert(state.world_actor_rooms[WORLD_ACTOR_SPANIEL] == BOMBKI_ROOM_NOWHERE);
@@ -232,11 +231,11 @@ static void test_victory_finishes_the_same_atomic_turn(void)
         "WALCZYSZ - <<<<TWOJ WROG MA 1%>>>><<<< A TY MASZ 50% ENERGII>>>>>\n"
         "PRZECIWNIK CIE TYLKO DRASNA I TRACISZ 0% ENERGII\n"
         "MASZ PECHA : LEKKO POPCHNALES GO I STRACIL TYLKO 2% ENERGII\n"
-        "ZABILES GO ! ZYSKUJESZ ZA TO 22 KUNSZTU \n"
+        "ZABILES GO ! ZYSKUJESZ ZA TO 8 KUNSZTU \n"
         "WYCIAGASZ 1 MONET Z CIALA\n"
     ) == 0);
     assert(state.coins == 1);
-    assert(state.experience == 22);
+    assert(state.experience == 8);
     assert(state.world_actor_rooms[WORLD_ACTOR_KORNIK] == BOMBKI_ROOM_NOWHERE);
     assert(state.active_opponent_actor == BOMBKI_NO_ACTOR);
     assert(state.turn == 1);
@@ -319,13 +318,14 @@ static void test_death_stops_the_current_combat(void)
         "NIESTETY WRAZ ZE SMIERCIA TRACISZ KUNSZT ADEKWATNIE DO TWOJEGO LEVELKA\n"
         "POJAWISZ SIE W CENTRUM MIASTA ..... POWODZENIA\n"
         "P.S : AHA POTWORY SIE ODREGENEROWALY\n"
+        "TRACISZ 0 KUNSZTU\n"
     ) == 0);
     assert(state.energy == state.maximum_energy);
-    assert(state.experience == -221);
+    assert(state.experience == 0);
     assert(state.room_id == ROOM_CITY_THRESHOLD);
     assert(state.active_opponent_actor == BOMBKI_NO_ACTOR);
     assert(state.world_actor_rooms[WORLD_ACTOR_CAGE_WEAK] == ROOM_CAGE_WEAK);
-    assert(state.quest_progress == 200);
+    assert(state.quest_progress == 37);
     assert(state.turn == 1);
     assert(game_state_is_valid(&state));
 
@@ -338,7 +338,7 @@ static void test_death_stops_the_current_combat(void)
     state.random_state = 0u;
     memset(&capture, 0, sizeof(capture));
     execute(&state, &capture, "ZABIJ POTWOR");
-    assert(state.quest_progress == 50);
+    assert(state.quest_progress == 4);
 }
 
 static void test_milestone_six_fixed_opponents(void)
@@ -437,7 +437,7 @@ static void test_flee_practice_and_threshold_prompt(void)
 
     execute(&state, &capture, "CWICZ UCIEKAC");
     assert(strcmp(capture.text,
-        "CWICZYSZ UCIEKANIE - PRAWDOPODOBIENSTWO JEST TERAZ 21% MASZ 9 PRAKTYK\n"
+        "CWICZYSZ UCIEKANIE - PRAWDOPODOBIENSTWO JEST TERAZ 67% MASZ 9 PRAKTYK\n"
     ) == 0);
     assert(state.flee_skill == 21);
     assert(state.practices == 9);
@@ -576,11 +576,11 @@ static void test_successful_automatic_flee(void)
         "WALCZYSZ - <<<<TWOJ WROG MA 20%>>>><<<< A TY MASZ 50% ENERGII>>>>>\n"
         "PRZECIWNIK CIE TYLKO DRASNA I TRACISZ 1% ENERGII\n"
         "MASZ PECHA : LEKKO POPCHNALES GO I STRACIL TYLKO 4% ENERGII\n"
-        "WSTYD !!! UCIEKLES Z POLA BITWY TRACISZ 20 KUNSZTU\n"
+        "WSTYD !!! UCIEKLES Z POLA BITWY\n"
     ) == 0);
     assert(state.energy == 49);
-    assert(state.mana == 82);
-    assert(state.experience == -20);
+    assert(state.mana == 100);
+    assert(state.experience == 0);
     assert(state.active_opponent_actor == BOMBKI_NO_ACTOR);
     assert(state.world_actor_rooms[WORLD_ACTOR_CAGE_WEAK] == ROOM_CAGE_WEAK);
     assert(state.turn == 1);
@@ -607,7 +607,7 @@ static void test_failed_automatic_flee(void)
         "NIE UDALO CI SIE UCIEC !!!! WALCZYSZ DALEJ !!! \n"
     ) == 0);
     assert(state.energy == 49);
-    assert(state.mana == 83);
+    assert(state.mana == 100);
     assert(state.experience == 0);
     assert(state.active_opponent_actor == WORLD_ACTOR_CAGE_WEAK);
     assert(state.active_opponent_energy == 13);
@@ -615,7 +615,7 @@ static void test_failed_automatic_flee(void)
     assert(game_state_is_valid(&state));
 }
 
-static void test_flee_low_mana_blocked_silently(void)
+static void test_flee_low_mana(void)
 {
     GameState state;
     Capture capture = {{0}, 0};
@@ -633,11 +633,11 @@ static void test_flee_low_mana_blocked_silently(void)
 
     assert(strcmp(capture.text,
         "WALCZYSZ - <<<<TWOJ WROG MA 20%>>>><<<< A TY MASZ 50% ENERGII>>>>>\n"
-        "PRZECIWNIK CIE TYLKO DRASNA I TRACISZ 0% ENERGII\n"
+        "WSTYD !!! UCIEKLES Z POLA BITWY\n"
     ) == 0);
-    assert(state.mana == 13);
-    assert(game_combat_is_active(&state));
-    assert(state.active_opponent_energy == 20);
+    assert(state.mana == 15);
+    assert(!game_combat_is_active(&state));
+    assert(state.energy == 50);
     assert(state.turn == 1);
     assert(game_state_is_valid(&state));
 }
@@ -662,14 +662,15 @@ static void test_combat_loop_options_and_empty_round(void)
     memset(&capture, 0, sizeof(capture));
     game_describe_combat_options(&state, output);
     assert(strcmp(capture.text,
-        "OPCJE WALKI: ENTER/ZABIJ | KOP | ZWIEJ\n"
+        "OPCJE WALKI: ENTER/ZABIJ | KOP | ZWIEJ | UZYJ <PRZEDMIOT>\n"
     ) == 0);
 
     state.kick_skill = 0;
     state.flee_skill = 0;
     memset(&capture, 0, sizeof(capture));
     game_describe_combat_options(&state, output);
-    assert(strcmp(capture.text, "OPCJE WALKI: ENTER/ZABIJ\n") == 0);
+    assert(strcmp(capture.text,
+        "OPCJE WALKI: ENTER/ZABIJ | ZWIEJ | UZYJ <PRZEDMIOT>\n") == 0);
 
     memset(&capture, 0, sizeof(capture));
     execute(&state, &capture, "");
@@ -703,11 +704,11 @@ static void test_combat_loop_kick_and_flee_choices(void)
 
     execute(&state, &capture, "ZWIEJ");
     assert(strstr(capture.text,
-        "WSTYD !!! UCIEKLES Z POLA BITWY TRACISZ 20 KUNSZTU\n"
+        "WSTYD !!! UCIEKLES Z POLA BITWY\n"
     ) != NULL);
     assert(!game_combat_is_active(&state));
-    assert(state.mana == 82);
-    assert(state.experience == -20);
+    assert(state.mana == 100);
+    assert(state.experience == 0);
     assert(state.turn == 1);
 }
 
@@ -922,14 +923,14 @@ static void test_cooking_practice_and_automatic_learning(void)
 
     assert(game_resolve_active_opponent_victory(&state, output));
     assert(strcmp(capture.text,
-        "ZABILES GO ! ZYSKUJESZ ZA TO 9 KUNSZTU \n"
+        "ZABILES GO ! ZYSKUJESZ ZA TO 8 KUNSZTU \n"
         "WYCIAGASZ 2 MONET Z CIALA\n"
         "ROBISZ SOBIE PYSZNY PYSZNY BIGOS Z KAPUSTA Z WROGA\n"
         "UCZYSZ SIE ZDOLNOSCI POTRAWKI !!! \n"
     ) == 0);
     assert(state.item_quantities[ITEM_BIGOS] == 1);
     assert(state.cooking_skill == 100);
-    assert(state.experience == 19);
+    assert(state.experience == 18);
     assert(game_state_is_valid(&state));
 }
 
@@ -1039,52 +1040,52 @@ static void test_skill_poster(void)
     ) == 0);
 }
 
-static void test_logical_sleep_and_recovered_wake_rolls(void)
+static void test_sleep_fully_restores_resources(void)
 {
     GameState state;
     Capture capture = {{0}, 0};
 
     game_initialize(&state);
     state.energy = 20;
+    state.mana = 7;
     state.experience = 100;
     state.random_state = 1u;
     execute(&state, &capture, "SLEEP");
     assert(strcmp(capture.text,
-        "JAK CHCESZ SPAC TO NAPISZ SPIJ [LICZBA GODZIN] , BO NIE BEDE CIE BUDZIC CO CHWILE\n"
+        "PO OBUDZENIU STWIERDZILES ZE MASZ PELNA ENERGIE I MANE\n"
     ) == 0);
     assert(state.sleep_hours == 0);
-    assert(state.energy == 20);
+    assert(state.energy == state.maximum_energy);
+    assert(state.mana == state.maximum_mana);
     assert(state.experience == 100);
-    assert(state.turn == 0);
+    assert(state.turn == 1);
 
     memset(&capture, 0, sizeof(capture));
-    execute(&state, &capture, "SPIJ 1");
+    execute(&state, &capture, "SPIJ");
     assert(strcmp(capture.text,
-        "SPISZ JUZ 1 GODZIN\n"
-        "PO OBUDZENIU STWIERDZILES ZE ZYSKALES 10 ENERGI I STRACILES 20 KUNSZTU\n"
+        "PO OBUDZENIU STWIERDZILES ZE MASZ PELNA ENERGIE I MANE\n"
     ) == 0);
     assert(state.sleep_hours == 0);
-    assert(state.energy == 30);
-    assert(state.experience == 81);
-    assert(state.turn == 1);
+    assert(state.energy == state.maximum_energy);
+    assert(state.experience == 100);
+    assert(state.turn == 2);
 
     game_initialize(&state);
     state.energy = 0;
+    state.mana = 0;
     state.maximum_energy = 200;
     state.experience = 0;
     state.random_state = 1u;
     memset(&capture, 0, sizeof(capture));
-    execute(&state, &capture, "SPIJ 9");
-    assert(strstr(capture.text, "SPISZ JUZ 9 GODZIN\n") != NULL);
-    assert(strstr(capture.text,
-        "PO OBUDZENIU STWIERDZILES ZE ZYSKALES 90 ENERGI I STRACILES 180 KUNSZTU\n"
-        "DLUGI SEN DODATKOWO POZWOLIL CI ODPOCZAC : ZYSKALES 10ENERGI\n"
-        "PELNOWARTOSCIOWY SEN SPOWODOWAL SUPER ZYSK : 20ENERGI\n"
-    ) != NULL);
-    assert(state.energy == 120);
-    assert(state.experience == -165);
+    execute(&state, &capture, "SPIJ");
+    assert(strcmp(capture.text,
+        "PO OBUDZENIU STWIERDZILES ZE MASZ PELNA ENERGIE I MANE\n"
+    ) == 0);
+    assert(state.energy == state.maximum_energy);
+    assert(state.mana == state.maximum_mana);
+    assert(state.experience == 0);
     assert(state.sleep_hours == 0);
-    assert(state.turn == 9);
+    assert(state.turn == 1);
 }
 
 static void test_dormant_poster_commands_are_silent(void)
@@ -1106,7 +1107,7 @@ static void test_dormant_poster_commands_are_silent(void)
     }
 }
 
-static void test_victory_kunszt_deductions(void)
+static void test_victory_fixed_kunszt(void)
 {
     GameState state;
     Capture capture = {{0}, 0};
@@ -1122,10 +1123,10 @@ static void test_victory_kunszt_deductions(void)
 
     assert(game_resolve_active_opponent_victory(&state, output));
     assert(strncmp(capture.text,
-        "ZABILES GO ! ZYSKUJESZ ZA TO 27 KUNSZTU \n",
-        strlen("ZABILES GO ! ZYSKUJESZ ZA TO 27 KUNSZTU \n")
+        "ZABILES GO ! ZYSKUJESZ ZA TO 45 KUNSZTU \n",
+        strlen("ZABILES GO ! ZYSKUJESZ ZA TO 45 KUNSZTU \n")
     ) == 0);
-    assert(state.experience == 27);
+    assert(state.experience == 45);
     assert(game_state_is_valid(&state));
 }
 
@@ -1136,7 +1137,7 @@ static void test_level_advancement(void)
     const char *level_output;
 
     game_initialize(&state);
-    state.experience = 700;
+    state.experience = 200;
     execute(&state, &capture, "N");
 
     level_output = strstr(capture.text,
@@ -1153,7 +1154,7 @@ static void test_level_advancement(void)
         "<<<<<<<<<<<<<<ZYSKALES 12MANY >>>>>>>>>>>>>>>>>\n"
     ) == 0);
     assert(state.level == 2);
-    assert(state.experience == -25);
+    assert(state.experience == 0);
     assert(state.practices == 13);
     assert(state.maximum_energy == 60);
     assert(state.maximum_mana == 112);
@@ -1171,7 +1172,7 @@ static void test_level_twelve_maximum_statistics(void)
 
     game_initialize(&state);
     state.level = 11;
-    state.experience = 757;
+    state.experience = 750;
     execute(&state, &capture, "N");
 
     assert(state.level == 12);
@@ -1210,7 +1211,7 @@ int main(void)
     test_flee_practice_and_threshold_prompt();
     test_successful_automatic_flee();
     test_failed_automatic_flee();
-    test_flee_low_mana_blocked_silently();
+    test_flee_low_mana();
     test_combat_loop_options_and_empty_round();
     test_combat_loop_kick_and_flee_choices();
     test_parry_practice();
@@ -1222,9 +1223,9 @@ int main(void)
     test_cooking_practice_and_automatic_learning();
     test_return_training_and_spell_outcomes();
     test_skill_poster();
-    test_logical_sleep_and_recovered_wake_rolls();
+    test_sleep_fully_restores_resources();
     test_dormant_poster_commands_are_silent();
-    test_victory_kunszt_deductions();
+    test_victory_fixed_kunszt();
     test_level_advancement();
     test_level_twelve_maximum_statistics();
     return 0;

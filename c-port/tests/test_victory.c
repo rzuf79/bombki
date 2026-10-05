@@ -192,13 +192,13 @@ static void test_weak_standard_rewards_are_coins_only(void)
 
     assert(game_resolve_active_opponent_victory(&state, output));
     (void)snprintf(expected, sizeof(expected),
-        "ZABILES GO ! ZYSKUJESZ ZA TO 9 KUNSZTU \n"
+        "ZABILES GO ! ZYSKUJESZ ZA TO 8 KUNSZTU \n"
         "WYCIAGASZ %d MONET Z CIALA\n",
         coins
     );
     assert(strcmp(capture.text, expected) == 0);
     assert(state.coins == coins);
-    assert(state.experience == 9);
+    assert(state.experience == 8);
     assert(state.item_quantities[ITEM_BLOODY_HEART] == 0);
     assert(state.item_quantities[ITEM_DOUGHNUT] == 0);
     assert_victory_state(&state, WORLD_ACTOR_KORNIK);
@@ -294,14 +294,14 @@ static void test_mrowka_drops_paczek(void)
 
     assert(game_resolve_active_opponent_victory(&state, output));
     (void)snprintf(expected, sizeof(expected),
-        "ZABILES GO ! ZYSKUJESZ ZA TO 9 KUNSZTU \n"
+        "ZABILES GO ! ZYSKUJESZ ZA TO 8 KUNSZTU \n"
         "WYCIAGASZ %d MONET Z CIALA\n"
         "WYCIAGASZ PACZEK Z CIALA MROWKI\n",
         coins
     );
     assert(strcmp(capture.text, expected) == 0);
     assert(state.coins == coins);
-    assert(state.experience == 9);
+    assert(state.experience == 8);
     assert(state.item_quantities[ITEM_DOUGHNUT] == 1);
     assert(state.item_quantities[ITEM_BLOODY_HEART] == 0);
     assert_victory_state(&state, WORLD_ACTOR_MROWKA);
@@ -323,7 +323,7 @@ static void test_mrowka_drops_paczek_again_when_carrying(void)
 
     assert(game_resolve_active_opponent_victory(&state, output));
     (void)snprintf(expected, sizeof(expected),
-        "ZABILES GO ! ZYSKUJESZ ZA TO 9 KUNSZTU \n"
+        "ZABILES GO ! ZYSKUJESZ ZA TO 8 KUNSZTU \n"
         "WYCIAGASZ %d MONET Z CIALA\n"
         "WYCIAGASZ PACZEK Z CIALA MROWKI\n",
         coins
@@ -349,14 +349,14 @@ static void test_dog_rewards_stay_in_the_room(void)
 
     assert(game_resolve_active_opponent_victory(&state, output));
     (void)snprintf(expected, sizeof(expected),
-        "ZABILES GO ! ZYSKUJESZ ZA TO 17 KUNSZTU \n"
+        "ZABILES GO ! ZYSKUJESZ ZA TO 20 KUNSZTU \n"
         "WYCIAGASZ %d MONET Z CIALA PSA\n"
         "WYCIAGASZ ZAKRWAWIONE SERCE Z CIALA PSA\n",
         coins
     );
     assert(strcmp(capture.text, expected) == 0);
     assert(state.coins == coins);
-    assert(state.experience == 17);
+    assert(state.experience == 20);
     assert(state.item_quantities[ITEM_BLOODY_HEART] == 0);
     assert(state.world_object_rooms[WORLD_OBJECT_BLOODY_HEART]
         == ROOM_SHOP_STREET);
@@ -378,7 +378,7 @@ static void test_spaniel_speaks_after_victory(void)
 
     assert(game_resolve_active_opponent_victory(&state, output));
     (void)snprintf(expected, sizeof(expected),
-        "ZABILES GO ! ZYSKUJESZ ZA TO 17 KUNSZTU \n"
+        "ZABILES GO ! ZYSKUJESZ ZA TO 20 KUNSZTU \n"
         "WYCIAGASZ %d MONET Z CIALA PSA\n"
         "GDY NAGLE!!!! NIEBIOSA SIE OTWIERAJA\n"
         "A SPANIEL PRZEMAWIA DO CIEBIE LUDZKIM GLOSEM !!!!!\n"
@@ -459,7 +459,7 @@ static void test_cage_rewards_use_original_roll_order(void)
 
     assert(game_resolve_active_opponent_victory(&state, output));
     (void)snprintf(expected, sizeof(expected),
-        "ZABILES GO ! ZYSKUJESZ ZA TO 30 KUNSZTU \n"
+        "ZABILES GO ! ZYSKUJESZ ZA TO 45 KUNSZTU \n"
         "WYCIAGASZ %d MONET Z CIALA POTWORA\n"
         "WYCIAGASZ STARY ZARDZEWIALY MIECZ Z CIALA POTWORA\n"
         "WYCIAGASZ ZWYKLA MALA TARCZA Z CIALA POTWORA\n"
@@ -468,7 +468,7 @@ static void test_cage_rewards_use_original_roll_order(void)
     );
     assert(strcmp(capture.text, expected) == 0);
     assert(state.coins == coins);
-    assert(state.experience == 30);
+    assert(state.experience == 45);
     assert(state.world_object_rooms[WORLD_OBJECT_OLD_SWORD] == ROOM_CAGE_ALL);
     assert(state.world_object_rooms[WORLD_OBJECT_SMALL_SHIELD] == ROOM_CAGE_ALL);
     assert(state.world_object_rooms[WORLD_OBJECT_BLOODY_HEART] == ROOM_CAGE_ALL);
@@ -498,7 +498,7 @@ static void test_named_loot_follows_ordinary_rewards(void)
 
     assert(game_resolve_active_opponent_victory(&state, output));
     (void)snprintf(expected, sizeof(expected),
-        "ZABILES GO ! ZYSKUJESZ ZA TO 44 KUNSZTU \n"
+        "ZABILES GO ! ZYSKUJESZ ZA TO 65 KUNSZTU \n"
         "WYCIAGASZ %d MONET Z CIALA\n"
         "ZYSKUJESZ GARNITUR !!!! Z CIALA WROGA !!!!\n"
         "PRZEDMIOT UNIQE !!! 2.5%% !!! \n",
@@ -506,7 +506,7 @@ static void test_named_loot_follows_ordinary_rewards(void)
     );
     assert(strcmp(capture.text, expected) == 0);
     assert(state.coins == coins);
-    assert(state.experience == 44);
+    assert(state.experience == 65);
     assert(state.item_quantities[ITEM_SPIKED_SUIT] == 1);
     assert_victory_state(&state, WORLD_ACTOR_TRENER);
 }

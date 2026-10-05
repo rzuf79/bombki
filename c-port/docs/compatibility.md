@@ -10,6 +10,44 @@ terminal control, timing, and other implementation details may be replaced with
 simpler portable designs when doing so does not compromise those targets or a
 documented intentional difference.
 
+## User-approved balance pass (2026-10-05)
+
+The user explicitly approved replacing the recovered balance with the following
+portable rules. These rules take precedence over historical values recorded
+below; the original artifacts remain unchanged.
+
+- Next-level requirements and deductions match: 200, 350, 500, 650, then 750
+  kunszt. Experience never becomes negative, including transport-pill penalties;
+  loading an existing save clears negative experience.
+- Victory rewards depend only on enemy profile: insects 8, dogs 20, small
+  animals 30, larger small animals 40, ordinary higher tiers 55/65/75/85/100/125,
+  cave nettle and Quest Master 150, and tutorial cages 25/35/35/35/45.
+  Fight duration, equipment, kick, and parry do not alter victory experience.
+- Bare `SPIJ` or `SLEEP` costs no experience and restores energy and mana to
+  their maxima in one logical turn; the hours argument is removed.
+  Town rest replenishes defeated arena and street opponents without moving
+  living opponents or resurrecting tutorial cages and quest actors.
+- Death costs no experience at level one, then 5% of current experience,
+  rounded down and capped at 50. Quest counters and completed encounters are
+  preserved; ordinary encounters replenish.
+- Food heals the greater of a flat minimum and a rounded-up percentage of
+  maximum energy: heart 15/20%, doughnut 18/30%, cake 24/40%, ration 16/45%,
+  roll 20/50%, bread 26/60%, weka 34/70%, bigos 30/50%. Food messages retain
+  their flavor while showing actual energy restored instead of stale values.
+- During combat, food, beer, and mana bottles consume one round, restore
+  resources before the enemy response, and replace the player's attack.
+  Rejected item use consumes neither an item nor a turn.
+- Escape needs no training or mana and costs no experience. Its chance is
+  `min(90, 60 + flee_skill / 3)` percent. Explicit successful escape precedes
+  the enemy's attack; failed escape gives up the player's attack for that turn.
+  Optional automatic escape still uses the configured energy threshold.
+- Rats, partridges, and rabbits use 20–28 energy, 6–8 strength, and 6–9 dexterity;
+  larger animals retain their recovered profiles.
+- Native saves now use version 19. Versions 1–18 remain readable, with existing
+  small-animal fights migrated to the new profile while preserving the
+  proportion of remaining health. Existing test expectations were updated;
+  no tests were added.
+
 ## Verified artifact facts
 
 - `BOMBKI.EXE` is a 141,264-byte 16-bit MS-DOS MZ executable.
@@ -315,7 +353,7 @@ active-opponent snapshot, level, kick configuration, flee skill, and
 flee-energy threshold, comparison skill, parry skill, cooking skill, return
 skill, logical sleep hours, Duncan's quest byte and black-market unlock, and the
 Quest Master type and kill counter are serialized in native save format version
-17. Versions 1–16 remain readable;
+19. Versions 1–18 remain readable;
 absent newer fields receive their portable defaults. None of the formats
 contains elapsed-time gameplay state.
 
@@ -404,13 +442,11 @@ the retained command handlers. `POMOC` and `HELP` retain the port's command
 guide, and blocked movement or non-combat actions during a fight retain their
 port feedback text.
 
-`SPIJ <liczba godzin>` is a user-approved sleep convenience. One command
-resolves each requested recovered sleep hour, adding ten energy, subtracting 20
-kunszt, and consuming one logical turn per hour. It then wakes automatically,
-uses the two separate `Random(2 * hours)` rolls, applies the greater-than-four
-and greater-than-eight-hour strength bonuses, and clamps energy to its maximum.
-Bare `SPIJ` or `SLEEP` prints the command syntax; `SLEEP <liczba godzin>` is
-also accepted. The DOS delay and keyboard polling are absent.
+`SPIJ` or its `SLEEP` alias fully restores energy and mana in one logical turn
+without costing kunszt. The user approved removing the hours argument,
+per-hour loop, and long-sleep bonuses. Town rest still replenishes ordinary
+encounters. The persisted `sleep_hours` field remains readable and writable
+for save compatibility, but no longer affects gameplay and is cleared on sleep.
 
 Quest Master's easy, medium, and hard quests use their recovered purchase
 prices, monster-kill counters, Liroy bonus, death reset, turn-in items, and

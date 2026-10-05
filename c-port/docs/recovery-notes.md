@@ -63,6 +63,21 @@ repeating broad inspection of the original binaries or the project docs.
 
 ## Current handoff
 
+The user-approved balance pass (2026-10-05) supersedes the recovered balance
+values in the historical milestone notes below. Next-level costs are
+200/350/500/650/750, victory XP is fixed by enemy tier, bare `SPIJ`/`SLEEP`
+fully restores HP and mana in one turn without costing XP, and town rest
+replenishes ordinary encounters. The hours argument is removed; the legacy
+`sleep_hours` save field is retained but ignored by gameplay.
+Death preserves quest progress and costs no XP at level one, then 5% capped
+at 50. Food scales with maximum HP and is usable in combat; escape is always
+available with 60–90% success and no mana/XP cost. Rats, partridges, and rabbits
+have a separate gentler profile. Save version 19 imports versions 1–18,
+clears XP debt, and migrates old small-animal fights. Only existing test
+expectations were updated; the user prohibited adding tests. The complete
+balance values and permitted message updates are recorded at the start of
+`compatibility.md`.
+
 Milestones 1 through 9 are complete. Legacy-save import, multi-OS verification,
 and a seed flag are not part of the remaining game-reconstruction work. Do not
 invent player-facing text or mechanics for unrecovered commands.
@@ -149,10 +164,9 @@ invent player-facing text or mechanics for unrecovered commands.
   growth, portal outcomes, mana costs, and exact output. Native room IDs
   translate the random original `GDZIE` result; unsupported gaps safely use the
   starting room.
-- `SPIJ <liczba godzin>` is timer-free: one command resolves each requested
-  recovered sleep hour and logical turn, then wakes automatically with both
-  original wake rolls and the long-sleep bonuses. Bare `SPIJ` or `SLEEP`
-  prints its syntax, and `SLEEP <liczba godzin>` is accepted as an alias.
+- Bare `SPIJ` or `SLEEP` is timer-free and fully restores HP and mana in one
+  logical turn. The user-approved balance pass removes per-hour sleep, wake
+  rolls, and long-sleep bonuses. The old sleep counter is only a save field.
   Version 14 persists those fields plus Duncan's quest and market unlock;
   version 15 additionally persists the Quest Master type and counter. Version
   16 drops the obsolete command-state flag; version 17 additionally preserves

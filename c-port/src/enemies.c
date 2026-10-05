@@ -4,7 +4,8 @@
  * The shared ranges come from the initial assignments in PRZEDM.TPU's eight
  * named combat procedures. Turbo Pascal Random(N) produces values 0..N-1.
  * The dogs use PRZEDM.TPU WALKAPIES. The five cage monsters use direct
- * assignments in their room handlers.
+ * assignments in their room handlers. Small animals and victory experience
+ * use the user-approved portable balance values.
  */
 static const EnemyProfile profiles[] = {
     {ENEMY_PROFILE_SLABO, "SLABO", {1, 1}, {2, 2}, {1, 1},
@@ -39,7 +40,9 @@ static const EnemyProfile profiles[] = {
     {ENEMY_PROFILE_CAGE_STRONG, "direct room assignment", {20, 20}, {10, 10}, {3, 3},
      {ENEMY_REWARD_CAGE, {0, 14}, {7, 20}, {7, 20}, {6, 20}}},
     {ENEMY_PROFILE_CAGE_ALL, "direct room assignment", {40, 40}, {10, 10}, {11, 11},
-     {ENEMY_REWARD_CAGE, {0, 29}, {10, 20}, {10, 20}, {6, 20}}}
+     {ENEMY_REWARD_CAGE, {0, 29}, {10, 20}, {10, 20}, {6, 20}}},
+    {ENEMY_PROFILE_SMALL_ANIMAL, "balanced small animal", {20, 28}, {6, 8}, {6, 9},
+     {ENEMY_REWARD_STANDARD, {10, 30}, {0, 0}, {0, 0}, {5, 20}}}
 };
 
 static const EnemyProfileId actor_profiles[WORLD_ACTOR_COUNT] = {
@@ -53,10 +56,10 @@ static const EnemyProfileId actor_profiles[WORLD_ACTOR_COUNT] = {
     [WORLD_ACTOR_PAJAK] = ENEMY_PROFILE_SLABO,
 
     [WORLD_ACTOR_DZIK] = ENEMY_PROFILE_MNIEJSLABO,
-    [WORLD_ACTOR_SZCZUR] = ENEMY_PROFILE_MNIEJSLABO,
+    [WORLD_ACTOR_SZCZUR] = ENEMY_PROFILE_SMALL_ANIMAL,
     [WORLD_ACTOR_LIS] = ENEMY_PROFILE_MNIEJSLABO,
-    [WORLD_ACTOR_KUROPATWA] = ENEMY_PROFILE_MNIEJSLABO,
-    [WORLD_ACTOR_ZAJAC] = ENEMY_PROFILE_MNIEJSLABO,
+    [WORLD_ACTOR_KUROPATWA] = ENEMY_PROFILE_SMALL_ANIMAL,
+    [WORLD_ACTOR_ZAJAC] = ENEMY_PROFILE_SMALL_ANIMAL,
     [WORLD_ACTOR_WILCZUR] = ENEMY_PROFILE_MNIEJSLABO,
     [WORLD_ACTOR_ORZEL] = ENEMY_PROFILE_MNIEJSLABO,
     [WORLD_ACTOR_SARNA] = ENEMY_PROFILE_MNIEJSLABO,
@@ -135,6 +138,33 @@ _Static_assert(
     sizeof(profiles) / sizeof(profiles[0]) == ENEMY_PROFILE_COUNT - 1,
     "every valid enemy profile needs a definition"
 );
+
+int enemy_profile_experience(EnemyProfileId id)
+{
+    static const int rewards[ENEMY_PROFILE_COUNT] = {
+        [ENEMY_PROFILE_SLABO] = 8,
+        [ENEMY_PROFILE_SMALL_ANIMAL] = 30,
+        [ENEMY_PROFILE_MNIEJSLABO] = 40,
+        [ENEMY_PROFILE_SREDNIO] = 55,
+        [ENEMY_PROFILE_TRUDNO] = 65,
+        [ENEMY_PROFILE_BTRUDNO] = 75,
+        [ENEMY_PROFILE_VEASY] = 85,
+        [ENEMY_PROFILE_EASY] = 100,
+        [ENEMY_PROFILE_NEASY] = 125,
+        [ENEMY_PROFILE_POKRZYWA] = 150,
+        [ENEMY_PROFILE_QUEST_MASTER] = 150,
+        [ENEMY_PROFILE_DOG] = 20,
+        [ENEMY_PROFILE_CAGE_WEAK] = 25,
+        [ENEMY_PROFILE_CAGE_DEXTEROUS] = 35,
+        [ENEMY_PROFILE_CAGE_RESISTANT] = 35,
+        [ENEMY_PROFILE_CAGE_STRONG] = 35,
+        [ENEMY_PROFILE_CAGE_ALL] = 45
+    };
+
+    return id > ENEMY_PROFILE_INVALID && id < ENEMY_PROFILE_COUNT
+        ? rewards[id] : 0;
+}
+
 _Static_assert(
     sizeof(actor_profiles) / sizeof(actor_profiles[0]) == WORLD_ACTOR_COUNT,
     "every world actor needs an enemy profile slot"

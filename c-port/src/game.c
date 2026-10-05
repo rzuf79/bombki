@@ -24,7 +24,8 @@ typedef struct {
 typedef enum {
     COMBAT_ACTION_BASIC = 0,
     COMBAT_ACTION_KICK,
-    COMBAT_ACTION_FLEE
+    COMBAT_ACTION_FLEE,
+    COMBAT_ACTION_ITEM
 } CombatAction;
 
 static const char *const race_names[RACE_COUNT] = {
@@ -82,7 +83,6 @@ static const int plant_spawn_rooms[] = {
     ROOM_FOREST_WEST
 };
 
-static int recovered_combat_chance(const GameState *state);
 static bool resolve_basic_combat_round(
     GameState *state,
     const char *target,
@@ -224,7 +224,7 @@ bool game_select_opponent(GameState *state, const char *target)
         );
         state->active_opponent_fireballs = profile->fireball_charges;
         state->active_opponent_poison_casts = profile->poison_charges;
-        state->active_opponent_reward = recovered_combat_chance(state);
+        state->active_opponent_reward = enemy_profile_experience(profile->id);
         return true;
     }
 
@@ -481,6 +481,7 @@ bool game_state_is_valid(const GameState *state)
         && state->maximum_mana >= 0
         && state->mana >= 0
         && state->mana <= state->maximum_mana
+        && state->experience >= 0
         && state->level >= 0
         && state->kick_skill >= 0
         && state->flee_skill >= 0
@@ -670,38 +671,67 @@ static int add_wrapped_long(int value, int amount)
     return (int)(INT32_MIN + (int64_t)(result - UINT32_C(0x80000000)));
 }
 
+static bool replenish_ordinary_encounters(GameState *state)
+{
+    WorldActorId actor;
+    bool replenished = false;
+
+    for (actor = WORLD_ACTOR_KORNIK; actor <= WORLD_ACTOR_ZEBRAK; ++actor) {
+        if (state->world_actor_rooms[actor] != BOMBKI_ROOM_NOWHERE) {
+            continue;
+        }
+        if (actor < WORLD_ACTOR_JAMNIK) {
+            state->world_actor_rooms[actor] = ROOM_ARENA_33
+                + (int)random_below(state, 25);
+        } else {
+            place_actor(state, actor, street_spawn_rooms,
+                sizeof(street_spawn_rooms) / sizeof(street_spawn_rooms[0]));
+        }
+        replenished = true;
+    }
+    return replenished;
+}
+
+static bool is_town_room(int room)
+{
+    switch (room) {
+    case ROOM_CITY_THRESHOLD:
+    case ROOM_SHOP_STREET:
+    case ROOM_SHOP_STREET_NORTH:
+    case ROOM_BAKERY:
+    case ROOM_ARMORY:
+    case ROOM_GENERAL_STORE:
+    case ROOM_MAGIC_STORE:
+    case ROOM_DARK_STREET:
+    case ROOM_BAR:
+    case ROOM_LONG_STREET:
+    case ROOM_LONG_STREET_WEST:
+        return true;
+    default:
+        return false;
+    }
+}
+
 static int64_t level_threshold(int level)
 {
-    if (level == 1) {
-        return 700;
+    if (level <= 1) {
+        return 200;
     }
     if (level == 2) {
-        return 725;
+        return 350;
     }
     if (level == 3) {
-        return 730;
+        return 500;
     }
-    if (level <= 8) {
-        return 735 + (int64_t)level;
+    if (level == 4) {
+        return 650;
     }
-    return 735 + 2 * (int64_t)level;
+    return 750;
 }
 
 static int64_t level_cost(int level)
 {
-    if (level == 1) {
-        return 725;
-    }
-    if (level == 2) {
-        return 730;
-    }
-    if (level == 3) {
-        return 735;
-    }
-    if (level <= 8) {
-        return 735 + (int64_t)level;
-    }
-    return 735 + 2 * (int64_t)level;
+    return level_threshold(level);
 }
 
 static void improve_level_twelve_maxima(GameState *state, GameOutput output)
@@ -1204,18 +1234,27 @@ static ItemActionResult drop_item(
 
 static void restore_energy(GameState *state, int amount)
 {
-    state->energy += amount;
-    if (state->energy > state->maximum_energy) {
-        state->energy = state->maximum_energy;
-    }
+    int64_t energy = (int64_t)state->energy + amount;
+
+    state->energy = energy > state->maximum_energy
+        ? state->maximum_energy : (int)energy;
 }
 
 static void restore_mana(GameState *state, int amount)
 {
-    state->mana += amount;
-    if (state->mana > state->maximum_mana) {
-        state->mana = state->maximum_mana;
-    }
+    int64_t mana = (int64_t)state->mana + amount;
+
+    state->mana = mana > state->maximum_mana
+        ? state->maximum_mana : (int)mana;
+}
+
+static int restore_food_energy(GameState *state, int minimum, int percent)
+{
+    int energy = state->energy;
+    int amount = (int)(((int64_t)state->maximum_energy * percent + 99) / 100);
+
+    restore_energy(state, amount > minimum ? amount : minimum);
+    return state->energy - energy;
 }
 
 static void consume_item(GameState *state, ItemId item)
@@ -1231,6 +1270,7 @@ static ItemActionResult use_item(
 {
     const ItemDefinition *definition = item_find(argument);
     ItemId item;
+    int healed;
 
     if (definition == NULL) {
         return ITEM_ACTION_FAILED;
@@ -1260,8 +1300,8 @@ static ItemActionResult use_item(
             return ITEM_ACTION_FAILED;
         }
         consume_item(state, item);
-        emit(output, "ZJADASZ ZAKRWAWIONE SERCE I ODZYSKUJESZ 5% ENERGII\n");
-        restore_energy(state, 5);
+        healed = restore_food_energy(state, 15, 20);
+        emit_formatted(output, "ZJADASZ ZAKRWAWIONE SERCE I ODZYSKUJESZ %d ENERGII\n", healed);
         return ITEM_ACTION_SUCCEEDED;
     case ITEM_SCHOOL_DIPLOMA:
         if (state->item_quantities[item] == 0) {
@@ -1292,58 +1332,57 @@ static ItemActionResult use_item(
             return ITEM_ACTION_FAILED;
         }
         consume_item(state, item);
-        emit(output, "ZJADASZ PACZKA I TYJESZ 1 KILO (DOSTAJESZ 8%ENERGII)\n");
-        restore_energy(state, 8);
+        healed = restore_food_energy(state, 18, 30);
+        emit_formatted(output, "ZJADASZ PACZKA I TYJESZ 1 KILO (DOSTAJESZ %d ENERGII)\n", healed);
         return ITEM_ACTION_SUCCEEDED;
     case ITEM_CAKE:
         if (state->item_quantities[item] == 0) {
             return ITEM_ACTION_FAILED;
         }
         consume_item(state, item);
-        emit(output, "ZJADASZ CIASTKO I TYJESZ 2 KILO (DOSTAJESZ 12% ENERGII)\n");
-        restore_energy(state, 12);
+        healed = restore_food_energy(state, 24, 40);
+        emit_formatted(output, "ZJADASZ CIASTKO I TYJESZ 2 KILO (DOSTAJESZ %d ENERGII)\n", healed);
         return ITEM_ACTION_SUCCEEDED;
     case ITEM_DRY_RATION:
         if (state->item_quantities[item] == 0) {
             return ITEM_ACTION_FAILED;
         }
         consume_item(state, item);
-        emit(output,
-            "ZJADASZ SUCHA RACJE I CHUDNIESZ 3 KILO (DOSTAJESZ 16% ENERGII)\n"
-        );
-        restore_energy(state, 16);
+        healed = restore_food_energy(state, 16, 45);
+        emit_formatted(output,
+            "ZJADASZ SUCHA RACJE I CHUDNIESZ 3 KILO (DOSTAJESZ %d ENERGII)\n", healed);
         return ITEM_ACTION_SUCCEEDED;
     case ITEM_ROLL:
         if (state->item_quantities[item] == 0) {
             return ITEM_ACTION_FAILED;
         }
         consume_item(state, item);
-        emit(output, "ZJADASZ BULKE I STWIERDZASZ ZE ZYSKALES 20%\n");
-        restore_energy(state, 20);
+        healed = restore_food_energy(state, 20, 50);
+        emit_formatted(output, "ZJADASZ BULKE I STWIERDZASZ ZE ZYSKALES %d ENERGII\n", healed);
         return ITEM_ACTION_SUCCEEDED;
     case ITEM_BREAD:
         if (state->item_quantities[item] == 0) {
             return ITEM_ACTION_FAILED;
         }
         consume_item(state, item);
-        emit(output, "ZJADASZ DUZY CIEPLY CHLEB I JESTES PELEN (ZYSKUJESZ 26%)\n");
-        restore_energy(state, 26);
+        healed = restore_food_energy(state, 26, 60);
+        emit_formatted(output, "ZJADASZ DUZY CIEPLY CHLEB I JESTES PELEN (ZYSKUJESZ %d ENERGII)\n", healed);
         return ITEM_ACTION_SUCCEEDED;
     case ITEM_WEKA:
         if (state->item_quantities[item] == 0) {
             return ITEM_ACTION_FAILED;
         }
         consume_item(state, item);
-        emit(output, "ZJADASZ DLUGASNA WEKE I TYJAC 15 KILO ZYSKUJESZ 34%\n");
-        restore_energy(state, 34);
+        healed = restore_food_energy(state, 34, 70);
+        emit_formatted(output, "ZJADASZ DLUGASNA WEKE I TYJAC 15 KILO ZYSKUJESZ %d ENERGII\n", healed);
         return ITEM_ACTION_SUCCEEDED;
     case ITEM_BIGOS:
         if (state->item_quantities[item] == 0) {
             return ITEM_ACTION_FAILED;
         }
         consume_item(state, item);
-        emit(output, "ZJADASZ BIGOS Z WROGA I ODZYSKUJESZ 20% ENERGI\n");
-        restore_energy(state, 20);
+        healed = restore_food_energy(state, 30, 50);
+        emit_formatted(output, "ZJADASZ BIGOS Z WROGA I ODZYSKUJESZ %d ENERGI\n", healed);
         return ITEM_ACTION_SUCCEEDED;
     case ITEM_BEER:
         if (state->item_quantities[item] == 0) {
@@ -1407,7 +1446,7 @@ static ItemActionResult use_item(
             );
             --state->maximum_energy;
             state->energy = 1;
-            state->experience -= 50;
+            state->experience = state->experience > 50 ? state->experience - 50 : 0;
         } else if (state->wisdom < 16) {
             emit(output,
                 "MASZ PEWNE OBYCIE W MAGICZNYCH PRZEDMIOTACH ALE MIMO WSZYSTKO\n"
@@ -1417,7 +1456,7 @@ static ItemActionResult use_item(
             if (state->energy < 1) {
                 state->energy = 1;
             }
-            state->experience -= 30;
+            state->experience = state->experience > 30 ? state->experience - 30 : 0;
         } else {
             emit(output,
                 "ZNASZ SIE NA TEGO TYPU PRZEDMIOTACH , WYSZEDLES Z TEGO BEZ SZWANKU\n"
@@ -2024,32 +2063,8 @@ static bool is_stage_musician(WorldActorId actor)
 
 static void resolve_victory_kunszt(GameState *state, GameOutput output)
 {
-    int reward = state->active_opponent_reward;
-
-    if (state->active_opponent_maximum_energy > 75) {
-        reward -= 2;
-    }
-    if (state->active_opponent_maximum_energy > 115) {
-        reward -= 3;
-    }
-    if (state->parry_skill > 50) {
-        reward -= 2;
-    }
-    if (state->parry_skill > 75) {
-        reward -= 2;
-    }
-    if (state->parry_skill > 95) {
-        --reward;
-    }
-    if (state->kick_skill > 50) {
-        reward -= 5;
-    }
-    if (state->kick_skill > 95) {
-        reward -= 2;
-    }
-    if (reward < 0) {
-        reward = 0;
-    }
+    int reward = enemy_profile_experience(enemy_profile_for_world_actor(
+        (WorldActorId)state->active_opponent_actor));
 
     emit_formatted(output,
         "ZABILES GO ! ZYSKUJESZ ZA TO %d KUNSZTU \n",
@@ -2209,7 +2224,8 @@ void game_recover_active_opponent_reward(GameState *state)
     if (state == NULL || state->active_opponent_actor == BOMBKI_NO_ACTOR) {
         return;
     }
-    state->active_opponent_reward = recovered_combat_chance(state);
+    state->active_opponent_reward = enemy_profile_experience(
+        enemy_profile_for_world_actor((WorldActorId)state->active_opponent_actor));
 }
 
 static size_t recovered_dodge_roll(
@@ -2259,140 +2275,21 @@ static size_t recovered_dodge_roll(
     return roll;
 }
 
-static int recovered_combat_chance(const GameState *state)
+static int flee_success_chance(const GameState *state)
 {
-    int chance = 0;
-    int64_t difference;
-
-    difference = (int64_t)state->maximum_energy
-        - state->active_opponent_maximum_energy;
-    if (difference > 0) {
-        if (difference < 4) {
-            chance += 10;
-        }
-        if (difference > 2 && difference < 7) {
-            chance += 9;
-        }
-        if (difference > 6 && difference < 10) {
-            chance += 8;
-        }
-        if (difference > 9 && difference < 13) {
-            chance += 7;
-        }
-        if (difference > 12 && difference < 16) {
-            chance += 6;
-        }
-        if (difference > 15 && difference < 19) {
-            chance += 5;
-        }
-        if (difference > 18 && difference < 22) {
-            chance += 4;
-        }
-        if (difference > 21 && difference < 25) {
-            chance += 3;
-        }
-        if (difference > 24 && difference < 28) {
-            chance += 2;
-        }
-        if (difference > 27 && difference < 31) {
-            chance += 1;
-        }
-    } else if (difference < 0) {
-        difference = -difference;
-        if (difference == 2) {
-            chance += 12;
-        }
-        if (difference == 4) {
-            chance += 13;
-        }
-        if (difference == 6) {
-            chance += 14;
-        }
-        if (difference == 8) {
-            chance += 15;
-        }
-        if (difference == 10) {
-            chance += 16;
-        }
-        if (difference == 12) {
-            chance += 17;
-        }
-        if (difference == 14) {
-            chance += 18;
-        }
-        if (difference == 16) {
-            chance += 19;
-        }
-        if (difference == 18) {
-            chance += 20;
-        }
-        if (difference > 20) {
-            chance += 21;
-        }
-    } else {
-        chance += 11;
-    }
-
-    difference = (int64_t)state->strength - state->active_opponent_strength;
-    if (difference > 0) {
-        if (difference >= 1 && difference <= 8) {
-            chance += 11 - (int)difference;
-        } else if (difference == 9) {
-            chance += 2;
-        } else if (difference == 10) {
-            chance += 1;
-        }
-    } else if (difference < 0) {
-        difference = -difference;
-        if (difference >= 1 && difference <= 9) {
-            chance += 11 + (int)difference;
-        } else if (difference > 9) {
-            chance += 21;
-        }
-    } else {
-        chance += 11;
-    }
-
-    difference = (int64_t)state->dexterity
-        - state->active_opponent_dexterity;
-    if (difference > 0) {
-        if (difference <= 20) {
-            chance += 11 - (int)((difference + 1) / 2);
-        }
-    } else if (difference < 0) {
-        difference = -difference;
-        if (difference <= 20) {
-            chance += 11 + (int)((difference + 1) / 2);
-        }
-    } else {
-        chance += 11;
-    }
-
-    return chance;
+    return state->flee_skill >= 90 ? 90 : 60 + state->flee_skill / 3;
 }
-
-static void spend_mana(GameState *state, int amount);
 
 static bool try_flee(GameState *state, bool forced, GameOutput output)
 {
-    if (state->flee_skill <= 0) {
+    if (state->energy <= 0 || state->active_opponent_energy <= 0
+        || (!forced && (state->flee_energy_threshold <= 0
+            || state->energy >= state->flee_energy_threshold))) {
         return false;
     }
 
-    spend_mana(state, (int)random_below(state, 2) + 2);
-    if ((!forced && state->energy >= state->flee_energy_threshold)
-        || state->mana <= 14) {
-        return false;
-    }
-    spend_mana(state, 15);
-
-    if ((int)random_below(state, 100) <= state->flee_skill) {
-        emit(output, "WSTYD !!! UCIEKLES Z POLA BITWY TRACISZ 20 KUNSZTU\n");
-        if (state->experience < INT_MIN + 20) {
-            state->experience = INT_MIN;
-        } else {
-            state->experience -= 20;
-        }
+    if ((int)random_below(state, 100) < flee_success_chance(state)) {
+        emit(output, "WSTYD !!! UCIEKLES Z POLA BITWY\n");
         game_clear_active_opponent(state);
         return true;
     }
@@ -2612,7 +2509,6 @@ static int apply_automatic_parry(
             "*************** UCZYSZ SIE ZDOLNOSCI PAROWANIE !!!!! ***************\n"
         );
         ++state->parry_skill;
-        add_clamped(&state->active_opponent_reward, 5);
     }
     return damage;
 }
@@ -2654,7 +2550,11 @@ static void apply_enemy_magic(GameState *state, GameOutput output)
 
 static void resolve_player_death(GameState *state, GameOutput output)
 {
-    int64_t adjusted_experience;
+    int experience_loss = state->level <= 1 ? 0 : state->experience / 20;
+
+    if (experience_loss > 50) {
+        experience_loss = 50;
+    }
 
     emit(output,
         "AJAJAJAJ TWOJA GLOWA NAWALA JAK TESCIOWA!!!\n"
@@ -2666,24 +2566,38 @@ static void resolve_player_death(GameState *state, GameOutput output)
     );
 
     state->energy = state->maximum_energy;
-    adjusted_experience = (int64_t)state->experience
-        - 250
-        + (int)random_below(state, 50)
-        - 5 * (int64_t)state->level;
-    if (adjusted_experience < INT_MIN) {
-        state->experience = INT_MIN;
-    } else if (adjusted_experience > INT_MAX) {
-        state->experience = INT_MAX;
-    } else {
-        state->experience = (int)adjusted_experience;
-    }
-    if (state->quest_type == 1) {
-        state->quest_progress = 50;
-    } else if (state->quest_type > 1) {
-        state->quest_progress = 200;
-    }
+    state->experience -= experience_loss;
+    emit_formatted(output, "TRACISZ %d KUNSZTU\n", experience_loss);
     state->room_id = ROOM_CITY_THRESHOLD;
-    game_regenerate_encounters(state);
+    game_clear_active_opponent(state);
+    (void)replenish_ordinary_encounters(state);
+}
+
+static void resolve_escaped_combat(
+    GameState *state,
+    WorldActorId opponent,
+    GameOutput output
+)
+{
+    resolve_fled_dog_post_fight(state, opponent, output);
+    if (is_stage_musician(opponent)) {
+        state->world_actor_rooms[opponent] = BOMBKI_ROOM_NOWHERE;
+        (void)game_resolve_enemy_loot(state, (GameLootSource)(
+            opponent == WORLD_ACTOR_GITARZYSTA ? GAME_LOOT_GITARZYSTA
+            : opponent == WORLD_ACTOR_PERKUSISTA ? GAME_LOOT_PERKUSISTA
+            : GAME_LOOT_ORGANISTA
+        ), output);
+    } else if (is_plant(opponent)
+        && plant_clears_after_fight(opponent, state->energy > 0)) {
+        state->world_actor_rooms[opponent] = BOMBKI_ROOM_NOWHERE;
+    }
+    resolve_unconditional_post_fight(state, opponent, output);
+    if (opponent == WORLD_ACTOR_TRAWA) {
+        state->grass_fight_waves = 0;
+    }
+    if (opponent == WORLD_ACTOR_STARUCH) {
+        resolve_staruch_consequence(state, output);
+    }
 }
 
 static bool resolve_basic_combat_round(
@@ -2717,6 +2631,11 @@ static bool resolve_basic_combat_round(
         state->energy
     );
 
+    if (action == COMBAT_ACTION_FLEE && try_flee(state, true, output)) {
+        resolve_escaped_combat(state, opponent, output);
+        return true;
+    }
+
     difference = state->dexterity - state->active_opponent_dexterity;
     if (difference > 0) {
         player_dodged = recovered_dodge_roll(state, difference, true) < 10;
@@ -2726,13 +2645,15 @@ static bool resolve_basic_combat_round(
             );
         }
         opponent_dodged = recovered_dodge_roll(state, difference, false) < 10;
-        if (opponent_dodged) {
+        if (opponent_dodged && action != COMBAT_ACTION_ITEM
+            && action != COMBAT_ACTION_FLEE) {
             emit(output, "PRZECIWNIK UNIKA TWOJEGO LAMERSKIEGO ATAKU\n");
         }
     } else if (difference < 0) {
         difference = -difference;
         opponent_dodged = recovered_dodge_roll(state, difference, true) < 10;
-        if (opponent_dodged) {
+        if (opponent_dodged && action != COMBAT_ACTION_ITEM
+            && action != COMBAT_ACTION_FLEE) {
             emit(output, "PRZECIWNIK Z GRACJA UNIKA TWEGO CIOSU\n");
         }
         player_dodged = recovered_dodge_roll(state, difference, false) < 10;
@@ -2753,7 +2674,6 @@ static bool resolve_basic_combat_round(
         damage = apply_automatic_parry(state, damage, output);
         state->energy = damage >= state->energy ? 0 : state->energy - damage;
         apply_enemy_magic(state, output);
-        add_clamped(&state->active_opponent_reward, 1);
     }
 
     if (action == COMBAT_ACTION_BASIC && !opponent_dodged) {
@@ -2780,26 +2700,9 @@ static bool resolve_basic_combat_round(
     } else if (action == COMBAT_ACTION_BASIC) {
         try_kick(state, false, output);
     }
-    if (try_flee(state, action == COMBAT_ACTION_FLEE, output)) {
-        resolve_fled_dog_post_fight(state, opponent, output);
-        if (is_stage_musician(opponent)) {
-            state->world_actor_rooms[opponent] = BOMBKI_ROOM_NOWHERE;
-            (void)game_resolve_enemy_loot(state, (GameLootSource)(
-                opponent == WORLD_ACTOR_GITARZYSTA ? GAME_LOOT_GITARZYSTA
-                : opponent == WORLD_ACTOR_PERKUSISTA ? GAME_LOOT_PERKUSISTA
-                : GAME_LOOT_ORGANISTA
-            ), output);
-        } else if (is_plant(opponent)
-            && plant_clears_after_fight(opponent, state->energy > 0)) {
-            state->world_actor_rooms[opponent] = BOMBKI_ROOM_NOWHERE;
-        }
-        resolve_unconditional_post_fight(state, opponent, output);
-        if (opponent == WORLD_ACTOR_TRAWA) {
-            state->grass_fight_waves = 0;
-        }
-        if (opponent == WORLD_ACTOR_STARUCH) {
-            resolve_staruch_consequence(state, output);
-        }
+    if ((action == COMBAT_ACTION_BASIC || action == COMBAT_ACTION_KICK)
+        && try_flee(state, false, output)) {
+        resolve_escaped_combat(state, opponent, output);
         return true;
     }
     (void)game_resolve_active_opponent_victory(state, output);
@@ -2849,7 +2752,7 @@ static bool practice_fleeing(GameState *state, GameOutput output)
     --state->practices;
     emit_formatted(output,
         "CWICZYSZ UCIEKANIE - PRAWDOPODOBIENSTWO JEST TERAZ %d%% MASZ %d PRAKTYK\n",
-        state->flee_skill,
+        flee_success_chance(state),
         state->practices
     );
     return true;
@@ -3072,9 +2975,6 @@ static void describe_abilities(const GameState *state, GameOutput output)
     bool kick_available = state->kick_skill > 0
         || (state->wisdom > 10 && state->strength > 11
             && state->practices > 0);
-    bool flee_available = state->flee_skill > 0
-        || (state->wisdom > 10 && state->dexterity > 10
-            && state->practices > 0 && state->flee_skill < 85);
     bool parry_available = state->parry_skill > 0
         || (state->wisdom > 15 && state->dexterity > 11
             && state->practices > 0 && state->parry_skill < 90);
@@ -3093,10 +2993,8 @@ static void describe_abilities(const GameState *state, GameOutput output)
         emit_formatted(output, "KOPANIE       - %d%% (CWICZ KOPAC)\n",
             state->kick_skill);
     }
-    if (flee_available) {
-        emit_formatted(output, "UCIEKANIE     - %d%% (CWICZ UCIEKAC)\n",
-            state->flee_skill);
-    }
+    emit_formatted(output, "UCIEKANIE     - %d%% (CWICZ UCIEKAC)\n",
+        flee_success_chance(state));
     if (parry_available) {
         emit_formatted(output, "PAROWANIE     - %d%% (CWICZ PAROWANIE)\n",
             state->parry_skill);
@@ -3118,11 +3016,6 @@ static void describe_abilities(const GameState *state, GameOutput output)
     if (!kick_available) {
         emit(output,
             "KOPANIE       - WYMAGA SILY 12, MADROSCI 11 I 1 PRAKTYKI\n"
-        );
-    }
-    if (!flee_available) {
-        emit(output,
-            "UCIEKANIE     - WYMAGA ZRECNOSCI 11, MADROSCI 11 I 1 PRAKTYKI\n"
         );
     }
     if (!parry_available) {
@@ -3147,108 +3040,17 @@ static void describe_abilities(const GameState *state, GameOutput output)
     }
 }
 
-static void continue_sleep(GameState *state, GameOutput output)
+static void sleep_player(GameState *state, GameOutput output)
 {
-    if (state->sleep_hours < INT_MAX) {
-        ++state->sleep_hours;
-    }
-    emit_formatted(output, "SPISZ JUZ %d GODZIN\n", state->sleep_hours);
-    add_clamped(&state->experience, -20);
-    add_clamped(&state->energy, 10);
     advance_turn(state, output);
-}
-
-static void wake_from_sleep(GameState *state, GameOutput output);
-
-static bool parse_sleep_hours(const char *argument, int *hours)
-{
-    int value = 0;
-    size_t index;
-
-    if (argument[0] == '\0') {
-        return false;
-    }
-    for (index = 0; argument[index] != '\0'; ++index) {
-        int digit;
-
-        if (!isdigit((unsigned char)argument[index])) {
-            return false;
-        }
-        digit = argument[index] - '0';
-        if (value > (INT_MAX / 2 - digit) / 10) {
-            return false;
-        }
-        value = 10 * value + digit;
-    }
-    if (value == 0) {
-        return false;
-    }
-    *hours = value;
-    return true;
-}
-
-static void sleep_for_hours(
-    GameState *state,
-    const char *argument,
-    GameOutput output
-)
-{
-    int hours;
-    int hour;
-
-    if (!parse_sleep_hours(argument, &hours)) {
-        emit(output,
-            "JAK CHCESZ SPAC TO NAPISZ SPIJ [LICZBA GODZIN] , BO NIE BEDE CIE BUDZIC CO CHWILE\n"
-        );
-        return;
-    }
-    for (hour = 0; hour < hours; ++hour) {
-        continue_sleep(state, output);
-    }
-    wake_from_sleep(state, output);
-}
-
-static void wake_from_sleep(GameState *state, GameOutput output)
-{
-    int hours = state->sleep_hours;
-    size_t random_limit;
-    int64_t displayed_loss;
-
-    if (hours <= 0) {
-        return;
-    }
-
-    random_limit = (size_t)hours * 2;
-    displayed_loss = 20 * (int64_t)hours
-        - (int64_t)random_below(state, random_limit);
-    emit_formatted(output,
-        "PO OBUDZENIU STWIERDZILES ZE ZYSKALES %lld ENERGI I STRACILES %lld KUNSZTU\n",
-        (long long)(10 * (int64_t)hours),
-        (long long)displayed_loss
-    );
-    add_clamped(
-        &state->experience,
-        (int64_t)random_below(state, random_limit)
-    );
-
-    if (hours > 4) {
-        emit_formatted(output,
-            "DLUGI SEN DODATKOWO POZWOLIL CI ODPOCZAC : ZYSKALES %dENERGI\n",
-            state->wisdom
-        );
-        add_clamped(&state->energy, state->wisdom);
-    }
-    if (hours > 8) {
-        emit_formatted(output,
-            "PELNOWARTOSCIOWY SEN SPOWODOWAL SUPER ZYSK : %lldENERGI\n",
-            (long long)(2 * (int64_t)state->wisdom)
-        );
-        add_clamped(&state->energy, 2 * (int64_t)state->wisdom);
-    }
-    if (state->energy > state->maximum_energy) {
-        state->energy = state->maximum_energy;
-    }
+    state->energy = state->maximum_energy;
+    state->mana = state->maximum_mana;
     state->sleep_hours = 0;
+    emit(output,
+        "PO OBUDZENIU STWIERDZILES ZE MASZ PELNA ENERGIE I MANE\n");
+    if (is_town_room(state->room_id) && replenish_ordinary_encounters(state)) {
+        emit(output, "POTWORY SIE ODREGENEROWALY\n");
+    }
 }
 
 static bool train_attribute(GameState *state, const char *attribute,
@@ -4188,9 +3990,7 @@ void game_describe_combat_options(const GameState *state, GameOutput output)
     if (state->kick_skill > 0 && state->mana > 0) {
         emit(output, " | KOP");
     }
-    if (state->flee_skill > 0) {
-        emit(output, " | ZWIEJ");
-    }
+    emit(output, " | ZWIEJ | UZYJ <PRZEDMIOT>");
     emit(output, "\n");
 }
 
@@ -4198,10 +3998,6 @@ GameAction game_execute(GameState *state, const Command *command, GameOutput out
 {
     if (state == NULL || command == NULL) {
         return GAME_ACTION_NONE;
-    }
-
-    if (state->sleep_hours > 0) {
-        wake_from_sleep(state, output);
     }
 
     if (game_combat_is_active(state)) {
@@ -4220,11 +4016,24 @@ GameAction game_execute(GameState *state, const Command *command, GameOutput out
             }
             break;
         case COMMAND_FLEE:
-            if (state->flee_skill > 0) {
-                combat_action = COMBAT_ACTION_FLEE;
+            combat_action = COMBAT_ACTION_FLEE;
+            resolve_round = true;
+            break;
+        case COMMAND_USE: {
+            const ItemDefinition *item = item_find(command->argument);
+
+            if (item != NULL && (is_protected_food(item->id)
+                    || item->id == ITEM_BEER
+                    || item->id == ITEM_SMALL_MANA_BOTTLE)
+                && use_item(state, command->argument, output)
+                    == ITEM_ACTION_SUCCEEDED) {
+                combat_action = COMBAT_ACTION_ITEM;
                 resolve_round = true;
+            } else {
+                emit(output, "NIE MOZESZ TERAZ UZYC TEGO PRZEDMIOTU!\n");
             }
             break;
+        }
         case COMMAND_STATUS:
             describe_status(state, output);
             break;
@@ -4383,11 +4192,8 @@ GameAction game_execute(GameState *state, const Command *command, GameOutput out
         }
         break;
     case COMMAND_FLEE:
-        if (state->flee_skill > 0) {
-            emit(output, "PONIZEJ ILU ENERGII CHCESZ UCIEKAC?\n");
-            return GAME_ACTION_FLEE_THRESHOLD;
-        }
-        break;
+        emit(output, "PONIZEJ ILU ENERGII CHCESZ UCIEKAC?\n");
+        return GAME_ACTION_FLEE_THRESHOLD;
     case COMMAND_KICK:
         if (state->kick_skill > 0) {
             emit(output,
@@ -4413,7 +4219,7 @@ GameAction game_execute(GameState *state, const Command *command, GameOutput out
         describe_abilities(state, output);
         break;
     case COMMAND_SLEEP:
-        sleep_for_hours(state, command->argument, output);
+        sleep_player(state, output);
         break;
     case COMMAND_SECRET_LIST:
         list_duncan_market(state, output);
@@ -4440,7 +4246,7 @@ GameAction game_execute(GameState *state, const Command *command, GameOutput out
             "PATRZ, EXIT, POLNOC, POLUDNIE, WSCHOD, ZACHOD, GORA, DOL\n"
             "N, S, W, E, U, D, JA, KTO (NA ARENIE), BIERZ, ODRZUC, UZYJ, ODLOZ, ZABIJ\n"
             "ROZMAWIAJ, KUP, SPRZEDAJ, LISTA, CWICZ, TRENUJ, POROWNAJ, KOP, ZWIEJ\n"
-            "POWROT, ZDOLNOSCI, SPIJ <GODZINY>, PAMIETAJ, WLACZ POSTAC, KONIEC.\n"
+            "POWROT, ZDOLNOSCI, SPIJ, PAMIETAJ, WLACZ POSTAC, KONIEC.\n"
             "RESZTE ODKRYJ SAM !!\n");
         break;
     case COMMAND_QUIT:
