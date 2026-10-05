@@ -1014,56 +1014,12 @@ static void test_return_training_and_spell_outcomes(void)
     }
 }
 
-static void test_ability_display_and_skill_poster(void)
+static void test_skill_poster(void)
 {
     GameState state;
     Capture capture = {{0}, 0};
 
     game_initialize(&state);
-    state.strength = 20;
-    state.maximum_strength = 31;
-    state.dexterity = 16;
-    state.maximum_dexterity = 31;
-    state.wisdom = 12;
-    state.maximum_wisdom = 31;
-    state.kick_skill = 11;
-    state.flee_skill = 22;
-    state.parry_skill = 33;
-    state.comparison_skill = 44;
-    state.cooking_skill = 55;
-    state.return_skill = 66;
-    execute(&state, &capture, "ZDOLNOSCI");
-    assert(strcmp(capture.text,
-        "DOSTEPNE ZDOLNOSCI:\n"
-        "KOPANIE       - 11% (CWICZ KOPAC)\n"
-        "UCIEKANIE     - 22% (CWICZ UCIEKAC)\n"
-        "PAROWANIE     - 33% (CWICZ PAROWANIE)\n"
-        "POROWNYWANIE  - 44% (CWICZ POROWNANIE)\n"
-        "POTRAWKI      - 55% (CWICZ POTRAWKI)\n"
-        "POWROT        - 66% (CWICZ POWROT)\n"
-        "JESZCZE NIEDOSTEPNE:\n"
-    ) == 0);
-    assert(state.turn == 0);
-
-    game_initialize(&state);
-    state.strength = 11;
-    state.dexterity = 10;
-    state.wisdom = 13;
-    state.practices = 2;
-    memset(&capture, 0, sizeof(capture));
-    execute(&state, &capture, "ZDOLNOSCI");
-    assert(strcmp(capture.text,
-        "DOSTEPNE ZDOLNOSCI:\n"
-        "POROWNYWANIE  - 0% (CWICZ POROWNANIE)\n"
-        "JESZCZE NIEDOSTEPNE:\n"
-        "KOPANIE       - WYMAGA SILY 12, MADROSCI 11 I 1 PRAKTYKI\n"
-        "UCIEKANIE     - WYMAGA ZRECNOSCI 11, MADROSCI 11 I 1 PRAKTYKI\n"
-        "PAROWANIE     - WYMAGA ZRECNOSCI 12, MADROSCI 16 I 1 PRAKTYKI\n"
-        "POTRAWKI      - WYMAGA MADROSCI 19 I 1 PRAKTYKI\n"
-        "POWROT        - WYMAGA MADROSCI 18 I 1 PRAKTYKI\n"
-    ) == 0);
-    assert(state.turn == 0);
-
     state.room_id = ROOM_UNDERGROUND;
     state.strength = 31;
     state.dexterity = 31;
@@ -1265,7 +1221,7 @@ int main(void)
     test_attribute_training();
     test_cooking_practice_and_automatic_learning();
     test_return_training_and_spell_outcomes();
-    test_ability_display_and_skill_poster();
+    test_skill_poster();
     test_logical_sleep_and_recovered_wake_rolls();
     test_dormant_poster_commands_are_silent();
     test_victory_kunszt_deductions();

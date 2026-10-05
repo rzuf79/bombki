@@ -375,14 +375,14 @@ recovered combined energy/strength/dexterity score, costs 20 kunszt, leaves the
 enemy in its room, and closes the active fight. Failed attempts retain the
 fight. Neither path has a clock or background activity.
 
-`CWICZ PAROWANIE` uses the recovered strength, dexterity, practice, and
+`CWICZ PAROWANIE` uses the recovered wisdom, dexterity, practice, and
 90-point gates. During an enemy hit, automatic parrying runs after the small
 shield. Its inclusive `Random(140) <= PAR` test reduces remaining damage to
 zero below three points, by two below ten points, or by three otherwise. A
 successful zero roll can raise the skill and award five kunszt. The exact
 leading spaces and wording of its output are retained.
 
-`CWICZ POWROT` uses the recovered strength, practice, and 90-point gates.
+`CWICZ POWROT` uses the recovered wisdom, practice, and 90-point gates.
 Direct `POWROT` uses the inclusive skill check and the original three portal
 outcomes: city for 15 mana, failure for five mana, or a random original room
 for ten mana. Mana is clamped at zero to keep portable state valid. Original
