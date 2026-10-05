@@ -212,10 +212,12 @@ wording. Commands advertised there but absent from every executable command
 handler, state block, and combat branch remain silent no-ops instead of gaining
 invented mechanics.
 
-`SPIJ` retains the recovered per-hour healing, kunszt loss, two independent
-wake rolls, long-sleep bonuses, maximum-energy clamp, and exact output. Each
-explicit `SPIJ` is one logical hour; any other input wakes the player and then
-continues normally. The five-second delay and keyboard polling are discarded.
+`SPIJ <liczba godzin>` retains the recovered per-hour healing, kunszt loss,
+two independent wake rolls, long-sleep bonuses, maximum-energy clamp, and
+exact output. Each requested hour advances one logical turn, then the command
+wakes the player automatically. Bare `SPIJ` or `SLEEP` prints the syntax, and
+`SLEEP <liczba godzin>` is accepted as an alias. The five-second delay and
+keyboard polling are discarded.
 
 ## Milestone 6 — conversations, quests, and ending (complete)
 

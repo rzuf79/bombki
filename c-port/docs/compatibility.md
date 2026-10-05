@@ -326,7 +326,10 @@ victory, death, escape, and monster regeneration clear them. The initial
 combat round and consume one logical turn: both
 dexterity-dependent dodge checks run first, the enemy attacks, the player
 attacks, and victory rewards are resolved before the prompt returns. The
-recovered pending `MINIKUNSZT` score starts from the combat comparison, gains
+strongest school-cage monster is the recovered exception: entering its room
+sets its fixed 40-energy, 10-strength, 11-dexterity profile and immediately
+starts that same basic round. Staruch's teleport follows the same path.
+The recovered pending `MINIKUNSZT` score starts from the combat comparison, gains
 one for each received attack and five for automatic parry learning, then gets
 its original maximum-energy, parry, and kick reductions only on a surviving
 kill. The
@@ -398,12 +401,13 @@ the retained command handlers. `POMOC` and `HELP` retain the port's command
 guide, and blocked movement or non-combat actions during a fight retain their
 port feedback text.
 
-`SPIJ` is the recovered healing path. One explicit command represents one
-logical sleep hour, adds ten energy, subtracts 20 kunszt, and consumes one turn.
-Repeating it continues the same sleep. Any other input wakes the player, uses
-the two separate `Random(2 * hours)` rolls, applies the greater-than-four and
-greater-than-eight-hour strength bonuses, clamps energy to its maximum, and
-then processes that input. The DOS delay and keyboard polling are absent.
+`SPIJ <liczba godzin>` is a user-approved sleep convenience. One command
+resolves each requested recovered sleep hour, adding ten energy, subtracting 20
+kunszt, and consuming one logical turn per hour. It then wakes automatically,
+uses the two separate `Random(2 * hours)` rolls, applies the greater-than-four
+and greater-than-eight-hour strength bonuses, and clamps energy to its maximum.
+Bare `SPIJ` or `SLEEP` prints the command syntax; `SLEEP <liczba godzin>` is
+also accepted. The DOS delay and keyboard polling are absent.
 
 Quest Master's easy, medium, and hard quests use their recovered purchase
 prices, monster-kill counters, Liroy bonus, death reset, turn-in items, and

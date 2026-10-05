@@ -33,6 +33,18 @@ static void clear_capture(Capture *capture)
     capture->text[0] = '\0';
 }
 
+static size_t count_occurrences(const char *text, const char *needle)
+{
+    size_t count = 0;
+    size_t needle_length = strlen(needle);
+
+    while ((text = strstr(text, needle)) != NULL) {
+        ++count;
+        text += needle_length;
+    }
+    return count;
+}
+
 static void clear_world_contents(GameState *state)
 {
     size_t index;
@@ -197,7 +209,7 @@ int main(void)
         "PATRZ, EXIT, POLNOC, POLUDNIE, WSCHOD, ZACHOD, GORA, DOL\n"
         "N, S, W, E, U, D, JA, KTO (NA ARENIE), BIERZ, ODRZUC, UZYJ, ODLOZ, ZABIJ\n"
         "ROZMAWIAJ, KUP, SPRZEDAJ, LISTA, CWICZ, TRENUJ, POROWNAJ, KOP, ZWIEJ\n"
-        "POWROT, ZDOLNOSCI, SPIJ, PAMIETAJ, WLACZ POSTAC, KONIEC.\n"
+        "POWROT, ZDOLNOSCI, SPIJ <GODZINY>, PAMIETAJ, WLACZ POSTAC, KONIEC.\n"
         "RESZTE ODKRYJ SAM !!\n") == 0);
     clear_capture(&capture);
     command = parser_parse("NIEZNANA KOMENDA");
@@ -276,7 +288,7 @@ int main(void)
     clear_capture(&capture);
     game_describe_current_room(&state, output);
     assert(strstr(capture.text,
-        "KORNIK SZUKA JAKIEGOS DRZEWA ABY COS PRZEKASIC") != NULL);
+        "KORNIK SZUKA JAKIEGOS DRZEWA ABY COS PRZEKASIC") == NULL);
     assert(strstr(capture.text,
         "W TWYM POKOJU LEZY !STARY! ZARDZEWIALY MIECZ") != NULL);
 
@@ -421,8 +433,24 @@ int main(void)
     assert(strstr(capture.text,
         "KORNIK SZUKA JAKIEGOS DRZEWA ABY COS PRZEKASIC\n"
     ) != NULL);
+    assert(count_occurrences(capture.text,
+        "KORNIK SZUKA JAKIEGOS DRZEWA ABY COS PRZEKASIC\n") == 1);
     assert(capture.length > 0 && capture.text[capture.length - 1] == '>');
 
+    game_initialize(&state);
+    state.room_id = ROOM_CAGE_HALL;
+    state.random_state = 2u;
+    clear_capture(&capture);
+    command = parser_parse("GORA");
+    (void)game_execute(&state, &command, output);
+    assert(state.room_id == ROOM_CAGE_ALL);
+    assert(state.active_opponent_actor == WORLD_ACTOR_CAGE_ALL);
+    assert(state.turn == 1);
+    assert(strstr(capture.text,
+        "WALCZYSZ - <<<<TWOJ WROG MA 40%>>>><<<< A TY MASZ 50% ENERGII>>>>>")
+        != NULL);
+
+    game_clear_active_opponent(&state);
     state.room_id = ROOM_BRUSZCZ_SOUTH;
     state.random_state = 1u;
     state.coins = 0;

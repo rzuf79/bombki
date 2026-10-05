@@ -113,6 +113,11 @@ int main(void)
     assert(parser_command_requires_argument(command.verb));
     assert(!parser_command_requires_argument(COMMAND_TRAIN));
 
+    command = parser_parse("SPIJ 9");
+    assert(command.verb == COMMAND_SLEEP);
+    assert(strcmp(command.argument, "9") == 0);
+    assert(parser_parse("SLEEP").verb == COMMAND_SLEEP);
+
     for (index = 0;
          index < sizeof(recovered_commands) / sizeof(recovered_commands[0]);
          ++index) {

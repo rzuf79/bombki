@@ -45,7 +45,8 @@ void terminal_write_banner(const Terminal *terminal, bool save_available)
         "|  \\______________/       |\n"
         "|   \\____________/        |\n"
         "\\_________________________/\n"
-        "VERSJA CETA 0.86 23.05.99 - LAST MODYFIKACIONEN\n",
+        "VERSJA CETA 0.86 23.05.99 - LAST MODYFIKACIONEN\n"
+        "PORT C WERSJA 1.0 by zolv & vaxquis\n",
         stdout
     );
     fputs(save_available

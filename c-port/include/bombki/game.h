@@ -61,6 +61,7 @@ typedef struct {
     int quest_progress;
     int world_actor_rooms[BOMBKI_WORLD_ACTOR_SLOTS];
     int world_object_rooms[BOMBKI_WORLD_OBJECT_SLOTS];
+    bool school_diploma_spawned;
     int item_quantities[BOMBKI_ITEM_SLOTS];
     int equipped_weapon;
     int equipped_shield;

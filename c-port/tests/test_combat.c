@@ -1066,25 +1066,28 @@ static void test_logical_sleep_and_recovered_wake_rolls(void)
 {
     GameState state;
     Capture capture = {{0}, 0};
-    int hour;
 
     game_initialize(&state);
     state.energy = 20;
     state.experience = 100;
     state.random_state = 1u;
-    execute(&state, &capture, "SPIJ");
-    assert(strcmp(capture.text, "SPISZ JUZ 1 GODZIN\n") == 0);
-    assert(state.sleep_hours == 1);
-    assert(state.energy == 30);
-    assert(state.experience == 80);
-    assert(state.turn == 1);
+    execute(&state, &capture, "SLEEP");
+    assert(strcmp(capture.text,
+        "JAK CHCESZ SPAC TO NAPISZ SPIJ [LICZBA GODZIN] , BO NIE BEDE CIE BUDZIC CO CHWILE\n"
+    ) == 0);
+    assert(state.sleep_hours == 0);
+    assert(state.energy == 20);
+    assert(state.experience == 100);
+    assert(state.turn == 0);
 
     memset(&capture, 0, sizeof(capture));
-    execute(&state, &capture, "");
+    execute(&state, &capture, "SPIJ 1");
     assert(strcmp(capture.text,
+        "SPISZ JUZ 1 GODZIN\n"
         "PO OBUDZENIU STWIERDZILES ZE ZYSKALES 10 ENERGI I STRACILES 20 KUNSZTU\n"
     ) == 0);
     assert(state.sleep_hours == 0);
+    assert(state.energy == 30);
     assert(state.experience == 81);
     assert(state.turn == 1);
 
@@ -1093,17 +1096,14 @@ static void test_logical_sleep_and_recovered_wake_rolls(void)
     state.maximum_energy = 200;
     state.experience = 0;
     state.random_state = 1u;
-    for (hour = 0; hour < 9; ++hour) {
-        memset(&capture, 0, sizeof(capture));
-        execute(&state, &capture, "SPIJ");
-    }
     memset(&capture, 0, sizeof(capture));
-    execute(&state, &capture, "");
-    assert(strcmp(capture.text,
+    execute(&state, &capture, "SPIJ 9");
+    assert(strstr(capture.text, "SPISZ JUZ 9 GODZIN\n") != NULL);
+    assert(strstr(capture.text,
         "PO OBUDZENIU STWIERDZILES ZE ZYSKALES 90 ENERGI I STRACILES 180 KUNSZTU\n"
         "DLUGI SEN DODATKOWO POZWOLIL CI ODPOCZAC : ZYSKALES 10ENERGI\n"
         "PELNOWARTOSCIOWY SEN SPOWODOWAL SUPER ZYSK : 20ENERGI\n"
-    ) == 0);
+    ) != NULL);
     assert(state.energy == 120);
     assert(state.experience == -165);
     assert(state.sleep_hours == 0);

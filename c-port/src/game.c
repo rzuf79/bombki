@@ -21,6 +21,12 @@ typedef struct {
     int starting_coins;
 } RaceProfile;
 
+typedef enum {
+    COMBAT_ACTION_BASIC = 0,
+    COMBAT_ACTION_KICK,
+    COMBAT_ACTION_FLEE
+} CombatAction;
+
 static const char *const race_names[RACE_COUNT] = {
     "CZLOWIEK", "OLBRZYM", "NIMFA", "POL-ELF", "UFOK", "CZAROMIL"
 };
@@ -77,6 +83,13 @@ static const int plant_spawn_rooms[] = {
 };
 
 static int recovered_combat_chance(const GameState *state);
+static bool resolve_basic_combat_round(
+    GameState *state,
+    const char *target,
+    CombatAction action,
+    GameOutput output
+);
+static void resolve_cage_all_entry(GameState *state, GameOutput output);
 
 _Static_assert(WORLD_ACTOR_COUNT <= BOMBKI_WORLD_ACTOR_SLOTS,
                "GameState needs a slot for every world actor");
@@ -315,6 +328,7 @@ void game_reset_world(GameState *state)
     for (index = 0; index < BOMBKI_WORLD_OBJECT_SLOTS; ++index) {
         state->world_object_rooms[index] = BOMBKI_ROOM_NOWHERE;
     }
+    state->school_diploma_spawned = false;
     state->quest_passage_open = false;
     game_regenerate_encounters(state);
     state->world_actor_rooms[WORLD_ACTOR_CAGE_WEAK] = ROOM_CAGE_WEAK;
@@ -500,6 +514,16 @@ bool game_state_is_valid(const GameState *state)
         if (state->item_quantities[index] < 0) {
             return false;
         }
+    }
+    if (state->item_quantities[ITEM_SCHOOL_DIPLOMA] > 1
+        || (!state->school_diploma_spawned
+            && (state->item_quantities[ITEM_SCHOOL_DIPLOMA] > 0
+                || state->world_object_rooms[WORLD_OBJECT_SCHOOL_DIPLOMA]
+                    != BOMBKI_ROOM_NOWHERE))
+        || (state->item_quantities[ITEM_SCHOOL_DIPLOMA] > 0
+            && state->world_object_rooms[WORLD_OBJECT_SCHOOL_DIPLOMA]
+                != BOMBKI_ROOM_NOWHERE)) {
+        return false;
     }
 
     if (!((state->equipped_weapon == BOMBKI_NO_ITEM
@@ -909,6 +933,10 @@ void game_describe_current_room(const GameState *state, GameOutput output)
             && actor->id != WORLD_ACTOR_STARUCH
             && actor->id != WORLD_ACTOR_QUEST_MASTER
             && actor->id != WORLD_ACTOR_LIVING_DOOR
+            && !(state->room_id >= ROOM_ARENA_33
+                && state->room_id <= ROOM_ARENA_57
+                && actor->id >= WORLD_ACTOR_KORNIK
+                && actor->id <= WORLD_ACTOR_TRENER)
             && state->world_actor_rooms[index] == state->room_id) {
             emit(output, "\n");
             emit(output, actor->description);
@@ -1086,7 +1114,10 @@ static ItemActionResult take_item(
 
     emit(output, messages[index]);
     state->world_object_rooms[index] = BOMBKI_ROOM_NOWHERE;
-    if (state->item_quantities[index] < INT_MAX) {
+    if (item->id == ITEM_SCHOOL_DIPLOMA) {
+        state->school_diploma_spawned = true;
+        state->item_quantities[index] = 1;
+    } else if (state->item_quantities[index] < INT_MAX) {
         ++state->item_quantities[index];
     }
     if (item->id == ITEM_SCHOOL_DIPLOMA) {
@@ -2655,12 +2686,6 @@ static void resolve_player_death(GameState *state, GameOutput output)
     game_regenerate_encounters(state);
 }
 
-typedef enum {
-    COMBAT_ACTION_BASIC = 0,
-    COMBAT_ACTION_KICK,
-    COMBAT_ACTION_FLEE
-} CombatAction;
-
 static bool resolve_basic_combat_round(
     GameState *state,
     const char *target,
@@ -2787,6 +2812,19 @@ static bool resolve_basic_combat_round(
         }
     }
     return true;
+}
+
+static void resolve_cage_all_entry(GameState *state, GameOutput output)
+{
+    if (state->room_id == ROOM_CAGE_ALL
+        && state->world_actor_rooms[WORLD_ACTOR_CAGE_ALL] == state->room_id) {
+        (void)resolve_basic_combat_round(
+            state,
+            "POTWOR",
+            COMBAT_ACTION_BASIC,
+            output
+        );
+    }
 }
 
 static bool practice_fleeing(GameState *state, GameOutput output)
@@ -3076,6 +3114,56 @@ static void continue_sleep(GameState *state, GameOutput output)
     add_clamped(&state->experience, -20);
     add_clamped(&state->energy, 10);
     advance_turn(state, output);
+}
+
+static void wake_from_sleep(GameState *state, GameOutput output);
+
+static bool parse_sleep_hours(const char *argument, int *hours)
+{
+    int value = 0;
+    size_t index;
+
+    if (argument[0] == '\0') {
+        return false;
+    }
+    for (index = 0; argument[index] != '\0'; ++index) {
+        int digit;
+
+        if (!isdigit((unsigned char)argument[index])) {
+            return false;
+        }
+        digit = argument[index] - '0';
+        if (value > (INT_MAX / 2 - digit) / 10) {
+            return false;
+        }
+        value = 10 * value + digit;
+    }
+    if (value == 0) {
+        return false;
+    }
+    *hours = value;
+    return true;
+}
+
+static void sleep_for_hours(
+    GameState *state,
+    const char *argument,
+    GameOutput output
+)
+{
+    int hours;
+    int hour;
+
+    if (!parse_sleep_hours(argument, &hours)) {
+        emit(output,
+            "JAK CHCESZ SPAC TO NAPISZ SPIJ [LICZBA GODZIN] , BO NIE BEDE CIE BUDZIC CO CHWILE\n"
+        );
+        return;
+    }
+    for (hour = 0; hour < hours; ++hour) {
+        continue_sleep(state, output);
+    }
+    wake_from_sleep(state, output);
 }
 
 static void wake_from_sleep(GameState *state, GameOutput output)
@@ -3685,6 +3773,8 @@ static bool talk_to_old_elf(GameState *state, GameOutput output)
     if (state->item_quantities[ITEM_RETURN_SCROLL] > 0) {
         emit(output, "AAAA SPADAJ STAD BO CI KOSCI POLAMIE\n");
         state->room_id = ROOM_CAGE_ALL;
+        game_describe_current_room(state, output);
+        resolve_cage_all_entry(state, output);
     }
     return true;
 }
@@ -3910,11 +4000,14 @@ static bool move_player(GameState *state, Direction direction, GameOutput output
         && state->world_actor_rooms[WORLD_ACTOR_CAGE_STRONG]
             == BOMBKI_ROOM_NOWHERE
         && state->world_actor_rooms[WORLD_ACTOR_CAGE_ALL]
-            == BOMBKI_ROOM_NOWHERE) {
+            == BOMBKI_ROOM_NOWHERE
+        && !state->school_diploma_spawned) {
         state->world_object_rooms[WORLD_OBJECT_SCHOOL_DIPLOMA]
             = ROOM_TELEPORT;
+        state->school_diploma_spawned = true;
     }
     game_describe_current_room(state, output);
+    resolve_cage_all_entry(state, output);
     if (is_miniarena_room(state->room_id)) {
         describe_arena_actors(state, output);
         emit_formatted(output, "%d.%d>", state->energy, state->experience);
@@ -4065,7 +4158,7 @@ GameAction game_execute(GameState *state, const Command *command, GameOutput out
         return GAME_ACTION_NONE;
     }
 
-    if (state->sleep_hours > 0 && command->verb != COMMAND_SLEEP) {
+    if (state->sleep_hours > 0) {
         wake_from_sleep(state, output);
     }
 
@@ -4278,7 +4371,7 @@ GameAction game_execute(GameState *state, const Command *command, GameOutput out
         describe_abilities(state, output);
         break;
     case COMMAND_SLEEP:
-        continue_sleep(state, output);
+        sleep_for_hours(state, command->argument, output);
         break;
     case COMMAND_SECRET_LIST:
         list_duncan_market(state, output);
@@ -4305,7 +4398,7 @@ GameAction game_execute(GameState *state, const Command *command, GameOutput out
             "PATRZ, EXIT, POLNOC, POLUDNIE, WSCHOD, ZACHOD, GORA, DOL\n"
             "N, S, W, E, U, D, JA, KTO (NA ARENIE), BIERZ, ODRZUC, UZYJ, ODLOZ, ZABIJ\n"
             "ROZMAWIAJ, KUP, SPRZEDAJ, LISTA, CWICZ, TRENUJ, POROWNAJ, KOP, ZWIEJ\n"
-            "POWROT, ZDOLNOSCI, SPIJ, PAMIETAJ, WLACZ POSTAC, KONIEC.\n"
+            "POWROT, ZDOLNOSCI, SPIJ <GODZINY>, PAMIETAJ, WLACZ POSTAC, KONIEC.\n"
             "RESZTE ODKRYJ SAM !!\n");
         break;
     case COMMAND_QUIT:

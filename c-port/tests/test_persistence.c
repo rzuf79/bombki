@@ -47,11 +47,15 @@ static void write_previous_save_from_current(const char *path, int version)
     assert(source != NULL);
     assert(destination != NULL);
     assert(fgets(line, sizeof(line), source) != NULL);
-    assert(strcmp(line, "BOMBKI_PORT 17\n") == 0);
+    assert(strcmp(line, "BOMBKI_PORT 18\n") == 0);
     assert(fprintf(destination, "BOMBKI_PORT %d\n", version) >= 0);
     while (fgets(line, sizeof(line), source) != NULL) {
         if (version <= 16 && (strncmp(line, "active_opponent_reward=", 23) == 0
             || strncmp(line, "grass_fight_waves=", 18) == 0)) {
+            continue;
+        }
+        if (version <= 17
+            && strncmp(line, "school_diploma_spawned=", 23) == 0) {
             continue;
         }
         if (version == 14 && (strncmp(line, "quest_type=", 11) == 0
@@ -100,6 +104,8 @@ int main(void)
     state.world_actor_rooms[WORLD_ACTOR_KORNIK] = ROOM_ARENA_57;
     state.world_actor_rooms[WORLD_ACTOR_CAGE_WEAK] = BOMBKI_ROOM_NOWHERE;
     state.world_object_rooms[WORLD_OBJECT_PIPE] = ROOM_ELF_HOUSE;
+    state.item_quantities[ITEM_SCHOOL_DIPLOMA] = 1;
+    state.school_diploma_spawned = true;
     state.item_quantities[ITEM_DOUGHNUT] = 3;
     state.item_quantities[ITEM_BACKPACK] = 1;
     state.item_quantities[ITEM_SPIKED_SUIT] = 1;
@@ -145,6 +151,8 @@ int main(void)
     assert(loaded.world_actor_rooms[WORLD_ACTOR_CAGE_WEAK]
         == BOMBKI_ROOM_NOWHERE);
     assert(loaded.world_object_rooms[WORLD_OBJECT_PIPE] == ROOM_ELF_HOUSE);
+    assert(loaded.item_quantities[ITEM_SCHOOL_DIPLOMA] == 1);
+    assert(loaded.school_diploma_spawned);
     assert(loaded.item_quantities[ITEM_DOUGHNUT] == 3);
     assert(loaded.item_quantities[ITEM_BACKPACK] == 1);
     assert(loaded.equipped_weapon == BOMBKI_NO_ITEM);

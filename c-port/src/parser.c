@@ -150,7 +150,9 @@ Command parser_parse(const char *input)
         || parse_argument_command(normalized, "CWICZ", COMMAND_PRACTICE, &command)
         || parse_argument_command(normalized, "TRENUJ", COMMAND_TRAIN, &command)
         || parse_argument_command(normalized, "CIOS W", COMMAND_BACKSTAB, &command)
-        || parse_argument_command(normalized, "PIECZ", COMMAND_COOK, &command)) {
+        || parse_argument_command(normalized, "PIECZ", COMMAND_COOK, &command)
+        || parse_argument_command(normalized, "SPIJ", COMMAND_SLEEP, &command)
+        || parse_argument_command(normalized, "SLEEP", COMMAND_SLEEP, &command)) {
         return command;
     }
     if (strcmp(normalized, "EXIT") == 0 || strcmp(normalized, "WYJSCIA") == 0) {
@@ -189,8 +191,6 @@ Command parser_parse(const char *input)
         command.verb = COMMAND_SPEED;
     } else if (strcmp(normalized, "ZDOLNOSCI") == 0) {
         command.verb = COMMAND_ABILITIES;
-    } else if (strcmp(normalized, "SPIJ") == 0) {
-        command.verb = COMMAND_SLEEP;
     } else if (strcmp(normalized, "SCAN") == 0) {
         command.verb = COMMAND_SCAN;
     } else if (strcmp(normalized, "SECRET LISTA") == 0) {

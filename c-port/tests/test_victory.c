@@ -415,9 +415,32 @@ static void test_school_completion_places_diploma_in_teleporter(void)
     assert(state.room_id == ROOM_TELEPORT);
     assert(state.world_object_rooms[WORLD_OBJECT_SCHOOL_DIPLOMA]
         == ROOM_TELEPORT);
+    assert(state.school_diploma_spawned);
     assert(strstr(capture.text,
         "W TYM POKOJU ZNAJDUJE SIE !DYPLOM! MUD SZKOLY"
     ) != NULL);
+
+    memset(&capture, 0, sizeof(capture));
+    command = parser_parse("BIERZ DYPLOM");
+    (void)game_execute(&state, &command, output);
+    assert(state.item_quantities[ITEM_SCHOOL_DIPLOMA] == 1);
+    command = parser_parse("GORA");
+    (void)game_execute(&state, &command, output);
+    command = parser_parse("DOL");
+    (void)game_execute(&state, &command, output);
+    assert(state.room_id == ROOM_TELEPORT);
+    assert(state.item_quantities[ITEM_SCHOOL_DIPLOMA] == 1);
+    assert(state.world_object_rooms[WORLD_OBJECT_SCHOOL_DIPLOMA]
+        == BOMBKI_ROOM_NOWHERE);
+
+    state.item_quantities[ITEM_SCHOOL_DIPLOMA] = 0;
+    state.maximum_energy -= 5;
+    command = parser_parse("GORA");
+    (void)game_execute(&state, &command, output);
+    command = parser_parse("DOL");
+    (void)game_execute(&state, &command, output);
+    assert(state.world_object_rooms[WORLD_OBJECT_SCHOOL_DIPLOMA]
+        == BOMBKI_ROOM_NOWHERE);
     assert(game_state_is_valid(&state));
 }
 

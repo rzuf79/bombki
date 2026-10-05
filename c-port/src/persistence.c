@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "items.h"
 #include "world.h"
 
 #define SAVE_HEADER_V1 "BOMBKI_PORT 1"
@@ -26,6 +27,7 @@
 #define SAVE_HEADER_V15 "BOMBKI_PORT 15"
 #define SAVE_HEADER_V16 "BOMBKI_PORT 16"
 #define SAVE_HEADER_V17 "BOMBKI_PORT 17"
+#define SAVE_HEADER_V18 "BOMBKI_PORT 18"
 #define SAVE_LINE_CAPACITY 256
 
 static void set_error(char *error, size_t capacity, const char *message)
@@ -41,7 +43,7 @@ static bool write_state(FILE *file, const GameState *state)
 {
     size_t index;
 
-    if (!(fprintf(file, "%s\n", SAVE_HEADER_V17) >= 0
+    if (!(fprintf(file, "%s\n", SAVE_HEADER_V18) >= 0
         && fprintf(file, "room=%d\n", state->room_id) >= 0
         && fprintf(file, "turn=%" PRIu64 "\n", state->turn) >= 0
         && fprintf(file, "random_state=%u\n", state->random_state) >= 0
@@ -107,7 +109,9 @@ static bool write_state(FILE *file, const GameState *state)
         && fprintf(file, "living_door_alive=%d\n",
             state->living_door_alive ? 1 : 0) >= 0
         && fprintf(file, "old_elf_present=%d\n",
-            state->old_elf_present ? 1 : 0) >= 0)) {
+            state->old_elf_present ? 1 : 0) >= 0
+        && fprintf(file, "school_diploma_spawned=%d\n",
+            state->school_diploma_spawned ? 1 : 0) >= 0)) {
         return false;
     }
 
@@ -237,7 +241,9 @@ bool persistence_load(
         return false;
     }
     trim_line_ending(line);
-    if (strcmp(line, SAVE_HEADER_V17) == 0) {
+    if (strcmp(line, SAVE_HEADER_V18) == 0) {
+        version = 18;
+    } else if (strcmp(line, SAVE_HEADER_V17) == 0) {
         version = 17;
     } else if (strcmp(line, SAVE_HEADER_V16) == 0) {
         version = 16;
@@ -449,6 +455,11 @@ bool persistence_load(
             && (value == 0 || value == 1)) {
             candidate.old_elf_present = value != 0;
             world_fields |= 1u << 2;
+        } else if (strncmp(line, "school_diploma_spawned=", 23) == 0
+            && parse_integer(line + 23, &value)
+            && (value == 0 || value == 1)) {
+            candidate.school_diploma_spawned = value != 0;
+            fields |= UINT64_C(1) << 47;
         } else {
             unsigned index;
             char trailing;
@@ -496,6 +507,29 @@ bool persistence_load(
     }
     if (version <= 16) {
         game_recover_active_opponent_reward(&candidate);
+    }
+    if (version <= 17) {
+        candidate.school_diploma_spawned =
+            candidate.item_quantities[ITEM_SCHOOL_DIPLOMA] > 0
+            || candidate.world_object_rooms[WORLD_OBJECT_SCHOOL_DIPLOMA]
+                != BOMBKI_ROOM_NOWHERE;
+        if (candidate.item_quantities[ITEM_SCHOOL_DIPLOMA] > 1) {
+            int64_t excess_energy = 5LL
+                * (candidate.item_quantities[ITEM_SCHOOL_DIPLOMA] - 1);
+
+            candidate.maximum_energy = excess_energy
+                    >= candidate.maximum_energy
+                ? 1
+                : candidate.maximum_energy - (int)excess_energy;
+            if (candidate.energy > candidate.maximum_energy) {
+                candidate.energy = candidate.maximum_energy;
+            }
+            candidate.item_quantities[ITEM_SCHOOL_DIPLOMA] = 1;
+        }
+        if (candidate.item_quantities[ITEM_SCHOOL_DIPLOMA] > 0) {
+            candidate.world_object_rooms[WORLD_OBJECT_SCHOOL_DIPLOMA] =
+                BOMBKI_ROOM_NOWHERE;
+        }
     }
 
     if ((version == 1 && fields != (1u << 14) - 1)
@@ -567,6 +601,12 @@ bool persistence_load(
             || object_field_count != BOMBKI_WORLD_OBJECT_SLOTS
             || item_field_count != BOMBKI_ITEM_SLOTS))
         || (version == 17 && (fields != (((UINT64_C(1) << 47) - 1)
+                & ~(UINT64_C(1) << 1))
+            || world_fields != (1u << 3) - 1
+            || actor_field_count != BOMBKI_WORLD_ACTOR_SLOTS
+            || object_field_count != BOMBKI_WORLD_OBJECT_SLOTS
+            || item_field_count != BOMBKI_ITEM_SLOTS))
+        || (version == 18 && (fields != (((UINT64_C(1) << 48) - 1)
                 & ~(UINT64_C(1) << 1))
             || world_fields != (1u << 3) - 1
             || actor_field_count != BOMBKI_WORLD_ACTOR_SLOTS

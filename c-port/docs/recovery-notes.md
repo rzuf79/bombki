@@ -149,13 +149,14 @@ invent player-facing text or mechanics for unrecovered commands.
   growth, portal outcomes, mana costs, and exact output. Native room IDs
   translate the random original `GDZIE` result; unsupported gaps safely use the
   starting room.
-- `SPIJ` is timer-free: each command advances one recovered sleep hour and one
-  logical turn, while another input wakes the player and applies both original
-  wake rolls and the long-sleep bonuses. Version 14 persists those fields plus
-  Duncan's quest and market unlock; version 15 additionally persists the Quest
-  Master type and counter. Version 16 drops the obsolete command-state flag;
-  version 17 additionally preserves deferred combat rewards and grass-fight
-  progress; versions 1–16 still import.
+- `SPIJ <liczba godzin>` is timer-free: one command resolves each requested
+  recovered sleep hour and logical turn, then wakes automatically with both
+  original wake rolls and the long-sleep bonuses. Bare `SPIJ` or `SLEEP`
+  prints its syntax, and `SLEEP <liczba godzin>` is accepted as an alias.
+  Version 14 persists those fields plus Duncan's quest and market unlock;
+  version 15 additionally persists the Quest Master type and counter. Version
+  16 drops the obsolete command-state flag; version 17 additionally preserves
+  deferred combat rewards and grass-fight progress; versions 1–16 still import.
 - The underground skill poster retains its exact text and independent stat
   gates. Its extra advertised commands have no handler, state, or combat branch
   in the retained executable and therefore remain silent no-ops.

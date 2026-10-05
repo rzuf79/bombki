@@ -387,27 +387,34 @@ static void test_old_elf_fetch_quest(void)
     state.coins = 200;
     clear_capture(&capture);
     execute(&state, &capture, "ROZMAWIAJ STARUCH");
-    assert(strcmp(capture.text,
+    assert(strstr(capture.text,
         "STARUCH MOWI CI : OOO JAKA PIEKNA WEKA ... MNIAM I DRUGA TRZECIA I CZWARTA\n"
         "TO BYLO DOBRE ZARCIE !!! , DAWAJ KASE , PIENIADZE !!! , CO SIE TAK GAPISZ?\n"
         "WYNOCHA STAD !!! MRAMMMARAMMARAMAAMMARAM BUM !! -T-E-L-E-P-O-R-T-Y\n"
         "WYGLADA ZE ZROBIL CIE W BUCA , A MOZE JEDNAK NIE , CO TO ? , SCROLL POWROTU\n"
         "I PIWSKO NA OSLODZENIE ZYCIA , NO TRUDNO PRZYNAJMNIEJ CZEGOS SIE NAUCZYLES\n"
         "AAAA SPADAJ STAD BO CI KOSCI POLAMIE\n"
-    ) == 0);
+    ) != NULL);
     assert(state.item_quantities[ITEM_WEKA] == 0);
     assert(state.item_quantities[ITEM_BEER] == 1);
     assert(state.item_quantities[ITEM_RETURN_SCROLL] == 1);
     assert(state.coins == 0);
     assert(state.experience == 50);
     assert(state.room_id == ROOM_CAGE_ALL);
+    assert(state.active_opponent_actor == WORLD_ACTOR_CAGE_ALL);
+    assert(strstr(capture.text,
+        "WALCZYSZ - <<<<TWOJ WROG MA 40%>>>><<<< A TY MASZ 50% ENERGII>>>>>")
+        != NULL);
 
     state.room_id = ROOM_ELF_HOUSE;
     state.old_elf_present = false;
+    game_clear_active_opponent(&state);
     clear_capture(&capture);
     execute(&state, &capture, "ROZMAWIAJ STARUCH");
-    assert(strcmp(capture.text, "AAAA SPADAJ STAD BO CI KOSCI POLAMIE\n") == 0);
+    assert(strstr(capture.text, "AAAA SPADAJ STAD BO CI KOSCI POLAMIE\n")
+        != NULL);
     assert(state.room_id == ROOM_CAGE_ALL);
+    assert(state.active_opponent_actor == WORLD_ACTOR_CAGE_ALL);
 }
 
 static void test_talk_fallbacks(void)
