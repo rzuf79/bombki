@@ -3865,3 +3865,55 @@ reconstruction. Original-side findings are grounded in the EXE/TPU.
   conformance: 4/4 PASS.
 - Status: RESOLVED (dead scaffolding removed; compiled
   output unchanged).
+
+### 2026-10-05 (147): block-depth reindent via tools/reindent.py
+
+- Added `tools/reindent.py` and used it to fix under-indented
+  lines in reconstructed/BOMBKI.PAS: 939 lines, whitespace
+  only, line counts unchanged (BOMBKI 2581, PRZEDM 1575,
+  SWIAT 445, MONSTRA 53). MONSTRA, PRZEDM and SWIAT need no
+  changes.
+- Rule: a line's correct indent is two spaces per enclosing
+  block, and the tool only ever increases indentation, so
+  hand-placed alignment the structural model cannot see
+  (indented `WriteLn` continuation lines) is preserved. A line
+  starting with `end`/`until`/`else` is placed at the
+  enclosing level so it aligns with its opener.
+- Two constructs need one extra level that block depth alone
+  cannot express:
+  - The statement after an unbraced `if <cond> then` (or
+    `else`) is that `if`'s body but opens no block, so depth
+    alone leaves it flush against its own `if`. The sources
+    use the conventional +2 continuation for this in 68
+    places in BOMBKI.PAS, and two of them (lines 1666, 2514)
+    were a column short as well.
+  - But when that body is itself a block opener, the `begin`
+    belongs to the `if`'s own level, Turbo Pascal style:
+    `if cond then` / `begin` / ... / `end;`. Adding the extra
+    level there would leave the `begin`'s contents flush with
+    it. PRZEDM.PAS `MINIARENA` relies on this and must not
+    be touched.
+- Verified as invariants over the whole tree, not by eye:
+  zero unbraced continuations that are not deeper than their
+  `if` (2 in the original), and zero block bodies not deeper
+  than their opener (0 in the original, 0 after).
+- Rejected alternative: FPC's `ptop` formatter. It cannot
+  line-break a string-concatenation list such as
+  `WriteLn('A'#164'B')` - it emits the `#164` at end of line
+  and the following literal on the next line, which Pascal
+  rejects - and it inflated PRZEDM.PAS by 777 lines, which
+  would break per-source-line attribution outright. `-l 127`
+  does not avoid the split: one survives at every width tried
+  (80/100/120/127). The trial was discarded.
+- Two lines cannot be indented and are reported on every run:
+  PRZEDM.PAS:452 (126 columns, would reach 128) and
+  SWIAT.PAS:432 (127 columns, would reach 131).
+- Verification (machine): TP7 compile under DOSBox-X via
+  tools/compare_tp7_artifacts.py - MONSTRA/PRZEDM/SWIAT TPU
+  per-line code-byte counts: no mismatches (42/1460/415
+  entries); BOMBKI.EXE byte-identical to ../og/BOMBKI.EXE
+  (141264 bytes); all three TPUs at the 4-byte checksum-only
+  baseline, i.e. no symbol line-number shift. FPC TP-mode
+  conformance: 4/4 PASS. Re-running the tool is a no-op.
+- Status: RESOLVED (formatting only; compiled output
+  unchanged).
