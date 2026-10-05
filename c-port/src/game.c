@@ -3069,38 +3069,80 @@ static bool resolve_return(GameState *state, GameOutput output)
 
 static void describe_abilities(const GameState *state, GameOutput output)
 {
-    bool has_ability = false;
+    bool kick_available = state->kick_skill > 0
+        || (state->wisdom > 10 && state->strength > 11
+            && state->practices > 0);
+    bool flee_available = state->flee_skill > 0
+        || (state->wisdom > 10 && state->dexterity > 10
+            && state->practices > 0 && state->flee_skill < 85);
+    bool parry_available = state->parry_skill > 0
+        || (state->wisdom > 15 && state->dexterity > 11
+            && state->practices > 0 && state->parry_skill < 90);
+    bool comparison_available = state->comparison_skill > 0
+        || (state->wisdom > 11 && state->practices > 0
+            && state->comparison_skill < 90);
+    bool cooking_available = state->cooking_skill > 0
+        || (state->wisdom > 18 && state->practices > 0
+            && state->cooking_skill < 90);
+    bool return_available = state->return_skill > 0
+        || (state->wisdom > 17 && state->practices > 0
+            && state->return_skill < 90);
 
-    if (state->strength > 10 && state->wisdom > 11) {
-        emit_formatted(output, "KOPANIE       - %d%%\n", state->kick_skill);
-        has_ability = true;
+    emit(output, "DOSTEPNE ZDOLNOSCI:\n");
+    if (kick_available) {
+        emit_formatted(output, "KOPANIE       - %d%% (CWICZ KOPAC)\n",
+            state->kick_skill);
     }
-    if (state->strength > 10 && state->dexterity > 10) {
-        emit_formatted(output, "UCIEKANIE     - %d%%\n", state->flee_skill);
-        has_ability = true;
+    if (flee_available) {
+        emit_formatted(output, "UCIEKANIE     - %d%% (CWICZ UCIEKAC)\n",
+            state->flee_skill);
     }
-    if (state->strength > 15 && state->dexterity > 11) {
-        emit_formatted(output, "PAROWANIE     - %d%%\n", state->parry_skill);
-        has_ability = true;
+    if (parry_available) {
+        emit_formatted(output, "PAROWANIE     - %d%% (CWICZ PAROWANIE)\n",
+            state->parry_skill);
     }
-    if (state->strength > 11) {
-        emit_formatted(output,
-            "POROWNYWANIE  - %d%%\n",
-            state->comparison_skill
-        );
-        has_ability = true;
+    if (comparison_available) {
+        emit_formatted(output, "POROWNYWANIE  - %d%% (CWICZ POROWNANIE)\n",
+            state->comparison_skill);
     }
-    if (state->strength > 18) {
-        emit_formatted(output, "POTRAWKI      - %d%%\n", state->cooking_skill);
-        has_ability = true;
+    if (cooking_available) {
+        emit_formatted(output, "POTRAWKI      - %d%% (CWICZ POTRAWKI)\n",
+            state->cooking_skill);
     }
-    if (state->strength > 19) {
-        emit_formatted(output, "POWROT        - %d%%\n", state->return_skill);
-        has_ability = true;
+    if (return_available) {
+        emit_formatted(output, "POWROT        - %d%% (CWICZ POWROT)\n",
+            state->return_skill);
     }
-    if (!has_ability) {
+
+    emit(output, "JESZCZE NIEDOSTEPNE:\n");
+    if (!kick_available) {
         emit(output,
-            "NIE MASZ ZADNYCH ZDOLNOSCI , ALE POTRAFISZ JESZCZE CHODZIC\n"
+            "KOPANIE       - WYMAGA SILY 12, MADROSCI 11 I 1 PRAKTYKI\n"
+        );
+    }
+    if (!flee_available) {
+        emit(output,
+            "UCIEKANIE     - WYMAGA ZRECNOSCI 11, MADROSCI 11 I 1 PRAKTYKI\n"
+        );
+    }
+    if (!parry_available) {
+        emit(output,
+            "PAROWANIE     - WYMAGA ZRECNOSCI 12, MADROSCI 16 I 1 PRAKTYKI\n"
+        );
+    }
+    if (!comparison_available) {
+        emit(output,
+            "POROWNYWANIE  - WYMAGA MADROSCI 12 I 1 PRAKTYKI\n"
+        );
+    }
+    if (!cooking_available) {
+        emit(output,
+            "POTRAWKI      - WYMAGA MADROSCI 19 I 1 PRAKTYKI\n"
+        );
+    }
+    if (!return_available) {
+        emit(output,
+            "POWROT        - WYMAGA MADROSCI 18 I 1 PRAKTYKI\n"
         );
     }
 }

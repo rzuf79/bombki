@@ -389,9 +389,12 @@ for ten mana. Mana is clamped at zero to keep portable state valid. Original
 room numbers are translated to native IDs; unrepresented dispatcher gaps fall
 back to the starting room instead of creating invalid native state.
 
-`ZDOLNOSCI` displays the six stored skills under their recovered stat gates.
-The underground poster also preserves every independent gate and exact line.
-Its additional advertised direct and automatic abilities have no executable
+At the user's request, `ZDOLNOSCI` lists all six skills: first those the player
+can already use or train, including their exact `CWICZ` command, then the
+remaining skills with their training requirements. This replaces the recovered
+display-only stat gates, which could show an untrainable 0% skill. The
+underground poster also preserves every independent gate and exact line. Its
+additional advertised direct and automatic abilities have no executable
 handler, state, or combat branch, so those command words are silent no-ops.
 
 `KTO` follows `PRZEDM.KTO`: it lists only the recovered arena roster from

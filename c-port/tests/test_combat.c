@@ -1034,12 +1034,33 @@ static void test_ability_display_and_skill_poster(void)
     state.return_skill = 66;
     execute(&state, &capture, "ZDOLNOSCI");
     assert(strcmp(capture.text,
-        "KOPANIE       - 11%\n"
-        "UCIEKANIE     - 22%\n"
-        "PAROWANIE     - 33%\n"
-        "POROWNYWANIE  - 44%\n"
-        "POTRAWKI      - 55%\n"
-        "POWROT        - 66%\n"
+        "DOSTEPNE ZDOLNOSCI:\n"
+        "KOPANIE       - 11% (CWICZ KOPAC)\n"
+        "UCIEKANIE     - 22% (CWICZ UCIEKAC)\n"
+        "PAROWANIE     - 33% (CWICZ PAROWANIE)\n"
+        "POROWNYWANIE  - 44% (CWICZ POROWNANIE)\n"
+        "POTRAWKI      - 55% (CWICZ POTRAWKI)\n"
+        "POWROT        - 66% (CWICZ POWROT)\n"
+        "JESZCZE NIEDOSTEPNE:\n"
+    ) == 0);
+    assert(state.turn == 0);
+
+    game_initialize(&state);
+    state.strength = 11;
+    state.dexterity = 10;
+    state.wisdom = 13;
+    state.practices = 2;
+    memset(&capture, 0, sizeof(capture));
+    execute(&state, &capture, "ZDOLNOSCI");
+    assert(strcmp(capture.text,
+        "DOSTEPNE ZDOLNOSCI:\n"
+        "POROWNYWANIE  - 0% (CWICZ POROWNANIE)\n"
+        "JESZCZE NIEDOSTEPNE:\n"
+        "KOPANIE       - WYMAGA SILY 12, MADROSCI 11 I 1 PRAKTYKI\n"
+        "UCIEKANIE     - WYMAGA ZRECNOSCI 11, MADROSCI 11 I 1 PRAKTYKI\n"
+        "PAROWANIE     - WYMAGA ZRECNOSCI 12, MADROSCI 16 I 1 PRAKTYKI\n"
+        "POTRAWKI      - WYMAGA MADROSCI 19 I 1 PRAKTYKI\n"
+        "POWROT        - WYMAGA MADROSCI 18 I 1 PRAKTYKI\n"
     ) == 0);
     assert(state.turn == 0);
 
