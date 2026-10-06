@@ -15,7 +15,7 @@ uses
   Other unit-owned globals live in the SWIAT/PRZEDM/MONSTRA interface vars. }
 
 label
-  L1012_ZachetaPodswiadomosc, L1025_Wyjscie, L1026_KoniecObladowania,
+  L1012_ZachetaPodswiadomosc, L1025_Wyjscie,
   L1027_Ucieczka16, L1028_PoUcieczce16;
 const
   MIECHO_Podswiadomosc = 1000; { subconscious (MODE) context }
@@ -1447,11 +1447,11 @@ begin
     PunktyKontrolne; { call 0x51C3 at img 0xB0F0 }
     SprawdzCzyZdobylesLevel; { call 0x872E at img 0xB0F3 }
   { Overload gate: PRZED [0x182] > LimitPrzedmiotow [0x62] -> overload-print block }
-    if PRZED <= LimitPrzedmiotow then goto L1026_KoniecObladowania;
-    WriteLn('JESTES OBLADOWANY !!! MASZ O ', PRZED - LimitPrzedmiotow, ' ZA DUZO');
-    WriteLn('TRACISZ ', (PRZED - LimitPrzedmiotow) * 10, '% ENERGI');
-    ENERGIA := ENERGIA - ((PRZED - LimitPrzedmiotow) * 10);
-    L1026_KoniecObladowania:
+    if PRZED > LimitPrzedmiotow then begin
+      WriteLn('JESTES OBLADOWANY !!! MASZ O ', PRZED - LimitPrzedmiotow, ' ZA DUZO');
+      WriteLn('TRACISZ ', (PRZED - LimitPrzedmiotow) * 10, '% ENERGI');
+      ENERGIA := ENERGIA - ((PRZED - LimitPrzedmiotow) * 10);
+    end;
   { --- img 0xB193 bleed tick; img 0xB1E5 ordered room dispatch --- }
     { bleed tick at img 0xB193..0xB1E4 }
     if ILEPOI > 0 then begin
