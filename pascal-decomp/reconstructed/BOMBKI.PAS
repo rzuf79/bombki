@@ -7,7 +7,7 @@ program BOMBKI;
   at img 0x16F9. Main loop bleed tick at img 0xB193; ordered room dispatch
   at img 0xB1E5. Backedge img 0xF5BF returns to img 0xB0F0. }
 uses
-  crt, swiat, przedm, monstra, dos;
+  crt, swiat, przedm, monstra;
 
 { program-level DGROUP workspace:
     ds:0x007E  plik / save-file TextRec (img 0x2BEA..0x2BF4)
